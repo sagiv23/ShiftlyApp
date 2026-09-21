@@ -3,65 +3,81 @@
 <div dir="rtl">
 
 Shiftly היא פלטפורמה מקיפה לניהול ומעקב משמרות עבודה והוצאות נלוות, המיועדת לספק מענה מדויק לחישוב
-שכר נטו, ניהול הפסקות ורישום טיפים. האפליקציה נבנתה ב-Flutter ותומכת ב-Android, iOS, Windows, macOS,
-Linux ו-Web.
+שכר נטו, ניהול הפסקות ורישום טיפים. האפליקציה תומכת בכל הפלטפורמות (Android, iOS, Windows, macOS,
+Linux, Web) ומציעה פתרונות סנכרון מתקדמים.
 
 ## תכונות עיקריות
 
-* **מעקב זמן אמת וטיימר חכם:** שעון עצר מובנה לניהול משמרת פעילה, הכולל אפשרות למעבר למצבי הפסקה (
-  בתשלום/ללא תשלום) וחזרה לעבודה בלחיצה אחת.
+* **מעקב זמן אמת וטיימר חכם:** שעון עצר מובנה לניהול משמרת פעילה, כולל מעבר למצבי הפסקה (בתשלום/ללא
+  תשלום) ושליטה מלאה מווילון ההתראות.
+* **סנכרון ענן כפול:**
+  * **BYOS (Bring Your Own Storage):** גיבוי ושחזור ל-Google Drive הפרטי שלך – השליטה במידע נשארת
+    אצלך.
+  * **Shiftly Account:** סנכרון מלא בזמן אמת מול שרת מרכזי למעבר חלק בין מכשירים (מובייל ודסקטופ).
 * **ניהול היסטוריית שכר:** תמיכה בשינויי שכר לפי תאריך (Effective Dates). המערכת שומרת היסטוריית שכר
   לכל תפקיד ומבטיחה ששינויי שכר עתידיים לא ישפיעו על חישובי העבר.
-* **ניהול טיפים גמיש:** אפשרות להוספת מספר טיפים בודדים בתוך כל משמרת עם חישוב אוטומטי של הסכום
-  הכולל.
-* **התראות חכמות וגמישות:**
-    * שליטה מלאה בטיימר מווילון ההתראות (Android/iOS/macOS).
-    * תזכורות מותאמות אישית לפני תחילת משמרת (ניתן לקבוע כמה זמן מראש לקבל את ההתראה).
-* **ניהול הוצאות:** תיעוד הוצאות הקשורות לעבודה (נסיעות, אוכל וכו') וקיזוז אוטומטי שלהן מהשכר הכולל.
-* **מנוע פיענוח טקסט (Smart Parser):** הזנת משמרות מרובות באמצעות הדבקת טקסט חופשי. המערכת מזהה
-  אוטומטית תאריכים, טווח שעות, סוגי הפסקה וטיפים.
-* **ממשק משתמש מודרני (Material 3):** עיצוב נקי ויוקרתי עם תמיכה מלאה במצב בהיר (Light) ומצב כהה (
-  Dark).
-* **דיוק ובטיחות נתונים:**
-    * חישוב שעות נטו על בסיס שניות.
-    * נעילת שכר (Snapshot) בזמן הזנת משמרת למניעת שינויים רטרואקטיביים.
-    * דיאלוגים לאישור פעולות (Confirmation) למניעת מחיקות בטעות.
-    * אפשרות לאיפוס נתונים מלא (Factory Reset) מתוך הגדרות האפליקציה.
+* **ניהול טיפים והוצאות:** תיעוד הוצאות (נסיעות, אוכל) וטיפים בודדים עם חישוב נטו סופי מדויק.
+* **מנוע פיענוח טקסט (Smart Parser):** הזנת משמרות מרובות באמצעות הדבקת טקסט חופשי (פורמט: תאריך -
+  שעות - הפסקה + טיפ).
+* **ממשק מודרני (Material 3):** תמיכה מלאה במצב בהיר/כהה ועיצוב מותאם לכל גודל מסך.
+* **רב-לשוניות:** תמיכה מלאה בעברית ובאנגלית.
 
 ## מפרט טכני
 
-* **UI Framework:** Flutter (Material 3 Design).
-* **State Management:** Provider.
-* **Persistence:** Hive (Local NoSQL Storage) – כל המידע נשמר על המכשיר שלך בלבד.
-* **Localization:** תמיכה מלאה בעברית ובתצוגת מימין לשמאל (RTL).
+### Frontend (Flutter)
 
-## פורמט הזנה (Smart Paste)
+* **State Management:** Provider & ProxyProvider.
+* **Persistence:** Hive (Local NoSQL) & Google Drive API.
+* **Localization:** `flutter_localizations` (HE/EN).
+* **Platforms:** Mobile (Android/iOS), Desktop (Windows/macOS/Linux), Web.
 
-המערכת תומכת בפורמט הבא:
-`[DD.MM.YYYY] - [HH:mm] - [HH:mm] [תיאור הפסקה] + [טיפים]`
+### Backend (Shiftly Cloud)
 
-**דוגמאות מזוהות:**
-
-* `07.09.2026 - 09:00 - 17:00 45 דקות + 50`
-* `07.09 - 22:00 - 06:00 ללא + 20.5`
-
-## הורדה והתקנה (Releases)
-
-ניתן להוריד גרסאות מוכנות לשימוש בדף ה-Releases של הפרויקט.
-
-* **Android:** הורד את קובץ ה-`apk` המתאים (מומלץ `app-release.apk` לגרסה אוניברסלית).
-* **iOS/macOS:** האפליקציה תומכת בהתראות Foreground ודורשת אישור הרשאות בהפעלה ראשונה.
-* **Desktop:** זמין עבור Windows, macOS ו-Linux (יש לחלץ את ה-Zip ולהריץ את הקובץ המפעיל).
+* **Runtime:** Node.js (Express.js).
+* **Database:** PostgreSQL.
+* **Auth:** JWT (JSON Web Tokens) & Bcrypt.
+* **Containerization:** Docker & Docker Compose.
+* **Orchestration:** Kubernetes (K8s) Ready.
 
 ## התקנה ופיתוח מקומי
 
+###Frontend
 1. **התקנת תלויות:** `flutter pub get`
 2. **יצירת קבצי Adapters:** `dart run build_runner build --delete-conflicting-outputs`
 3. **הרצה:** `flutter run`
 
-## בדיקות (Testing)
+### Backend (Docker)
 
-הרצת בדיקות יחידה ללוגיקת החישוב והפיענוח:
-`flutter test test/unit/shift_logic_test.dart`
+1. וודא ש-Docker Desktop מותקן.
+2. הרץ: `docker compose up --build`
+3. השרת יהיה זמין ב-`http://localhost:3000` ומסד הנתונים ב-Adminer ב-`http://localhost:8080`.
+
+## פורמט הזנה (Smart Paste)
+
+`[DD.MM.YYYY] - [HH:mm] - [HH:mm] [תיאור הפסקה] + [טיפים]`
+*דוגמה:* `24.06.2026 - 17:30 - 23:00 45 דקות + 50`
 
 </div>
+
+---
+
+# English Summary
+
+Shiftly is a comprehensive shift tracking and expense management platform built with Flutter. It
+supports Android, iOS, Windows, macOS, Linux, and Web.
+
+## Key Features
+
+- **Real-time Tracking:** Smart timer with break management and notification controls.
+- **Dual Sync Options:**
+  - **BYOS:** Private backup to your own Google Drive.
+  - **Shiftly Cloud:** Real-time sync via Node.js/PostgreSQL backend.
+- **Wage History:** Support for effective-dated hourly rates.
+- **Smart Parser:** Free-text shift entry for bulk additions.
+- **Multilingual:** Full support for Hebrew and English.
+
+## Tech Stack
+
+- **Frontend:** Flutter, Provider, Hive.
+- **Backend:** Node.js, Express, PostgreSQL, JWT.
+- **DevOps:** Docker, Kubernetes.
