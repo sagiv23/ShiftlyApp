@@ -82,7 +82,7 @@ class JobType extends HiveObject {
     name: json['name'],
     hourlyRate: json['hourlyRate'].toDouble(),
     wageHistory: (json['wageHistory'] as List?)
-        ?.map((e) => WageEntry.fromJson(e))
+        ?.map((e) => WageEntry.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),
   );
 }

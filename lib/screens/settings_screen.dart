@@ -24,6 +24,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late TextEditingController _paidController;
   late TextEditingController _unpaidController;
 
+  bool _isRestoring = false;
+  bool _isBackingUp = false;
+
   @override
   void initState() {
     super.initState();
@@ -329,9 +332,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         child: Text(l.settings_byos_disconnect),
                       ),
                     ),
+                    SwitchListTile(
+                      title: Text(
+                        l.settings_byos_auto_sync,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      subtitle: Text(
+                        l.settings_byos_auto_sync_sub,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      value: settings.autoSyncEnabled,
+                      onChanged: (val) => settings.setAutoSyncEnabled(val),
+                    ),
                     if (context.watch<ShiftProvider>().lastBackupTime != null)
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
                         child: Row(
                           children: [
                             Container(
@@ -358,6 +373,130 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ],
                         ),
                       ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                      child: Row(
+                        children: [
+                          TextButton.icon(
+                            onPressed: _isBackingUp
+                                ? null
+                                : () async {
+                                    setState(() => _isBackingUp = true);
+                                    try {
+                                      final provider = context
+                                          .read<ShiftProvider>();
+                                      final success = await provider
+                                          .manualBackup();
+                                      if (context.mounted) {
+                                        if (success) {
+                                          UIUtils.showSnackBar(
+                                            context,
+                                            l.common_success,
+                                          );
+                                        } else {
+                                          UIUtils.showSnackBar(
+                                            context,
+                                            l.common_error,
+                                            isError: true,
+                                          );
+                                        }
+                                      }
+                                    } finally {
+                                      if (context.mounted) {
+                                        setState(() => _isBackingUp = false);
+                                      }
+                                    }
+                                  },
+                            icon: _isBackingUp
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.cloud_upload_outlined,
+                                    size: 16,
+                                  ),
+                            label: Text(
+                              l.settings_byos_backup_now,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          TextButton.icon(
+                            onPressed: _isRestoring
+                                ? null
+                                : () async {
+                                    final confirmed = await UIUtils.showConfirmDialog(
+                                      context: context,
+                                      title:
+                                          l.settings_byos_restore_dialog_title,
+                                      content: l
+                                          .settings_byos_restore_dialog_content,
+                                      confirmLabel:
+                                          l.settings_byos_restore_confirm,
+                                      cancelLabel:
+                                          l.settings_byos_restore_cancel,
+                                    );
+                                    if (confirmed == true && context.mounted) {
+                                      setState(() => _isRestoring = true);
+                                      try {
+                                        final results = await context
+                                            .read<ShiftProvider>()
+                                            .restoreFromBYOS();
+                                        if (context.mounted) {
+                                          if (results['shifts']! > 0 ||
+                                              results['jobs']! > 0) {
+                                            UIUtils.showSnackBar(
+                                              context,
+                                              l.settings_restore_success
+                                                  .replaceFirst(
+                                                    '[[shifts]]',
+                                                    results['shifts']
+                                                        .toString(),
+                                                  )
+                                                  .replaceFirst(
+                                                    '[[jobs]]',
+                                                    results['jobs'].toString(),
+                                                  ),
+                                            );
+                                          } else {
+                                            UIUtils.showSnackBar(
+                                              context,
+                                              l.settings_restore_no_data,
+                                              isError: true,
+                                            );
+                                          }
+                                        }
+                                      } finally {
+                                        if (context.mounted) {
+                                          setState(() => _isRestoring = false);
+                                        }
+                                      }
+                                    }
+                                  },
+                            icon: _isRestoring
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.cloud_download_outlined,
+                                    size: 16,
+                                  ),
+                            label: Text(
+                              l.settings_byos_restore_confirm,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -403,14 +542,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       title: Text(l.settings_byos_method_title),
                       subtitle: Text(l.settings_byos_method_sub),
                       onTap: () async {
-                        if (!kIsWeb && Platform.isWindows) {
-                          UIUtils.showSnackBar(
-                            context,
-                            'Google Sign In is not natively supported on Windows. Please test this feature on Android or iOS.',
-                            isError: true,
-                          );
-                          return;
-                        }
                         await auth.connectBYOS();
                         if (context.mounted && auth.authType == AuthType.byos) {
                           final confirmed = await UIUtils.showConfirmDialog(
@@ -421,9 +552,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             cancelLabel: l.settings_byos_restore_cancel,
                           );
                           if (confirmed == true && context.mounted) {
-                            await context
+                            final results = await context
                                 .read<ShiftProvider>()
                                 .restoreFromBYOS();
+                            if (context.mounted) {
+                              if (results['shifts']! > 0 ||
+                                  results['jobs']! > 0) {
+                                UIUtils.showSnackBar(
+                                  context,
+                                  l.settings_restore_success
+                                      .replaceFirst(
+                                        '[[shifts]]',
+                                        results['shifts'].toString(),
+                                      )
+                                      .replaceFirst(
+                                        '[[jobs]]',
+                                        results['jobs'].toString(),
+                                      ),
+                                );
+                              } else {
+                                UIUtils.showSnackBar(
+                                  context,
+                                  l.settings_restore_no_data,
+                                  isError: true,
+                                );
+                              }
+                            }
                           }
                         }
                       },

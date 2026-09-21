@@ -20,6 +20,7 @@ class SettingsProvider with ChangeNotifier {
   String _currencySymbol = '₪';
   Locale _locale = const Locale('he', 'IL');
   bool _breaksEnabled = true;
+  bool _autoSyncEnabled = true;
 
   ThemeMode get themeMode => _themeMode;
 
@@ -43,6 +44,8 @@ class SettingsProvider with ChangeNotifier {
   Locale get locale => _locale;
 
   bool get breaksEnabled => _breaksEnabled;
+
+  bool get autoSyncEnabled => _autoSyncEnabled;
 
   void _loadSettings() {
     final box = _persistence.settingsBox;
@@ -74,6 +77,7 @@ class SettingsProvider with ChangeNotifier {
     );
     _currencySymbol = box.get('currencySymbol', defaultValue: '₪');
     _breaksEnabled = box.get('breaksEnabled', defaultValue: true);
+    _autoSyncEnabled = box.get('autoSyncEnabled', defaultValue: true);
     final String? localeCode = box.get('locale');
     if (localeCode != null) {
       _locale = Locale(localeCode);
@@ -87,6 +91,12 @@ class SettingsProvider with ChangeNotifier {
     } else {
       _defaultAutomaticExpenses = [];
     }
+    notifyListeners();
+  }
+
+  Future<void> setAutoSyncEnabled(bool enabled) async {
+    _autoSyncEnabled = enabled;
+    await _persistence.settingsBox.put('autoSyncEnabled', enabled);
     notifyListeners();
   }
 

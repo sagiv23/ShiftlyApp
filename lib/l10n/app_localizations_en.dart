@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -834,6 +835,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings_byos_last_backup => 'Last backup: [[time]]';
 
   @override
+  String get settings_byos_backup_now => 'Backup Now';
+
+  @override
+  String get settings_byos_auto_sync => 'Auto Sync';
+
+  @override
+  String get settings_byos_auto_sync_sub => 'Instantly backup changes to cloud';
+
+  @override
   String get settings_byos_disconnect => 'Disconnect';
 
   @override
@@ -874,6 +884,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settings_byos_login_hint =>
       'Login to backup data to cloud and use more devices';
+
+  @override
+  String get settings_restore_success =>
+      'Restore successful: [[shifts]] shifts and [[jobs]] jobs restored.';
+
+  @override
+  String get settings_restore_no_data =>
+      'No backup found on Google Drive or an error occurred.';
 
   @override
   String get auth_sync_dialog_title => 'Data Sync';

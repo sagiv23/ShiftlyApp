@@ -10,10 +10,6 @@ class AuthProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
   final GoogleDriveService _driveService = GoogleDriveService();
 
-  AuthProvider(this._persistence) {
-    _loadAuthState();
-  }
-
   bool _isLoggedIn = false;
   AuthType _authType = AuthType.guest;
   String? _userName;
@@ -21,16 +17,16 @@ class AuthProvider with ChangeNotifier {
   String? _token;
 
   bool get isLoggedIn => _isLoggedIn;
-
   AuthType get authType => _authType;
-
   String? get userName => _userName;
-
   String? get userEmail => _userEmail;
-
   String? get token => _token;
 
-  void _loadAuthState() {
+  AuthProvider(this._persistence) {
+    _loadAuthState();
+  }
+
+  void _loadAuthState() async {
     final box = _persistence.settingsBox;
     _isLoggedIn = box.get('isLoggedIn', defaultValue: false);
     _authType = AuthType
@@ -38,16 +34,21 @@ class AuthProvider with ChangeNotifier {
     _userName = box.get('userName');
     _userEmail = box.get('userEmail');
     _token = box.get('token');
+
+    if (_isLoggedIn && _authType == AuthType.byos) {
+      // Restore Google Drive session on app startup
+      await _driveService.init();
+    }
     notifyListeners();
   }
 
   Future<void> connectBYOS() async {
     try {
-      final account = await _driveService.signIn();
-      if (account != null) {
+      final email = await _driveService.signIn();
+      if (email != null) {
         _isLoggedIn = true;
         _authType = AuthType.byos;
-        _userEmail = account.email;
+        _userEmail = email;
         _userName = null; // Anonymous on home screen
 
         final box = _persistence.settingsBox;

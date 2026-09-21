@@ -1,5 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:shiftly/models/automatic_expense.dart';
+import 'package:shiftly/models/break_type.dart';
 import 'package:shiftly/models/expense.dart';
 import 'package:shiftly/models/job_type.dart';
 import 'package:shiftly/models/shift.dart';
@@ -15,25 +17,34 @@ class ShiftProvider with ChangeNotifier {
   final GoogleDriveService _driveService = GoogleDriveService();
   String? _authToken;
   bool _isBYOS = false;
+  bool _autoSyncEnabled = true;
 
   ShiftProvider(this._persistence);
 
-  void updateAuthStatus(String? token, bool isBYOS) {
+  void updateAuthStatus(String? token, bool isBYOS, bool autoSyncEnabled) {
     _authToken = token;
-    final wasNotBYOS = !_isBYOS;
     _isBYOS = isBYOS;
-
-    if (isBYOS && wasNotBYOS) {
-      _triggerBackup();
-      restoreFromBYOS(); // Automatic restore attempt on first connection
-    }
+    _autoSyncEnabled = autoSyncEnabled;
+    // Don't trigger auto-backup here to avoid overwriting remote data 
+    // before the user has a chance to restore.
   }
 
   DateTime? _lastBackupTime;
 
   DateTime? get lastBackupTime => _lastBackupTime;
 
+  Future<bool> manualBackup() async {
+    // Manual backup ignores the auto-sync setting
+    return await _performBackup();
+  }
+
   Future<void> _triggerBackup() async {
+    if (_autoSyncEnabled) {
+      await _performBackup();
+    }
+  }
+
+  Future<bool> _performBackup() async {
     if (_isBYOS) {
       try {
         final data = {
@@ -44,41 +55,85 @@ class ShiftProvider with ChangeNotifier {
         await _driveService.uploadBackup(data);
         _lastBackupTime = DateTime.now();
         notifyListeners();
+        return true;
       } catch (e) {
         debugPrint('Backup failed: $e');
+        return false;
       }
     }
+    return false;
   }
 
-  Future<void> restoreFromBYOS() async {
-    if (!_isBYOS) return;
+  Future<Map<String, int>> restoreFromBYOS() async {
+    if (!_isBYOS) {
+      debugPrint('Restore: Not in BYOS mode.');
+      return {'shifts': 0, 'jobs': 0, 'expenses': 0};
+    }
+    int shiftCount = 0;
+    int jobCount = 0;
+    int expCount = 0;
+
     try {
       final data = await _driveService.downloadBackup();
-      if (data == null) return;
+      if (data == null) {
+        debugPrint('Restore: No backup data found on Drive.');
+        return {'shifts': 0, 'jobs': 0, 'expenses': 0};
+      }
 
-      if (data['jobTypes'] != null) {
+      debugPrint('Restore: Data found. Parsing...');
+
+      if (data['jobTypes'] != null && data['jobTypes'] is List) {
         for (var jobData in data['jobTypes']) {
-          final job = JobType.fromJson(jobData);
-          await _persistence.jobTypesBox.put(job.id, job);
+          try {
+            final map = Map<String, dynamic>.from(jobData as Map);
+            final job = JobType.fromJson(map);
+            await _persistence.jobTypesBox.put(job.id, job);
+            jobCount++;
+          } catch (e) {
+            debugPrint('Restore: Failed to parse job: $e');
+          }
         }
       }
 
-      if (data['expenses'] != null) {
+      if (data['expenses'] != null && data['expenses'] is List) {
         for (var expData in data['expenses']) {
-          final exp = Expense.fromJson(expData);
-          await _persistence.expensesBox.put(exp.id, exp);
+          try {
+            final map = Map<String, dynamic>.from(expData as Map);
+            final exp = Expense.fromJson(map);
+            await _persistence.expensesBox.put(exp.id, exp);
+            expCount++;
+          } catch (e) {
+            debugPrint('Restore: Failed to parse expense: $e');
+          }
         }
       }
 
-      if (data['shifts'] != null) {
-        for (var shiftData in data['shifts']) {
-          final shift = Shift.fromJson(shiftData);
-          await _persistence.shiftsBox.put(shift.id, shift);
+      if (data['shifts'] != null && data['shifts'] is List) {
+        final shiftsList = data['shifts'] as List;
+        debugPrint('Restore: Found ${shiftsList.length} shifts in backup.');
+        for (var shiftData in shiftsList) {
+          try {
+            // Ensure shiftData is Map<String, dynamic>
+            final map = Map<String, dynamic>.from(shiftData as Map);
+            final shift = Shift.fromJson(map);
+            await _persistence.shiftsBox.put(shift.id, shift);
+            shiftCount++;
+          } catch (e) {
+            debugPrint('Restore: Failed to parse shift: $e. Data: $shiftData');
+          }
         }
+      } else {
+        debugPrint(
+            'Restore: No shifts list found in backup data or it is not a list.');
       }
+
+      debugPrint('Restore complete. Shifts: $shiftCount, Jobs: $jobCount');
+      _lastBackupTime = DateTime.now();
       notifyListeners();
+      return {'shifts': shiftCount, 'jobs': jobCount, 'expenses': expCount};
     } catch (e) {
-      debugPrint('Restore from BYOS failed: $e');
+      debugPrint('Restore from BYOS failed with major error: $e');
+      return {'shifts': 0, 'jobs': 0, 'expenses': 0};
     }
   }
 
@@ -127,9 +182,22 @@ class ShiftProvider with ChangeNotifier {
           jobTypeId: shiftData['job_type_id'],
           tips: double.parse(shiftData['tips'].toString()),
           hourlyRate: double.parse(shiftData['hourly_rate'].toString()),
+          breakType: shiftData['break_type'] != null
+              ? BreakType.values.firstWhere(
+                (e) =>
+            e
+                .toString()
+                .split('.')
+                .last == shiftData['break_type'],
+            orElse: () => BreakType.none,
+          )
+              : BreakType.none,
           unpaidBreakMinutes: double.parse(
             shiftData['unpaid_break_minutes']?.toString() ?? '0',
           ),
+          automaticExpenses: (shiftData['automatic_expenses'] as List?)
+              ?.map((e) => AutomaticExpense.fromJson(e as Map<String, dynamic>))
+              .toList(),
         );
         await _persistence.shiftsBox.put(shift.id, shift);
       }

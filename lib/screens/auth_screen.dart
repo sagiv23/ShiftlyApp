@@ -124,6 +124,15 @@ class _AuthScreenState extends State<AuthScreen> {
     final isLogin = _authMode == AuthMode.login;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration(

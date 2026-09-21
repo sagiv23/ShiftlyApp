@@ -65,6 +65,7 @@ class Shift extends HiveObject {
     'endTime': endTime.toIso8601String(),
     'jobTypeId': jobTypeId,
     'tips': tips,
+    'individualTips': individualTips,
     'breakType': breakType?.toString(),
     'unpaidBreakMinutes': unpaidBreakMinutes,
     'hourlyRate': hourlyRate,
@@ -78,13 +79,19 @@ class Shift extends HiveObject {
     endTime: DateTime.parse(json['endTime']),
     jobTypeId: json['jobTypeId'],
     tips: json['tips']?.toDouble() ?? 0.0,
+    individualTips: (json['individualTips'] as List?)?.map((e) =>
+        (e as num).toDouble()).toList(),
     breakType: json['breakType'] != null
-        ? BreakType.values.firstWhere((e) => e.toString() == json['breakType'])
+        ? BreakType.values.firstWhere(
+          (e) => e.toString() == json['breakType'],
+      orElse: () => BreakType.none,
+    )
         : BreakType.none,
     unpaidBreakMinutes: json['unpaidBreakMinutes']?.toDouble(),
     hourlyRate: json['hourlyRate']?.toDouble(),
     automaticExpenses: (json['automaticExpenses'] as List?)
-        ?.map((e) => AutomaticExpense.fromJson(e))
+        ?.map((e) =>
+        AutomaticExpense.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),
   );
 

@@ -1676,6 +1676,24 @@ abstract class AppLocalizations {
   /// **'גיבוי אחרון: [[time]]'**
   String get settings_byos_last_backup;
 
+  /// No description provided for @settings_byos_backup_now.
+  ///
+  /// In he, this message translates to:
+  /// **'גיבוי עכשיו'**
+  String get settings_byos_backup_now;
+
+  /// No description provided for @settings_byos_auto_sync.
+  ///
+  /// In he, this message translates to:
+  /// **'סנכרון אוטומטי'**
+  String get settings_byos_auto_sync;
+
+  /// No description provided for @settings_byos_auto_sync_sub.
+  ///
+  /// In he, this message translates to:
+  /// **'גיבוי שינויים באופן מיידי לענן'**
+  String get settings_byos_auto_sync_sub;
+
   /// No description provided for @settings_byos_disconnect.
   ///
   /// In he, this message translates to:
@@ -1753,6 +1771,18 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'התחבר כדי לגבות את הנתונים לענן ולהשתמש במכשירים נוספים'**
   String get settings_byos_login_hint;
+
+  /// No description provided for @settings_restore_success.
+  ///
+  /// In he, this message translates to:
+  /// **'השחזור הושלם: [[shifts]] משמרות ו-[[jobs]] תפקידים שוחזרו.'**
+  String get settings_restore_success;
+
+  /// No description provided for @settings_restore_no_data.
+  ///
+  /// In he, this message translates to:
+  /// **'לא נמצא גיבוי ב-Google Drive או שאירעה שגיאה.'**
+  String get settings_restore_no_data;
 
   /// No description provided for @auth_sync_dialog_title.
   ///

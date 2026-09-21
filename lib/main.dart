@@ -40,10 +40,14 @@ void main() async {
           ChangeNotifierProvider(
             create: (_) => AuthProvider(persistenceService),
           ),
-          ChangeNotifierProxyProvider<AuthProvider, ShiftProvider>(
+          ChangeNotifierProxyProvider2<AuthProvider,
+              SettingsProvider,
+              ShiftProvider>(
             create: (_) => ShiftProvider(persistenceService),
-            update: (_, auth, shift) => shift!
-              ..updateAuthStatus(auth.token, auth.authType == AuthType.byos),
+            update: (_, auth, settings, shift) =>
+            shift!
+              ..updateAuthStatus(auth.token, auth.authType == AuthType.byos,
+                  settings.autoSyncEnabled),
           ),
           ChangeNotifierProvider(
             create: (_) => TimerProvider(persistenceService),

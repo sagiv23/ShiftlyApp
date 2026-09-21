@@ -1,25 +1,66 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in_all_platforms/google_sign_in_all_platforms.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
+import 'package:http/http.dart' as http;
 
 class GoogleDriveService {
   static const String _backupFileName = 'shiftly_backup.json';
 
-  final _googleSignIn = GoogleSignIn(
-    scopes: [drive.DriveApi.driveAppdataScope],
-  );
+  // IMPORTANT: For Windows support, you must create a "Desktop app" Client ID
+  // in Google Cloud Console and paste it here.
+  static const String _windowsClientId =
+      '471238980617-6844beciupc5kt0tafejlr7umsfmn95s.apps.googleusercontent.com';
+  static const String _windowsClientSecret = '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';
 
-  Future<GoogleSignInAccount?> signIn() async {
-    if (!kIsWeb && Platform.isWindows) {
-      debugPrint('Google Sign In is not natively supported on Windows via the official package.');
-      return null;
-    }
+  // IMPORTANT: For Android/iOS, create a "Web application" Client ID and paste it here.
+  // This is required to get the necessary tokens for Google Drive API.
+  static const String _mobileWebClientId = '471238980617-3hc67sm28ckcp7p4a1ukm7u3ln8pp1k5.apps.googleusercontent.com';
+
+  // Singleton instance
+  static final GoogleDriveService _instance = GoogleDriveService._internal();
+
+  factory GoogleDriveService() => _instance;
+
+  late final GoogleSignIn _googleSignIn;
+
+  GoogleDriveService._internal() {
+    _googleSignIn = GoogleSignIn(
+      params: GoogleSignInParams(
+        clientId: kIsWeb || !Platform.isWindows
+            ? _mobileWebClientId
+            : _windowsClientId,
+        clientSecret: kIsWeb || !Platform.isWindows
+            ? null
+            : _windowsClientSecret,
+        scopes: [drive.DriveApi.driveAppdataScope],
+        redirectPort: 8082,
+      ),
+    );
+  }
+
+  /// Attempts to restore a previous session without user interaction.
+  Future<void> init() async {
     try {
-      return await _googleSignIn.signIn();
+      debugPrint('GoogleDrive: Initializing and attempting silent sign-in...');
+      await _googleSignIn.silentSignIn();
+    } catch (e) {
+      debugPrint('GoogleDrive: Silent sign-in failed: $e');
+    }
+  }
+
+  /// Returns a placeholder or email on success, or null on failure.
+  Future<String?> signIn() async {
+    try {
+      final credentials = await _googleSignIn.signIn();
+      if (credentials != null) {
+        // In this package, credentials might not always have email
+        // depending on scopes and platform.
+        return 'Google Drive User';
+      }
+      return null;
     } catch (e) {
       debugPrint('Google Sign In Error: $e');
       return null;
@@ -27,7 +68,6 @@ class GoogleDriveService {
   }
 
   Future<void> signOut() async {
-    if (!kIsWeb && Platform.isWindows) return;
     try {
       await _googleSignIn.signOut();
     } catch (e) {
@@ -35,16 +75,27 @@ class GoogleDriveService {
     }
   }
 
+  Future<http.Client?> _getAuthenticatedClient() async {
+    // In version 2.0.3, authenticatedClient is a getter
+    return await _googleSignIn.authenticatedClient;
+  }
+
   Future<void> uploadBackup(Map<String, dynamic> data) async {
-    final httpClient = (await _googleSignIn.authenticatedClient());
-    if (httpClient == null) return;
+    final httpClient = await _getAuthenticatedClient();
+    if (httpClient == null) {
+      debugPrint('GoogleDrive: Cannot upload, authenticated client is null.');
+      throw Exception('Not authenticated with Google');
+    }
 
     final driveApi = drive.DriveApi(httpClient);
     final jsonContent = jsonEncode(data);
+    final bytes = utf8.encode(jsonContent);
     final media = drive.Media(
-      Stream.value(utf8.encode(jsonContent)),
-      jsonContent.length,
+      Stream.value(bytes),
+      bytes.length,
     );
+
+    debugPrint('GoogleDrive: Uploading backup... size: ${bytes.length} bytes');
 
     final fileList = await driveApi.files.list(
       q: "name = '$_backupFileName'",
@@ -52,34 +103,54 @@ class GoogleDriveService {
     );
 
     if (fileList.files?.isNotEmpty ?? false) {
+      final fileId = fileList.files!.first.id!;
+      debugPrint('GoogleDrive: Updating existing file $fileId');
+      // Set metadata to ensure it stays in appDataFolder
+      final metadata = drive.File()
+        ..name = _backupFileName;
       await driveApi.files.update(
-        drive.File(),
-        fileList.files!.first.id!,
+        metadata,
+        fileId,
         uploadMedia: media,
       );
     } else {
+      debugPrint('GoogleDrive: Creating new backup file');
       final driveFile = drive.File()
         ..name = _backupFileName
-        ..parents = ['appDataFolder'];
+        ..parents = ['appDataFolder']
+        ..mimeType = 'application/json';
       await driveApi.files.create(driveFile, uploadMedia: media);
     }
+    debugPrint('GoogleDrive: Upload successful.');
   }
 
   Future<Map<String, dynamic>?> downloadBackup() async {
-    final httpClient = (await _googleSignIn.authenticatedClient());
-    if (httpClient == null) return null;
+    final httpClient = await _getAuthenticatedClient();
+    if (httpClient == null) {
+      debugPrint(
+          'GoogleDrive: Failed to get authenticated client for download.');
+      return null;
+    }
 
     final driveApi = drive.DriveApi(httpClient);
+    debugPrint('GoogleDrive: Searching for backup file...');
+
     final fileList = await driveApi.files.list(
       q: "name = '$_backupFileName'",
       spaces: 'appDataFolder',
     );
 
-    if (fileList.files?.isEmpty ?? true) return null;
+    if (fileList.files?.isEmpty ?? true) {
+      debugPrint('GoogleDrive: No backup file found in appDataFolder.');
+      return null;
+    }
+
+    final fileId = fileList.files!.first.id!;
+    debugPrint('GoogleDrive: Downloading file $fileId');
 
     final response =
         await driveApi.files.get(
-              fileList.files!.first.id!,
+          fileId,
               downloadOptions: drive.DownloadOptions.fullMedia,
             )
             as drive.Media;
@@ -88,6 +159,15 @@ class GoogleDriveService {
     await for (final data in response.stream) {
       dataStore.addAll(data);
     }
-    return jsonDecode(utf8.decode(dataStore));
+
+    final decodedString = utf8.decode(dataStore);
+    debugPrint('GoogleDrive: Downloaded ${dataStore.length} bytes');
+
+    try {
+      return jsonDecode(decodedString) as Map<String, dynamic>;
+    } catch (e) {
+      debugPrint('GoogleDrive: Failed to decode JSON: $e');
+      return null;
+    }
   }
 }

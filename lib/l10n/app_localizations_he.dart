@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -828,6 +829,15 @@ class AppLocalizationsHe extends AppLocalizations {
   String get settings_byos_last_backup => 'גיבוי אחרון: [[time]]';
 
   @override
+  String get settings_byos_backup_now => 'גיבוי עכשיו';
+
+  @override
+  String get settings_byos_auto_sync => 'סנכרון אוטומטי';
+
+  @override
+  String get settings_byos_auto_sync_sub => 'גיבוי שינויים באופן מיידי לענן';
+
+  @override
   String get settings_byos_disconnect => 'נתק';
 
   @override
@@ -868,6 +878,14 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String get settings_byos_login_hint =>
       'התחבר כדי לגבות את הנתונים לענן ולהשתמש במכשירים נוספים';
+
+  @override
+  String get settings_restore_success =>
+      'השחזור הושלם: [[shifts]] משמרות ו-[[jobs]] תפקידים שוחזרו.';
+
+  @override
+  String get settings_restore_no_data =>
+      'לא נמצא גיבוי ב-Google Drive או שאירעה שגיאה.';
 
   @override
   String get auth_sync_dialog_title => 'סנכרון נתונים';
