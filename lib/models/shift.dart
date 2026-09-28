@@ -43,6 +43,9 @@ class Shift extends HiveObject {
   @HiveField(12)
   List<AutomaticExpense>? automaticExpenses;
 
+  @HiveField(13)
+  List<AutomaticExpense>? automaticIncomes;
+
   Shift({
     required this.id,
     required this.date,
@@ -56,6 +59,7 @@ class Shift extends HiveObject {
     this.hourlyRate,
     this.automaticExpense = 0.0,
     this.automaticExpenses,
+    this.automaticIncomes,
   });
 
   Map<String, dynamic> toJson() => {
@@ -70,6 +74,7 @@ class Shift extends HiveObject {
     'unpaidBreakMinutes': unpaidBreakMinutes,
     'hourlyRate': hourlyRate,
     'automaticExpenses': automaticExpenses?.map((e) => e.toJson()).toList(),
+    'automaticIncomes': automaticIncomes?.map((e) => e.toJson()).toList(),
   };
 
   factory Shift.fromJson(Map<String, dynamic> json) => Shift(
@@ -93,12 +98,26 @@ class Shift extends HiveObject {
         ?.map((e) =>
         AutomaticExpense.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),
+    automaticIncomes: (json['automaticIncomes'] as List?)
+        ?.map((e) =>
+        AutomaticExpense.fromJson(Map<String, dynamic>.from(e as Map)))
+        .toList(),
   );
 
   double get totalAutomaticExpenses {
     double total = automaticExpense ?? 0.0;
     if (automaticExpenses != null) {
       for (var e in automaticExpenses!) {
+        total += e.amount;
+      }
+    }
+    return total;
+  }
+
+  double get totalAutomaticIncomes {
+    double total = 0.0;
+    if (automaticIncomes != null) {
+      for (var e in automaticIncomes!) {
         total += e.amount;
       }
     }
@@ -132,7 +151,8 @@ class Shift extends HiveObject {
 
   double calculateTotalPay(double currentHourlyRate) {
     return (netHours * effectiveHourlyRate(currentHourlyRate)) +
-        tips -
+        tips +
+        totalAutomaticIncomes -
         totalAutomaticExpenses;
   }
 }

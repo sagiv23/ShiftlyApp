@@ -250,6 +250,7 @@ class ShiftProvider with ChangeNotifier {
       'date': expense.date.toIso8601String().split('T')[0],
       'description': expense.description,
       'amount': expense.amount,
+      'is_income': expense.isIncome,
     });
   }
 
@@ -345,7 +346,15 @@ class ShiftProvider with ChangeNotifier {
 
   // Expenses
   List<Expense> get expenses =>
-      _persistence.expensesBox.values.toList()
+      _persistence.expensesBox.values
+          .where((e) => !e.isIncome)
+          .toList()
+        ..sort((a, b) => b.date.compareTo(a.date));
+
+  List<Expense> get incomes =>
+      _persistence.expensesBox.values
+          .where((e) => e.isIncome)
+          .toList()
         ..sort((a, b) => b.date.compareTo(a.date));
 
   List<JobType> get jobTypes => _persistence.jobTypesBox.values.toList();
@@ -503,6 +512,14 @@ class ShiftProvider with ChangeNotifier {
   Map<String, List<Expense>> get expensesGroupedByMonth {
     return groupBy(
       expenses,
+      (Expense e) =>
+          "${e.date.year}-${e.date.month.toString().padLeft(2, '0')}",
+    );
+  }
+
+  Map<String, List<Expense>> get incomesGroupedByMonth {
+    return groupBy(
+      incomes,
       (Expense e) =>
           "${e.date.year}-${e.date.month.toString().padLeft(2, '0')}",
     );

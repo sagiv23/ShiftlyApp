@@ -389,8 +389,32 @@ abstract class AppLocalizations {
   /// No description provided for @onboarding_auto_expenses_invalid_amount.
   ///
   /// In he, this message translates to:
-  /// **'סכום ההוצאה חייב להיות גדול מ-0'**
+  /// **'סכום חייב להיות גדול מ-0'**
   String get onboarding_auto_expenses_invalid_amount;
+
+  /// No description provided for @onboarding_auto_incomes_title.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנסות קבועות'**
+  String get onboarding_auto_incomes_title;
+
+  /// No description provided for @onboarding_auto_incomes_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'האם יש לך הכנסות קבועות בכל משמרת? (למשל החזר נסיעות מעסיק)'**
+  String get onboarding_auto_incomes_subtitle;
+
+  /// No description provided for @onboarding_auto_incomes_enable.
+  ///
+  /// In he, this message translates to:
+  /// **'הפעל הכנסות אוטומטיות'**
+  String get onboarding_auto_incomes_enable;
+
+  /// No description provided for @onboarding_auto_incomes_add_button.
+  ///
+  /// In he, this message translates to:
+  /// **'הוסף הכנסה קבועה'**
+  String get onboarding_auto_incomes_add_button;
 
   /// No description provided for @onboarding_job_types_title.
   ///
@@ -625,6 +649,12 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'נא להזין תיאור לכל הוצאה קבועה'**
   String get settings_dialog_error_enter_desc;
+
+  /// No description provided for @settings_dialog_error_enter_income_desc.
+  ///
+  /// In he, this message translates to:
+  /// **'נא להזין תיאור לכל הכנסה קבועה'**
+  String get settings_dialog_error_enter_income_desc;
 
   /// No description provided for @settings_theme_system.
   ///
@@ -863,8 +893,20 @@ abstract class AppLocalizations {
   /// No description provided for @expenses_title.
   ///
   /// In he, this message translates to:
-  /// **'ניהול הוצאות'**
+  /// **'ניהול הוצאות והכנסות'**
   String get expenses_title;
+
+  /// No description provided for @expenses_tab_expenses.
+  ///
+  /// In he, this message translates to:
+  /// **'הוצאות'**
+  String get expenses_tab_expenses;
+
+  /// No description provided for @expenses_tab_incomes.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנסות מיוחדות'**
+  String get expenses_tab_incomes;
 
   /// No description provided for @expenses_auto_section_title.
   ///
@@ -961,6 +1003,96 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'הוצאה נמחקה'**
   String get expenses_deleted_msg;
+
+  /// No description provided for @expenses_auto_incomes_updated_msg.
+  ///
+  /// In he, this message translates to:
+  /// **'הגדרות הכנסות אוטומטיות עודכנו'**
+  String get expenses_auto_incomes_updated_msg;
+
+  /// No description provided for @expenses_auto_incomes_section_title.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנסות קבועות למשמרת'**
+  String get expenses_auto_incomes_section_title;
+
+  /// No description provided for @expenses_auto_incomes_section_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'הוסף הכנסות קבועות לכל משמרת חדשה'**
+  String get expenses_auto_incomes_section_subtitle;
+
+  /// No description provided for @expenses_auto_incomes_section_enable.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנסות אוטומטיות'**
+  String get expenses_auto_incomes_section_enable;
+
+  /// No description provided for @incomes_history_section_title.
+  ///
+  /// In he, this message translates to:
+  /// **'פירוט הכנסות חודשי'**
+  String get incomes_history_section_title;
+
+  /// No description provided for @incomes_action_new_income.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנסה חדשה'**
+  String get incomes_action_new_income;
+
+  /// No description provided for @incomes_dialog_add_title.
+  ///
+  /// In he, this message translates to:
+  /// **'הוספת הכנסה מיוחדת'**
+  String get incomes_dialog_add_title;
+
+  /// No description provided for @incomes_dialog_edit_title.
+  ///
+  /// In he, this message translates to:
+  /// **'עריכת הכנסה'**
+  String get incomes_dialog_edit_title;
+
+  /// No description provided for @incomes_dialog_delete_title.
+  ///
+  /// In he, this message translates to:
+  /// **'מחיקת הכנסה'**
+  String get incomes_dialog_delete_title;
+
+  /// No description provided for @incomes_no_history.
+  ///
+  /// In he, this message translates to:
+  /// **'אין הכנסות מיוחדות רשומות'**
+  String get incomes_no_history;
+
+  /// No description provided for @incomes_save_income_confirm_content.
+  ///
+  /// In he, this message translates to:
+  /// **'האם לשמור את ההכנסה \"[[desc]]\" בסך [[amount]]?'**
+  String get incomes_save_income_confirm_content;
+
+  /// No description provided for @incomes_delete_income_confirm_content.
+  ///
+  /// In he, this message translates to:
+  /// **'האם למחוק את ההכנסה \"[[desc]]\" בסך [[amount]]?'**
+  String get incomes_delete_income_confirm_content;
+
+  /// No description provided for @incomes_deleted_msg.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנסה נמחקה'**
+  String get incomes_deleted_msg;
+
+  /// No description provided for @incomes_info_card_title.
+  ///
+  /// In he, this message translates to:
+  /// **'מהן הכנסות מיוחדות?'**
+  String get incomes_info_card_title;
+
+  /// No description provided for @incomes_info_card_desc.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנסות חד-פעמיות או תשלומים מיוחדים מהמעסיק (כגון החזרי נסיעות, בונוסים או מענקים) שמתווספים לחישוב הנטו החודשי.'**
+  String get incomes_info_card_desc;
 
   /// No description provided for @add_shift_title.
   ///
@@ -1219,6 +1351,24 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'הוסף הוצאה'**
   String get add_shift_expenses_add_button;
+
+  /// No description provided for @add_shift_incomes_title.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנסות למשמרת'**
+  String get add_shift_incomes_title;
+
+  /// No description provided for @add_shift_incomes_total.
+  ///
+  /// In he, this message translates to:
+  /// **'סה\"כ'**
+  String get add_shift_incomes_total;
+
+  /// No description provided for @add_shift_incomes_add_button.
+  ///
+  /// In he, this message translates to:
+  /// **'הוסף הכנסה'**
+  String get add_shift_incomes_add_button;
 
   /// No description provided for @add_shift_shift_ended_dialog_title.
   ///

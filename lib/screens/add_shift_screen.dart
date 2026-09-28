@@ -44,6 +44,8 @@ class _AddShiftScreenState extends State<AddShiftScreen>
   final List<TextEditingController> _timerTipControllers = [];
   final List<TextEditingController> _autoExpenseAmountControllers = [];
   final List<TextEditingController> _autoExpenseDescControllers = [];
+  final List<TextEditingController> _autoIncomeAmountControllers = [];
+  final List<TextEditingController> _autoIncomeDescControllers = [];
 
   @override
   void initState() {
@@ -79,6 +81,16 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         );
       }
 
+      final incomes = s.automaticIncomes ?? [];
+      for (var e in incomes) {
+        _autoIncomeAmountControllers.add(
+          TextEditingController(text: e.amount.toStringAsFixed(0)),
+        );
+        _autoIncomeDescControllers.add(
+          TextEditingController(text: e.description),
+        );
+      }
+
       if (s.individualTips != null && s.individualTips!.isNotEmpty) {
         for (var tip in s.individualTips!) {
           _tipControllers.add(
@@ -102,6 +114,17 @@ class _AddShiftScreenState extends State<AddShiftScreen>
             TextEditingController(text: e.amount.toStringAsFixed(0)),
           );
           _autoExpenseDescControllers.add(
+            TextEditingController(text: e.description),
+          );
+        }
+      }
+
+      if (settings.automaticIncomeEnabled) {
+        for (var e in settings.defaultAutomaticIncomes) {
+          _autoIncomeAmountControllers.add(
+            TextEditingController(text: e.amount.toStringAsFixed(0)),
+          );
+          _autoIncomeDescControllers.add(
             TextEditingController(text: e.description),
           );
         }
@@ -169,6 +192,12 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     for (var c in _autoExpenseDescControllers) {
       c.dispose();
     }
+    for (var c in _autoIncomeAmountControllers) {
+      c.dispose();
+    }
+    for (var c in _autoIncomeDescControllers) {
+      c.dispose();
+    }
     _rawTextController.dispose();
     _tabController.dispose();
     _pulseController.dispose();
@@ -222,6 +251,39 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     return list;
   }
 
+  List<AutomaticExpense>? _getIncomeList() {
+    final l = AppLocalizations.of(context)!;
+    List<AutomaticExpense> list = [];
+    for (int i = 0; i < _autoIncomeAmountControllers.length; i++) {
+      final amountText = _autoIncomeAmountControllers[i].text.trim();
+      final desc = _autoIncomeDescControllers[i].text.trim();
+
+      if (amountText.isEmpty && desc.isEmpty) continue;
+
+      final amount = double.tryParse(amountText);
+      if (desc.isEmpty) {
+        UIUtils.showSnackBar(
+          context,
+          l.settings_dialog_error_enter_income_desc,
+          isError: true,
+        );
+        return null;
+      }
+      if (amount == null || amount < 0) {
+        UIUtils.showSnackBar(
+          context,
+          l.onboarding_auto_expenses_invalid_amount,
+          isError: true,
+        );
+        return null;
+      }
+      if (amount > 0) {
+        list.add(AutomaticExpense(description: desc, amount: amount));
+      }
+    }
+    return list;
+  }
+
   void _finishTimerShift() async {
     final timerProvider = context.read<TimerProvider>();
     final shiftProvider = context.read<ShiftProvider>();
@@ -245,6 +307,8 @@ class _AddShiftScreenState extends State<AddShiftScreen>
 
     final expenses = _getExpenseList();
     if (expenses == null) return;
+    final incomes = _getIncomeList();
+    if (incomes == null) return;
 
     final job = shiftProvider.getJobTypeById(timerProvider.jobTypeId ?? "");
 
@@ -258,6 +322,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       individualTips: _getTipList(_timerTipControllers),
       hourlyRate: job?.getRateForDate(timerProvider.startTime!),
       automaticExpenses: expenses,
+      automaticIncomes: incomes,
       breakType: timerProvider.accumulatedUnpaidMinutes > 0
           ? BreakType.unpaid
           : BreakType.none,
@@ -321,6 +386,8 @@ class _AddShiftScreenState extends State<AddShiftScreen>
 
     final expenses = _getExpenseList();
     if (expenses == null) return;
+    final incomes = _getIncomeList();
+    if (incomes == null) return;
 
     if (widget.shiftToEdit != null) {
       final s = widget.shiftToEdit!;
@@ -332,6 +399,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       s.individualTips = _getTipList(_tipControllers);
       s.hourlyRate = job?.getRateForDate(_selectedDate);
       s.automaticExpenses = expenses;
+      s.automaticIncomes = incomes;
       s.breakType = _selectedBreakType;
       s.unpaidBreakMinutes = settings.unpaidBreakDurationMinutes;
 
@@ -360,6 +428,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         individualTips: _getTipList(_tipControllers),
         hourlyRate: job?.getRateForDate(_selectedDate),
         automaticExpenses: expenses,
+        automaticIncomes: incomes,
         breakType: _selectedBreakType,
         unpaidBreakMinutes: settings.unpaidBreakDurationMinutes,
       );
@@ -413,6 +482,11 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         shift.hourlyRate = job?.getRateForDate(shift.date);
         if (settings.automaticExpenseEnabled) {
           shift.automaticExpenses = settings.defaultAutomaticExpenses
+              .map((e) => e.copyWith())
+              .toList();
+        }
+        if (settings.automaticIncomeEnabled) {
+          shift.automaticIncomes = settings.defaultAutomaticIncomes
               .map((e) => e.copyWith())
               .toList();
         }
@@ -737,6 +811,8 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                 _buildTipsSection(_timerTipControllers, symbol),
                 const SizedBox(height: AppTheme.spaceMd),
                 _buildAutoExpensesSection(symbol),
+                const SizedBox(height: AppTheme.spaceMd),
+                _buildAutoIncomesSection(symbol),
               ],
             ),
           ),
@@ -998,6 +1074,8 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                 _buildTipsSection(_tipControllers, symbol),
                 const SizedBox(height: AppTheme.spaceMd),
                 _buildAutoExpensesSection(symbol),
+                const SizedBox(height: AppTheme.spaceMd),
+                _buildAutoIncomesSection(symbol),
               ],
             ),
           ),
@@ -1305,6 +1383,93 @@ class _AddShiftScreenState extends State<AddShiftScreen>
           icon: const Icon(Icons.add_circle_outline_rounded),
           label: Text(l.add_shift_expenses_add_button),
           style: TextButton.styleFrom(foregroundColor: AppTheme.primaryDark),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAutoIncomesSection(String symbol) {
+    double total = 0;
+    for (var c in _autoIncomeAmountControllers) {
+      total += double.tryParse(c.text) ?? 0.0;
+    }
+    final l = AppLocalizations.of(context)!;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              l.add_shift_incomes_title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppTheme.profit.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '${l.add_shift_incomes_total} ${UIUtils.formatCurrency(total, symbol: symbol)}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.profitSoft,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ...List.generate(_autoIncomeAmountControllers.length, (index) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: TextField(
+                    controller: _autoIncomeDescControllers[index],
+                    decoration: InputDecoration(
+                      labelText: l.onboarding_auto_expenses_desc_label,
+                    ),
+                    onChanged: (_) => setState(() {}),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 1,
+                  child: TextField(
+                    controller: _autoIncomeAmountControllers[index],
+                    decoration: InputDecoration(labelText: symbol),
+                    keyboardType: TextInputType.number,
+                    onChanged: (_) => setState(() {}),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.remove_circle_outline,
+                    color: AppTheme.profit,
+                  ),
+                  onPressed: () => setState(() {
+                    _autoIncomeAmountControllers.removeAt(index);
+                    _autoIncomeDescControllers.removeAt(index);
+                  }),
+                ),
+              ],
+            ),
+          );
+        }),
+        TextButton.icon(
+          onPressed: () => setState(() {
+            _autoIncomeAmountControllers.add(TextEditingController(text: '0'));
+            _autoIncomeDescControllers.add(TextEditingController(text: ''));
+          }),
+          icon: const Icon(Icons.add_circle_outline_rounded),
+          label: Text(l.add_shift_incomes_add_button),
+          style: TextButton.styleFrom(foregroundColor: AppTheme.profitSoft),
         ),
       ],
     );

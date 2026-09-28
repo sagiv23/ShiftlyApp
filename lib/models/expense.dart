@@ -16,11 +16,15 @@ class Expense extends HiveObject {
   @HiveField(3)
   double amount;
 
+  @HiveField(4)
+  bool isIncome;
+
   Expense({
     required this.id,
     required this.date,
     required this.description,
     required this.amount,
+    this.isIncome = false,
   });
 
   Map<String, dynamic> toJson() => {
@@ -28,12 +32,14 @@ class Expense extends HiveObject {
     'date': date.toIso8601String(),
     'description': description,
     'amount': amount,
+    'isIncome': isIncome,
   };
 
   factory Expense.fromJson(Map<String, dynamic> json) => Expense(
     id: json['id'],
     date: DateTime.parse(json['date']),
     description: json['description'],
-    amount: json['amount'],
+    amount: (json['amount'] as num).toDouble(),
+    isIncome: json['isIncome'] ?? false,
   );
 }

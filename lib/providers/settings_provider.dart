@@ -17,6 +17,8 @@ class SettingsProvider with ChangeNotifier {
   double _shiftReminderDurationHours = 4.0;
   bool _automaticExpenseEnabled = false;
   List<AutomaticExpense> _defaultAutomaticExpenses = [];
+  bool _automaticIncomeEnabled = false;
+  List<AutomaticExpense> _defaultAutomaticIncomes = [];
   String _currencySymbol = '₪';
   Locale _locale = const Locale('he', 'IL');
   bool _breaksEnabled = true;
@@ -38,6 +40,11 @@ class SettingsProvider with ChangeNotifier {
 
   List<AutomaticExpense> get defaultAutomaticExpenses =>
       _defaultAutomaticExpenses;
+
+  bool get automaticIncomeEnabled => _automaticIncomeEnabled;
+
+  List<AutomaticExpense> get defaultAutomaticIncomes =>
+      _defaultAutomaticIncomes;
 
   String get currencySymbol => _currencySymbol;
 
@@ -75,6 +82,10 @@ class SettingsProvider with ChangeNotifier {
       'automaticExpenseEnabled',
       defaultValue: false,
     );
+    _automaticIncomeEnabled = box.get(
+      'automaticIncomeEnabled',
+      defaultValue: false,
+    );
     _currencySymbol = box.get('currencySymbol', defaultValue: '₪');
     _breaksEnabled = box.get('breaksEnabled', defaultValue: true);
     _autoSyncEnabled = box.get('autoSyncEnabled', defaultValue: true);
@@ -90,6 +101,13 @@ class SettingsProvider with ChangeNotifier {
       _defaultAutomaticExpenses = List<AutomaticExpense>.from(storedExpenses);
     } else {
       _defaultAutomaticExpenses = [];
+    }
+
+    final List? storedIncomes = box.get('defaultAutomaticIncomes');
+    if (storedIncomes != null) {
+      _defaultAutomaticIncomes = List<AutomaticExpense>.from(storedIncomes);
+    } else {
+      _defaultAutomaticIncomes = [];
     }
     notifyListeners();
   }
@@ -132,6 +150,12 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setAutomaticIncomeEnabled(bool enabled) async {
+    _automaticIncomeEnabled = enabled;
+    await _persistence.settingsBox.put('automaticIncomeEnabled', enabled);
+    notifyListeners();
+  }
+
   Future<void> setCurrencySymbol(String symbol) async {
     _currencySymbol = symbol;
     await _persistence.settingsBox.put('currencySymbol', symbol);
@@ -158,6 +182,14 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateDefaultAutomaticIncomes(
+    List<AutomaticExpense> incomes,
+  ) async {
+    _defaultAutomaticIncomes = incomes;
+    await _persistence.settingsBox.put('defaultAutomaticIncomes', incomes);
+    notifyListeners();
+  }
+
   Future<void> completeOnboarding() async {
     _hasCompletedOnboarding = true;
     await _persistence.settingsBox.put('hasCompletedOnboarding', true);
@@ -173,6 +205,8 @@ class SettingsProvider with ChangeNotifier {
     _shiftReminderDurationHours = 4.0;
     _automaticExpenseEnabled = false;
     _defaultAutomaticExpenses = [];
+    _automaticIncomeEnabled = false;
+    _defaultAutomaticIncomes = [];
     _currencySymbol = '₪';
     _locale = const Locale('he', 'IL');
     _breaksEnabled = true;

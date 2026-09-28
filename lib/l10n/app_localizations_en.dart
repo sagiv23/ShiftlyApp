@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -162,7 +161,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboarding_auto_expenses_invalid_amount =>
-      'Expense amount must be greater than 0';
+      'Amount must be greater than 0';
+
+  @override
+  String get onboarding_auto_incomes_title => 'Recurring Incomes';
+
+  @override
+  String get onboarding_auto_incomes_subtitle =>
+      'Do you have recurring incomes in every shift? (e.g. travel reimbursement)';
+
+  @override
+  String get onboarding_auto_incomes_enable => 'Enable Auto Incomes';
+
+  @override
+  String get onboarding_auto_incomes_add_button => 'Add Income';
 
   @override
   String get onboarding_job_types_title => 'Shifts & Wages';
@@ -290,6 +302,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please enter a description for each expense';
 
   @override
+  String get settings_dialog_error_enter_income_desc =>
+      'Please enter a description for each income';
+
+  @override
   String get settings_theme_system => 'System';
 
   @override
@@ -410,7 +426,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_action_calendar => 'Calendar';
 
   @override
-  String get expenses_title => 'Expense Management';
+  String get expenses_title => 'Expenses & Incomes';
+
+  @override
+  String get expenses_tab_expenses => 'Expenses';
+
+  @override
+  String get expenses_tab_incomes => 'Special Incomes';
 
   @override
   String get expenses_auto_section_title => 'Recurring Shift Expenses';
@@ -462,6 +484,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expenses_deleted_msg => 'Expense deleted';
+
+  @override
+  String get expenses_auto_incomes_updated_msg =>
+      'Auto income settings updated';
+
+  @override
+  String get expenses_auto_incomes_section_title => 'Recurring Shift Incomes';
+
+  @override
+  String get expenses_auto_incomes_section_subtitle =>
+      'Add recurring incomes to each new shift';
+
+  @override
+  String get expenses_auto_incomes_section_enable => 'Auto Incomes';
+
+  @override
+  String get incomes_history_section_title => 'Monthly Income Breakdown';
+
+  @override
+  String get incomes_action_new_income => 'New Income';
+
+  @override
+  String get incomes_dialog_add_title => 'Add Special Income';
+
+  @override
+  String get incomes_dialog_edit_title => 'Edit Income';
+
+  @override
+  String get incomes_dialog_delete_title => 'Delete Income';
+
+  @override
+  String get incomes_no_history => 'No special incomes recorded';
+
+  @override
+  String get incomes_save_income_confirm_content =>
+      'Save income \"[[desc]]\" for [[amount]]?';
+
+  @override
+  String get incomes_delete_income_confirm_content =>
+      'Delete \"[[desc]]\" for [[amount]]?';
+
+  @override
+  String get incomes_deleted_msg => 'Income deleted';
+
+  @override
+  String get incomes_info_card_title => 'What are special incomes?';
+
+  @override
+  String get incomes_info_card_desc =>
+      'One-time payments or special reimbursements from employer (e.g. travel reimbursement, bonus, grant) added to total net calculation.';
 
   @override
   String get add_shift_title => 'New Shift';
@@ -596,6 +668,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get add_shift_expenses_add_button => 'Add Expense';
+
+  @override
+  String get add_shift_incomes_title => 'Shift Incomes';
+
+  @override
+  String get add_shift_incomes_total => 'Total';
+
+  @override
+  String get add_shift_incomes_add_button => 'Add Income';
 
   @override
   String get add_shift_shift_ended_dialog_title => 'Save Shift';

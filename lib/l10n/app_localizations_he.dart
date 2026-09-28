@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -161,7 +160,20 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get onboarding_auto_expenses_invalid_amount =>
-      'סכום ההוצאה חייב להיות גדול מ-0';
+      'סכום חייב להיות גדול מ-0';
+
+  @override
+  String get onboarding_auto_incomes_title => 'הכנסות קבועות';
+
+  @override
+  String get onboarding_auto_incomes_subtitle =>
+      'האם יש לך הכנסות קבועות בכל משמרת? (למשל החזר נסיעות מעסיק)';
+
+  @override
+  String get onboarding_auto_incomes_enable => 'הפעל הכנסות אוטומטיות';
+
+  @override
+  String get onboarding_auto_incomes_add_button => 'הוסף הכנסה קבועה';
 
   @override
   String get onboarding_job_types_title => 'סוגי משמרות ושכר';
@@ -288,6 +300,10 @@ class AppLocalizationsHe extends AppLocalizations {
       'נא להזין תיאור לכל הוצאה קבועה';
 
   @override
+  String get settings_dialog_error_enter_income_desc =>
+      'נא להזין תיאור לכל הכנסה קבועה';
+
+  @override
   String get settings_theme_system => 'מערכת';
 
   @override
@@ -408,7 +424,13 @@ class AppLocalizationsHe extends AppLocalizations {
   String get home_action_calendar => 'לוח משמרות';
 
   @override
-  String get expenses_title => 'ניהול הוצאות';
+  String get expenses_title => 'ניהול הוצאות והכנסות';
+
+  @override
+  String get expenses_tab_expenses => 'הוצאות';
+
+  @override
+  String get expenses_tab_incomes => 'הכנסות מיוחדות';
 
   @override
   String get expenses_auto_section_title => 'הוצאות קבועות למשמרת';
@@ -460,6 +482,56 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get expenses_deleted_msg => 'הוצאה נמחקה';
+
+  @override
+  String get expenses_auto_incomes_updated_msg =>
+      'הגדרות הכנסות אוטומטיות עודכנו';
+
+  @override
+  String get expenses_auto_incomes_section_title => 'הכנסות קבועות למשמרת';
+
+  @override
+  String get expenses_auto_incomes_section_subtitle =>
+      'הוסף הכנסות קבועות לכל משמרת חדשה';
+
+  @override
+  String get expenses_auto_incomes_section_enable => 'הכנסות אוטומטיות';
+
+  @override
+  String get incomes_history_section_title => 'פירוט הכנסות חודשי';
+
+  @override
+  String get incomes_action_new_income => 'הכנסה חדשה';
+
+  @override
+  String get incomes_dialog_add_title => 'הוספת הכנסה מיוחדת';
+
+  @override
+  String get incomes_dialog_edit_title => 'עריכת הכנסה';
+
+  @override
+  String get incomes_dialog_delete_title => 'מחיקת הכנסה';
+
+  @override
+  String get incomes_no_history => 'אין הכנסות מיוחדות רשומות';
+
+  @override
+  String get incomes_save_income_confirm_content =>
+      'האם לשמור את ההכנסה \"[[desc]]\" בסך [[amount]]?';
+
+  @override
+  String get incomes_delete_income_confirm_content =>
+      'האם למחוק את ההכנסה \"[[desc]]\" בסך [[amount]]?';
+
+  @override
+  String get incomes_deleted_msg => 'הכנסה נמחקה';
+
+  @override
+  String get incomes_info_card_title => 'מהן הכנסות מיוחדות?';
+
+  @override
+  String get incomes_info_card_desc =>
+      'הכנסות חד-פעמיות או תשלומים מיוחדים מהמעסיק (כגון החזרי נסיעות, בונוסים או מענקים) שמתווספים לחישוב הנטו החודשי.';
 
   @override
   String get add_shift_title => 'רישום משמרת';
@@ -594,6 +666,15 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get add_shift_expenses_add_button => 'הוסף הוצאה';
+
+  @override
+  String get add_shift_incomes_title => 'הכנסות למשמרת';
+
+  @override
+  String get add_shift_incomes_total => 'סה\"כ';
+
+  @override
+  String get add_shift_incomes_add_button => 'הוסף הכנסה';
 
   @override
   String get add_shift_shift_ended_dialog_title => 'שמירת משמרת';

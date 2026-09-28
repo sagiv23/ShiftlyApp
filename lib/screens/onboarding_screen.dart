@@ -31,11 +31,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   late bool _remindersEnabled;
   late double _reminderHours;
   late bool _autoExpenseEnabled;
+  late bool _autoIncomeEnabled;
   late String _currencySymbol;
   late Locale _locale;
   late bool _breaksEnabled;
   final List<TextEditingController> _autoAmountControllers = [];
   final List<TextEditingController> _autoDescControllers = [];
+  final List<TextEditingController> _autoIncomeAmountControllers = [];
+  final List<TextEditingController> _autoIncomeDescControllers = [];
 
   @override
   void initState() {
@@ -46,6 +49,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _remindersEnabled = settings.shiftRemindersEnabled;
     _reminderHours = settings.shiftReminderDurationHours;
     _autoExpenseEnabled = settings.automaticExpenseEnabled;
+    _autoIncomeEnabled = settings.automaticIncomeEnabled;
     _currencySymbol = settings.currencySymbol;
     _locale = settings.locale;
     _breaksEnabled = settings.breaksEnabled;
@@ -60,6 +64,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       _autoAmountControllers.add(TextEditingController(text: '20'));
       _autoDescControllers.add(TextEditingController(text: ''));
     }
+
+    for (var e in settings.defaultAutomaticIncomes) {
+      _autoIncomeAmountControllers.add(
+        TextEditingController(text: e.amount.toStringAsFixed(0)),
+      );
+      _autoIncomeDescControllers.add(TextEditingController(text: e.description));
+    }
+    if (_autoIncomeAmountControllers.isEmpty) {
+      _autoIncomeAmountControllers.add(TextEditingController(text: '0'));
+      _autoIncomeDescControllers.add(TextEditingController(text: ''));
+    }
   }
 
   @override
@@ -71,11 +86,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     for (var c in _autoDescControllers) {
       c.dispose();
     }
+    for (var c in _autoIncomeAmountControllers) {
+      c.dispose();
+    }
+    for (var c in _autoIncomeDescControllers) {
+      c.dispose();
+    }
     super.dispose();
   }
 
   void _nextPage() {
-    if (_currentPage < 6) {
+    if (_currentPage < 7) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
@@ -127,12 +148,43 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       }
     }
 
+    List<AutomaticExpense> incomes = [];
+    if (_autoIncomeEnabled) {
+      for (int i = 0; i < _autoIncomeAmountControllers.length; i++) {
+        final amountText = _autoIncomeAmountControllers[i].text.trim();
+        final desc = _autoIncomeDescControllers[i].text.trim();
+
+        if (amountText.isEmpty && desc.isEmpty) continue;
+
+        final amount = double.tryParse(amountText);
+        if (desc.isEmpty) {
+          UIUtils.showSnackBar(
+            context,
+            l.settings_dialog_error_enter_income_desc,
+            isError: true,
+          );
+          return;
+        }
+        if (amount == null || amount <= 0) {
+          UIUtils.showSnackBar(
+            context,
+            l.onboarding_auto_expenses_invalid_amount,
+            isError: true,
+          );
+          return;
+        }
+        incomes.add(AutomaticExpense(description: desc, amount: amount));
+      }
+    }
+
     await settings.setBreakDurations(_paidMinutes, _unpaidMinutes);
     await settings.setBreaksEnabled(_breaksEnabled);
     await settings.setShiftRemindersEnabled(_remindersEnabled);
     await settings.setShiftReminderDurationHours(_reminderHours);
     await settings.setAutomaticExpenseEnabled(_autoExpenseEnabled);
     await settings.updateDefaultAutomaticExpenses(expenses);
+    await settings.setAutomaticIncomeEnabled(_autoIncomeEnabled);
+    await settings.updateDefaultAutomaticIncomes(incomes);
     await settings.setCurrencySymbol(_currencySymbol);
     await settings.setLocale(_locale);
 
@@ -166,6 +218,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   _buildPage(child: _buildReminderSettingsPage()),
                   _buildPage(child: _buildCurrencyPage()),
                   _buildPage(child: _buildAutoExpensePage()),
+                  _buildPage(child: _buildAutoIncomePage()),
                   _buildPage(child: _buildBreakSettingsPage()),
                   _buildJobTypesPage(),
                 ],
@@ -487,6 +540,95 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
+  Widget _buildAutoIncomePage() {
+    final l = AppLocalizations.of(context)!;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Icon(
+          Icons.account_balance_wallet_rounded,
+          size: 64,
+          color: AppTheme.profitSoft,
+        ),
+        const SizedBox(height: 24),
+        Text(
+          l.onboarding_auto_incomes_title,
+          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          l.onboarding_auto_incomes_subtitle,
+          style: const TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+        const SizedBox(height: 40),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(
+            l.onboarding_auto_incomes_enable,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          value: _autoIncomeEnabled,
+          onChanged: (val) => setState(() => _autoIncomeEnabled = val),
+          activeThumbColor: AppTheme.profit,
+          activeTrackColor: AppTheme.profit.withValues(alpha: 0.35),
+        ),
+        if (_autoIncomeEnabled) ...[
+          const SizedBox(height: 24),
+          ...List.generate(
+            _autoIncomeAmountControllers.length,
+            (index) => _buildAutoIncomeRow(index, _currencySymbol),
+          ),
+          TextButton.icon(
+            onPressed: () => setState(() {
+              _autoIncomeAmountControllers.add(TextEditingController(text: '0'));
+              _autoIncomeDescControllers.add(TextEditingController(text: ''));
+            }),
+            icon: const Icon(Icons.add_circle_outline_rounded),
+            label: Text(l.onboarding_auto_incomes_add_button),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildAutoIncomeRow(int index, String symbol) {
+    final l = AppLocalizations.of(context)!;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: TextField(
+              controller: _autoIncomeDescControllers[index],
+              decoration: InputDecoration(
+                labelText: l.onboarding_auto_expenses_desc_label,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            flex: 1,
+            child: TextField(
+              controller: _autoIncomeAmountControllers[index],
+              decoration: InputDecoration(labelText: symbol),
+              keyboardType: TextInputType.number,
+            ),
+          ),
+          if (_autoIncomeAmountControllers.length > 1)
+            IconButton(
+              icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
+              onPressed: () => setState(() {
+                _autoIncomeAmountControllers.removeAt(index);
+                _autoIncomeDescControllers.removeAt(index);
+              }),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDurationSlider({
     required String label,
     required double value,
@@ -792,7 +934,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
-                7,
+                8,
                 (index) => Container(
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   width: _currentPage == index ? 10 : 8,

@@ -32,6 +32,7 @@ class HomeScreen extends StatelessWidget {
     double grandTotalBaseSalary = 0;
     double grandTotalTips = 0;
     double grandTotalExpenses = 0;
+    double grandTotalIncomes = 0;
     int grandTotalShifts = shiftProvider.filteredShifts.length;
 
     for (var shift in shiftProvider.filteredShifts) {
@@ -41,10 +42,15 @@ class HomeScreen extends StatelessWidget {
       grandTotalBaseSalary += shift.netHours * rate;
       grandTotalTips += shift.tips;
       grandTotalExpenses += shift.totalAutomaticExpenses;
+      grandTotalIncomes += shift.totalAutomaticIncomes;
     }
 
     for (var expense in shiftProvider.expenses) {
       grandTotalExpenses += expense.amount;
+    }
+
+    for (var income in shiftProvider.incomes) {
+      grandTotalIncomes += income.amount;
     }
 
     if (timerProvider.startTime != null) {
@@ -167,6 +173,7 @@ class HomeScreen extends StatelessWidget {
                             totalBase: grandTotalBaseSalary,
                             totalTips: grandTotalTips,
                             totalExpenses: grandTotalExpenses,
+                            totalIncomes: grandTotalIncomes,
                             totalShifts: grandTotalShifts,
                           );
                         }
@@ -372,6 +379,7 @@ class _GrandTotalCard extends StatelessWidget {
   final double totalBase;
   final double totalTips;
   final double totalExpenses;
+  final double totalIncomes;
   final int totalShifts;
 
   const _GrandTotalCard({
@@ -379,12 +387,13 @@ class _GrandTotalCard extends StatelessWidget {
     required this.totalBase,
     required this.totalTips,
     required this.totalExpenses,
+    required this.totalIncomes,
     required this.totalShifts,
   });
 
   @override
   Widget build(BuildContext context) {
-    final net = totalBase + totalTips - totalExpenses;
+    final net = totalBase + totalTips + totalIncomes - totalExpenses;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l = AppLocalizations.of(context)!;
     final symbol = context.watch<SettingsProvider>().currencySymbol;
@@ -517,24 +526,39 @@ class _GrandTotalCard extends StatelessWidget {
                           ),
                           amount: totalBase,
                         ),
-                        _VerticalDivider(),
-                        _HeaderInfoItem(
-                          label: l.home_total_card_tips,
-                          value: UIUtils.formatCurrency(
-                            totalTips,
-                            symbol: symbol,
+                        if (totalTips > 0) ...[
+                          _VerticalDivider(),
+                          _HeaderInfoItem(
+                            label: l.home_total_card_tips,
+                            value: UIUtils.formatCurrency(
+                              totalTips,
+                              symbol: symbol,
+                            ),
+                            amount: totalTips,
                           ),
-                          amount: totalTips,
-                        ),
-                        _VerticalDivider(),
-                        _HeaderInfoItem(
-                          label: l.home_total_card_expenses,
-                          value: UIUtils.formatCurrency(
-                            totalExpenses,
-                            symbol: symbol,
+                        ],
+                        if (totalIncomes > 0) ...[
+                          _VerticalDivider(),
+                          _HeaderInfoItem(
+                            label: l.expenses_tab_incomes,
+                            value: UIUtils.formatCurrency(
+                              totalIncomes,
+                              symbol: symbol,
+                            ),
+                            amount: totalIncomes,
                           ),
-                          amount: -totalExpenses,
-                        ),
+                        ],
+                        if (totalExpenses > 0) ...[
+                          _VerticalDivider(),
+                          _HeaderInfoItem(
+                            label: l.home_total_card_expenses,
+                            value: UIUtils.formatCurrency(
+                              totalExpenses,
+                              symbol: symbol,
+                            ),
+                            amount: -totalExpenses,
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -618,6 +642,7 @@ class _MonthExpansionSection extends StatelessWidget {
     double totalBaseSalary = 0;
     double totalTips = 0;
     double totalMonthExpenses = 0;
+    double totalMonthIncomes = 0;
     int monthShiftCount = shifts.length;
 
     for (var shift in shifts) {
@@ -627,11 +652,17 @@ class _MonthExpansionSection extends StatelessWidget {
       totalBaseSalary += shift.netHours * rate;
       totalTips += shift.tips;
       totalMonthExpenses += shift.totalAutomaticExpenses;
+      totalMonthIncomes += shift.totalAutomaticIncomes;
     }
 
     final allExpenses = shiftProvider.expensesGroupedByMonth[monthKey] ?? [];
     for (var expense in allExpenses) {
       totalMonthExpenses += expense.amount;
+    }
+
+    final allIncomes = shiftProvider.incomesGroupedByMonth[monthKey] ?? [];
+    for (var income in allIncomes) {
+      totalMonthIncomes += income.amount;
     }
 
     final date = DateTime.parse("$monthKey-01");
@@ -656,7 +687,7 @@ class _MonthExpansionSection extends StatelessWidget {
       }
     }
 
-    final net = totalBaseSalary + totalTips - totalMonthExpenses;
+    final net = totalBaseSalary + totalTips + totalMonthIncomes - totalMonthExpenses;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Theme(
@@ -720,22 +751,41 @@ class _MonthExpansionSection extends StatelessWidget {
                       ),
                       amount: totalBaseSalary,
                     ),
-                    const VerticalDivider(width: 1, indent: 4, endIndent: 4),
-                    _SummaryItem(
-                      label: l.home_total_card_tips,
-                      value: UIUtils.formatCurrency(totalTips, symbol: symbol),
-                      amount: totalTips,
-                      accent: AppTheme.profit,
-                    ),
-                    const VerticalDivider(width: 1, indent: 4, endIndent: 4),
-                    _SummaryItem(
-                      label: l.home_total_card_expenses,
-                      value: UIUtils.formatCurrency(
-                        totalMonthExpenses,
-                        symbol: symbol,
+                    if (totalTips > 0) ...[
+                      const VerticalDivider(width: 1, indent: 4, endIndent: 4),
+                      _SummaryItem(
+                        label: l.home_total_card_tips,
+                        value: UIUtils.formatCurrency(
+                          totalTips,
+                          symbol: symbol,
+                        ),
+                        amount: totalTips,
+                        accent: AppTheme.profit,
                       ),
-                      amount: -totalMonthExpenses,
-                    ),
+                    ],
+                    if (totalMonthIncomes > 0) ...[
+                      const VerticalDivider(width: 1, indent: 4, endIndent: 4),
+                      _SummaryItem(
+                        label: l.expenses_tab_incomes,
+                        value: UIUtils.formatCurrency(
+                          totalMonthIncomes,
+                          symbol: symbol,
+                        ),
+                        amount: totalMonthIncomes,
+                        accent: AppTheme.profit,
+                      ),
+                    ],
+                    if (totalMonthExpenses > 0) ...[
+                      const VerticalDivider(width: 1, indent: 4, endIndent: 4),
+                      _SummaryItem(
+                        label: l.home_total_card_expenses,
+                        value: UIUtils.formatCurrency(
+                          totalMonthExpenses,
+                          symbol: symbol,
+                        ),
+                        amount: -totalMonthExpenses,
+                      ),
+                    ],
                     const VerticalDivider(width: 1, indent: 4, endIndent: 4),
                     _SummaryItem(
                       label: l.common_net,
@@ -975,7 +1025,7 @@ class _ShiftTile extends StatelessWidget {
                           "${DateFormat.Hm().format(shift.startTime)} – ${DateFormat.Hm().format(shift.endTime)}  ·  ${shift.netHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
-                        if (shift.tips > 0 || breakType != BreakType.none) ...[
+                        if (shift.tips > 0 || shift.totalAutomaticIncomes > 0 || shift.totalAutomaticExpenses > 0 || breakType != BreakType.none) ...[
                           const SizedBox(height: 6),
                           Wrap(
                             spacing: 6,
@@ -986,6 +1036,13 @@ class _ShiftTile extends StatelessWidget {
                                   label:
                                       '+${UIUtils.formatCurrency(shift.tips, symbol: settings.currencySymbol)}',
                                   icon: Icons.payments_outlined,
+                                  color: AppTheme.profit,
+                                ),
+                              if (shift.totalAutomaticIncomes > 0)
+                                _ShiftTag(
+                                  label:
+                                      '+${UIUtils.formatCurrency(shift.totalAutomaticIncomes, symbol: settings.currencySymbol)}',
+                                  icon: Icons.account_balance_wallet_rounded,
                                   color: AppTheme.profit,
                                 ),
                               if (breakType == BreakType.paid)
