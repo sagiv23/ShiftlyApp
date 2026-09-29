@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:file_saver/file_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:shiftly/models/shift.dart';
@@ -67,8 +68,7 @@ class ExportUtils {
 
     for (var shift in shifts) {
       final job = shiftProvider.getJobTypeById(shift.jobTypeId);
-      final rate =
-          shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
+      final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
       final pay = shift.calculateTotalPay(rate);
       final dateStr = DateFormat('dd/MM/yyyy').format(shift.date);
       final startStr = DateFormat('HH:mm').format(shift.startTime);
@@ -109,8 +109,7 @@ class ExportUtils {
 
     for (var shift in shifts) {
       final job = shiftProvider.getJobTypeById(shift.jobTypeId);
-      final rate =
-          shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
+      final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
       final pay = shift.calculateTotalPay(rate);
       totalHours += shift.netHours;
       totalBase += shift.netHours * rate;

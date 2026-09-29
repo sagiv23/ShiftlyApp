@@ -11,11 +11,9 @@ import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/providers/timer_provider.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
-import 'package:shiftly/screens/calendar_screen.dart';
-import 'package:shiftly/screens/expenses_screen.dart';
-import 'package:shiftly/screens/settings_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/ui_utils.dart';
+import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/export_bottom_sheet.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -69,93 +67,62 @@ class HomeScreen extends StatelessWidget {
       }
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 150,
-        leading: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.calendar_month_rounded),
-              tooltip: l.home_action_calendar,
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const CalendarScreen()),
-              ),
+    return AdaptiveScaffold(
+      currentIndex: 0,
+      titleWidget: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            l.common_app_name,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              letterSpacing: -0.5,
             ),
-            IconButton(
-              icon: const Icon(Icons.receipt_long_rounded),
-              tooltip: l.expenses_title,
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ExpensesScreen()),
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.download_rounded),
-              tooltip: l.export_title,
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                useSafeArea: true,
-                backgroundColor: Colors.transparent,
-                builder: (context) => const ExportBottomSheet(),
-              ),
-            ),
-          ],
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
+          ),
+          if (auth.isLoggedIn && auth.userName != null)
             Text(
-              l.common_app_name,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              l.home_welcome_back.replaceFirst('[[name]]', auth.userName!),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: AppTheme.primary,
                 fontWeight: FontWeight.bold,
-                letterSpacing: -0.5,
               ),
             ),
-            if (auth.isLoggedIn && auth.userName != null)
-              Text(
-                l.home_welcome_back.replaceFirst('[[name]]', auth.userName!),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppTheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              shiftProvider.activeFilter?.isActive == true
-                  ? Icons.filter_alt_rounded
-                  : Icons.filter_alt_outlined,
-              color: shiftProvider.activeFilter?.isActive == true
-                  ? AppTheme.primary
-                  : null,
-            ),
-            tooltip: l.filter_title,
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                useSafeArea: true,
-                backgroundColor: Colors.transparent,
-                builder: (context) => const _FilterBottomSheet(),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            tooltip: l.settings_title,
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const SettingsScreen()),
-            ),
-          ),
-          const SizedBox(width: AppTheme.spaceXs),
         ],
       ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.download_rounded),
+          tooltip: l.export_title,
+          onPressed: () => showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            useSafeArea: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => const ExportBottomSheet(),
+          ),
+        ),
+        IconButton(
+          icon: Icon(
+            shiftProvider.activeFilter?.isActive == true
+                ? Icons.filter_alt_rounded
+                : Icons.filter_alt_outlined,
+            color: shiftProvider.activeFilter?.isActive == true
+                ? AppTheme.primary
+                : null,
+          ),
+          tooltip: l.filter_title,
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              useSafeArea: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) => const _FilterBottomSheet(),
+            );
+          },
+        ),
+        const SizedBox(width: AppTheme.spaceXs),
+      ],
       body: SafeArea(
         child: Column(
           children: [
@@ -208,22 +175,22 @@ class HomeScreen extends StatelessWidget {
         onPressed: () => Navigator.push(
           context,
           PageRouteBuilder(
+            transitionDuration: const Duration(milliseconds: 300),
+            reverseTransitionDuration: const Duration(milliseconds: 250),
             pageBuilder: (context, animation, secondaryAnimation) =>
                 const AddShiftScreen(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
+                  final curved = CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                  );
                   return SlideTransition(
-                    position:
-                        Tween<Offset>(
-                          begin: const Offset(0, 1),
-                          end: Offset.zero,
-                        ).animate(
-                          CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.easeOutCubic,
-                          ),
-                        ),
-                    child: child,
+                    position: Tween<Offset>(
+                      begin: const Offset(0, 0.12),
+                      end: Offset.zero,
+                    ).animate(curved),
+                    child: FadeTransition(opacity: curved, child: child),
                   );
                 },
           ),
@@ -306,8 +273,24 @@ class _ActiveTimerBanner extends StatelessWidget {
     return ScalePress(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (_) => const AddShiftScreen(initialTabIndex: 0),
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 280),
+          reverseTransitionDuration: const Duration(milliseconds: 220),
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const AddShiftScreen(initialTabIndex: 0),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            final curved = CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic,
+            );
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 0.08),
+                end: Offset.zero,
+              ).animate(curved),
+              child: FadeTransition(opacity: curved, child: child),
+            );
+          },
         ),
       ),
       child: Container(
@@ -520,55 +503,67 @@ class _GrandTotalCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _HeaderInfoItem(
-                          label: l.common_shifts_count,
-                          value: totalShifts.toString(),
-                        ),
-                        _VerticalDivider(),
-                        _HeaderInfoItem(
-                          label: l.home_total_card_hours,
-                          value: totalHours.toStringAsFixed(2),
-                        ),
-                        _VerticalDivider(),
-                        _HeaderInfoItem(
-                          label: l.home_total_card_base,
-                          value: UIUtils.formatCurrency(
-                            totalBase,
-                            symbol: symbol,
+                        Expanded(
+                          child: _HeaderInfoItem(
+                            label: l.common_shifts_count,
+                            value: totalShifts.toString(),
                           ),
-                          amount: totalBase,
+                        ),
+                        _VerticalDivider(),
+                        Expanded(
+                          child: _HeaderInfoItem(
+                            label: l.home_total_card_hours,
+                            value: totalHours.toStringAsFixed(2),
+                          ),
+                        ),
+                        _VerticalDivider(),
+                        Expanded(
+                          child: _HeaderInfoItem(
+                            label: l.home_total_card_base,
+                            value: UIUtils.formatCurrency(
+                              totalBase,
+                              symbol: symbol,
+                            ),
+                            amount: totalBase,
+                          ),
                         ),
                         if (totalTips > 0) ...[
                           _VerticalDivider(),
-                          _HeaderInfoItem(
-                            label: l.home_total_card_tips,
-                            value: UIUtils.formatCurrency(
-                              totalTips,
-                              symbol: symbol,
+                          Expanded(
+                            child: _HeaderInfoItem(
+                              label: l.home_total_card_tips,
+                              value: UIUtils.formatCurrency(
+                                totalTips,
+                                symbol: symbol,
+                              ),
+                              amount: totalTips,
                             ),
-                            amount: totalTips,
                           ),
                         ],
                         if (totalIncomes > 0) ...[
                           _VerticalDivider(),
-                          _HeaderInfoItem(
-                            label: l.expenses_tab_incomes,
-                            value: UIUtils.formatCurrency(
-                              totalIncomes,
-                              symbol: symbol,
+                          Expanded(
+                            child: _HeaderInfoItem(
+                              label: l.expenses_tab_incomes,
+                              value: UIUtils.formatCurrency(
+                                totalIncomes,
+                                symbol: symbol,
+                              ),
+                              amount: totalIncomes,
                             ),
-                            amount: totalIncomes,
                           ),
                         ],
                         if (totalExpenses > 0) ...[
                           _VerticalDivider(),
-                          _HeaderInfoItem(
-                            label: l.home_total_card_expenses,
-                            value: UIUtils.formatCurrency(
-                              totalExpenses,
-                              symbol: symbol,
+                          Expanded(
+                            child: _HeaderInfoItem(
+                              label: l.home_total_card_expenses,
+                              value: UIUtils.formatCurrency(
+                                totalExpenses,
+                                symbol: symbol,
+                              ),
+                              amount: -totalExpenses,
                             ),
-                            amount: -totalExpenses,
                           ),
                         ],
                       ],
@@ -598,23 +593,30 @@ class _HeaderInfoItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.7),
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.7),
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            color: (amount ?? 0) < 0 ? const Color(0xFFFECACA) : Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            fontFeatures: const [FontFeature.tabularFigures()],
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            value,
+            style: TextStyle(
+              color: (amount ?? 0) < 0 ? const Color(0xFFFECACA) : Colors.white,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
           ),
         ),
       ],
@@ -872,8 +874,74 @@ class _ShiftTile extends StatelessWidget {
 
   const _ShiftTile({required this.shift});
 
+  Future<void> _deleteShift(BuildContext context) async {
+    final l = AppLocalizations.of(context)!;
+    final shiftProvider = context.read<ShiftProvider>();
+    final dateStr = DateFormat('dd/MM/yyyy').format(shift.date);
+    final confirm = await UIUtils.showConfirmDialog(
+      context: context,
+      title: l.add_shift_delete_title,
+      content: '${l.add_shift_delete_desc} $dateStr?',
+      isDestructive: true,
+      confirmLabel: l.common_delete,
+    );
+    if (!context.mounted) return;
+
+    if (confirm == true) {
+      shiftProvider.deleteShift(shift.id);
+      UIUtils.showSnackBar(
+        context,
+        '$dateStr ${l.add_shift_delete_msg}',
+        action: SnackBarAction(
+          label: l.common_cancel,
+          onPressed: () {
+            shiftProvider.addShift(
+              shift,
+              l10n: {
+                'title': l.notification_reminder_title,
+                'body': l.notification_reminder_body,
+                'hours': l.common_hours_suffix,
+                'minutes': l.common_min_suffix,
+                'channelName': l.notification_channel_reminders_name,
+                'channelDesc': l.notification_channel_reminders_desc,
+              },
+            );
+          },
+        ),
+      );
+    }
+  }
+
+  void _editShift(BuildContext context) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 280),
+        reverseTransitionDuration: const Duration(milliseconds: 220),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            AddShiftScreen(shiftToEdit: shift),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          );
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.08, 0),
+              end: Offset.zero,
+            ).animate(curved),
+            child: FadeTransition(opacity: curved, child: child),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWide = screenWidth >= 768;
+
     final shiftProvider = context.read<ShiftProvider>();
     final settings = context.watch<SettingsProvider>();
     final l = AppLocalizations.of(context)!;
@@ -882,6 +950,181 @@ class _ShiftTile extends StatelessWidget {
     final pay = shift.calculateTotalPay(rate);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final breakType = shift.breakType ?? BreakType.none;
+
+    Widget tileContent = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+          onTap: () => _editShift(context),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.spaceXs,
+              vertical: 10,
+            ),
+            child: Row(
+              children: [
+                // Date badge
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        DateFormat.d().format(shift.date),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: AppTheme.primaryDark,
+                          height: 1,
+                        ),
+                      ),
+                      Text(
+                        DateFormat.E(l.localeName).format(shift.date),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.5),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            AppTheme.iconForJobName(job?.name),
+                            size: 16,
+                            color: AppTheme.primaryDark,
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              job?.name ?? l.common_error,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "${DateFormat.Hm().format(shift.startTime)} – ${DateFormat.Hm().format(shift.endTime)}  ·  ${shift.netHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      if (shift.tips > 0 ||
+                          shift.totalAutomaticIncomes > 0 ||
+                          shift.totalAutomaticExpenses > 0 ||
+                          breakType != BreakType.none) ...[
+                        const SizedBox(height: 6),
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 4,
+                          children: [
+                            if (shift.tips > 0)
+                              _ShiftTag(
+                                label:
+                                    '+${UIUtils.formatCurrency(shift.tips, symbol: settings.currencySymbol)}',
+                                icon: Icons.payments_outlined,
+                                color: AppTheme.profit,
+                              ),
+                            if (shift.totalAutomaticIncomes > 0)
+                              _ShiftTag(
+                                label:
+                                    '+${UIUtils.formatCurrency(shift.totalAutomaticIncomes, symbol: settings.currencySymbol)}',
+                                icon: Icons.account_balance_wallet_rounded,
+                                color: AppTheme.profit,
+                              ),
+                            if (breakType == BreakType.paid)
+                              _ShiftTag(
+                                label:
+                                    "${settings.paidBreakDurationMinutes.toStringAsFixed(0)} ${l.common_min_suffix} ${l.add_shift_manual_paid_break}",
+                                icon: Icons.timer_outlined,
+                                color: AppTheme.primary,
+                              ),
+                            if (breakType == BreakType.unpaid)
+                              _ShiftTag(
+                                label:
+                                    "${(shift.unpaidBreakMinutes ?? settings.unpaidBreakDurationMinutes).toStringAsFixed(0)} ${l.common_min_suffix} ${l.add_shift_manual_unpaid_break}",
+                                icon: Icons.coffee_outlined,
+                                color: AppTheme.warningSoft,
+                              ),
+                            if (shift.totalAutomaticExpenses > 0)
+                              _ShiftTag(
+                                label:
+                                    '-${UIUtils.formatCurrency(shift.totalAutomaticExpenses, symbol: settings.currencySymbol)}',
+                                icon: Icons.money_off_rounded,
+                                color: AppTheme.expense,
+                              ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spaceXs),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    UIUtils.formatCurrency(
+                      pay,
+                      symbol: settings.currencySymbol,
+                    ),
+                    style: UIUtils.getCurrencyStyle(
+                      context,
+                      pay,
+                      positiveColor: AppTheme.primaryDark,
+                      baseStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        fontFeatures: [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ),
+                ),
+                if (isWide) ...[
+                  const SizedBox(width: 4),
+                  IconButton(
+                    icon: const Icon(Icons.edit_outlined, size: 20),
+                    tooltip: l.common_edit,
+                    onPressed: () => _editShift(context),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.delete_outline_rounded,
+                      size: 20,
+                      color: AppTheme.expenseSoft,
+                    ),
+                    tooltip: l.common_delete,
+                    onPressed: () => _deleteShift(context),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    if (isWide) {
+      return tileContent;
+    }
 
     return Dismissible(
       key: Key(shift.id),
@@ -912,205 +1155,8 @@ class _ShiftTile extends StatelessWidget {
           confirmLabel: l.common_delete,
         );
       },
-      onDismissed: (_) {
-        final dateStr = DateFormat('dd/MM/yyyy').format(shift.date);
-        shiftProvider.deleteShift(shift.id);
-
-        UIUtils.showSnackBar(
-          context,
-          '$dateStr ${l.add_shift_delete_msg}',
-          action: SnackBarAction(
-            label: l.common_cancel,
-            onPressed: () {
-              shiftProvider.addShift(
-                shift,
-                l10n: {
-                  'title': l.notification_reminder_title,
-                  'body': l.notification_reminder_body,
-                  'hours': l.common_hours_suffix,
-                  'minutes': l.common_min_suffix,
-                  'channelName': l.notification_channel_reminders_name,
-                  'channelDesc': l.notification_channel_reminders_desc,
-                },
-              );
-            },
-          ),
-        );
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-            onTap: () {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) =>
-                      AddShiftScreen(shiftToEdit: shift),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                        return SlideTransition(
-                          position:
-                              Tween<Offset>(
-                                begin: const Offset(1, 0),
-                                end: Offset.zero,
-                              ).animate(
-                                CurvedAnimation(
-                                  parent: animation,
-                                  curve: Curves.easeOutCubic,
-                                ),
-                              ),
-                          child: child,
-                        );
-                      },
-                ),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTheme.spaceXs,
-                vertical: 10,
-              ),
-              child: Row(
-                children: [
-                  // Date badge
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          DateFormat.d().format(shift.date),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: AppTheme.primaryDark,
-                            height: 1,
-                          ),
-                        ),
-                        Text(
-                          DateFormat.E(l.localeName).format(shift.date),
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.5),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              AppTheme.iconForJobName(job?.name),
-                              size: 16,
-                              color: AppTheme.primaryDark,
-                            ),
-                            const SizedBox(width: 6),
-                            Flexible(
-                              child: Text(
-                                job?.name ?? l.common_error,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "${DateFormat.Hm().format(shift.startTime)} – ${DateFormat.Hm().format(shift.endTime)}  ·  ${shift.netHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        if (shift.tips > 0 ||
-                            shift.totalAutomaticIncomes > 0 ||
-                            shift.totalAutomaticExpenses > 0 ||
-                            breakType != BreakType.none) ...[
-                          const SizedBox(height: 6),
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: 4,
-                            children: [
-                              if (shift.tips > 0)
-                                _ShiftTag(
-                                  label:
-                                      '+${UIUtils.formatCurrency(shift.tips, symbol: settings.currencySymbol)}',
-                                  icon: Icons.payments_outlined,
-                                  color: AppTheme.profit,
-                                ),
-                              if (shift.totalAutomaticIncomes > 0)
-                                _ShiftTag(
-                                  label:
-                                      '+${UIUtils.formatCurrency(shift.totalAutomaticIncomes, symbol: settings.currencySymbol)}',
-                                  icon: Icons.account_balance_wallet_rounded,
-                                  color: AppTheme.profit,
-                                ),
-                              if (breakType == BreakType.paid)
-                                _ShiftTag(
-                                  label:
-                                      "${settings.paidBreakDurationMinutes.toStringAsFixed(0)} ${l.common_min_suffix} ${l.add_shift_manual_paid_break}",
-                                  icon: Icons.timer_outlined,
-                                  color: AppTheme.primary,
-                                ),
-                              if (breakType == BreakType.unpaid)
-                                _ShiftTag(
-                                  label:
-                                      "${(shift.unpaidBreakMinutes ?? settings.unpaidBreakDurationMinutes).toStringAsFixed(0)} ${l.common_min_suffix} ${l.add_shift_manual_unpaid_break}",
-                                  icon: Icons.coffee_outlined,
-                                  color: AppTheme.warningSoft,
-                                ),
-                              if (shift.totalAutomaticExpenses > 0)
-                                _ShiftTag(
-                                  label:
-                                      '-${UIUtils.formatCurrency(shift.totalAutomaticExpenses, symbol: settings.currencySymbol)}',
-                                  icon: Icons.money_off_rounded,
-                                  color: AppTheme.expense,
-                                ),
-                            ],
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: AppTheme.spaceXs),
-                  Text(
-                    UIUtils.formatCurrency(
-                      pay,
-                      symbol: settings.currencySymbol,
-                    ),
-                    style: UIUtils.getCurrencyStyle(
-                      context,
-                      pay,
-                      positiveColor: AppTheme.primaryDark,
-                      baseStyle: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        fontFeatures: [FontFeature.tabularFigures()],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+      onDismissed: (_) => _deleteShift(context),
+      child: tileContent,
     );
   }
 }

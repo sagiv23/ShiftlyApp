@@ -11,6 +11,7 @@ import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/services/notification_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/ui_utils.dart';
+import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:uuid/uuid.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -266,13 +267,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return a.name.compareTo(b.name);
       });
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          l.settings_title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
+    return AdaptiveScaffold(
+      currentIndex: 3,
+      title: l.settings_title,
       body: SafeArea(
         bottom: true,
         child: ListView(
@@ -511,7 +508,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   subtitle: Text(l.settings_byos_upgrade_subtitle),
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const AuthScreen()),
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(milliseconds: 280),
+                      reverseTransitionDuration: const Duration(
+                        milliseconds: 220,
+                      ),
+                      pageBuilder: (_, animation, secondaryAnimation) =>
+                          const AuthScreen(),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            final curved = CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeOutCubic,
+                            );
+                            return SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(0, 0.08),
+                                end: Offset.zero,
+                              ).animate(curved),
+                              child: FadeTransition(
+                                opacity: curved,
+                                child: child,
+                              ),
+                            );
+                          },
+                    ),
                   ),
                 ),
               ),
@@ -530,7 +551,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       subtitle: Text(l.settings_byos_login_shiftly_sub),
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const AuthScreen()),
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 280),
+                          reverseTransitionDuration: const Duration(
+                            milliseconds: 220,
+                          ),
+                          pageBuilder: (_, animation, secondaryAnimation) =>
+                              const AuthScreen(),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                                final curved = CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeOutCubic,
+                                );
+                                return SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0, 0.08),
+                                    end: Offset.zero,
+                                  ).animate(curved),
+                                  child: FadeTransition(
+                                    opacity: curved,
+                                    child: child,
+                                  ),
+                                );
+                              },
+                        ),
                       ),
                     ),
                     const Divider(height: 1, indent: 56),

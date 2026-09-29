@@ -10,6 +10,7 @@ import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/ui_utils.dart';
+import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:uuid/uuid.dart';
 import 'package:collection/collection.dart';
 
@@ -397,25 +398,21 @@ class _ExpensesScreenState extends State<ExpensesScreen>
       (r) => "${r.date.year}-${r.date.month.toString().padLeft(2, '0')}",
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          l.expenses_title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(
-              icon: const Icon(Icons.money_off_rounded),
-              text: l.expenses_tab_expenses,
-            ),
-            Tab(
-              icon: const Icon(Icons.account_balance_wallet_rounded),
-              text: l.expenses_tab_incomes,
-            ),
-          ],
-        ),
+    return AdaptiveScaffold(
+      currentIndex: 2,
+      title: l.expenses_title,
+      bottom: TabBar(
+        controller: _tabController,
+        tabs: [
+          Tab(
+            icon: const Icon(Icons.money_off_rounded),
+            text: l.expenses_tab_expenses,
+          ),
+          Tab(
+            icon: const Icon(Icons.account_balance_wallet_rounded),
+            text: l.expenses_tab_incomes,
+          ),
+        ],
       ),
       body: SafeArea(
         bottom: true,
@@ -520,10 +517,40 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                               if (record.shift != null) {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (_) => AddShiftScreen(
-                                      shiftToEdit: record.shift,
+                                  PageRouteBuilder(
+                                    transitionDuration: const Duration(
+                                      milliseconds: 280,
                                     ),
+                                    reverseTransitionDuration: const Duration(
+                                      milliseconds: 220,
+                                    ),
+                                    pageBuilder:
+                                        (_, animation, secondaryAnimation) =>
+                                            AddShiftScreen(
+                                              shiftToEdit: record.shift,
+                                            ),
+                                    transitionsBuilder:
+                                        (
+                                          context,
+                                          animation,
+                                          secondaryAnimation,
+                                          child,
+                                        ) {
+                                          final curved = CurvedAnimation(
+                                            parent: animation,
+                                            curve: Curves.easeOutCubic,
+                                          );
+                                          return SlideTransition(
+                                            position: Tween<Offset>(
+                                              begin: const Offset(0.08, 0),
+                                              end: Offset.zero,
+                                            ).animate(curved),
+                                            child: FadeTransition(
+                                              opacity: curved,
+                                              child: child,
+                                            ),
+                                          );
+                                        },
                                   ),
                                 );
                               } else if (record.standaloneExpense != null) {
@@ -646,10 +673,40 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                               if (record.shift != null) {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (_) => AddShiftScreen(
-                                      shiftToEdit: record.shift,
+                                  PageRouteBuilder(
+                                    transitionDuration: const Duration(
+                                      milliseconds: 280,
                                     ),
+                                    reverseTransitionDuration: const Duration(
+                                      milliseconds: 220,
+                                    ),
+                                    pageBuilder:
+                                        (_, animation, secondaryAnimation) =>
+                                            AddShiftScreen(
+                                              shiftToEdit: record.shift,
+                                            ),
+                                    transitionsBuilder:
+                                        (
+                                          context,
+                                          animation,
+                                          secondaryAnimation,
+                                          child,
+                                        ) {
+                                          final curved = CurvedAnimation(
+                                            parent: animation,
+                                            curve: Curves.easeOutCubic,
+                                          );
+                                          return SlideTransition(
+                                            position: Tween<Offset>(
+                                              begin: const Offset(0.08, 0),
+                                              end: Offset.zero,
+                                            ).animate(curved),
+                                            child: FadeTransition(
+                                              opacity: curved,
+                                              child: child,
+                                            ),
+                                          );
+                                        },
                                   ),
                                 );
                               } else if (record.standaloneExpense != null) {
@@ -837,8 +894,7 @@ class _ItemTile extends StatelessWidget {
     required this.symbol,
   });
 
-  @override
-  Widget build(BuildContext context) {
+  Future<void> _deleteRecord(BuildContext context) async {
     final shiftProvider = context.read<ShiftProvider>();
     final l = AppLocalizations.of(context)!;
     final deleteTitle = isIncome
@@ -850,6 +906,171 @@ class _ItemTile extends StatelessWidget {
     final deletedMsg = isIncome
         ? l.incomes_deleted_msg
         : l.expenses_deleted_msg;
+
+    final confirm = await UIUtils.showConfirmDialog(
+      context: context,
+      title: deleteTitle,
+      content: deleteConfirmText
+          .replaceAll('[[desc]]', record.description)
+          .replaceAll(
+            '[[amount]]',
+            UIUtils.formatCurrency(record.amount, symbol: symbol),
+          ),
+      isDestructive: true,
+      confirmLabel: l.common_delete,
+      cancelLabel: l.common_cancel,
+    );
+    if (!context.mounted) return;
+
+    if (confirm == true) {
+      if (record.shift != null && record.shiftIndex != null) {
+        final shift = record.shift!;
+        if (isIncome) {
+          shift.automaticIncomes?.removeAt(record.shiftIndex!);
+        } else {
+          shift.automaticExpenses?.removeAt(record.shiftIndex!);
+        }
+        shiftProvider.updateShift(shift);
+      } else if (record.standaloneExpense != null) {
+        shiftProvider.deleteExpense(record.standaloneExpense!.id);
+      }
+      UIUtils.showSnackBar(
+        context,
+        deletedMsg,
+        action: SnackBarAction(
+          label: l.common_cancel,
+          onPressed: () {
+            if (record.shift != null && record.shiftIndex != null) {
+              final shift = record.shift!;
+              if (isIncome) {
+                shift.automaticIncomes ??= [];
+                shift.automaticIncomes!.insert(
+                  record.shiftIndex!,
+                  AutomaticExpense(
+                    description: record.description,
+                    amount: record.amount,
+                  ),
+                );
+              } else {
+                shift.automaticExpenses ??= [];
+                shift.automaticExpenses!.insert(
+                  record.shiftIndex!,
+                  AutomaticExpense(
+                    description: record.description,
+                    amount: record.amount,
+                  ),
+                );
+              }
+              shiftProvider.updateShift(shift);
+            } else if (record.standaloneExpense != null) {
+              shiftProvider.addExpense(record.standaloneExpense!);
+            }
+          },
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWide = screenWidth >= 768;
+
+    Widget cardWidget = Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        onTap: onTap,
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: (isIncome ? AppTheme.profit : AppTheme.expense).withValues(
+              alpha: 0.12,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            record.shift != null
+                ? Icons.work_outline_rounded
+                : (isIncome
+                      ? Icons.account_balance_wallet_rounded
+                      : Icons.money_off_rounded),
+            color: isIncome ? AppTheme.profitSoft : AppTheme.expenseSoft,
+            size: 20,
+          ),
+        ),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                record.description,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            if (record.shiftInfo != null)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppTheme.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  record.shiftInfo!,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.primaryDark,
+                  ),
+                ),
+              ),
+          ],
+        ),
+        subtitle: Text(DateFormat('dd/MM/yyyy').format(record.date)),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              UIUtils.formatCurrency(record.amount, symbol: symbol),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: isIncome ? AppTheme.profitSoft : AppTheme.expenseSoft,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+            ),
+            if (isWide) ...[
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.edit_outlined, size: 20),
+                tooltip: AppLocalizations.of(context)!.common_edit,
+                onPressed: onTap,
+              ),
+              IconButton(
+                icon: const Icon(
+                  Icons.delete_outline_rounded,
+                  size: 20,
+                  color: AppTheme.expenseSoft,
+                ),
+                tooltip: AppLocalizations.of(context)!.common_delete,
+                onPressed: () => _deleteRecord(context),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+
+    if (isWide) {
+      return cardWidget;
+    }
+
+    final l = AppLocalizations.of(context)!;
+    final deleteTitle = isIncome
+        ? l.incomes_dialog_delete_title
+        : l.expenses_dialog_delete_title;
+    final deleteConfirmText = isIncome
+        ? l.incomes_delete_income_confirm_content
+        : l.expenses_delete_expense_confirm_content;
 
     return Dismissible(
       key: Key(record.id),
@@ -882,117 +1103,8 @@ class _ItemTile extends StatelessWidget {
         confirmLabel: l.common_delete,
         cancelLabel: l.common_cancel,
       ),
-      onDismissed: (_) {
-        if (record.shift != null && record.shiftIndex != null) {
-          final shift = record.shift!;
-          if (isIncome) {
-            shift.automaticIncomes?.removeAt(record.shiftIndex!);
-          } else {
-            shift.automaticExpenses?.removeAt(record.shiftIndex!);
-          }
-          shiftProvider.updateShift(shift);
-        } else if (record.standaloneExpense != null) {
-          shiftProvider.deleteExpense(record.standaloneExpense!.id);
-        }
-        UIUtils.showSnackBar(
-          context,
-          deletedMsg,
-          action: SnackBarAction(
-            label: l.common_cancel,
-            onPressed: () {
-              if (record.shift != null && record.shiftIndex != null) {
-                final shift = record.shift!;
-                if (isIncome) {
-                  shift.automaticIncomes ??= [];
-                  shift.automaticIncomes!.insert(
-                    record.shiftIndex!,
-                    AutomaticExpense(
-                      description: record.description,
-                      amount: record.amount,
-                    ),
-                  );
-                } else {
-                  shift.automaticExpenses ??= [];
-                  shift.automaticExpenses!.insert(
-                    record.shiftIndex!,
-                    AutomaticExpense(
-                      description: record.description,
-                      amount: record.amount,
-                    ),
-                  );
-                }
-                shiftProvider.updateShift(shift);
-              } else if (record.standaloneExpense != null) {
-                shiftProvider.addExpense(record.standaloneExpense!);
-              }
-            },
-          ),
-        );
-      },
-      child: Card(
-        margin: const EdgeInsets.only(bottom: 8),
-        child: ListTile(
-          onTap: onTap,
-          leading: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: (isIncome ? AppTheme.profit : AppTheme.expense).withValues(
-                alpha: 0.12,
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              record.shift != null
-                  ? Icons.work_outline_rounded
-                  : (isIncome
-                        ? Icons.account_balance_wallet_rounded
-                        : Icons.money_off_rounded),
-              color: isIncome ? AppTheme.profitSoft : AppTheme.expenseSoft,
-              size: 20,
-            ),
-          ),
-          title: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  record.description,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              if (record.shiftInfo != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primary.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    record.shiftInfo!,
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryDark,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          subtitle: Text(DateFormat('dd/MM/yyyy').format(record.date)),
-          trailing: Text(
-            UIUtils.formatCurrency(record.amount, symbol: symbol),
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: isIncome ? AppTheme.profitSoft : AppTheme.expenseSoft,
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
-          ),
-        ),
-      ),
+      onDismissed: (_) => _deleteRecord(context),
+      child: cardWidget,
     );
   }
 }

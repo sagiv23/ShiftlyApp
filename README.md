@@ -11,9 +11,9 @@ Linux, Web) ומציעה פתרונות סנכרון מתקדמים.
 * **מעקב זמן אמת וטיימר חכם:** שעון עצר מובנה לניהול משמרת פעילה, כולל מעבר למצבי הפסקה (בתשלום/ללא
   תשלום) ושליטה מלאה מווילון ההתראות.
 * **סנכרון ענן כפול:**
-  * **BYOS (Bring Your Own Storage):** גיבוי ושחזור ל-Google Drive הפרטי שלך – השליטה במידע נשארת
-    אצלך.
-  * **Shiftly Account:** סנכרון מלא בזמן אמת מול שרת מרכזי למעבר חלק בין מכשירים (מובייל ודסקטופ).
+    * **BYOS (Bring Your Own Storage):** גיבוי ושחזור ל-Google Drive הפרטי שלך – השליטה במידע נשארת
+      אצלך.
+    * **Shiftly Account:** סנכרון מלא בזמן אמת מול שרת מרכזי למעבר חלק בין מכשירים (מובייל ודסקטופ).
 * **ניהול היסטוריית שכר:** תמיכה בשינויי שכר לפי תאריך (Effective Dates). המערכת שומרת היסטוריית שכר
   לכל תפקיד ומבטיחה ששינויי שכר עתידיים לא ישפיעו על חישובי העבר.
 * **ניהול טיפים והוצאות:** תיעוד הוצאות (נסיעות, אוכל) וטיפים בודדים עם חישוב נטו סופי מדויק.
@@ -42,6 +42,7 @@ Linux, Web) ומציעה פתרונות סנכרון מתקדמים.
 ## התקנה ופיתוח מקומי
 
 ###Frontend
+
 1. **התקנת תלויות:** `flutter pub get`
 2. **יצירת קבצי Adapters:** `dart run build_runner build --delete-conflicting-outputs`
 3. **הרצה:** `flutter run`
@@ -70,8 +71,8 @@ supports Android, iOS, Windows, macOS, Linux, and Web.
 
 - **Real-time Tracking:** Smart timer with break management and notification controls.
 - **Dual Sync Options:**
-  - **BYOS:** Private backup to your own Google Drive.
-  - **Shiftly Cloud:** Real-time sync via Node.js/PostgreSQL backend.
+    - **BYOS:** Private backup to your own Google Drive.
+    - **Shiftly Cloud:** Real-time sync via Node.js/PostgreSQL backend.
 - **Wage History:** Support for effective-dated hourly rates.
 - **Smart Parser:** Free-text shift entry for bulk additions.
 - **Multilingual:** Full support for Hebrew and English.

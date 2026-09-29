@@ -19,9 +19,13 @@ class AuthProvider with ChangeNotifier {
   String? _token;
 
   bool get isLoggedIn => _isLoggedIn;
+
   AuthType get authType => _authType;
+
   String? get userName => _userName;
+
   String? get userEmail => _userEmail;
+
   String? get token => _token;
 
   AuthProvider(this._persistence) {

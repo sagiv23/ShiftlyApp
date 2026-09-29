@@ -9,6 +9,7 @@ import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/ui_utils.dart';
+import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -45,13 +46,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
       allShifts,
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          l.home_action_calendar,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
+    return AdaptiveScaffold(
+      currentIndex: 1,
+      title: l.home_action_calendar,
       body: SafeArea(
         bottom: true,
         child: CustomScrollView(
@@ -249,8 +246,74 @@ class _CalendarShiftTile extends StatelessWidget {
 
   const _CalendarShiftTile({required this.shift});
 
+  Future<void> _deleteShift(BuildContext context) async {
+    final l = AppLocalizations.of(context)!;
+    final shiftProvider = context.read<ShiftProvider>();
+    final dateStr = DateFormat('dd/MM/yyyy').format(shift.date);
+    final confirm = await UIUtils.showConfirmDialog(
+      context: context,
+      title: l.common_delete_shit_short,
+      content: '${l.common_delete_shit_expanded} $dateStr?',
+      isDestructive: true,
+      confirmLabel: l.common_delete,
+    );
+    if (!context.mounted) return;
+
+    if (confirm == true) {
+      shiftProvider.deleteShift(shift.id);
+      UIUtils.showSnackBar(
+        context,
+        '$dateStr ${l.common_delete_shift_after}',
+        action: SnackBarAction(
+          label: l.common_cancel,
+          onPressed: () {
+            shiftProvider.addShift(
+              shift,
+              l10n: {
+                'title': l.notification_reminder_title,
+                'body': l.notification_reminder_body,
+                'hours': l.common_hours_suffix,
+                'minutes': l.common_min_suffix,
+                'channelName': l.notification_channel_reminders_name,
+                'channelDesc': l.notification_channel_reminders_desc,
+              },
+            );
+          },
+        ),
+      );
+    }
+  }
+
+  void _editShift(BuildContext context) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 280),
+        reverseTransitionDuration: const Duration(milliseconds: 220),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            AddShiftScreen(shiftToEdit: shift),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          );
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.08, 0),
+              end: Offset.zero,
+            ).animate(curved),
+            child: FadeTransition(opacity: curved, child: child),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWide = screenWidth >= 768;
+
     final shiftProvider = context.read<ShiftProvider>();
     final settings = context.watch<SettingsProvider>();
     final l = AppLocalizations.of(context)!;
@@ -266,6 +329,128 @@ class _CalendarShiftTile extends StatelessWidget {
     } else if ((shift.breakType ?? BreakType.none) == BreakType.unpaid) {
       breakInfo =
           " (${(shift.unpaidBreakMinutes ?? settings.unpaidBreakDurationMinutes).toStringAsFixed(0)} ${l.common_min_suffix} ${l.add_shift_manual_unpaid_break})";
+    }
+
+    Widget tileContent = Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Theme.of(
+            context,
+          ).colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      child: ListTile(
+        onTap: () => _editShift(context),
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: Theme.of(
+              context,
+            ).colorScheme.primaryContainer.withValues(alpha: 0.4),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            Icons.work_rounded,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
+        ),
+        title: Text(
+          "${job?.name ?? l.common_error}$breakInfo",
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+        subtitle: Text(
+          "${DateFormat.Hm().format(shift.startTime)} - ${DateFormat.Hm().format(shift.endTime)} | "
+          "${shift.netHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
+          style: const TextStyle(fontSize: 12),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  UIUtils.formatCurrency(pay, symbol: symbol),
+                  style: UIUtils.getCurrencyStyle(
+                    context,
+                    pay,
+                    positiveColor: Theme.of(context).colorScheme.primary,
+                    baseStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                if (shift.tips > 0)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 1,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      "+${UIUtils.formatCurrency(shift.tips, symbol: symbol)}",
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.green.shade700,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                if (shift.totalAutomaticExpenses > 0)
+                  Container(
+                    margin: const EdgeInsets.only(top: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 1,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.expense.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      "-${UIUtils.formatCurrency(shift.totalAutomaticExpenses, symbol: symbol)}",
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: AppTheme.expenseSoft,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            if (isWide) ...[
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.edit_outlined, size: 20),
+                tooltip: l.common_edit,
+                onPressed: () => _editShift(context),
+              ),
+              IconButton(
+                icon: const Icon(
+                  Icons.delete_outline_rounded,
+                  size: 20,
+                  color: Colors.red,
+                ),
+                tooltip: l.common_delete,
+                onPressed: () => _deleteShift(context),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+
+    if (isWide) {
+      return tileContent;
     }
 
     return Dismissible(
@@ -291,133 +476,8 @@ class _CalendarShiftTile extends StatelessWidget {
           confirmLabel: l.common_delete,
         );
       },
-      onDismissed: (_) {
-        final dateStr = DateFormat('dd/MM/yyyy').format(shift.date);
-        shiftProvider.deleteShift(shift.id);
-
-        UIUtils.showSnackBar(
-          context,
-          '$dateStr ${l.common_delete_shift_after}',
-          action: SnackBarAction(
-            label: l.common_cancel,
-            onPressed: () {
-              shiftProvider.addShift(
-                shift,
-                l10n: {
-                  'title': l.notification_reminder_title,
-                  'body': l.notification_reminder_body,
-                  'hours': l.common_hours_suffix,
-                  'minutes': l.common_min_suffix,
-                  'channelName': l.notification_channel_reminders_name,
-                  'channelDesc': l.notification_channel_reminders_desc,
-                },
-              );
-            },
-          ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardTheme.color,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Theme.of(
-              context,
-            ).colorScheme.outlineVariant.withValues(alpha: 0.5),
-          ),
-        ),
-        child: ListTile(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AddShiftScreen(shiftToEdit: shift),
-              ),
-            );
-          },
-          leading: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Theme.of(
-                context,
-              ).colorScheme.primaryContainer.withValues(alpha: 0.4),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              Icons.work_rounded,
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
-            ),
-          ),
-          title: Text(
-            "${job?.name ?? l.common_error}$breakInfo",
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          subtitle: Text(
-            "${DateFormat.Hm().format(shift.startTime)} - ${DateFormat.Hm().format(shift.endTime)} | "
-            "${shift.netHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
-            style: const TextStyle(fontSize: 12),
-          ),
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                UIUtils.formatCurrency(pay, symbol: symbol),
-                style: UIUtils.getCurrencyStyle(
-                  context,
-                  pay,
-                  positiveColor: Theme.of(context).colorScheme.primary,
-                  baseStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-              if (shift.tips > 0)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
-                    vertical: 1,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade50,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    "+${UIUtils.formatCurrency(shift.tips, symbol: symbol)}",
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.green.shade700,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              if (shift.totalAutomaticExpenses > 0)
-                Container(
-                  margin: const EdgeInsets.only(top: 2),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
-                    vertical: 1,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppTheme.expense.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    "-${UIUtils.formatCurrency(shift.totalAutomaticExpenses, symbol: symbol)}",
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: AppTheme.expenseSoft,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
+      onDismissed: (_) => _deleteShift(context),
+      child: tileContent,
     );
   }
 }

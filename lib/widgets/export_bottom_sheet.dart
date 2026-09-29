@@ -91,7 +91,8 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                   ),
                 ],
                 selected: {_format},
-                onSelectionChanged: (val) => setState(() => _format = val.first),
+                onSelectionChanged: (val) =>
+                    setState(() => _format = val.first),
               ),
               const SizedBox(height: AppTheme.spaceMd),
               Text(
@@ -139,7 +140,9 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                   ),
                   items: monthKeys.map((key) {
                     final date = DateTime.parse('$key-01');
-                    final monthName = DateFormat.MMMM(l.localeName).format(date);
+                    final monthName = DateFormat.MMMM(
+                      l.localeName,
+                    ).format(date);
                     return DropdownMenuItem(
                       value: key,
                       child: Text('$monthName ${date.year}'),
@@ -222,8 +225,7 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                       shiftsToExport = shiftProvider.shifts;
                     } else if (_rangeType == 'month' &&
                         _selectedMonthKey != null) {
-                      shiftsToExport =
-                          groupedShifts[_selectedMonthKey] ?? [];
+                      shiftsToExport = groupedShifts[_selectedMonthKey] ?? [];
                     } else if (_rangeType == 'custom') {
                       shiftsToExport = shiftProvider.shifts.where((s) {
                         return (s.date.isAfter(
