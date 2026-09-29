@@ -1957,6 +1957,102 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'נתוני מכשיר'**
   String get auth_sync_dialog_local;
+
+  /// No description provided for @export_title.
+  ///
+  /// In he, this message translates to:
+  /// **'ייצוא משמרות'**
+  String get export_title;
+
+  /// No description provided for @export_format_label.
+  ///
+  /// In he, this message translates to:
+  /// **'פורמט קובץ'**
+  String get export_format_label;
+
+  /// No description provided for @export_format_csv.
+  ///
+  /// In he, this message translates to:
+  /// **'קובץ CSV (מתאים לאקסל)'**
+  String get export_format_csv;
+
+  /// No description provided for @export_format_txt.
+  ///
+  /// In he, this message translates to:
+  /// **'קובץ טקסט (TXT)'**
+  String get export_format_txt;
+
+  /// No description provided for @export_range_label.
+  ///
+  /// In he, this message translates to:
+  /// **'טווח ייצוא'**
+  String get export_range_label;
+
+  /// No description provided for @export_range_all.
+  ///
+  /// In he, this message translates to:
+  /// **'כל המשמרות'**
+  String get export_range_all;
+
+  /// No description provided for @export_range_month.
+  ///
+  /// In he, this message translates to:
+  /// **'חודש מסוים'**
+  String get export_range_month;
+
+  /// No description provided for @export_range_custom.
+  ///
+  /// In he, this message translates to:
+  /// **'טווח תאריכים'**
+  String get export_range_custom;
+
+  /// No description provided for @export_start_date.
+  ///
+  /// In he, this message translates to:
+  /// **'מתאריך'**
+  String get export_start_date;
+
+  /// No description provided for @export_end_date.
+  ///
+  /// In he, this message translates to:
+  /// **'עד תאריך'**
+  String get export_end_date;
+
+  /// No description provided for @export_select_month.
+  ///
+  /// In he, this message translates to:
+  /// **'בחר חודש'**
+  String get export_select_month;
+
+  /// No description provided for @export_button.
+  ///
+  /// In he, this message translates to:
+  /// **'ייצא קובץ'**
+  String get export_button;
+
+  /// No description provided for @export_success_msg.
+  ///
+  /// In he, this message translates to:
+  /// **'הקובץ נוצר בהצלחה ונשמר ב:'**
+  String get export_success_msg;
+
+  /// No description provided for @export_copy_button.
+  ///
+  /// In he, this message translates to:
+  /// **'העתק תוכן ללוח'**
+  String get export_copy_button;
+
+  /// No description provided for @export_copied_msg.
+  ///
+  /// In he, this message translates to:
+  /// **'הנתונים הועתקו ללוח בהצלחה'**
+  String get export_copied_msg;
+
+  /// No description provided for @export_empty_error.
+  ///
+  /// In he, this message translates to:
+  /// **'אין משמרות בטווח הנבחר לייצוא'**
+  String get export_empty_error;
 }
 
 class _AppLocalizationsDelegate

@@ -43,7 +43,9 @@ class _ExpensesScreenState extends State<ExpensesScreen>
       _autoExpenseAmountControllers.add(
         TextEditingController(text: e.amount.toStringAsFixed(0)),
       );
-      _autoExpenseDescControllers.add(TextEditingController(text: e.description));
+      _autoExpenseDescControllers.add(
+        TextEditingController(text: e.description),
+      );
     }
     if (_autoExpenseAmountControllers.isEmpty) {
       _autoExpenseAmountControllers.add(TextEditingController(text: '0'));
@@ -54,7 +56,9 @@ class _ExpensesScreenState extends State<ExpensesScreen>
       _autoIncomeAmountControllers.add(
         TextEditingController(text: e.amount.toStringAsFixed(0)),
       );
-      _autoIncomeDescControllers.add(TextEditingController(text: e.description));
+      _autoIncomeDescControllers.add(
+        TextEditingController(text: e.description),
+      );
     }
     if (_autoIncomeAmountControllers.isEmpty) {
       _autoIncomeAmountControllers.add(TextEditingController(text: '0'));
@@ -168,11 +172,11 @@ class _ExpensesScreenState extends State<ExpensesScreen>
 
     final titleText = isIncome
         ? (item == null
-            ? l.incomes_dialog_add_title
-            : l.incomes_dialog_edit_title)
+              ? l.incomes_dialog_add_title
+              : l.incomes_dialog_edit_title)
         : (item == null
-            ? l.expenses_dialog_add_title
-            : l.expenses_dialog_edit_title);
+              ? l.expenses_dialog_add_title
+              : l.expenses_dialog_edit_title);
 
     showDialog(
       context: context,
@@ -471,7 +475,9 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                                   TextEditingController(text: ''),
                                 );
                               }),
-                              icon: const Icon(Icons.add_circle_outline_rounded),
+                              icon: const Icon(
+                                Icons.add_circle_outline_rounded,
+                              ),
                               label: Text(l.expenses_action_add_auto),
                             ),
                             const SizedBox(height: 16),
@@ -488,7 +494,10 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                     ),
                   ),
                   const SizedBox(height: AppTheme.spaceLg),
-                  _buildSectionHeader(context, l.expenses_history_section_title),
+                  _buildSectionHeader(
+                    context,
+                    l.expenses_history_section_title,
+                  ),
                   const SizedBox(height: AppTheme.spaceXs),
                   if (groupedExpenses.isEmpty)
                     Center(
@@ -498,31 +507,35 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                       ),
                     )
                   else
-                    ...groupedExpenses.keys.toList().sorted((a, b) => b.compareTo(a)).map((monthKey) {
-                      final items = groupedExpenses[monthKey]!;
-                      return _MonthItemSection(
-                        monthKey: monthKey,
-                        items: items,
-                        isIncome: false,
-                        onEdit: (record) {
-                          if (record.shift != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    AddShiftScreen(shiftToEdit: record.shift),
-                              ),
-                            );
-                          } else if (record.standaloneExpense != null) {
-                            _showItemDialog(
-                              context,
-                              item: record.standaloneExpense,
-                              isIncome: false,
-                            );
-                          }
-                        },
-                      );
-                    }),
+                    ...groupedExpenses.keys
+                        .toList()
+                        .sorted((a, b) => b.compareTo(a))
+                        .map((monthKey) {
+                          final items = groupedExpenses[monthKey]!;
+                          return _MonthItemSection(
+                            monthKey: monthKey,
+                            items: items,
+                            isIncome: false,
+                            onEdit: (record) {
+                              if (record.shift != null) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => AddShiftScreen(
+                                      shiftToEdit: record.shift,
+                                    ),
+                                  ),
+                                );
+                              } else if (record.standaloneExpense != null) {
+                                _showItemDialog(
+                                  context,
+                                  item: record.standaloneExpense,
+                                  isIncome: false,
+                                );
+                              }
+                            },
+                          );
+                        }),
                 ],
               ),
             ),
@@ -585,7 +598,9 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                                   TextEditingController(text: ''),
                                 );
                               }),
-                              icon: const Icon(Icons.add_circle_outline_rounded),
+                              icon: const Icon(
+                                Icons.add_circle_outline_rounded,
+                              ),
                               label: Text(l.onboarding_auto_incomes_add_button),
                               style: TextButton.styleFrom(
                                 foregroundColor: AppTheme.profitSoft,
@@ -618,31 +633,35 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                       ),
                     )
                   else
-                    ...groupedIncomes.keys.toList().sorted((a, b) => b.compareTo(a)).map((monthKey) {
-                      final items = groupedIncomes[monthKey]!;
-                      return _MonthItemSection(
-                        monthKey: monthKey,
-                        items: items,
-                        isIncome: true,
-                        onEdit: (record) {
-                          if (record.shift != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    AddShiftScreen(shiftToEdit: record.shift),
-                              ),
-                            );
-                          } else if (record.standaloneExpense != null) {
-                            _showItemDialog(
-                              context,
-                              item: record.standaloneExpense,
-                              isIncome: true,
-                            );
-                          }
-                        },
-                      );
-                    }),
+                    ...groupedIncomes.keys
+                        .toList()
+                        .sorted((a, b) => b.compareTo(a))
+                        .map((monthKey) {
+                          final items = groupedIncomes[monthKey]!;
+                          return _MonthItemSection(
+                            monthKey: monthKey,
+                            items: items,
+                            isIncome: true,
+                            onEdit: (record) {
+                              if (record.shift != null) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => AddShiftScreen(
+                                      shiftToEdit: record.shift,
+                                    ),
+                                  ),
+                                );
+                              } else if (record.standaloneExpense != null) {
+                                _showItemDialog(
+                                  context,
+                                  item: record.standaloneExpense,
+                                  isIncome: true,
+                                );
+                              }
+                            },
+                          );
+                        }),
                 ],
               ),
             ),
@@ -651,7 +670,9 @@ class _ExpensesScreenState extends State<ExpensesScreen>
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showItemDialog(context, isIncome: isIncomeTab),
-        backgroundColor: isIncomeTab ? AppTheme.profitSoft : AppTheme.expenseSoft,
+        backgroundColor: isIncomeTab
+            ? AppTheme.profitSoft
+            : AppTheme.expenseSoft,
         foregroundColor: Colors.white,
         label: Text(
           isIncomeTab
@@ -697,10 +718,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
           ),
           if (amountControllers.length > 1)
             IconButton(
-              icon: const Icon(
-                Icons.remove_circle_outline,
-                color: Colors.red,
-              ),
+              icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
               onPressed: () => setState(() {
                 amountControllers.removeAt(index);
                 descControllers.removeAt(index);
@@ -829,7 +847,9 @@ class _ItemTile extends StatelessWidget {
     final deleteConfirmText = isIncome
         ? l.incomes_delete_income_confirm_content
         : l.expenses_delete_expense_confirm_content;
-    final deletedMsg = isIncome ? l.incomes_deleted_msg : l.expenses_deleted_msg;
+    final deletedMsg = isIncome
+        ? l.incomes_deleted_msg
+        : l.expenses_deleted_msg;
 
     return Dismissible(
       key: Key(record.id),
@@ -926,8 +946,8 @@ class _ItemTile extends StatelessWidget {
               record.shift != null
                   ? Icons.work_outline_rounded
                   : (isIncome
-                      ? Icons.account_balance_wallet_rounded
-                      : Icons.money_off_rounded),
+                        ? Icons.account_balance_wallet_rounded
+                        : Icons.money_off_rounded),
               color: isIncome ? AppTheme.profitSoft : AppTheme.expenseSoft,
               size: 20,
             ),

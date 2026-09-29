@@ -986,4 +986,53 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get auth_sync_dialog_local => 'Local Data';
+
+  @override
+  String get export_title => 'Export Shifts';
+
+  @override
+  String get export_format_label => 'File Format';
+
+  @override
+  String get export_format_csv => 'CSV (Excel Compatible)';
+
+  @override
+  String get export_format_txt => 'Text File (TXT)';
+
+  @override
+  String get export_range_label => 'Export Range';
+
+  @override
+  String get export_range_all => 'All Shifts';
+
+  @override
+  String get export_range_month => 'Specific Month';
+
+  @override
+  String get export_range_custom => 'Custom Date Range';
+
+  @override
+  String get export_start_date => 'Start Date';
+
+  @override
+  String get export_end_date => 'End Date';
+
+  @override
+  String get export_select_month => 'Select Month';
+
+  @override
+  String get export_button => 'Export File';
+
+  @override
+  String get export_success_msg => 'File exported successfully and saved at:';
+
+  @override
+  String get export_copy_button => 'Copy to Clipboard';
+
+  @override
+  String get export_copied_msg => 'Data copied to clipboard successfully';
+
+  @override
+  String get export_empty_error =>
+      'No shifts found in the selected range for export';
 }

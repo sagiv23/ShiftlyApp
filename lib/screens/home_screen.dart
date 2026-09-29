@@ -16,6 +16,7 @@ import 'package:shiftly/screens/expenses_screen.dart';
 import 'package:shiftly/screens/settings_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/ui_utils.dart';
+import 'package:shiftly/widgets/export_bottom_sheet.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -70,7 +71,7 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leadingWidth: 100,
+        leadingWidth: 150,
         leading: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -88,6 +89,17 @@ class HomeScreen extends StatelessWidget {
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const ExpensesScreen()),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.download_rounded),
+              tooltip: l.export_title,
+              onPressed: () => showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                useSafeArea: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) => const ExportBottomSheet(),
               ),
             ),
           ],
@@ -687,7 +699,8 @@ class _MonthExpansionSection extends StatelessWidget {
       }
     }
 
-    final net = totalBaseSalary + totalTips + totalMonthIncomes - totalMonthExpenses;
+    final net =
+        totalBaseSalary + totalTips + totalMonthIncomes - totalMonthExpenses;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Theme(
@@ -1025,7 +1038,10 @@ class _ShiftTile extends StatelessWidget {
                           "${DateFormat.Hm().format(shift.startTime)} – ${DateFormat.Hm().format(shift.endTime)}  ·  ${shift.netHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
-                        if (shift.tips > 0 || shift.totalAutomaticIncomes > 0 || shift.totalAutomaticExpenses > 0 || breakType != BreakType.none) ...[
+                        if (shift.tips > 0 ||
+                            shift.totalAutomaticIncomes > 0 ||
+                            shift.totalAutomaticExpenses > 0 ||
+                            breakType != BreakType.none) ...[
                           const SizedBox(height: 6),
                           Wrap(
                             spacing: 6,

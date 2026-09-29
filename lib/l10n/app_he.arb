@@ -309,5 +309,21 @@
   "auth_sync_dialog_title": "סנכרון נתונים",
   "auth_sync_dialog_content": "נמצאו נתונים קיימים גם במכשיר וגם בענן. באילו נתונים תרצה להשתמש?\n\n• שמירת נתוני המכשיר תעלה אותם לענן.\n• שימוש בנתוני ענן ימחק את המידע הקיים במכשיר.",
   "auth_sync_dialog_cloud": "נתוני ענן",
-  "auth_sync_dialog_local": "נתוני מכשיר"
+  "auth_sync_dialog_local": "נתוני מכשיר",
+  "export_title": "ייצוא משמרות",
+  "export_format_label": "פורמט קובץ",
+  "export_format_csv": "קובץ CSV (מתאים לאקסל)",
+  "export_format_txt": "קובץ טקסט (TXT)",
+  "export_range_label": "טווח ייצוא",
+  "export_range_all": "כל המשמרות",
+  "export_range_month": "חודש מסוים",
+  "export_range_custom": "טווח תאריכים",
+  "export_start_date": "מתאריך",
+  "export_end_date": "עד תאריך",
+  "export_select_month": "בחר חודש",
+  "export_button": "ייצא קובץ",
+  "export_success_msg": "הקובץ נוצר בהצלחה ונשמר ב:",
+  "export_copy_button": "העתק תוכן ללוח",
+  "export_copied_msg": "הנתונים הועתקו ללוח בהצלחה",
+  "export_empty_error": "אין משמרות בטווח הנבחר לייצוא"
 }

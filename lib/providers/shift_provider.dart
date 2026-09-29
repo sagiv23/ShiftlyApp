@@ -25,7 +25,7 @@ class ShiftProvider with ChangeNotifier {
     _authToken = token;
     _isBYOS = isBYOS;
     _autoSyncEnabled = autoSyncEnabled;
-    // Don't trigger auto-backup here to avoid overwriting remote data 
+    // Don't trigger auto-backup here to avoid overwriting remote data
     // before the user has a chance to restore.
   }
 
@@ -124,7 +124,8 @@ class ShiftProvider with ChangeNotifier {
         }
       } else {
         debugPrint(
-            'Restore: No shifts list found in backup data or it is not a list.');
+          'Restore: No shifts list found in backup data or it is not a list.',
+        );
       }
 
       debugPrint('Restore complete. Shifts: $shiftCount, Jobs: $jobCount');
@@ -184,13 +185,10 @@ class ShiftProvider with ChangeNotifier {
           hourlyRate: double.parse(shiftData['hourly_rate'].toString()),
           breakType: shiftData['break_type'] != null
               ? BreakType.values.firstWhere(
-                (e) =>
-            e
-                .toString()
-                .split('.')
-                .last == shiftData['break_type'],
-            orElse: () => BreakType.none,
-          )
+                  (e) =>
+                      e.toString().split('.').last == shiftData['break_type'],
+                  orElse: () => BreakType.none,
+                )
               : BreakType.none,
           unpaidBreakMinutes: double.parse(
             shiftData['unpaid_break_minutes']?.toString() ?? '0',
@@ -346,15 +344,11 @@ class ShiftProvider with ChangeNotifier {
 
   // Expenses
   List<Expense> get expenses =>
-      _persistence.expensesBox.values
-          .where((e) => !e.isIncome)
-          .toList()
+      _persistence.expensesBox.values.where((e) => !e.isIncome).toList()
         ..sort((a, b) => b.date.compareTo(a.date));
 
   List<Expense> get incomes =>
-      _persistence.expensesBox.values
-          .where((e) => e.isIncome)
-          .toList()
+      _persistence.expensesBox.values.where((e) => e.isIncome).toList()
         ..sort((a, b) => b.date.compareTo(a.date));
 
   List<JobType> get jobTypes => _persistence.jobTypesBox.values.toList();

@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
@@ -15,8 +18,18 @@ import 'package:shiftly/theme/app_theme.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
-  // Restarting analyzer
   WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await Firebase.initializeApp();
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+  } catch (e) {
+    debugPrint('Firebase initialization failed (non-fatal): $e');
+  }
 
   try {
     // Never let notification engine failure take down the whole app.
@@ -40,14 +53,18 @@ void main() async {
           ChangeNotifierProvider(
             create: (_) => AuthProvider(persistenceService),
           ),
-          ChangeNotifierProxyProvider2<AuthProvider,
-              SettingsProvider,
-              ShiftProvider>(
+          ChangeNotifierProxyProvider2<
+            AuthProvider,
+            SettingsProvider,
+            ShiftProvider
+          >(
             create: (_) => ShiftProvider(persistenceService),
-            update: (_, auth, settings, shift) =>
-            shift!
-              ..updateAuthStatus(auth.token, auth.authType == AuthType.byos,
-                  settings.autoSyncEnabled),
+            update: (_, auth, settings, shift) => shift!
+              ..updateAuthStatus(
+                auth.token,
+                auth.authType == AuthType.byos,
+                settings.autoSyncEnabled,
+              ),
           ),
           ChangeNotifierProvider(
             create: (_) => TimerProvider(persistenceService),

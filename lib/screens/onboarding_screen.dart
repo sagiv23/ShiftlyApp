@@ -69,7 +69,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       _autoIncomeAmountControllers.add(
         TextEditingController(text: e.amount.toStringAsFixed(0)),
       );
-      _autoIncomeDescControllers.add(TextEditingController(text: e.description));
+      _autoIncomeDescControllers.add(
+        TextEditingController(text: e.description),
+      );
     }
     if (_autoIncomeAmountControllers.isEmpty) {
       _autoIncomeAmountControllers.add(TextEditingController(text: '0'));
@@ -581,7 +583,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           TextButton.icon(
             onPressed: () => setState(() {
-              _autoIncomeAmountControllers.add(TextEditingController(text: '0'));
+              _autoIncomeAmountControllers.add(
+                TextEditingController(text: '0'),
+              );
               _autoIncomeDescControllers.add(TextEditingController(text: ''));
             }),
             icon: const Icon(Icons.add_circle_outline_rounded),

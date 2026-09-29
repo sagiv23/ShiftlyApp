@@ -9,15 +9,23 @@ import 'package:http/http.dart' as http;
 class GoogleDriveService {
   static const String _backupFileName = 'shiftly_backup.json';
 
-  // IMPORTANT: For Windows support, you must create a "Desktop app" Client ID
-  // in Google Cloud Console and paste it here.
-  static const String _windowsClientId =
-      '471238980617-6844beciupc5kt0tafejlr7umsfmn95s.apps.googleusercontent.com';
-  static const String _windowsClientSecret = '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';
+  // IMPORTANT: For Windows support, you can configure these via --dart-define
+  static const String _windowsClientId = String.fromEnvironment(
+    'WINDOWS_CLIENT_ID',
+    defaultValue:
+        '471238980617-6844beciupc5kt0tafejlr7umsfmn95s.apps.googleusercontent.com',
+  );
+  static const String _windowsClientSecret = String.fromEnvironment(
+    'WINDOWS_CLIENT_SECRET',
+    defaultValue: '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',
+  );
 
-  // IMPORTANT: For Android/iOS, create a "Web application" Client ID and paste it here.
-  // This is required to get the necessary tokens for Google Drive API.
-  static const String _mobileWebClientId = '471238980617-3hc67sm28ckcp7p4a1ukm7u3ln8pp1k5.apps.googleusercontent.com';
+  // IMPORTANT: For Android/iOS, you can configure these via --dart-define
+  static const String _mobileWebClientId = String.fromEnvironment(
+    'MOBILE_WEB_CLIENT_ID',
+    defaultValue:
+        '471238980617-3hc67sm28ckcp7p4a1ukm7u3ln8pp1k5.apps.googleusercontent.com',
+  );
 
   // Singleton instance
   static final GoogleDriveService _instance = GoogleDriveService._internal();
@@ -90,10 +98,7 @@ class GoogleDriveService {
     final driveApi = drive.DriveApi(httpClient);
     final jsonContent = jsonEncode(data);
     final bytes = utf8.encode(jsonContent);
-    final media = drive.Media(
-      Stream.value(bytes),
-      bytes.length,
-    );
+    final media = drive.Media(Stream.value(bytes), bytes.length);
 
     debugPrint('GoogleDrive: Uploading backup... size: ${bytes.length} bytes');
 
@@ -106,13 +111,8 @@ class GoogleDriveService {
       final fileId = fileList.files!.first.id!;
       debugPrint('GoogleDrive: Updating existing file $fileId');
       // Set metadata to ensure it stays in appDataFolder
-      final metadata = drive.File()
-        ..name = _backupFileName;
-      await driveApi.files.update(
-        metadata,
-        fileId,
-        uploadMedia: media,
-      );
+      final metadata = drive.File()..name = _backupFileName;
+      await driveApi.files.update(metadata, fileId, uploadMedia: media);
     } else {
       debugPrint('GoogleDrive: Creating new backup file');
       final driveFile = drive.File()
@@ -128,7 +128,8 @@ class GoogleDriveService {
     final httpClient = await _getAuthenticatedClient();
     if (httpClient == null) {
       debugPrint(
-          'GoogleDrive: Failed to get authenticated client for download.');
+        'GoogleDrive: Failed to get authenticated client for download.',
+      );
       return null;
     }
 
@@ -150,7 +151,7 @@ class GoogleDriveService {
 
     final response =
         await driveApi.files.get(
-          fileId,
+              fileId,
               downloadOptions: drive.DownloadOptions.fullMedia,
             )
             as drive.Media;

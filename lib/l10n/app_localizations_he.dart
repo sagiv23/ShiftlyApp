@@ -980,4 +980,52 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get auth_sync_dialog_local => 'נתוני מכשיר';
+
+  @override
+  String get export_title => 'ייצוא משמרות';
+
+  @override
+  String get export_format_label => 'פורמט קובץ';
+
+  @override
+  String get export_format_csv => 'קובץ CSV (מתאים לאקסל)';
+
+  @override
+  String get export_format_txt => 'קובץ טקסט (TXT)';
+
+  @override
+  String get export_range_label => 'טווח ייצוא';
+
+  @override
+  String get export_range_all => 'כל המשמרות';
+
+  @override
+  String get export_range_month => 'חודש מסוים';
+
+  @override
+  String get export_range_custom => 'טווח תאריכים';
+
+  @override
+  String get export_start_date => 'מתאריך';
+
+  @override
+  String get export_end_date => 'עד תאריך';
+
+  @override
+  String get export_select_month => 'בחר חודש';
+
+  @override
+  String get export_button => 'ייצא קובץ';
+
+  @override
+  String get export_success_msg => 'הקובץ נוצר בהצלחה ונשמר ב:';
+
+  @override
+  String get export_copy_button => 'העתק תוכן ללוח';
+
+  @override
+  String get export_copied_msg => 'הנתונים הועתקו ללוח בהצלחה';
+
+  @override
+  String get export_empty_error => 'אין משמרות בטווח הנבחר לייצוא';
 }

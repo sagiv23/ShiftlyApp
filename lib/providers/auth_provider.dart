@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
@@ -9,6 +10,7 @@ class AuthProvider with ChangeNotifier {
   final PersistenceService _persistence;
   final ApiService _apiService = ApiService();
   final GoogleDriveService _driveService = GoogleDriveService();
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   bool _isLoggedIn = false;
   AuthType _authType = AuthType.guest;
@@ -33,7 +35,7 @@ class AuthProvider with ChangeNotifier {
         .values[box.get('authType', defaultValue: AuthType.guest.index)];
     _userName = box.get('userName');
     _userEmail = box.get('userEmail');
-    _token = box.get('token');
+    _token = await _secureStorage.read(key: 'token');
 
     if (_isLoggedIn && _authType == AuthType.byos) {
       // Restore Google Drive session on app startup
@@ -92,7 +94,9 @@ class AuthProvider with ChangeNotifier {
     await box.put('authType', _authType.index);
     await box.put('userEmail', _userEmail);
     await box.put('userName', _userName);
-    await box.put('token', _token);
+    if (_token != null) {
+      await _secureStorage.write(key: 'token', value: _token!);
+    }
   }
 
   Future<void> updateProfile(String name, String email) async {
@@ -121,7 +125,7 @@ class AuthProvider with ChangeNotifier {
     await box.put('authType', _authType.index);
     await box.delete('userEmail');
     await box.delete('userName');
-    await box.delete('token');
+    await _secureStorage.delete(key: 'token');
     notifyListeners();
   }
 }
