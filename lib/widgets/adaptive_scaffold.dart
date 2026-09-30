@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
+import 'package:shiftly/screens/analytics_screen.dart';
 import 'package:shiftly/screens/calendar_screen.dart';
 import 'package:shiftly/screens/expenses_screen.dart';
 import 'package:shiftly/screens/home_screen.dart';
@@ -40,9 +41,12 @@ class AdaptiveScaffold extends StatelessWidget {
         targetScreen = const CalendarScreen();
         break;
       case 2:
-        targetScreen = const ExpensesScreen();
+        targetScreen = const AnalyticsScreen();
         break;
       case 3:
+        targetScreen = const ExpensesScreen();
+        break;
+      case 4:
         targetScreen = const SettingsScreen();
         break;
       default:
@@ -87,6 +91,10 @@ class AdaptiveScaffold extends StatelessWidget {
         label: l.home_action_calendar,
       ),
       BottomNavigationBarItem(
+        icon: const Icon(Icons.bar_chart_rounded),
+        label: l.analytics_title,
+      ),
+      BottomNavigationBarItem(
         icon: const Icon(Icons.receipt_long_rounded),
         label: l.expenses_title,
       ),
@@ -96,49 +104,60 @@ class AdaptiveScaffold extends StatelessWidget {
       ),
     ];
 
-    final topCenteredNav = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _TopNavButton(
-          label: l.common_app_name,
-          icon: Icons.home_rounded,
-          isSelected: currentIndex == 0,
-          onTap: () => _onItemTapped(context, 0),
-        ),
-        const SizedBox(width: 6),
-        _TopNavButton(
-          label: l.home_action_calendar,
-          icon: Icons.calendar_month_rounded,
-          isSelected: currentIndex == 1,
-          onTap: () => _onItemTapped(context, 1),
-        ),
-        const SizedBox(width: 6),
-        _TopNavButton(
-          label: l.expenses_title,
-          icon: Icons.receipt_long_rounded,
-          isSelected: currentIndex == 2,
-          onTap: () => _onItemTapped(context, 2),
-        ),
-        const SizedBox(width: 6),
-        _TopNavButton(
-          label: l.settings_title,
-          icon: Icons.settings_outlined,
-          isSelected: currentIndex == 3,
-          onTap: () => _onItemTapped(context, 3),
-        ),
-      ],
+    final topCenteredNav = SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _TopNavButton(
+            label: l.common_app_name,
+            icon: Icons.home_rounded,
+            isSelected: currentIndex == 0,
+            onTap: () => _onItemTapped(context, 0),
+          ),
+          const SizedBox(width: 4),
+          _TopNavButton(
+            label: l.home_action_calendar,
+            icon: Icons.calendar_month_rounded,
+            isSelected: currentIndex == 1,
+            onTap: () => _onItemTapped(context, 1),
+          ),
+          const SizedBox(width: 4),
+          _TopNavButton(
+            label: l.analytics_title,
+            icon: Icons.bar_chart_rounded,
+            isSelected: currentIndex == 2,
+            onTap: () => _onItemTapped(context, 2),
+          ),
+          const SizedBox(width: 4),
+          _TopNavButton(
+            label: l.expenses_title,
+            icon: Icons.receipt_long_rounded,
+            isSelected: currentIndex == 3,
+            onTap: () => _onItemTapped(context, 3),
+          ),
+          const SizedBox(width: 4),
+          _TopNavButton(
+            label: l.settings_title,
+            icon: Icons.settings_outlined,
+            isSelected: currentIndex == 4,
+            onTap: () => _onItemTapped(context, 4),
+          ),
+        ],
+      ),
     );
 
     PreferredSizeWidget? desktopBottomHeader;
     if (isDesktopOrWide) {
-      final headerWidget = titleWidget ??
+      final headerWidget =
+          titleWidget ??
           (title != null
               ? Text(
                   title!,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 )
               : null);
 
@@ -169,7 +188,7 @@ class AdaptiveScaffold extends StatelessWidget {
                       width: 32,
                       height: 32,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
+                      errorBuilder: (context, error, stackTrace) =>
                           const Icon(Icons.access_time_filled_rounded),
                     ),
                   ),
@@ -179,7 +198,7 @@ class AdaptiveScaffold extends StatelessWidget {
         title: isDesktopOrWide
             ? topCenteredNav
             : (titleWidget ??
-                (title != null ? Text(title!) : Text(l.common_app_name))),
+                  (title != null ? Text(title!) : Text(l.common_app_name))),
         bottom: isDesktopOrWide ? desktopBottomHeader : bottom,
         actions: actions,
       ),
@@ -207,17 +226,15 @@ class AdaptiveScaffold extends StatelessWidget {
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) =>
                                 const Icon(
-                              Icons.access_time_filled_rounded,
-                              size: 48,
-                            ),
+                                  Icons.access_time_filled_rounded,
+                                  size: 48,
+                                ),
                           ),
                         ),
                         const SizedBox(height: 12),
                         Text(
                           l.common_app_name,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge
+                          style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -242,12 +259,21 @@ class AdaptiveScaffold extends StatelessWidget {
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.receipt_long_rounded),
-                    title: Text(l.expenses_title),
+                    leading: const Icon(Icons.bar_chart_rounded),
+                    title: Text(l.analytics_title),
                     selected: currentIndex == 2,
                     onTap: () {
                       Navigator.pop(context);
                       _onItemTapped(context, 2);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.receipt_long_rounded),
+                    title: Text(l.expenses_title),
+                    selected: currentIndex == 3,
+                    onTap: () {
+                      Navigator.pop(context);
+                      _onItemTapped(context, 3);
                     },
                   ),
                   ListTile(
@@ -268,10 +294,10 @@ class AdaptiveScaffold extends StatelessWidget {
                   ListTile(
                     leading: const Icon(Icons.settings_outlined),
                     title: Text(l.settings_title),
-                    selected: currentIndex == 3,
+                    selected: currentIndex == 4,
                     onTap: () {
                       Navigator.pop(context);
-                      _onItemTapped(context, 3);
+                      _onItemTapped(context, 4);
                     },
                   ),
                 ],
@@ -280,7 +306,7 @@ class AdaptiveScaffold extends StatelessWidget {
       body: isDesktopOrWide
           ? Center(
               child: Container(
-                constraints: const BoxConstraints(maxWidth: 1100),
+                constraints: const BoxConstraints(maxWidth: 1400),
                 child: body,
               ),
             )

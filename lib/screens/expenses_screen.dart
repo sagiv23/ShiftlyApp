@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +13,6 @@ import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:uuid/uuid.dart';
-import 'package:collection/collection.dart';
 
 class ExpensesScreen extends StatefulWidget {
   const ExpensesScreen({super.key});
@@ -399,7 +399,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
     );
 
     return AdaptiveScaffold(
-      currentIndex: 2,
+      currentIndex: 3,
       title: l.expenses_title,
       bottom: TabBar(
         controller: _tabController,

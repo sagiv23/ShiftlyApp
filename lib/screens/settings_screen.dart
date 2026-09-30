@@ -268,7 +268,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       });
 
     return AdaptiveScaffold(
-      currentIndex: 3,
+      currentIndex: 4,
       title: l.settings_title,
       body: SafeArea(
         bottom: true,

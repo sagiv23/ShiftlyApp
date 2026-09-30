@@ -2053,6 +2053,168 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'אין משמרות בטווח הנבחר לייצוא'**
   String get export_empty_error;
+
+  /// No description provided for @analytics_title.
+  ///
+  /// In he, this message translates to:
+  /// **'אנליטיקה וגרפים'**
+  String get analytics_title;
+
+  /// No description provided for @analytics_period_monthly.
+  ///
+  /// In he, this message translates to:
+  /// **'חודשי'**
+  String get analytics_period_monthly;
+
+  /// No description provided for @analytics_period_yearly.
+  ///
+  /// In he, this message translates to:
+  /// **'שנתי'**
+  String get analytics_period_yearly;
+
+  /// No description provided for @analytics_period_all_time.
+  ///
+  /// In he, this message translates to:
+  /// **'כל הזמנים'**
+  String get analytics_period_all_time;
+
+  /// No description provided for @analytics_all_jobs.
+  ///
+  /// In he, this message translates to:
+  /// **'כל התפקידים'**
+  String get analytics_all_jobs;
+
+  /// No description provided for @analytics_stat_total_net.
+  ///
+  /// In he, this message translates to:
+  /// **'סה\"כ נטו'**
+  String get analytics_stat_total_net;
+
+  /// No description provided for @analytics_stat_total_hours.
+  ///
+  /// In he, this message translates to:
+  /// **'סה\"כ שעות'**
+  String get analytics_stat_total_hours;
+
+  /// No description provided for @analytics_stat_avg_rate.
+  ///
+  /// In he, this message translates to:
+  /// **'שכר שעתי אפקטיבי'**
+  String get analytics_stat_avg_rate;
+
+  /// No description provided for @analytics_stat_tips.
+  ///
+  /// In he, this message translates to:
+  /// **'סה\"כ טיפים'**
+  String get analytics_stat_tips;
+
+  /// No description provided for @analytics_chart_earnings_title.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנסות לפי זמן'**
+  String get analytics_chart_earnings_title;
+
+  /// No description provided for @analytics_chart_earnings_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'לחץ על עמודה לצפייה בפירוט משמרת'**
+  String get analytics_chart_earnings_subtitle;
+
+  /// No description provided for @analytics_chart_jobs_title.
+  ///
+  /// In he, this message translates to:
+  /// **'פילוח לפי תפקיד'**
+  String get analytics_chart_jobs_title;
+
+  /// No description provided for @analytics_chart_jobs_by_earnings.
+  ///
+  /// In he, this message translates to:
+  /// **'לפי שכר (₪)'**
+  String get analytics_chart_jobs_by_earnings;
+
+  /// No description provided for @analytics_chart_jobs_by_hours.
+  ///
+  /// In he, this message translates to:
+  /// **'לפי שעות'**
+  String get analytics_chart_jobs_by_hours;
+
+  /// No description provided for @analytics_chart_wage_trend_title.
+  ///
+  /// In he, this message translates to:
+  /// **'מגמת שכר שעתי'**
+  String get analytics_chart_wage_trend_title;
+
+  /// No description provided for @analytics_chart_wage_trend_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'השוואה בין שכר הבסיס לשכר השעתי בפועל (כולל טיפים)'**
+  String get analytics_chart_wage_trend_subtitle;
+
+  /// No description provided for @analytics_chart_day_performance_title.
+  ///
+  /// In he, this message translates to:
+  /// **'ביצועים לפי ימי השבוע'**
+  String get analytics_chart_day_performance_title;
+
+  /// No description provided for @analytics_chart_best_day_msg.
+  ///
+  /// In he, this message translates to:
+  /// **'היום המשתלם ביותר שלך הוא [[day]] (ממוצע [[rate]] לשעה)'**
+  String get analytics_chart_best_day_msg;
+
+  /// No description provided for @analytics_no_data.
+  ///
+  /// In he, this message translates to:
+  /// **'אין נתונים לתקופה הנבחרת'**
+  String get analytics_no_data;
+
+  /// No description provided for @analytics_selected_breakdown.
+  ///
+  /// In he, this message translates to:
+  /// **'פירוט יום נבחר'**
+  String get analytics_selected_breakdown;
+
+  /// No description provided for @analytics_base_salary.
+  ///
+  /// In he, this message translates to:
+  /// **'שכר בסיס'**
+  String get analytics_base_salary;
+
+  /// No description provided for @analytics_chart_cumulative_title.
+  ///
+  /// In he, this message translates to:
+  /// **'צמיחת הכנסה מצטברת'**
+  String get analytics_chart_cumulative_title;
+
+  /// No description provided for @analytics_chart_cumulative_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'מראה כיצד השכר הצטבר יום אחר יום לאורך התקופה'**
+  String get analytics_chart_cumulative_subtitle;
+
+  /// No description provided for @analytics_chart_tips_trend_title.
+  ///
+  /// In he, this message translates to:
+  /// **'מגמת טיפים והכנסות מיוחדות'**
+  String get analytics_chart_tips_trend_title;
+
+  /// No description provided for @analytics_chart_tips_trend_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'מעקב אחר גובה הטיפים וההכנסות שנתקבלו בכל משמרת'**
+  String get analytics_chart_tips_trend_subtitle;
+
+  /// No description provided for @analytics_gross_pay.
+  ///
+  /// In he, this message translates to:
+  /// **'ברוטו'**
+  String get analytics_gross_pay;
+
+  /// No description provided for @analytics_net_pay.
+  ///
+  /// In he, this message translates to:
+  /// **'נטו'**
+  String get analytics_net_pay;
 }
 
 class _AppLocalizationsDelegate

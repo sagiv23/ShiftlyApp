@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1035,4 +1036,90 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get export_empty_error =>
       'No shifts found in the selected range for export';
+
+  @override
+  String get analytics_title => 'Analytics & Charts';
+
+  @override
+  String get analytics_period_monthly => 'Monthly';
+
+  @override
+  String get analytics_period_yearly => 'Yearly';
+
+  @override
+  String get analytics_period_all_time => 'All Time';
+
+  @override
+  String get analytics_all_jobs => 'All Jobs';
+
+  @override
+  String get analytics_stat_total_net => 'Total Net';
+
+  @override
+  String get analytics_stat_total_hours => 'Total Hours';
+
+  @override
+  String get analytics_stat_avg_rate => 'Avg Effective Rate';
+
+  @override
+  String get analytics_stat_tips => 'Total Tips';
+
+  @override
+  String get analytics_chart_earnings_title => 'Earnings Over Time';
+
+  @override
+  String get analytics_chart_earnings_subtitle =>
+      'Tap a bar to see day breakdown';
+
+  @override
+  String get analytics_chart_jobs_title => 'Breakdown by Job';
+
+  @override
+  String get analytics_chart_jobs_by_earnings => 'By Earnings';
+
+  @override
+  String get analytics_chart_jobs_by_hours => 'By Hours';
+
+  @override
+  String get analytics_chart_wage_trend_title => 'Hourly Wage Trend';
+
+  @override
+  String get analytics_chart_wage_trend_subtitle =>
+      'Comparison between base rate and actual effective rate (with tips)';
+
+  @override
+  String get analytics_chart_day_performance_title => 'Day of Week Performance';
+
+  @override
+  String get analytics_chart_best_day_msg =>
+      'Your most profitable day is [[day]] (Avg [[rate]]/h)';
+
+  @override
+  String get analytics_no_data => 'No data for selected period';
+
+  @override
+  String get analytics_selected_breakdown => 'Selected Day Details';
+
+  @override
+  String get analytics_base_salary => 'Base Pay';
+
+  @override
+  String get analytics_chart_cumulative_title => 'Cumulative Earnings Growth';
+
+  @override
+  String get analytics_chart_cumulative_subtitle =>
+      'Shows how pay accumulates day-by-day over the period';
+
+  @override
+  String get analytics_chart_tips_trend_title => 'Tips & Special Incomes Trend';
+
+  @override
+  String get analytics_chart_tips_trend_subtitle =>
+      'Tracking tips and bonuses earned in each shift';
+
+  @override
+  String get analytics_gross_pay => 'Gross';
+
+  @override
+  String get analytics_net_pay => 'Net';
 }

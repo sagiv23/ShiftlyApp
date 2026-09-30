@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1028,4 +1029,90 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get export_empty_error => 'אין משמרות בטווח הנבחר לייצוא';
+
+  @override
+  String get analytics_title => 'אנליטיקה וגרפים';
+
+  @override
+  String get analytics_period_monthly => 'חודשי';
+
+  @override
+  String get analytics_period_yearly => 'שנתי';
+
+  @override
+  String get analytics_period_all_time => 'כל הזמנים';
+
+  @override
+  String get analytics_all_jobs => 'כל התפקידים';
+
+  @override
+  String get analytics_stat_total_net => 'סה\"כ נטו';
+
+  @override
+  String get analytics_stat_total_hours => 'סה\"כ שעות';
+
+  @override
+  String get analytics_stat_avg_rate => 'שכר שעתי אפקטיבי';
+
+  @override
+  String get analytics_stat_tips => 'סה\"כ טיפים';
+
+  @override
+  String get analytics_chart_earnings_title => 'הכנסות לפי זמן';
+
+  @override
+  String get analytics_chart_earnings_subtitle =>
+      'לחץ על עמודה לצפייה בפירוט משמרת';
+
+  @override
+  String get analytics_chart_jobs_title => 'פילוח לפי תפקיד';
+
+  @override
+  String get analytics_chart_jobs_by_earnings => 'לפי שכר (₪)';
+
+  @override
+  String get analytics_chart_jobs_by_hours => 'לפי שעות';
+
+  @override
+  String get analytics_chart_wage_trend_title => 'מגמת שכר שעתי';
+
+  @override
+  String get analytics_chart_wage_trend_subtitle =>
+      'השוואה בין שכר הבסיס לשכר השעתי בפועל (כולל טיפים)';
+
+  @override
+  String get analytics_chart_day_performance_title => 'ביצועים לפי ימי השבוע';
+
+  @override
+  String get analytics_chart_best_day_msg =>
+      'היום המשתלם ביותר שלך הוא [[day]] (ממוצע [[rate]] לשעה)';
+
+  @override
+  String get analytics_no_data => 'אין נתונים לתקופה הנבחרת';
+
+  @override
+  String get analytics_selected_breakdown => 'פירוט יום נבחר';
+
+  @override
+  String get analytics_base_salary => 'שכר בסיס';
+
+  @override
+  String get analytics_chart_cumulative_title => 'צמיחת הכנסה מצטברת';
+
+  @override
+  String get analytics_chart_cumulative_subtitle =>
+      'מראה כיצד השכר הצטבר יום אחר יום לאורך התקופה';
+
+  @override
+  String get analytics_chart_tips_trend_title => 'מגמת טיפים והכנסות מיוחדות';
+
+  @override
+  String get analytics_chart_tips_trend_subtitle =>
+      'מעקב אחר גובה הטיפים וההכנסות שנתקבלו בכל משמרת';
+
+  @override
+  String get analytics_gross_pay => 'ברוטו';
+
+  @override
+  String get analytics_net_pay => 'נטו';
 }
