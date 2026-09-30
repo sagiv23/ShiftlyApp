@@ -96,52 +96,92 @@ class AdaptiveScaffold extends StatelessWidget {
       ),
     ];
 
+    final topCenteredNav = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _TopNavButton(
+          label: l.common_app_name,
+          icon: Icons.home_rounded,
+          isSelected: currentIndex == 0,
+          onTap: () => _onItemTapped(context, 0),
+        ),
+        const SizedBox(width: 6),
+        _TopNavButton(
+          label: l.home_action_calendar,
+          icon: Icons.calendar_month_rounded,
+          isSelected: currentIndex == 1,
+          onTap: () => _onItemTapped(context, 1),
+        ),
+        const SizedBox(width: 6),
+        _TopNavButton(
+          label: l.expenses_title,
+          icon: Icons.receipt_long_rounded,
+          isSelected: currentIndex == 2,
+          onTap: () => _onItemTapped(context, 2),
+        ),
+        const SizedBox(width: 6),
+        _TopNavButton(
+          label: l.settings_title,
+          icon: Icons.settings_outlined,
+          isSelected: currentIndex == 3,
+          onTap: () => _onItemTapped(context, 3),
+        ),
+      ],
+    );
+
+    PreferredSizeWidget? desktopBottomHeader;
+    if (isDesktopOrWide) {
+      final headerWidget = titleWidget ??
+          (title != null
+              ? Text(
+                  title!,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                )
+              : null);
+
+      if (bottom != null) {
+        desktopBottomHeader = bottom;
+      } else if (headerWidget != null) {
+        desktopBottomHeader = PreferredSize(
+          preferredSize: const Size.fromHeight(40),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Center(child: headerWidget),
+          ),
+        );
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title:
-            titleWidget ??
-            (title != null ? Text(title!) : Text(l.common_app_name)),
-        bottom: bottom,
-        actions: [
-          ...?actions,
-          // If wide screen, also show top navigation buttons
-          if (isDesktopOrWide) ...[
-            const VerticalDivider(indent: 12, endIndent: 12, width: 20),
-            TextButton.icon(
-              onPressed: () => _onItemTapped(context, 0),
-              icon: const Icon(Icons.home_rounded),
-              label: Text(l.common_app_name),
-              style: TextButton.styleFrom(
-                foregroundColor: currentIndex == 0 ? AppTheme.primary : null,
-              ),
-            ),
-            TextButton.icon(
-              onPressed: () => _onItemTapped(context, 1),
-              icon: const Icon(Icons.calendar_month_rounded),
-              label: Text(l.home_action_calendar),
-              style: TextButton.styleFrom(
-                foregroundColor: currentIndex == 1 ? AppTheme.primary : null,
-              ),
-            ),
-            TextButton.icon(
-              onPressed: () => _onItemTapped(context, 2),
-              icon: const Icon(Icons.receipt_long_rounded),
-              label: Text(l.expenses_title),
-              style: TextButton.styleFrom(
-                foregroundColor: currentIndex == 2 ? AppTheme.primary : null,
-              ),
-            ),
-            TextButton.icon(
-              onPressed: () => _onItemTapped(context, 3),
-              icon: const Icon(Icons.settings_outlined),
-              label: Text(l.settings_title),
-              style: TextButton.styleFrom(
-                foregroundColor: currentIndex == 3 ? AppTheme.primary : null,
-              ),
-            ),
-            const SizedBox(width: 8),
-          ],
-        ],
+        centerTitle: true,
+        leading: isDesktopOrWide
+            ? Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      'assets/icon/app_icon.png',
+                      width: 32,
+                      height: 32,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.access_time_filled_rounded),
+                    ),
+                  ),
+                ),
+              )
+            : null,
+        title: isDesktopOrWide
+            ? topCenteredNav
+            : (titleWidget ??
+                (title != null ? Text(title!) : Text(l.common_app_name))),
+        bottom: isDesktopOrWide ? desktopBottomHeader : bottom,
+        actions: actions,
       ),
       // Side menu drawer for mobile or when desktop screen is shrunk below 768px
       drawer: isDesktopOrWide
@@ -167,15 +207,17 @@ class AdaptiveScaffold extends StatelessWidget {
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) =>
                                 const Icon(
-                                  Icons.access_time_filled_rounded,
-                                  size: 48,
-                                ),
+                              Icons.access_time_filled_rounded,
+                              size: 48,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 12),
                         Text(
                           l.common_app_name,
-                          style: Theme.of(context).textTheme.titleLarge
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -254,6 +296,59 @@ class AdaptiveScaffold extends StatelessWidget {
             ),
       floatingActionButton: floatingActionButton,
       floatingActionButtonLocation: floatingActionButtonLocation,
+    );
+  }
+}
+
+class _TopNavButton extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _TopNavButton({
+    required this.label,
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primary = AppTheme.primary;
+
+    return Material(
+      color: isSelected ? primary.withValues(alpha: 0.15) : Colors.transparent,
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 18,
+                color: isSelected
+                    ? primary
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  color: isSelected ? primary : theme.colorScheme.onSurface,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
