@@ -2057,7 +2057,7 @@ abstract class AppLocalizations {
   /// No description provided for @analytics_title.
   ///
   /// In he, this message translates to:
-  /// **'אנליטיקה וגרפים'**
+  /// **'אנליטיקה ותובנות חכמות'**
   String get analytics_title;
 
   /// No description provided for @analytics_period_monthly.
@@ -2105,7 +2105,7 @@ abstract class AppLocalizations {
   /// No description provided for @analytics_stat_tips.
   ///
   /// In he, this message translates to:
-  /// **'סה\"כ טיפים'**
+  /// **'תוספות וניכויים (נטו)'**
   String get analytics_stat_tips;
 
   /// No description provided for @analytics_chart_earnings_title.
@@ -2147,20 +2147,8 @@ abstract class AppLocalizations {
   /// No description provided for @analytics_chart_wage_trend_subtitle.
   ///
   /// In he, this message translates to:
-  /// **'השוואה בין שכר הבסיס לשכר השעתי בפועל (כולל טיפים)'**
+  /// **'השוואה בין שכר הבסיס לשכר השעתי בפועל (כולל טיפים והכנסות נטו)'**
   String get analytics_chart_wage_trend_subtitle;
-
-  /// No description provided for @analytics_chart_day_performance_title.
-  ///
-  /// In he, this message translates to:
-  /// **'ביצועים לפי ימי השבוע'**
-  String get analytics_chart_day_performance_title;
-
-  /// No description provided for @analytics_chart_best_day_msg.
-  ///
-  /// In he, this message translates to:
-  /// **'היום המשתלם ביותר שלך הוא [[day]] (ממוצע [[rate]] לשעה)'**
-  String get analytics_chart_best_day_msg;
 
   /// No description provided for @analytics_no_data.
   ///
@@ -2173,6 +2161,12 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'פירוט יום נבחר'**
   String get analytics_selected_breakdown;
+
+  /// No description provided for @analytics_selected_month_breakdown.
+  ///
+  /// In he, this message translates to:
+  /// **'פירוט חודש נבחר'**
+  String get analytics_selected_month_breakdown;
 
   /// No description provided for @analytics_base_salary.
   ///
@@ -2189,19 +2183,19 @@ abstract class AppLocalizations {
   /// No description provided for @analytics_chart_cumulative_subtitle.
   ///
   /// In he, this message translates to:
-  /// **'מראה כיצד השכר הצטבר יום אחר יום לאורך התקופה'**
+  /// **'גרירה ימינה ושמאלה לצפייה בצמיחת השכר לאורך הזמן'**
   String get analytics_chart_cumulative_subtitle;
 
   /// No description provided for @analytics_chart_tips_trend_title.
   ///
   /// In he, this message translates to:
-  /// **'מגמת טיפים והכנסות מיוחדות'**
+  /// **'מגמת תוספות וניכויים נטו'**
   String get analytics_chart_tips_trend_title;
 
   /// No description provided for @analytics_chart_tips_trend_subtitle.
   ///
   /// In he, this message translates to:
-  /// **'מעקב אחר גובה הטיפים וההכנסות שנתקבלו בכל משמרת'**
+  /// **'מעקב אחר טיפים והכנסות מיוחדות בקיזוז הוצאות בכל משמרת'**
   String get analytics_chart_tips_trend_subtitle;
 
   /// No description provided for @analytics_gross_pay.
@@ -2215,6 +2209,132 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'נטו'**
   String get analytics_net_pay;
+
+  /// No description provided for @analytics_kpi_projected.
+  ///
+  /// In he, this message translates to:
+  /// **'תחזית לסוף החודש'**
+  String get analytics_kpi_projected;
+
+  /// No description provided for @analytics_kpi_retention.
+  ///
+  /// In he, this message translates to:
+  /// **'שיעור שמירת הכנסה'**
+  String get analytics_kpi_retention;
+
+  /// No description provided for @analytics_kpi_tip_yield.
+  ///
+  /// In he, this message translates to:
+  /// **'תשואת טיפים לשעה'**
+  String get analytics_kpi_tip_yield;
+
+  /// No description provided for @analytics_kpi_boost.
+  ///
+  /// In he, this message translates to:
+  /// **'תוספת לשעת עבודה'**
+  String get analytics_kpi_boost;
+
+  /// No description provided for @analytics_chart_pace_title.
+  ///
+  /// In he, this message translates to:
+  /// **'קצב הכנסה ותחזית חודשית'**
+  String get analytics_chart_pace_title;
+
+  /// No description provided for @analytics_chart_pace_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'השוואה בין קצב ההכנסה בפועל לתחזית לסוף החודש'**
+  String get analytics_chart_pace_subtitle;
+
+  /// No description provided for @analytics_chart_tod_title.
+  ///
+  /// In he, this message translates to:
+  /// **'פילוח לפי שעות היממה'**
+  String get analytics_chart_tod_title;
+
+  /// No description provided for @analytics_chart_tod_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'השוואת שכר ושעות בין משמרות בוקר, ערב ולילה'**
+  String get analytics_chart_tod_subtitle;
+
+  /// No description provided for @analytics_chart_tod_morning.
+  ///
+  /// In he, this message translates to:
+  /// **'בוקר (06:00-14:00)'**
+  String get analytics_chart_tod_morning;
+
+  /// No description provided for @analytics_chart_tod_evening.
+  ///
+  /// In he, this message translates to:
+  /// **'ערב (14:00-20:00)'**
+  String get analytics_chart_tod_evening;
+
+  /// No description provided for @analytics_chart_tod_night.
+  ///
+  /// In he, this message translates to:
+  /// **'לילה (20:00-06:00)'**
+  String get analytics_chart_tod_night;
+
+  /// No description provided for @analytics_chart_duration_title.
+  ///
+  /// In he, this message translates to:
+  /// **'התפלגות אורך משמרות ועומס'**
+  String get analytics_chart_duration_title;
+
+  /// No description provided for @analytics_chart_duration_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'חלוקה לפי אורך המשמרות (קצרות, רגילות, ארוכות)'**
+  String get analytics_chart_duration_subtitle;
+
+  /// No description provided for @analytics_duration_short.
+  ///
+  /// In he, this message translates to:
+  /// **'קצרות (<6 שעות)'**
+  String get analytics_duration_short;
+
+  /// No description provided for @analytics_duration_standard.
+  ///
+  /// In he, this message translates to:
+  /// **'רגילות (6-9 שעות)'**
+  String get analytics_duration_standard;
+
+  /// No description provided for @analytics_duration_long.
+  ///
+  /// In he, this message translates to:
+  /// **'ארוכות (>9 שעות)'**
+  String get analytics_duration_long;
+
+  /// No description provided for @analytics_insights_title.
+  ///
+  /// In he, this message translates to:
+  /// **'תובנות ומגמות מרכזיות'**
+  String get analytics_insights_title;
+
+  /// No description provided for @analytics_insight_night_boost.
+  ///
+  /// In he, this message translates to:
+  /// **'משמרות לילה מניבות [[amount]] יותר לשעה ממשמרות בוקר.'**
+  String get analytics_insight_night_boost;
+
+  /// No description provided for @analytics_insight_retention.
+  ///
+  /// In he, this message translates to:
+  /// **'הנך שומר על [[percent]]% מההכנסה שלך לאחר ניכוי הוצאות משמרת.'**
+  String get analytics_insight_retention;
+
+  /// No description provided for @analytics_insight_fatigue.
+  ///
+  /// In he, this message translates to:
+  /// **'[[percent]]% מהמשמרות שלך היו משמרות ארוכות (מעל 9 שעות).'**
+  String get analytics_insight_fatigue;
+
+  /// No description provided for @analytics_insight_tips_ratio.
+  ///
+  /// In he, this message translates to:
+  /// **'הטיפים מהווים [[percent]]% מסך ההכנסות שלך.'**
+  String get analytics_insight_tips_ratio;
 }
 
 class _AppLocalizationsDelegate

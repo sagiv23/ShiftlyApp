@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1031,7 +1030,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get export_empty_error => 'אין משמרות בטווח הנבחר לייצוא';
 
   @override
-  String get analytics_title => 'אנליטיקה וגרפים';
+  String get analytics_title => 'אנליטיקה ותובנות חכמות';
 
   @override
   String get analytics_period_monthly => 'חודשי';
@@ -1055,7 +1054,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get analytics_stat_avg_rate => 'שכר שעתי אפקטיבי';
 
   @override
-  String get analytics_stat_tips => 'סה\"כ טיפים';
+  String get analytics_stat_tips => 'תוספות וניכויים (נטו)';
 
   @override
   String get analytics_chart_earnings_title => 'הכנסות לפי זמן';
@@ -1078,20 +1077,16 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get analytics_chart_wage_trend_subtitle =>
-      'השוואה בין שכר הבסיס לשכר השעתי בפועל (כולל טיפים)';
-
-  @override
-  String get analytics_chart_day_performance_title => 'ביצועים לפי ימי השבוע';
-
-  @override
-  String get analytics_chart_best_day_msg =>
-      'היום המשתלם ביותר שלך הוא [[day]] (ממוצע [[rate]] לשעה)';
+      'השוואה בין שכר הבסיס לשכר השעתי בפועל (כולל טיפים והכנסות נטו)';
 
   @override
   String get analytics_no_data => 'אין נתונים לתקופה הנבחרת';
 
   @override
   String get analytics_selected_breakdown => 'פירוט יום נבחר';
+
+  @override
+  String get analytics_selected_month_breakdown => 'פירוט חודש נבחר';
 
   @override
   String get analytics_base_salary => 'שכר בסיס';
@@ -1101,18 +1096,88 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get analytics_chart_cumulative_subtitle =>
-      'מראה כיצד השכר הצטבר יום אחר יום לאורך התקופה';
+      'גרירה ימינה ושמאלה לצפייה בצמיחת השכר לאורך הזמן';
 
   @override
-  String get analytics_chart_tips_trend_title => 'מגמת טיפים והכנסות מיוחדות';
+  String get analytics_chart_tips_trend_title => 'מגמת תוספות וניכויים נטו';
 
   @override
   String get analytics_chart_tips_trend_subtitle =>
-      'מעקב אחר גובה הטיפים וההכנסות שנתקבלו בכל משמרת';
+      'מעקב אחר טיפים והכנסות מיוחדות בקיזוז הוצאות בכל משמרת';
 
   @override
   String get analytics_gross_pay => 'ברוטו';
 
   @override
   String get analytics_net_pay => 'נטו';
+
+  @override
+  String get analytics_kpi_projected => 'תחזית לסוף החודש';
+
+  @override
+  String get analytics_kpi_retention => 'שיעור שמירת הכנסה';
+
+  @override
+  String get analytics_kpi_tip_yield => 'תשואת טיפים לשעה';
+
+  @override
+  String get analytics_kpi_boost => 'תוספת לשעת עבודה';
+
+  @override
+  String get analytics_chart_pace_title => 'קצב הכנסה ותחזית חודשית';
+
+  @override
+  String get analytics_chart_pace_subtitle =>
+      'השוואה בין קצב ההכנסה בפועל לתחזית לסוף החודש';
+
+  @override
+  String get analytics_chart_tod_title => 'פילוח לפי שעות היממה';
+
+  @override
+  String get analytics_chart_tod_subtitle =>
+      'השוואת שכר ושעות בין משמרות בוקר, ערב ולילה';
+
+  @override
+  String get analytics_chart_tod_morning => 'בוקר (06:00-14:00)';
+
+  @override
+  String get analytics_chart_tod_evening => 'ערב (14:00-20:00)';
+
+  @override
+  String get analytics_chart_tod_night => 'לילה (20:00-06:00)';
+
+  @override
+  String get analytics_chart_duration_title => 'התפלגות אורך משמרות ועומס';
+
+  @override
+  String get analytics_chart_duration_subtitle =>
+      'חלוקה לפי אורך המשמרות (קצרות, רגילות, ארוכות)';
+
+  @override
+  String get analytics_duration_short => 'קצרות (<6 שעות)';
+
+  @override
+  String get analytics_duration_standard => 'רגילות (6-9 שעות)';
+
+  @override
+  String get analytics_duration_long => 'ארוכות (>9 שעות)';
+
+  @override
+  String get analytics_insights_title => 'תובנות ומגמות מרכזיות';
+
+  @override
+  String get analytics_insight_night_boost =>
+      'משמרות לילה מניבות [[amount]] יותר לשעה ממשמרות בוקר.';
+
+  @override
+  String get analytics_insight_retention =>
+      'הנך שומר על [[percent]]% מההכנסה שלך לאחר ניכוי הוצאות משמרת.';
+
+  @override
+  String get analytics_insight_fatigue =>
+      '[[percent]]% מהמשמרות שלך היו משמרות ארוכות (מעל 9 שעות).';
+
+  @override
+  String get analytics_insight_tips_ratio =>
+      'הטיפים מהווים [[percent]]% מסך ההכנסות שלך.';
 }

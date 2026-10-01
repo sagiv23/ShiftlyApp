@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1038,7 +1037,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'No shifts found in the selected range for export';
 
   @override
-  String get analytics_title => 'Analytics & Charts';
+  String get analytics_title => 'Analytics & Smart Insights';
 
   @override
   String get analytics_period_monthly => 'Monthly';
@@ -1062,7 +1061,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analytics_stat_avg_rate => 'Avg Effective Rate';
 
   @override
-  String get analytics_stat_tips => 'Total Tips';
+  String get analytics_stat_tips => 'Net Extras & Deductions';
 
   @override
   String get analytics_chart_earnings_title => 'Earnings Over Time';
@@ -1085,20 +1084,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get analytics_chart_wage_trend_subtitle =>
-      'Comparison between base rate and actual effective rate (with tips)';
-
-  @override
-  String get analytics_chart_day_performance_title => 'Day of Week Performance';
-
-  @override
-  String get analytics_chart_best_day_msg =>
-      'Your most profitable day is [[day]] (Avg [[rate]]/h)';
+      'Comparison between base rate and actual effective rate (with net extras)';
 
   @override
   String get analytics_no_data => 'No data for selected period';
 
   @override
   String get analytics_selected_breakdown => 'Selected Day Details';
+
+  @override
+  String get analytics_selected_month_breakdown => 'Selected Month Details';
 
   @override
   String get analytics_base_salary => 'Base Pay';
@@ -1108,18 +1103,89 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get analytics_chart_cumulative_subtitle =>
-      'Shows how pay accumulates day-by-day over the period';
+      'Scroll horizontally to view pay growth over time';
 
   @override
-  String get analytics_chart_tips_trend_title => 'Tips & Special Incomes Trend';
+  String get analytics_chart_tips_trend_title => 'Net Extras Trend';
 
   @override
   String get analytics_chart_tips_trend_subtitle =>
-      'Tracking tips and bonuses earned in each shift';
+      'Tracking tips and special incomes minus shift expenses';
 
   @override
   String get analytics_gross_pay => 'Gross';
 
   @override
   String get analytics_net_pay => 'Net';
+
+  @override
+  String get analytics_kpi_projected => 'Projected EOM Pay';
+
+  @override
+  String get analytics_kpi_retention => 'Net Retention Rate';
+
+  @override
+  String get analytics_kpi_tip_yield => 'Hourly Tip Yield';
+
+  @override
+  String get analytics_kpi_boost => 'Hourly Rate Boost';
+
+  @override
+  String get analytics_chart_pace_title => 'Income Pace & Projection';
+
+  @override
+  String get analytics_chart_pace_subtitle =>
+      'Comparing actual earnings pace against projected target';
+
+  @override
+  String get analytics_chart_tod_title => 'Time of Day Breakdown';
+
+  @override
+  String get analytics_chart_tod_subtitle =>
+      'Comparing pay and hours between Morning, Evening, and Night shifts';
+
+  @override
+  String get analytics_chart_tod_morning => 'Morning (06:00-14:00)';
+
+  @override
+  String get analytics_chart_tod_evening => 'Evening (14:00-20:00)';
+
+  @override
+  String get analytics_chart_tod_night => 'Night (20:00-06:00)';
+
+  @override
+  String get analytics_chart_duration_title =>
+      'Shift Length & Fatigue Breakdown';
+
+  @override
+  String get analytics_chart_duration_subtitle =>
+      'Distribution of shift lengths (short, standard, long)';
+
+  @override
+  String get analytics_duration_short => 'Short (<6h)';
+
+  @override
+  String get analytics_duration_standard => 'Standard (6-9h)';
+
+  @override
+  String get analytics_duration_long => 'Long (>9h)';
+
+  @override
+  String get analytics_insights_title => 'Key Smart Insights';
+
+  @override
+  String get analytics_insight_night_boost =>
+      'Night shifts yield [[amount]] more per hour than morning shifts.';
+
+  @override
+  String get analytics_insight_retention =>
+      'You retain [[percent]]% of gross earnings after shift expenses.';
+
+  @override
+  String get analytics_insight_fatigue =>
+      '[[percent]]% of your shifts were longer than 9 hours.';
+
+  @override
+  String get analytics_insight_tips_ratio =>
+      'Tips make up [[percent]]% of your total earnings.';
 }

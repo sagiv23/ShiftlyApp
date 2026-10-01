@@ -401,33 +401,60 @@ class _ExpensesScreenState extends State<ExpensesScreen>
     return AdaptiveScaffold(
       currentIndex: 3,
       title: l.expenses_title,
-      bottom: TabBar(
-        controller: _tabController,
-        tabs: [
-          Tab(
-            icon: const Icon(Icons.money_off_rounded),
-            text: l.expenses_tab_expenses,
-          ),
-          Tab(
-            icon: const Icon(Icons.account_balance_wallet_rounded),
-            text: l.expenses_tab_incomes,
-          ),
-        ],
-      ),
       body: SafeArea(
         bottom: true,
-        child: TabBarView(
-          controller: _tabController,
+        child: Column(
           children: [
-            // Tab 1: Expenses
-            SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(
+            Container(
+              margin: const EdgeInsets.fromLTRB(
                 AppTheme.spaceSm,
                 AppTheme.spaceXs,
                 AppTheme.spaceSm,
-                120,
+                AppTheme.spaceXs,
               ),
-              child: Column(
+              decoration: BoxDecoration(
+                color: Theme
+                    .of(context)
+                    .cardTheme
+                    .color,
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                border: Border.all(
+                  color: Theme
+                      .of(context)
+                      .dividerColor
+                      .withValues(alpha: 0.5),
+                ),
+              ),
+              child: TabBar(
+                controller: _tabController,
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: Colors.transparent,
+                tabs: [
+                  Tab(
+                    icon: const Icon(Icons.money_off_rounded, size: 20),
+                    text: l.expenses_tab_expenses,
+                  ),
+                  Tab(
+                    icon: const Icon(
+                        Icons.account_balance_wallet_rounded, size: 20),
+                    text: l.expenses_tab_incomes,
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  // Tab 1: Expenses
+                  SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppTheme.spaceSm,
+                      AppTheme.spaceXs,
+                      AppTheme.spaceSm,
+                      120,
+                    ),
+                    child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSectionHeader(context, l.expenses_auto_section_title),
@@ -722,6 +749,9 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                 ],
               ),
             ),
+          ],
+        ),
+      ),
           ],
         ),
       ),

@@ -101,7 +101,7 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _rangeType,
+                initialValue: _rangeType,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -130,7 +130,7 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
               if (_rangeType == 'month' && monthKeys.isNotEmpty) ...[
                 const SizedBox(height: AppTheme.spaceMd),
                 DropdownButtonFormField<String>(
-                  value: _selectedMonthKey,
+                  initialValue: _selectedMonthKey,
                   decoration: InputDecoration(
                     labelText: l.export_select_month,
                     border: OutlineInputBorder(
@@ -260,6 +260,7 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                       if (filePath != 'saved') {
                         await OpenFilex.open(filePath);
                       }
+                      if (!context.mounted) return;
                       UIUtils.showSnackBar(
                         context,
                         '${l.export_success_msg} (Downloads)',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
+import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/screens/analytics_screen.dart';
 import 'package:shiftly/screens/calendar_screen.dart';
 import 'package:shiftly/screens/expenses_screen.dart';
@@ -75,6 +76,31 @@ class AdaptiveScaffold extends StatelessWidget {
     );
   }
 
+  static void _openAddShiftScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 250),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const AddShiftScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          );
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.12),
+              end: Offset.zero,
+            ).animate(curved),
+            child: FadeTransition(opacity: curved, child: child),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
@@ -104,237 +130,301 @@ class AdaptiveScaffold extends StatelessWidget {
       ),
     ];
 
-    final topCenteredNav = SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _TopNavButton(
-            label: l.common_app_name,
-            icon: Icons.home_rounded,
-            isSelected: currentIndex == 0,
-            onTap: () => _onItemTapped(context, 0),
-          ),
-          const SizedBox(width: 4),
-          _TopNavButton(
-            label: l.home_action_calendar,
-            icon: Icons.calendar_month_rounded,
-            isSelected: currentIndex == 1,
-            onTap: () => _onItemTapped(context, 1),
-          ),
-          const SizedBox(width: 4),
-          _TopNavButton(
-            label: l.analytics_title,
-            icon: Icons.bar_chart_rounded,
-            isSelected: currentIndex == 2,
-            onTap: () => _onItemTapped(context, 2),
-          ),
-          const SizedBox(width: 4),
-          _TopNavButton(
-            label: l.expenses_title,
-            icon: Icons.receipt_long_rounded,
-            isSelected: currentIndex == 3,
-            onTap: () => _onItemTapped(context, 3),
-          ),
-          const SizedBox(width: 4),
-          _TopNavButton(
-            label: l.settings_title,
-            icon: Icons.settings_outlined,
-            isSelected: currentIndex == 4,
-            onTap: () => _onItemTapped(context, 4),
-          ),
-        ],
-      ),
-    );
-
-    PreferredSizeWidget? desktopBottomHeader;
     if (isDesktopOrWide) {
-      final headerWidget =
-          titleWidget ??
-          (title != null
-              ? Text(
-                  title!,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                )
-              : null);
-
-      if (bottom != null) {
-        desktopBottomHeader = bottom;
-      } else if (headerWidget != null) {
-        desktopBottomHeader = PreferredSize(
-          preferredSize: const Size.fromHeight(40),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Center(child: headerWidget),
-          ),
-        );
-      }
+      return Scaffold(
+        body: Row(
+          children: [
+            _SideNavigationPanel(
+              currentIndex: currentIndex,
+              onSelectTab: (index) => _onItemTapped(context, index),
+              onAddShift: () => _openAddShiftScreen(context),
+            ),
+            Expanded(
+              child: Scaffold(
+                appBar: AppBar(
+                  centerTitle: true,
+                  title:
+                      titleWidget ??
+                      (title != null
+                          ? Text(
+                              title!,
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            )
+                          : Text(
+                              l.common_app_name,
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            )),
+                  bottom: bottom,
+                  actions: actions,
+                ),
+                body: Center(
+                  child: Container(
+                    constraints: const BoxConstraints(maxWidth: 1200),
+                    child: body,
+                  ),
+                ),
+                floatingActionButton: floatingActionButton,
+                floatingActionButtonLocation: floatingActionButtonLocation,
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        leading: isDesktopOrWide
-            ? Padding(
-                padding: const EdgeInsets.only(left: 16),
-                child: Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
-                      'assets/icon/app_icon.png',
-                      width: 32,
-                      height: 32,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.access_time_filled_rounded),
-                    ),
-                  ),
-                ),
-              )
-            : null,
-        title: isDesktopOrWide
-            ? topCenteredNav
-            : (titleWidget ??
-                  (title != null ? Text(title!) : Text(l.common_app_name))),
-        bottom: isDesktopOrWide ? desktopBottomHeader : bottom,
+        title:
+            titleWidget ??
+            (title != null ? Text(title!) : Text(l.common_app_name)),
+        bottom: bottom,
         actions: actions,
       ),
-      // Side menu drawer for mobile or when desktop screen is shrunk below 768px
-      drawer: isDesktopOrWide
-          ? null
-          : Drawer(
-              child: ListView(
-                padding: EdgeInsets.zero,
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
-                            'assets/icon/app_icon.png',
-                            width: 48,
-                            height: 48,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(
-                                  Icons.access_time_filled_rounded,
-                                  size: 48,
-                                ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          l.common_app_name,
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      'assets/icon/app_icon.png',
+                      width: 48,
+                      height: 48,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.access_time_filled_rounded,
+                        size: 48,
+                      ),
                     ),
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.home_rounded),
-                    title: Text(l.common_app_name),
-                    selected: currentIndex == 0,
-                    onTap: () {
-                      Navigator.pop(context);
-                      _onItemTapped(context, 0);
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.calendar_month_rounded),
-                    title: Text(l.home_action_calendar),
-                    selected: currentIndex == 1,
-                    onTap: () {
-                      Navigator.pop(context);
-                      _onItemTapped(context, 1);
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.bar_chart_rounded),
-                    title: Text(l.analytics_title),
-                    selected: currentIndex == 2,
-                    onTap: () {
-                      Navigator.pop(context);
-                      _onItemTapped(context, 2);
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.receipt_long_rounded),
-                    title: Text(l.expenses_title),
-                    selected: currentIndex == 3,
-                    onTap: () {
-                      Navigator.pop(context);
-                      _onItemTapped(context, 3);
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.download_rounded),
-                    title: Text(l.export_title),
-                    onTap: () {
-                      Navigator.pop(context);
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        useSafeArea: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) => const ExportBottomSheet(),
-                      );
-                    },
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.settings_outlined),
-                    title: Text(l.settings_title),
-                    selected: currentIndex == 4,
-                    onTap: () {
-                      Navigator.pop(context);
-                      _onItemTapped(context, 4);
-                    },
+                  const SizedBox(height: 12),
+                  Text(
+                    l.common_app_name,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
             ),
-      body: isDesktopOrWide
-          ? Center(
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 1400),
-                child: body,
-              ),
-            )
-          : body,
-      // Bottom navigation bar for mobile (< 768px)
-      bottomNavigationBar: isDesktopOrWide
-          ? null
-          : BottomNavigationBar(
-              currentIndex: currentIndex,
-              onTap: (index) => _onItemTapped(context, index),
-              type: BottomNavigationBarType.fixed,
-              items: navItems,
+            ListTile(
+              leading: const Icon(Icons.add_rounded, color: AppTheme.primary),
+              title: Text(l.home_action_new_shift),
+              onTap: () {
+                Navigator.pop(context);
+                _openAddShiftScreen(context);
+              },
             ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.home_rounded),
+              title: Text(l.common_app_name),
+              selected: currentIndex == 0,
+              onTap: () {
+                Navigator.pop(context);
+                _onItemTapped(context, 0);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.calendar_month_rounded),
+              title: Text(l.home_action_calendar),
+              selected: currentIndex == 1,
+              onTap: () {
+                Navigator.pop(context);
+                _onItemTapped(context, 1);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.bar_chart_rounded),
+              title: Text(l.analytics_title),
+              selected: currentIndex == 2,
+              onTap: () {
+                Navigator.pop(context);
+                _onItemTapped(context, 2);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.receipt_long_rounded),
+              title: Text(l.expenses_title),
+              selected: currentIndex == 3,
+              onTap: () {
+                Navigator.pop(context);
+                _onItemTapped(context, 3);
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.settings_outlined),
+              title: Text(l.settings_title),
+              selected: currentIndex == 4,
+              onTap: () {
+                Navigator.pop(context);
+                _onItemTapped(context, 4);
+              },
+            ),
+          ],
+        ),
+      ),
+      body: body,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        onTap: (index) => _onItemTapped(context, index),
+        type: BottomNavigationBarType.fixed,
+        items: navItems,
+      ),
       floatingActionButton: floatingActionButton,
       floatingActionButtonLocation: floatingActionButtonLocation,
     );
   }
 }
 
-class _TopNavButton extends StatelessWidget {
-  final String label;
+class _SideNavigationPanel extends StatelessWidget {
+  final int currentIndex;
+  final ValueChanged<int> onSelectTab;
+  final VoidCallback onAddShift;
+
+  const _SideNavigationPanel({
+    required this.currentIndex,
+    required this.onSelectTab,
+    required this.onAddShift,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      width: 240,
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        border: Border(
+          left: isDark
+              ? const BorderSide(color: AppTheme.darkBorder)
+              : const BorderSide(color: AppTheme.lightBorder),
+          right: isDark
+              ? const BorderSide(color: AppTheme.darkBorder)
+              : const BorderSide(color: AppTheme.lightBorder),
+        ),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+          // App Logo & Brand Title
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.asset(
+                    'assets/icon/app_icon.png',
+                    width: 38,
+                    height: 38,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) =>
+                        const Icon(Icons.access_time_filled_rounded, size: 38),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  l.common_app_name,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Divider(height: 1),
+          const SizedBox(height: 12),
+          // New Shift Regular Menu Item
+          _SideNavItem(
+            icon: Icons.add_rounded,
+            label: l.home_action_new_shift,
+            isSelected: false,
+            onTap: onAddShift,
+          ),
+          const SizedBox(height: 4),
+          const Divider(height: 1, indent: 16, endIndent: 16),
+          const SizedBox(height: 4),
+          // Nav items
+          _SideNavItem(
+            icon: Icons.home_rounded,
+            label: l.common_app_name,
+            isSelected: currentIndex == 0,
+            onTap: () => onSelectTab(0),
+          ),
+          _SideNavItem(
+            icon: Icons.calendar_month_rounded,
+            label: l.home_action_calendar,
+            isSelected: currentIndex == 1,
+            onTap: () => onSelectTab(1),
+          ),
+          _SideNavItem(
+            icon: Icons.bar_chart_rounded,
+            label: l.analytics_title,
+            isSelected: currentIndex == 2,
+            onTap: () => onSelectTab(2),
+          ),
+          _SideNavItem(
+            icon: Icons.receipt_long_rounded,
+            label: l.expenses_title,
+            isSelected: currentIndex == 3,
+            onTap: () => onSelectTab(3),
+          ),
+          _SideNavItem(
+            icon: Icons.settings_outlined,
+            label: l.settings_title,
+            isSelected: currentIndex == 4,
+            onTap: () => onSelectTab(4),
+          ),
+          const Spacer(),
+          const Divider(height: 1),
+          // Quick Export Action in Side Panel
+          _SideNavItem(
+            icon: Icons.download_rounded,
+            label: l.export_title,
+            isSelected: false,
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                useSafeArea: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) => const ExportBottomSheet(),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+}
+
+class _SideNavItem extends StatelessWidget {
   final IconData icon;
+  final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _TopNavButton({
-    required this.label,
+  const _SideNavItem({
     required this.icon,
+    required this.label,
     required this.isSelected,
     required this.onTap,
   });
@@ -344,34 +434,44 @@ class _TopNavButton extends StatelessWidget {
     final theme = Theme.of(context);
     final primary = AppTheme.primary;
 
-    return Material(
-      color: isSelected ? primary.withValues(alpha: 0.15) : Colors.transparent,
-      borderRadius: BorderRadius.circular(20),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                icon,
-                size: 18,
-                color: isSelected
-                    ? primary
-                    : theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                  color: isSelected ? primary : theme.colorScheme.onSurface,
-                  fontSize: 14,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Material(
+        color: isSelected
+            ? primary.withValues(alpha: 0.15)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: () {
+            onTap();
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Icon(
+                  icon,
+                  size: 22,
+                  color: isSelected
+                      ? primary
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
-              ),
-            ],
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.w500,
+                      color: isSelected ? primary : theme.colorScheme.onSurface,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
