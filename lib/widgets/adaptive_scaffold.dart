@@ -7,7 +7,6 @@ import 'package:shiftly/screens/expenses_screen.dart';
 import 'package:shiftly/screens/home_screen.dart';
 import 'package:shiftly/screens/settings_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
-import 'package:shiftly/widgets/export_bottom_sheet.dart';
 
 class AdaptiveScaffold extends StatelessWidget {
   final int currentIndex;
@@ -107,26 +106,23 @@ class AdaptiveScaffold extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktopOrWide = screenWidth >= 768;
 
+    // 4 items on mobile bottom bar so text never truncates
     final navItems = [
       BottomNavigationBarItem(
-        icon: const Icon(Icons.home_rounded),
+        icon: const Icon(Icons.home_rounded, size: 22),
         label: l.common_app_name,
       ),
       BottomNavigationBarItem(
-        icon: const Icon(Icons.calendar_month_rounded),
+        icon: const Icon(Icons.calendar_month_rounded, size: 22),
         label: l.home_action_calendar,
       ),
       BottomNavigationBarItem(
-        icon: const Icon(Icons.bar_chart_rounded),
+        icon: const Icon(Icons.bar_chart_rounded, size: 22),
         label: l.analytics_title,
       ),
       BottomNavigationBarItem(
-        icon: const Icon(Icons.receipt_long_rounded),
+        icon: const Icon(Icons.receipt_long_rounded, size: 22),
         label: l.expenses_title,
-      ),
-      BottomNavigationBarItem(
-        icon: const Icon(Icons.settings_outlined),
-        label: l.settings_title,
       ),
     ];
 
@@ -134,10 +130,21 @@ class AdaptiveScaffold extends StatelessWidget {
       return Scaffold(
         body: Row(
           children: [
-            _SideNavigationPanel(
-              currentIndex: currentIndex,
-              onSelectTab: (index) => _onItemTapped(context, index),
-              onAddShift: () => _openAddShiftScreen(context),
+            Container(
+              width: 240,
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardTheme.color,
+                border: Border(
+                  right: Theme.of(context).brightness == Brightness.dark
+                      ? const BorderSide(color: AppTheme.darkBorder)
+                      : const BorderSide(color: AppTheme.lightBorder),
+                ),
+              ),
+              child: _SideMenuContent(
+                currentIndex: currentIndex,
+                onSelectTab: (index) => _onItemTapped(context, index),
+                onAddShift: () => _openAddShiftScreen(context),
+              ),
             ),
             Expanded(
               child: Scaffold(
@@ -184,103 +191,26 @@ class AdaptiveScaffold extends StatelessWidget {
         actions: actions,
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      'assets/icon/app_icon.png',
-                      width: 48,
-                      height: 48,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                        Icons.access_time_filled_rounded,
-                        size: 48,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    l.common_app_name,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.add_rounded, color: AppTheme.primary),
-              title: Text(l.home_action_new_shift),
-              onTap: () {
-                Navigator.pop(context);
-                _openAddShiftScreen(context);
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.home_rounded),
-              title: Text(l.common_app_name),
-              selected: currentIndex == 0,
-              onTap: () {
-                Navigator.pop(context);
-                _onItemTapped(context, 0);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.calendar_month_rounded),
-              title: Text(l.home_action_calendar),
-              selected: currentIndex == 1,
-              onTap: () {
-                Navigator.pop(context);
-                _onItemTapped(context, 1);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.bar_chart_rounded),
-              title: Text(l.analytics_title),
-              selected: currentIndex == 2,
-              onTap: () {
-                Navigator.pop(context);
-                _onItemTapped(context, 2);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.receipt_long_rounded),
-              title: Text(l.expenses_title),
-              selected: currentIndex == 3,
-              onTap: () {
-                Navigator.pop(context);
-                _onItemTapped(context, 3);
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.settings_outlined),
-              title: Text(l.settings_title),
-              selected: currentIndex == 4,
-              onTap: () {
-                Navigator.pop(context);
-                _onItemTapped(context, 4);
-              },
-            ),
-          ],
+        backgroundColor: Theme.of(context).cardTheme.color,
+        child: _SideMenuContent(
+          currentIndex: currentIndex,
+          onSelectTab: (index) {
+            Navigator.pop(context);
+            _onItemTapped(context, index);
+          },
+          onAddShift: () {
+            Navigator.pop(context);
+            _openAddShiftScreen(context);
+          },
         ),
       ),
       body: body,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+        currentIndex: currentIndex > 3 ? 0 : currentIndex,
         onTap: (index) => _onItemTapped(context, index),
         type: BottomNavigationBarType.fixed,
+        selectedFontSize: 11,
+        unselectedFontSize: 11,
         items: navItems,
       ),
       floatingActionButton: floatingActionButton,
@@ -289,12 +219,12 @@ class AdaptiveScaffold extends StatelessWidget {
   }
 }
 
-class _SideNavigationPanel extends StatelessWidget {
+class _SideMenuContent extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onSelectTab;
   final VoidCallback onAddShift;
 
-  const _SideNavigationPanel({
+  const _SideMenuContent({
     required this.currentIndex,
     required this.onSelectTab,
     required this.onAddShift,
@@ -303,115 +233,86 @@ class _SideNavigationPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      width: 240,
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color,
-        border: Border(
-          left: isDark
-              ? const BorderSide(color: AppTheme.darkBorder)
-              : const BorderSide(color: AppTheme.lightBorder),
-          right: isDark
-              ? const BorderSide(color: AppTheme.darkBorder)
-              : const BorderSide(color: AppTheme.lightBorder),
+    return Column(
+      children: [
+        const SizedBox(height: 24),
+        // App Logo & Brand Title
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  'assets/icon/app_icon.png',
+                  width: 38,
+                  height: 38,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) =>
+                      const Icon(Icons.access_time_filled_rounded, size: 38),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                l.common_app_name,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      child: Column(
-        children: [
-          const SizedBox(height: 20),
-          // App Logo & Brand Title
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.asset(
-                    'assets/icon/app_icon.png',
-                    width: 38,
-                    height: 38,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) =>
-                        const Icon(Icons.access_time_filled_rounded, size: 38),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  l.common_app_name,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Divider(height: 1),
-          const SizedBox(height: 12),
-          // New Shift Regular Menu Item
-          _SideNavItem(
-            icon: Icons.add_rounded,
-            label: l.home_action_new_shift,
-            isSelected: false,
-            onTap: onAddShift,
-          ),
-          const SizedBox(height: 4),
-          const Divider(height: 1, indent: 16, endIndent: 16),
-          const SizedBox(height: 4),
-          // Nav items
-          _SideNavItem(
-            icon: Icons.home_rounded,
-            label: l.common_app_name,
-            isSelected: currentIndex == 0,
-            onTap: () => onSelectTab(0),
-          ),
-          _SideNavItem(
-            icon: Icons.calendar_month_rounded,
-            label: l.home_action_calendar,
-            isSelected: currentIndex == 1,
-            onTap: () => onSelectTab(1),
-          ),
-          _SideNavItem(
-            icon: Icons.bar_chart_rounded,
-            label: l.analytics_title,
-            isSelected: currentIndex == 2,
-            onTap: () => onSelectTab(2),
-          ),
-          _SideNavItem(
-            icon: Icons.receipt_long_rounded,
-            label: l.expenses_title,
-            isSelected: currentIndex == 3,
-            onTap: () => onSelectTab(3),
-          ),
-          _SideNavItem(
-            icon: Icons.settings_outlined,
-            label: l.settings_title,
-            isSelected: currentIndex == 4,
-            onTap: () => onSelectTab(4),
-          ),
-          const Spacer(),
-          const Divider(height: 1),
-          // Quick Export Action in Side Panel
-          _SideNavItem(
-            icon: Icons.download_rounded,
-            label: l.export_title,
-            isSelected: false,
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                useSafeArea: true,
-                backgroundColor: Colors.transparent,
-                builder: (context) => const ExportBottomSheet(),
-              );
-            },
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
+        const SizedBox(height: 20),
+        const Divider(height: 1),
+        const SizedBox(height: 12),
+        // New Shift Action Item
+        _SideNavItem(
+          icon: Icons.add_rounded,
+          label: l.home_action_new_shift,
+          isSelected: false,
+          onTap: onAddShift,
+        ),
+        const SizedBox(height: 4),
+        const Divider(height: 1, indent: 16, endIndent: 16),
+        const SizedBox(height: 4),
+        // Nav items
+        _SideNavItem(
+          icon: Icons.home_rounded,
+          label: l.common_app_name,
+          isSelected: currentIndex == 0,
+          onTap: () => onSelectTab(0),
+        ),
+        _SideNavItem(
+          icon: Icons.calendar_month_rounded,
+          label: l.home_action_calendar,
+          isSelected: currentIndex == 1,
+          onTap: () => onSelectTab(1),
+        ),
+        _SideNavItem(
+          icon: Icons.bar_chart_rounded,
+          label: l.analytics_title,
+          isSelected: currentIndex == 2,
+          onTap: () => onSelectTab(2),
+        ),
+        _SideNavItem(
+          icon: Icons.receipt_long_rounded,
+          label: l.expenses_title,
+          isSelected: currentIndex == 3,
+          onTap: () => onSelectTab(3),
+        ),
+        const Spacer(),
+        const Divider(height: 1),
+        // Settings separated at the bottom
+        _SideNavItem(
+          icon: Icons.settings_outlined,
+          label: l.settings_title,
+          isSelected: currentIndex == 4,
+          onTap: () => onSelectTab(4),
+        ),
+        const SizedBox(height: 16),
+      ],
     );
   }
 }
@@ -442,9 +343,7 @@ class _SideNavItem extends StatelessWidget {
             : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
-          onTap: () {
-            onTap();
-          },
+          onTap: onTap,
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

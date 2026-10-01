@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -424,7 +425,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get home_action_calendar => 'לוח משמרות';
 
   @override
-  String get expenses_title => 'ניהול הוצאות והכנסות';
+  String get expenses_title => 'הוצאות והכנסות';
 
   @override
   String get expenses_tab_expenses => 'הוצאות';
@@ -1030,7 +1031,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get export_empty_error => 'אין משמרות בטווח הנבחר לייצוא';
 
   @override
-  String get analytics_title => 'אנליטיקה ותובנות חכמות';
+  String get analytics_title => 'אנליטיקה ותובנות';
 
   @override
   String get analytics_period_monthly => 'חודשי';
@@ -1054,14 +1055,14 @@ class AppLocalizationsHe extends AppLocalizations {
   String get analytics_stat_avg_rate => 'שכר שעתי אפקטיבי';
 
   @override
-  String get analytics_stat_tips => 'תוספות וניכויים (נטו)';
+  String get analytics_stat_tips => 'הוצאות משמרת נטו';
 
   @override
-  String get analytics_chart_earnings_title => 'הכנסות לפי זמן';
+  String get analytics_chart_earnings_title => 'הכנסות מול הוצאות לפי זמן';
 
   @override
   String get analytics_chart_earnings_subtitle =>
-      'לחץ על עמודה לצפייה בפירוט משמרת';
+      'לחץ על עמודה לצפייה בפירוט שכר והוצאות';
 
   @override
   String get analytics_chart_jobs_title => 'פילוח לפי תפקיד';
@@ -1071,13 +1072,6 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get analytics_chart_jobs_by_hours => 'לפי שעות';
-
-  @override
-  String get analytics_chart_wage_trend_title => 'מגמת שכר שעתי';
-
-  @override
-  String get analytics_chart_wage_trend_subtitle =>
-      'השוואה בין שכר הבסיס לשכר השעתי בפועל (כולל טיפים והכנסות נטו)';
 
   @override
   String get analytics_no_data => 'אין נתונים לתקופה הנבחרת';
@@ -1099,13 +1093,6 @@ class AppLocalizationsHe extends AppLocalizations {
       'גרירה ימינה ושמאלה לצפייה בצמיחת השכר לאורך הזמן';
 
   @override
-  String get analytics_chart_tips_trend_title => 'מגמת תוספות וניכויים נטו';
-
-  @override
-  String get analytics_chart_tips_trend_subtitle =>
-      'מעקב אחר טיפים והכנסות מיוחדות בקיזוז הוצאות בכל משמרת';
-
-  @override
   String get analytics_gross_pay => 'ברוטו';
 
   @override
@@ -1118,7 +1105,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get analytics_kpi_retention => 'שיעור שמירת הכנסה';
 
   @override
-  String get analytics_kpi_tip_yield => 'תשואת טיפים לשעה';
+  String get analytics_kpi_tip_yield => 'ממוצע שעות ליום';
 
   @override
   String get analytics_kpi_boost => 'תוספת לשעת עבודה';
@@ -1135,7 +1122,7 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get analytics_chart_tod_subtitle =>
-      'השוואת שכר ושעות בין משמרות בוקר, ערב ולילה';
+      'השוואת שעות בין משמרות בוקר, ערב ולילה';
 
   @override
   String get analytics_chart_tod_morning => 'בוקר (06:00-14:00)';
@@ -1167,11 +1154,11 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get analytics_insight_night_boost =>
-      'משמרות לילה מניבות [[amount]] יותר לשעה ממשמרות בוקר.';
+      'משמרות ערב ולילה מהוות [[percent]]% מסך שעות העבודה שלך.';
 
   @override
   String get analytics_insight_retention =>
-      'הנך שומר על [[percent]]% מההכנסה שלך לאחר ניכוי הוצאות משמרת.';
+      'הנך שומר על [[percent]]% מסך השכר בברוטו לאחר ניכוי הוצאות נסיעה.';
 
   @override
   String get analytics_insight_fatigue =>
@@ -1179,5 +1166,5 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get analytics_insight_tips_ratio =>
-      'הטיפים מהווים [[percent]]% מסך ההכנסות שלך.';
+      'ההוצאות הקבועות מהוות [[percent]]% מסך ההכנסות שלך.';
 }

@@ -41,8 +41,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     setState(() {
       _selectedBarIndex = null;
       if (_periodMode == AnalyticsPeriodMode.monthly) {
-        _selectedDate =
-            DateTime(_selectedDate.year, _selectedDate.month - 1, 1);
+        _selectedDate = DateTime(
+          _selectedDate.year,
+          _selectedDate.month - 1,
+          1,
+        );
       } else if (_periodMode == AnalyticsPeriodMode.yearly) {
         _selectedDate = DateTime(_selectedDate.year - 1, 1, 1);
       }
@@ -53,8 +56,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     setState(() {
       _selectedBarIndex = null;
       if (_periodMode == AnalyticsPeriodMode.monthly) {
-        _selectedDate =
-            DateTime(_selectedDate.year, _selectedDate.month + 1, 1);
+        _selectedDate = DateTime(
+          _selectedDate.year,
+          _selectedDate.month + 1,
+          1,
+        );
       } else if (_periodMode == AnalyticsPeriodMode.yearly) {
         _selectedDate = DateTime(_selectedDate.year + 1, 1, 1);
       }
@@ -132,7 +138,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     if (_periodMode == AnalyticsPeriodMode.monthly) {
       final now = DateTime.now();
       final daysInMonth = DateUtils.getDaysInMonth(
-          _selectedDate.year, _selectedDate.month);
+        _selectedDate.year,
+        _selectedDate.month,
+      );
       if (_selectedDate.year == now.year && _selectedDate.month == now.month) {
         final daysPassed = now.day.clamp(1, daysInMonth);
         final dailyPace = grandTotalNet / daysPassed;
@@ -142,7 +150,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     // Prepare Bar Chart Data
     final barDataPoints = _generateBarDataPoints(
-        filteredShifts, shiftProvider, l);
+      filteredShifts,
+      shiftProvider,
+      l,
+    );
 
     // Selected Bar Details
     BarDataPoint? selectedPoint;
@@ -157,22 +168,24 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     // Prepare Donut Chart Data
     final donutSegments = _generateDonutSegments(
-        filteredShifts, shiftProvider, jobTypes);
+      filteredShifts,
+      shiftProvider,
+      jobTypes,
+    );
 
     // Prepare Time of Day Segments
     final todSegments = _generateTimeOfDaySegments(
-        filteredShifts, shiftProvider, l);
+      filteredShifts,
+      shiftProvider,
+      l,
+    );
 
     // Prepare Shift Duration Categories
     final durationCategories = _generateDurationCategories(
-        filteredShifts, shiftProvider, l);
-
-    // Prepare Tips Trend Data
-    final tipsTrendData = _generateTipsTrendData(filteredShifts, l);
-
-    // Prepare Hourly Wage Trend Data
-    final wageTrendData = _generateWageTrendData(
-        filteredShifts, shiftProvider, l);
+      filteredShifts,
+      shiftProvider,
+      l,
+    );
 
     // Chart Widgets
     final earningsBarCard = _buildEarningsChartCard(
@@ -192,20 +205,20 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     final todCard = todSegments.isNotEmpty
         ? _buildTimeOfDayCard(
-      context,
-      l: l,
-      symbol: symbol,
-      segments: todSegments,
-    )
+            context,
+            l: l,
+            symbol: symbol,
+            segments: todSegments,
+          )
         : null;
 
     final durationCard = durationCategories.isNotEmpty
         ? _buildDurationCard(
-      context,
-      l: l,
-      symbol: symbol,
-      categories: durationCategories,
-    )
+            context,
+            l: l,
+            symbol: symbol,
+            categories: durationCategories,
+          )
         : null;
 
     final jobDonutCard = (jobTypes.length > 1 || donutSegments.isNotEmpty)
@@ -216,24 +229,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             segments: donutSegments,
             totalNet: grandTotalNet,
             totalHours: totalNetHours,
-          )
-        : null;
-
-    final tipsTrendCard = tipsTrendData.length >= 2
-        ? _buildTipsTrendCard(
-            context,
-            l: l,
-            symbol: symbol,
-            data: tipsTrendData,
-          )
-        : null;
-
-    final wageTrendCard = wageTrendData.length >= 2
-        ? _buildWageTrendCard(
-            context,
-            l: l,
-            symbol: symbol,
-            trendData: wageTrendData,
           )
         : null;
 
@@ -324,27 +319,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   const SizedBox(height: AppTheme.spaceSm),
                 ],
 
-                // Row 3: Job Donut & Tips Trend Line Chart
-                if (jobDonutCard != null || tipsTrendCard != null) ...[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (jobDonutCard != null)
-                        Expanded(child: jobDonutCard)
-                      else
-                        const Spacer(),
-                      const SizedBox(width: AppTheme.spaceSm),
-                      if (tipsTrendCard != null)
-                        Expanded(child: tipsTrendCard)
-                      else
-                        const Spacer(),
-                    ],
-                  ),
+                // Row 3: Job Donut Card
+                if (jobDonutCard != null) ...[
+                  jobDonutCard,
                   const SizedBox(height: AppTheme.spaceSm),
                 ],
-
-                // Row 4: Hourly Wage Trend Line Chart
-                ?wageTrendCard,
               ] else ...[
                 // Mobile Stacked Cards
                 earningsBarCard,
@@ -361,14 +340,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 ],
                 if (jobDonutCard != null) ...[
                   jobDonutCard,
-                  const SizedBox(height: AppTheme.spaceSm),
-                ],
-                if (tipsTrendCard != null) ...[
-                  tipsTrendCard,
-                  const SizedBox(height: AppTheme.spaceSm),
-                ],
-                if (wageTrendCard != null) ...[
-                  wageTrendCard,
                   const SizedBox(height: AppTheme.spaceSm),
                 ],
               ],
@@ -409,7 +380,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     value: AnalyticsPeriodMode.monthly,
                     label: Text(l.analytics_period_monthly),
                     icon: const Icon(
-                        Icons.calendar_view_month_rounded, size: 18),
+                      Icons.calendar_view_month_rounded,
+                      size: 18,
+                    ),
                   ),
                   ButtonSegment(
                     value: AnalyticsPeriodMode.yearly,
@@ -441,14 +414,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     child: Center(
                       child: Text(
                         dateTitle,
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .titleMedium
+                        style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryDark,
-                        ),
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.primaryDark,
+                            ),
                       ),
                     ),
                   ),
@@ -473,18 +443,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
-                      color: Theme
-                          .of(context)
-                          .colorScheme
-                          .primary
-                          .withValues(alpha: isDark ? 0.2 : 0.08),
+                      color: Theme.of(context).colorScheme.primary.withValues(
+                        alpha: isDark ? 0.2 : 0.08,
+                      ),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: Theme
-                            .of(context)
-                            .colorScheme
-                            .primary
-                            .withValues(alpha: 0.2),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.2),
                       ),
                     ),
                     child: DropdownButton<String?>(
@@ -494,7 +460,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       hint: Text(
                         l.analytics_all_jobs,
                         style: const TextStyle(
-                            fontSize: 13, fontWeight: FontWeight.bold),
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       items: [
                         DropdownMenuItem<String?>(
@@ -540,11 +508,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     required double avgRate,
     required double totalTips,
     required int shiftCount,
-        required double projectedEom,
-        required double retentionPct,
-        required double tipYield,
-        required double rateBoost,
-        required double netExtras,
+    required double projectedEom,
+    required double retentionPct,
+    required double tipYield,
+    required double rateBoost,
+    required double netExtras,
   }) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -563,8 +531,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               title: l.analytics_stat_total_net,
               value: UIUtils.formatCurrency(totalNet, symbol: symbol),
               subtitle: _periodMode == AnalyticsPeriodMode.monthly
-                  ? '${l.analytics_kpi_projected}: ${UIUtils.formatCurrency(
-                  projectedEom, symbol: symbol)}'
+                  ? '${l.analytics_kpi_projected}: ${UIUtils.formatCurrency(projectedEom, symbol: symbol)}'
                   : '$shiftCount ${l.common_shifts_count}',
               icon: Icons.account_balance_wallet_rounded,
               gradientColors: const [Color(0xFF6366F1), Color(0xFF4F46E5)],
@@ -574,8 +541,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               title: l.analytics_stat_avg_rate,
               value: UIUtils.formatCurrency(avgRate, symbol: symbol),
               subtitle: rateBoost > 0
-                  ? '+${UIUtils.formatCurrency(
-                  rateBoost, symbol: symbol)}/ש\' תוספות נטו'
+                  ? '+${UIUtils.formatCurrency(rateBoost, symbol: symbol)}/ש\' תוספות נטו'
                   : 'שכר בסיס',
               icon: Icons.trending_up_rounded,
               gradientColors: const [Color(0xFF10B981), Color(0xFF059669)],
@@ -593,8 +559,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               title: l.analytics_stat_tips,
               value: UIUtils.formatCurrency(netExtras, symbol: symbol),
               subtitle: totalNet > 0
-                  ? '${((netExtras / totalNet) * 100).toStringAsFixed(
-                  0)}% מסך השכר נטו'
+                  ? '${((netExtras / totalNet) * 100).toStringAsFixed(0)}% מסך השכר נטו'
                   : '0%',
               icon: Icons.payments_rounded,
               gradientColors: const [Color(0xFFEC4899), Color(0xFFD97706)],
@@ -606,7 +571,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
   }
 
-  Widget _buildSmartInsightsCard(BuildContext context, {
+  Widget _buildSmartInsightsCard(
+    BuildContext context, {
     required AppLocalizations l,
     required String symbol,
     required double retentionPct,
@@ -624,33 +590,39 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       totalTodHours += s.hours;
     }
     if (totalTodHours > 0) {
-      final nightAndEvening = todSegments.where((s) =>
-      !s.name.contains('בוקר') && !s.name.contains('Morning')).fold<double>(
-          0, (sum, s) => sum + s.hours);
+      final nightAndEvening = todSegments
+          .where((s) => !s.name.contains('בוקר') && !s.name.contains('Morning'))
+          .fold<double>(0, (sum, s) => sum + s.hours);
       final eveningPct = (nightAndEvening / totalTodHours * 100).round();
       if (eveningPct > 20) {
         insights.add(
-            '$eveningPct% מסך שעות העבודה שלך התבצעו במשמרות ערב ולילה.');
+          '$eveningPct% מסך שעות העבודה שלך התבצעו במשמרות ערב ולילה.',
+        );
       }
     }
 
     // Insight 2: Retention
     if (retentionPct < 100 && retentionPct > 0) {
-      insights.add(l.analytics_insight_retention.replaceFirst(
-          '[[percent]]', retentionPct.toStringAsFixed(1)));
+      insights.add(
+        l.analytics_insight_retention.replaceFirst(
+          '[[percent]]',
+          retentionPct.toStringAsFixed(1),
+        ),
+      );
     }
 
     // Insight 3: Long shift fatigue
     final longCategory = durationCategories.firstWhere(
-          (c) => c.label.contains('ארוכות') || c.label.contains('Long'),
-      orElse: () =>
-      const ShiftDurationCategory(label: '',
-          durationRange: '',
-          count: 0,
-          hours: 0,
-          avgEarnings: 0,
-          color: Colors.transparent,
-          icon: Icons.timer),
+      (c) => c.label.contains('ארוכות') || c.label.contains('Long'),
+      orElse: () => const ShiftDurationCategory(
+        label: '',
+        durationRange: '',
+        count: 0,
+        hours: 0,
+        avgEarnings: 0,
+        color: Colors.transparent,
+        icon: Icons.timer,
+      ),
     );
     int totalCount = 0;
     for (var c in durationCategories) {
@@ -659,8 +631,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     if (totalCount > 0 && longCategory.count > 0) {
       final longPct = (longCategory.count / totalCount * 100).round();
       if (longPct >= 15) {
-        insights.add(l.analytics_insight_fatigue.replaceFirst(
-            '[[percent]]', '$longPct'));
+        insights.add(
+          l.analytics_insight_fatigue.replaceFirst('[[percent]]', '$longPct'),
+        );
       }
     }
 
@@ -668,8 +641,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     if (totalNet > 0 && totalTips > 0) {
       final tipsPct = ((totalTips / totalNet) * 100).round();
       if (tipsPct > 5) {
-        insights.add(l.analytics_insight_tips_ratio.replaceFirst(
-            '[[percent]]', '$tipsPct'));
+        insights.add(
+          l.analytics_insight_tips_ratio.replaceFirst(
+            '[[percent]]',
+            '$tipsPct',
+          ),
+        );
       }
     }
 
@@ -685,7 +662,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             Row(
               children: [
                 const Icon(
-                    Icons.auto_awesome_rounded, color: Colors.amber, size: 20),
+                  Icons.auto_awesome_rounded,
+                  color: Colors.amber,
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   l.analytics_insights_title,
@@ -704,8 +684,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('• ', style: TextStyle(
-                        fontWeight: FontWeight.bold, color: AppTheme.primary)),
+                    const Text(
+                      '• ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primary,
+                      ),
+                    ),
                     Expanded(
                       child: Text(
                         text,
@@ -722,7 +707,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
   }
 
-  Widget _buildTimeOfDayCard(BuildContext context, {
+  Widget _buildTimeOfDayCard(
+    BuildContext context, {
     required AppLocalizations l,
     required String symbol,
     required List<TimeOfDaySegment> segments,
@@ -735,34 +721,25 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           children: [
             Text(
               l.analytics_chart_tod_title,
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             Text(
               l.analytics_chart_tod_subtitle,
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .bodySmall,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: AppTheme.spaceSm),
 
-            TimeOfDayChartWidget(
-              segments: segments,
-              currencySymbol: symbol,
-            ),
+            TimeOfDayChartWidget(segments: segments, currencySymbol: symbol),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDurationCard(BuildContext context, {
+  Widget _buildDurationCard(
+    BuildContext context, {
     required AppLocalizations l,
     required String symbol,
     required List<ShiftDurationCategory> categories,
@@ -775,20 +752,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           children: [
             Text(
               l.analytics_chart_duration_title,
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             Text(
               l.analytics_chart_duration_subtitle,
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .bodySmall,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: AppTheme.spaceSm),
 
@@ -824,13 +794,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     children: [
                       Text(
                         l.analytics_chart_earnings_title,
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(
                         l.analytics_chart_earnings_subtitle,
@@ -897,13 +862,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     children: [
                       Text(
                         l.analytics_chart_cumulative_title,
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(
                         l.analytics_chart_cumulative_subtitle,
@@ -914,11 +874,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 ),
                 Row(
                   children: [
-                    _LegendDot(color: const Color(0xFF6366F1),
-                        label: l.analytics_gross_pay),
+                    _LegendDot(
+                      color: const Color(0xFF6366F1),
+                      label: l.analytics_gross_pay,
+                    ),
                     const SizedBox(width: 8),
-                    _LegendDot(color: const Color(0xFF10B981),
-                        label: l.analytics_net_pay),
+                    _LegendDot(
+                      color: const Color(0xFF10B981),
+                      label: l.analytics_net_pay,
+                    ),
                   ],
                 ),
               ],
@@ -973,13 +937,17 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   segments: [
                     ButtonSegment(
                       value: true,
-                      label: Text(l.analytics_chart_jobs_by_earnings,
-                          style: const TextStyle(fontSize: 11)),
+                      label: Text(
+                        l.analytics_chart_jobs_by_earnings,
+                        style: const TextStyle(fontSize: 11),
+                      ),
                     ),
                     ButtonSegment(
                       value: false,
-                      label: Text(l.analytics_chart_jobs_by_hours,
-                          style: const TextStyle(fontSize: 11)),
+                      label: Text(
+                        l.analytics_chart_jobs_by_hours,
+                        style: const TextStyle(fontSize: 11),
+                      ),
                     ),
                   ],
                   selected: {_byEarningsForJobs},
@@ -1033,7 +1001,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                             Text(
                               _byEarningsForJobs
                                   ? UIUtils.formatCurrency(
-                                  seg.amount, symbol: symbol)
+                                      seg.amount,
+                                      symbol: symbol,
+                                    )
                                   : '${seg.hours.toStringAsFixed(1)} ש\'',
                               style: const TextStyle(
                                 fontSize: 12,
@@ -1062,84 +1032,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
   }
 
-  Widget _buildTipsTrendCard(
-    BuildContext context, {
-    required AppLocalizations l,
-    required String symbol,
-    required List<TipsTrendData> data,
-  }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spaceSm),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l.analytics_chart_tips_trend_title,
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              l.analytics_chart_tips_trend_subtitle,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: AppTheme.spaceSm),
-
-            TipsTrendLineChartWidget(
-              data: data,
-              currencySymbol: symbol,
-              height: 180,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWageTrendCard(
-    BuildContext context, {
-    required AppLocalizations l,
-    required String symbol,
-    required List<HourlyWageTrendData> trendData,
-  }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spaceSm),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l.analytics_chart_wage_trend_title,
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              l.analytics_chart_wage_trend_subtitle,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: AppTheme.spaceSm),
-
-            HourlyWageLineChartWidget(
-              data: trendData,
-              currencySymbol: symbol,
-              height: 180,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   // --- Helper Data Generators ---
 
   List<BarDataPoint> _generateBarDataPoints(
@@ -1151,7 +1043,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     if (_periodMode == AnalyticsPeriodMode.monthly) {
       final daysInMonth = DateUtils.getDaysInMonth(
-          _selectedDate.year, _selectedDate.month);
+        _selectedDate.year,
+        _selectedDate.month,
+      );
       for (int d = 1; d <= daysInMonth; d++) {
         grouped[d.toString()] = [];
       }
@@ -1273,7 +1167,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }
 
   List<CumulativeGrowthData> _generateCumulativeData(
-      List<BarDataPoint> barPoints) {
+    List<BarDataPoint> barPoints,
+  ) {
     double runningGross = 0;
     double runningNet = 0;
     final list = <CumulativeGrowthData>[];
@@ -1361,9 +1256,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     return segments;
   }
 
-  List<TimeOfDaySegment> _generateTimeOfDaySegments(List<Shift> shifts,
-      ShiftProvider shiftProvider,
-      AppLocalizations l,) {
+  List<TimeOfDaySegment> _generateTimeOfDaySegments(
+    List<Shift> shifts,
+    ShiftProvider shiftProvider,
+    AppLocalizations l,
+  ) {
     double morningMinutes = 0;
     double eveningMinutes = 0;
     double nightMinutes = 0;
@@ -1374,10 +1271,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           ? s.endTime.add(const Duration(days: 1))
           : s.endTime;
 
-      final totalShiftMins = end
-          .difference(s.startTime)
-          .inMinutes
-          .toDouble();
+      final totalShiftMins = end.difference(s.startTime).inMinutes.toDouble();
       if (totalShiftMins <= 0) continue;
 
       double unpaidBreakRatio = 1.0;
@@ -1391,9 +1285,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         }
       }
 
-      int mCount = 0,
-          eCount = 0,
-          nCount = 0;
+      int mCount = 0, eCount = 0, nCount = 0;
       while (current.isBefore(end)) {
         final hour = current.hour;
         if (hour >= 6 && hour < 14) {
@@ -1443,18 +1335,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     ];
   }
 
-  List<ShiftDurationCategory> _generateDurationCategories(List<Shift> shifts,
-      ShiftProvider shiftProvider,
-      AppLocalizations l,) {
-    int shortCount = 0,
-        stdCount = 0,
-        longCount = 0;
-    double shortHours = 0,
-        stdHours = 0,
-        longHours = 0;
-    double shortPay = 0,
-        stdPay = 0,
-        longPay = 0;
+  List<ShiftDurationCategory> _generateDurationCategories(
+    List<Shift> shifts,
+    ShiftProvider shiftProvider,
+    AppLocalizations l,
+  ) {
+    int shortCount = 0, stdCount = 0, longCount = 0;
+    double shortHours = 0, stdHours = 0, longHours = 0;
+    double shortPay = 0, stdPay = 0, longPay = 0;
 
     for (var s in shifts) {
       final job = shiftProvider.getJobTypeById(s.jobTypeId);
@@ -1509,58 +1397,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       ),
     ];
   }
-
-  List<TipsTrendData> _generateTipsTrendData(
-    List<Shift> shifts,
-    AppLocalizations l,
-  ) {
-    final sorted = List<Shift>.from(shifts)
-      ..sort((a, b) => a.date.compareTo(b.date));
-
-    final list = <TipsTrendData>[];
-    for (var s in sorted) {
-      if (s.tips <= 0 && s.totalAutomaticIncomes <= 0 &&
-          s.totalAutomaticExpenses <= 0) continue;
-      list.add(
-        TipsTrendData(
-          date: s.date,
-          label: DateFormat('dd/MM').format(s.date),
-          tips: s.tips,
-          extraIncomes: s.totalAutomaticIncomes,
-          expenses: s.totalAutomaticExpenses,
-        ),
-      );
-    }
-    return list;
-  }
-
-  List<HourlyWageTrendData> _generateWageTrendData(
-    List<Shift> shifts,
-    ShiftProvider shiftProvider,
-    AppLocalizations l,
-  ) {
-    final sorted = List<Shift>.from(shifts)
-      ..sort((a, b) => a.date.compareTo(b.date));
-
-    final list = <HourlyWageTrendData>[];
-    for (var s in sorted) {
-      if (s.netHours <= 0) continue;
-      final job = shiftProvider.getJobTypeById(s.jobTypeId);
-      final base = s.hourlyRate ?? job?.getRateForDate(s.date) ?? 40.22;
-      final totalPay = s.calculateTotalPay(base);
-      final effective = totalPay / s.netHours;
-
-      list.add(
-        HourlyWageTrendData(
-          date: s.date,
-          label: DateFormat('dd/MM').format(s.date),
-          effectiveRate: effective,
-          baseRate: base,
-        ),
-      );
-    }
-    return list;
-  }
 }
 
 class _KpiCard extends StatelessWidget {
@@ -1613,11 +1449,9 @@ class _KpiCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Theme
-                        .of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.75),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.75),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -1655,11 +1489,9 @@ class _KpiCard extends StatelessWidget {
             subtitle,
             style: TextStyle(
               fontSize: 10,
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.55),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.55),
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -1721,7 +1553,9 @@ class _SelectedPointDetailsCard extends StatelessWidget {
               Text(
                 '${point.netHours.toStringAsFixed(1)} שעות',
                 style: const TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 13),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
               ),
             ],
           ),
@@ -1742,7 +1576,9 @@ class _SelectedPointDetailsCard extends StatelessWidget {
               _DetailSubItem(
                 label: l.analytics_stat_avg_rate,
                 value: UIUtils.formatCurrency(
-                    point.effectiveHourlyRate, symbol: symbol),
+                  point.effectiveHourlyRate,
+                  symbol: symbol,
+                ),
                 isBold: true,
               ),
               _DetailSubItem(
@@ -1776,10 +1612,7 @@ class _DetailSubItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 11, color: Colors.grey),
-        ),
+        Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
         const SizedBox(height: 2),
         Text(
           value,
@@ -1812,10 +1645,7 @@ class _LegendDot extends StatelessWidget {
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 4),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 10, color: Colors.grey),
-        ),
+        Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
       ],
     );
   }

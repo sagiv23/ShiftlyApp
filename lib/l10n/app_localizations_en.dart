@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -944,7 +945,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings_byos_login_shiftly_sub => 'Full sync in our cloud';
 
   @override
-  String get settings_byos_method_title => 'BYOS Method (Google Drive)';
+  String get settings_byos_method_title => 'שיטת BYOS (Google Drive)';
 
   @override
   String get settings_byos_method_sub => 'Backup to your private cloud';
@@ -1037,7 +1038,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'No shifts found in the selected range for export';
 
   @override
-  String get analytics_title => 'Analytics & Smart Insights';
+  String get analytics_title => 'Analytics & Insights';
 
   @override
   String get analytics_period_monthly => 'Monthly';
@@ -1061,14 +1062,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analytics_stat_avg_rate => 'Avg Effective Rate';
 
   @override
-  String get analytics_stat_tips => 'Net Extras & Deductions';
+  String get analytics_stat_tips => 'Net Shift Expenses';
 
   @override
-  String get analytics_chart_earnings_title => 'Earnings Over Time';
+  String get analytics_chart_earnings_title => 'Earnings vs Expenses Over Time';
 
   @override
   String get analytics_chart_earnings_subtitle =>
-      'Tap a bar to see day breakdown';
+      'Tap a bar to see pay and expense breakdown';
 
   @override
   String get analytics_chart_jobs_title => 'Breakdown by Job';
@@ -1078,13 +1079,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get analytics_chart_jobs_by_hours => 'By Hours';
-
-  @override
-  String get analytics_chart_wage_trend_title => 'Hourly Wage Trend';
-
-  @override
-  String get analytics_chart_wage_trend_subtitle =>
-      'Comparison between base rate and actual effective rate (with net extras)';
 
   @override
   String get analytics_no_data => 'No data for selected period';
@@ -1106,13 +1100,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Scroll horizontally to view pay growth over time';
 
   @override
-  String get analytics_chart_tips_trend_title => 'Net Extras Trend';
-
-  @override
-  String get analytics_chart_tips_trend_subtitle =>
-      'Tracking tips and special incomes minus shift expenses';
-
-  @override
   String get analytics_gross_pay => 'Gross';
 
   @override
@@ -1125,7 +1112,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analytics_kpi_retention => 'Net Retention Rate';
 
   @override
-  String get analytics_kpi_tip_yield => 'Hourly Tip Yield';
+  String get analytics_kpi_tip_yield => 'Daily Average Hours';
 
   @override
   String get analytics_kpi_boost => 'Hourly Rate Boost';
@@ -1142,7 +1129,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get analytics_chart_tod_subtitle =>
-      'Comparing pay and hours between Morning, Evening, and Night shifts';
+      'Comparing hours between Morning, Evening, and Night shifts';
 
   @override
   String get analytics_chart_tod_morning => 'Morning (06:00-14:00)';
@@ -1175,7 +1162,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get analytics_insight_night_boost =>
-      'Night shifts yield [[amount]] more per hour than morning shifts.';
+      'Evening & night shifts make up [[percent]]% of your working hours.';
 
   @override
   String get analytics_insight_retention =>
@@ -1187,5 +1174,5 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get analytics_insight_tips_ratio =>
-      'Tips make up [[percent]]% of your total earnings.';
+      'Recurring expenses account for [[percent]]% of your total earnings.';
 }

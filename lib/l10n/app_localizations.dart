@@ -893,7 +893,7 @@ abstract class AppLocalizations {
   /// No description provided for @expenses_title.
   ///
   /// In he, this message translates to:
-  /// **'ניהול הוצאות והכנסות'**
+  /// **'הוצאות והכנסות'**
   String get expenses_title;
 
   /// No description provided for @expenses_tab_expenses.
@@ -2057,7 +2057,7 @@ abstract class AppLocalizations {
   /// No description provided for @analytics_title.
   ///
   /// In he, this message translates to:
-  /// **'אנליטיקה ותובנות חכמות'**
+  /// **'אנליטיקה ותובנות'**
   String get analytics_title;
 
   /// No description provided for @analytics_period_monthly.
@@ -2105,19 +2105,19 @@ abstract class AppLocalizations {
   /// No description provided for @analytics_stat_tips.
   ///
   /// In he, this message translates to:
-  /// **'תוספות וניכויים (נטו)'**
+  /// **'הוצאות משמרת נטו'**
   String get analytics_stat_tips;
 
   /// No description provided for @analytics_chart_earnings_title.
   ///
   /// In he, this message translates to:
-  /// **'הכנסות לפי זמן'**
+  /// **'הכנסות מול הוצאות לפי זמן'**
   String get analytics_chart_earnings_title;
 
   /// No description provided for @analytics_chart_earnings_subtitle.
   ///
   /// In he, this message translates to:
-  /// **'לחץ על עמודה לצפייה בפירוט משמרת'**
+  /// **'לחץ על עמודה לצפייה בפירוט שכר והוצאות'**
   String get analytics_chart_earnings_subtitle;
 
   /// No description provided for @analytics_chart_jobs_title.
@@ -2137,18 +2137,6 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'לפי שעות'**
   String get analytics_chart_jobs_by_hours;
-
-  /// No description provided for @analytics_chart_wage_trend_title.
-  ///
-  /// In he, this message translates to:
-  /// **'מגמת שכר שעתי'**
-  String get analytics_chart_wage_trend_title;
-
-  /// No description provided for @analytics_chart_wage_trend_subtitle.
-  ///
-  /// In he, this message translates to:
-  /// **'השוואה בין שכר הבסיס לשכר השעתי בפועל (כולל טיפים והכנסות נטו)'**
-  String get analytics_chart_wage_trend_subtitle;
 
   /// No description provided for @analytics_no_data.
   ///
@@ -2186,18 +2174,6 @@ abstract class AppLocalizations {
   /// **'גרירה ימינה ושמאלה לצפייה בצמיחת השכר לאורך הזמן'**
   String get analytics_chart_cumulative_subtitle;
 
-  /// No description provided for @analytics_chart_tips_trend_title.
-  ///
-  /// In he, this message translates to:
-  /// **'מגמת תוספות וניכויים נטו'**
-  String get analytics_chart_tips_trend_title;
-
-  /// No description provided for @analytics_chart_tips_trend_subtitle.
-  ///
-  /// In he, this message translates to:
-  /// **'מעקב אחר טיפים והכנסות מיוחדות בקיזוז הוצאות בכל משמרת'**
-  String get analytics_chart_tips_trend_subtitle;
-
   /// No description provided for @analytics_gross_pay.
   ///
   /// In he, this message translates to:
@@ -2225,7 +2201,7 @@ abstract class AppLocalizations {
   /// No description provided for @analytics_kpi_tip_yield.
   ///
   /// In he, this message translates to:
-  /// **'תשואת טיפים לשעה'**
+  /// **'ממוצע שעות ליום'**
   String get analytics_kpi_tip_yield;
 
   /// No description provided for @analytics_kpi_boost.
@@ -2255,7 +2231,7 @@ abstract class AppLocalizations {
   /// No description provided for @analytics_chart_tod_subtitle.
   ///
   /// In he, this message translates to:
-  /// **'השוואת שכר ושעות בין משמרות בוקר, ערב ולילה'**
+  /// **'השוואת שעות בין משמרות בוקר, ערב ולילה'**
   String get analytics_chart_tod_subtitle;
 
   /// No description provided for @analytics_chart_tod_morning.
@@ -2315,13 +2291,13 @@ abstract class AppLocalizations {
   /// No description provided for @analytics_insight_night_boost.
   ///
   /// In he, this message translates to:
-  /// **'משמרות לילה מניבות [[amount]] יותר לשעה ממשמרות בוקר.'**
+  /// **'משמרות ערב ולילה מהוות [[percent]]% מסך שעות העבודה שלך.'**
   String get analytics_insight_night_boost;
 
   /// No description provided for @analytics_insight_retention.
   ///
   /// In he, this message translates to:
-  /// **'הנך שומר על [[percent]]% מההכנסה שלך לאחר ניכוי הוצאות משמרת.'**
+  /// **'הנך שומר על [[percent]]% מסך השכר בברוטו לאחר ניכוי הוצאות נסיעה.'**
   String get analytics_insight_retention;
 
   /// No description provided for @analytics_insight_fatigue.
@@ -2333,7 +2309,7 @@ abstract class AppLocalizations {
   /// No description provided for @analytics_insight_tips_ratio.
   ///
   /// In he, this message translates to:
-  /// **'הטיפים מהווים [[percent]]% מסך ההכנסות שלך.'**
+  /// **'ההוצאות הקבועות מהוות [[percent]]% מסך ההכנסות שלך.'**
   String get analytics_insight_tips_ratio;
 }
 

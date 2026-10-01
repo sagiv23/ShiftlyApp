@@ -413,16 +413,10 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                 AppTheme.spaceXs,
               ),
               decoration: BoxDecoration(
-                color: Theme
-                    .of(context)
-                    .cardTheme
-                    .color,
+                color: Theme.of(context).cardTheme.color,
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                 border: Border.all(
-                  color: Theme
-                      .of(context)
-                      .dividerColor
-                      .withValues(alpha: 0.5),
+                  color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
                 ),
               ),
               child: TabBar(
@@ -436,7 +430,9 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                   ),
                   Tab(
                     icon: const Icon(
-                        Icons.account_balance_wallet_rounded, size: 20),
+                      Icons.account_balance_wallet_rounded,
+                      size: 20,
+                    ),
                     text: l.expenses_tab_incomes,
                   ),
                 ],
@@ -455,303 +451,331 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                       120,
                     ),
                     child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionHeader(context, l.expenses_auto_section_title),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppTheme.spaceSm),
-                      child: Column(
-                        children: [
-                          SwitchListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(l.expenses_auto_section_enable),
-                            subtitle: Text(l.expenses_auto_section_subtitle),
-                            secondary: const Icon(
-                              Icons.auto_fix_high_rounded,
-                              color: AppTheme.primaryDark,
-                            ),
-                            value: settings.automaticExpenseEnabled,
-                            onChanged: (val) =>
-                                settings.setAutomaticExpenseEnabled(val),
-                            activeThumbColor: AppTheme.primaryDark,
-                            activeTrackColor: AppTheme.primary.withValues(
-                              alpha: 0.35,
-                            ),
-                          ),
-                          if (settings.automaticExpenseEnabled) ...[
-                            const Divider(height: AppTheme.spaceLg),
-                            ...List.generate(
-                              _autoExpenseAmountControllers.length,
-                              (index) => _buildAutoRow(
-                                index,
-                                settings.currencySymbol,
-                                false,
-                              ),
-                            ),
-                            TextButton.icon(
-                              onPressed: () => setState(() {
-                                _autoExpenseAmountControllers.add(
-                                  TextEditingController(text: '0'),
-                                );
-                                _autoExpenseDescControllers.add(
-                                  TextEditingController(text: ''),
-                                );
-                              }),
-                              icon: const Icon(
-                                Icons.add_circle_outline_rounded,
-                              ),
-                              label: Text(l.expenses_action_add_auto),
-                            ),
-                            const SizedBox(height: 16),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: _saveDefaultExpenses,
-                                child: Text(l.expenses_action_update_settings),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spaceLg),
-                  _buildSectionHeader(
-                    context,
-                    l.expenses_history_section_title,
-                  ),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  if (groupedExpenses.isEmpty)
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 40),
-                        child: Text(l.expenses_no_history),
-                      ),
-                    )
-                  else
-                    ...groupedExpenses.keys
-                        .toList()
-                        .sorted((a, b) => b.compareTo(a))
-                        .map((monthKey) {
-                          final items = groupedExpenses[monthKey]!;
-                          return _MonthItemSection(
-                            monthKey: monthKey,
-                            items: items,
-                            isIncome: false,
-                            onEdit: (record) {
-                              if (record.shift != null) {
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    transitionDuration: const Duration(
-                                      milliseconds: 280,
-                                    ),
-                                    reverseTransitionDuration: const Duration(
-                                      milliseconds: 220,
-                                    ),
-                                    pageBuilder:
-                                        (_, animation, secondaryAnimation) =>
-                                            AddShiftScreen(
-                                              shiftToEdit: record.shift,
-                                            ),
-                                    transitionsBuilder:
-                                        (
-                                          context,
-                                          animation,
-                                          secondaryAnimation,
-                                          child,
-                                        ) {
-                                          final curved = CurvedAnimation(
-                                            parent: animation,
-                                            curve: Curves.easeOutCubic,
-                                          );
-                                          return SlideTransition(
-                                            position: Tween<Offset>(
-                                              begin: const Offset(0.08, 0),
-                                              end: Offset.zero,
-                                            ).animate(curved),
-                                            child: FadeTransition(
-                                              opacity: curved,
-                                              child: child,
-                                            ),
-                                          );
-                                        },
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionHeader(
+                          context,
+                          l.expenses_auto_section_title,
+                        ),
+                        const SizedBox(height: AppTheme.spaceXs),
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(AppTheme.spaceSm),
+                            child: Column(
+                              children: [
+                                SwitchListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  title: Text(l.expenses_auto_section_enable),
+                                  subtitle: Text(
+                                    l.expenses_auto_section_subtitle,
                                   ),
-                                );
-                              } else if (record.standaloneExpense != null) {
-                                _showItemDialog(
-                                  context,
-                                  item: record.standaloneExpense,
-                                  isIncome: false,
-                                );
-                              }
-                            },
-                          );
-                        }),
-                ],
-              ),
-            ),
-
-            // Tab 2: Special Incomes
-            SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(
-                AppTheme.spaceSm,
-                AppTheme.spaceXs,
-                AppTheme.spaceSm,
-                120,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionHeader(
-                    context,
-                    l.expenses_auto_incomes_section_title,
-                  ),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppTheme.spaceSm),
-                      child: Column(
-                        children: [
-                          SwitchListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(l.expenses_auto_incomes_section_enable),
-                            subtitle: Text(
-                              l.expenses_auto_incomes_section_subtitle,
-                            ),
-                            secondary: const Icon(
-                              Icons.savings_rounded,
-                              color: AppTheme.profitSoft,
-                            ),
-                            value: settings.automaticIncomeEnabled,
-                            onChanged: (val) =>
-                                settings.setAutomaticIncomeEnabled(val),
-                            activeThumbColor: AppTheme.profit,
-                            activeTrackColor: AppTheme.profit.withValues(
-                              alpha: 0.35,
-                            ),
-                          ),
-                          if (settings.automaticIncomeEnabled) ...[
-                            const Divider(height: AppTheme.spaceLg),
-                            ...List.generate(
-                              _autoIncomeAmountControllers.length,
-                              (index) => _buildAutoRow(
-                                index,
-                                settings.currencySymbol,
-                                true,
-                              ),
-                            ),
-                            TextButton.icon(
-                              onPressed: () => setState(() {
-                                _autoIncomeAmountControllers.add(
-                                  TextEditingController(text: '0'),
-                                );
-                                _autoIncomeDescControllers.add(
-                                  TextEditingController(text: ''),
-                                );
-                              }),
-                              icon: const Icon(
-                                Icons.add_circle_outline_rounded,
-                              ),
-                              label: Text(l.onboarding_auto_incomes_add_button),
-                              style: TextButton.styleFrom(
-                                foregroundColor: AppTheme.profitSoft,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: _saveDefaultIncomes,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppTheme.profitSoft,
+                                  secondary: const Icon(
+                                    Icons.auto_fix_high_rounded,
+                                    color: AppTheme.primaryDark,
+                                  ),
+                                  value: settings.automaticExpenseEnabled,
+                                  onChanged: (val) =>
+                                      settings.setAutomaticExpenseEnabled(val),
+                                  activeThumbColor: AppTheme.primaryDark,
+                                  activeTrackColor: AppTheme.primary.withValues(
+                                    alpha: 0.35,
+                                  ),
                                 ),
-                                child: Text(l.expenses_action_update_settings),
-                              ),
+                                if (settings.automaticExpenseEnabled) ...[
+                                  const Divider(height: AppTheme.spaceLg),
+                                  ...List.generate(
+                                    _autoExpenseAmountControllers.length,
+                                    (index) => _buildAutoRow(
+                                      index,
+                                      settings.currencySymbol,
+                                      false,
+                                    ),
+                                  ),
+                                  TextButton.icon(
+                                    onPressed: () => setState(() {
+                                      _autoExpenseAmountControllers.add(
+                                        TextEditingController(text: '0'),
+                                      );
+                                      _autoExpenseDescControllers.add(
+                                        TextEditingController(text: ''),
+                                      );
+                                    }),
+                                    icon: const Icon(
+                                      Icons.add_circle_outline_rounded,
+                                    ),
+                                    label: Text(l.expenses_action_add_auto),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: _saveDefaultExpenses,
+                                      child: Text(
+                                        l.expenses_action_update_settings,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
-                          ],
-                        ],
-                      ),
+                          ),
+                        ),
+                        const SizedBox(height: AppTheme.spaceLg),
+                        _buildSectionHeader(
+                          context,
+                          l.expenses_history_section_title,
+                        ),
+                        const SizedBox(height: AppTheme.spaceXs),
+                        if (groupedExpenses.isEmpty)
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 40),
+                              child: Text(l.expenses_no_history),
+                            ),
+                          )
+                        else
+                          ...groupedExpenses.keys
+                              .toList()
+                              .sorted((a, b) => b.compareTo(a))
+                              .map((monthKey) {
+                                final items = groupedExpenses[monthKey]!;
+                                return _MonthItemSection(
+                                  monthKey: monthKey,
+                                  items: items,
+                                  isIncome: false,
+                                  onEdit: (record) {
+                                    if (record.shift != null) {
+                                      Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                          transitionDuration: const Duration(
+                                            milliseconds: 280,
+                                          ),
+                                          reverseTransitionDuration:
+                                              const Duration(milliseconds: 220),
+                                          pageBuilder:
+                                              (
+                                                _,
+                                                animation,
+                                                secondaryAnimation,
+                                              ) => AddShiftScreen(
+                                                shiftToEdit: record.shift,
+                                              ),
+                                          transitionsBuilder:
+                                              (
+                                                context,
+                                                animation,
+                                                secondaryAnimation,
+                                                child,
+                                              ) {
+                                                final curved = CurvedAnimation(
+                                                  parent: animation,
+                                                  curve: Curves.easeOutCubic,
+                                                );
+                                                return SlideTransition(
+                                                  position: Tween<Offset>(
+                                                    begin: const Offset(
+                                                      0.08,
+                                                      0,
+                                                    ),
+                                                    end: Offset.zero,
+                                                  ).animate(curved),
+                                                  child: FadeTransition(
+                                                    opacity: curved,
+                                                    child: child,
+                                                  ),
+                                                );
+                                              },
+                                        ),
+                                      );
+                                    } else if (record.standaloneExpense !=
+                                        null) {
+                                      _showItemDialog(
+                                        context,
+                                        item: record.standaloneExpense,
+                                        isIncome: false,
+                                      );
+                                    }
+                                  },
+                                );
+                              }),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: AppTheme.spaceLg),
-                  _buildSectionHeader(context, l.incomes_history_section_title),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  if (groupedIncomes.isEmpty)
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 40),
-                        child: Text(l.incomes_no_history),
-                      ),
-                    )
-                  else
-                    ...groupedIncomes.keys
-                        .toList()
-                        .sorted((a, b) => b.compareTo(a))
-                        .map((monthKey) {
-                          final items = groupedIncomes[monthKey]!;
-                          return _MonthItemSection(
-                            monthKey: monthKey,
-                            items: items,
-                            isIncome: true,
-                            onEdit: (record) {
-                              if (record.shift != null) {
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    transitionDuration: const Duration(
-                                      milliseconds: 280,
-                                    ),
-                                    reverseTransitionDuration: const Duration(
-                                      milliseconds: 220,
-                                    ),
-                                    pageBuilder:
-                                        (_, animation, secondaryAnimation) =>
-                                            AddShiftScreen(
-                                              shiftToEdit: record.shift,
-                                            ),
-                                    transitionsBuilder:
-                                        (
-                                          context,
-                                          animation,
-                                          secondaryAnimation,
-                                          child,
-                                        ) {
-                                          final curved = CurvedAnimation(
-                                            parent: animation,
-                                            curve: Curves.easeOutCubic,
-                                          );
-                                          return SlideTransition(
-                                            position: Tween<Offset>(
-                                              begin: const Offset(0.08, 0),
-                                              end: Offset.zero,
-                                            ).animate(curved),
-                                            child: FadeTransition(
-                                              opacity: curved,
-                                              child: child,
-                                            ),
-                                          );
-                                        },
+
+                  // Tab 2: Special Incomes
+                  SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppTheme.spaceSm,
+                      AppTheme.spaceXs,
+                      AppTheme.spaceSm,
+                      120,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionHeader(
+                          context,
+                          l.expenses_auto_incomes_section_title,
+                        ),
+                        const SizedBox(height: AppTheme.spaceXs),
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(AppTheme.spaceSm),
+                            child: Column(
+                              children: [
+                                SwitchListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  title: Text(
+                                    l.expenses_auto_incomes_section_enable,
                                   ),
-                                );
-                              } else if (record.standaloneExpense != null) {
-                                _showItemDialog(
-                                  context,
-                                  item: record.standaloneExpense,
+                                  subtitle: Text(
+                                    l.expenses_auto_incomes_section_subtitle,
+                                  ),
+                                  secondary: const Icon(
+                                    Icons.savings_rounded,
+                                    color: AppTheme.profitSoft,
+                                  ),
+                                  value: settings.automaticIncomeEnabled,
+                                  onChanged: (val) =>
+                                      settings.setAutomaticIncomeEnabled(val),
+                                  activeThumbColor: AppTheme.profit,
+                                  activeTrackColor: AppTheme.profit.withValues(
+                                    alpha: 0.35,
+                                  ),
+                                ),
+                                if (settings.automaticIncomeEnabled) ...[
+                                  const Divider(height: AppTheme.spaceLg),
+                                  ...List.generate(
+                                    _autoIncomeAmountControllers.length,
+                                    (index) => _buildAutoRow(
+                                      index,
+                                      settings.currencySymbol,
+                                      true,
+                                    ),
+                                  ),
+                                  TextButton.icon(
+                                    onPressed: () => setState(() {
+                                      _autoIncomeAmountControllers.add(
+                                        TextEditingController(text: '0'),
+                                      );
+                                      _autoIncomeDescControllers.add(
+                                        TextEditingController(text: ''),
+                                      );
+                                    }),
+                                    icon: const Icon(
+                                      Icons.add_circle_outline_rounded,
+                                    ),
+                                    label: Text(
+                                      l.onboarding_auto_incomes_add_button,
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: AppTheme.profitSoft,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: _saveDefaultIncomes,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppTheme.profitSoft,
+                                      ),
+                                      child: Text(
+                                        l.expenses_action_update_settings,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: AppTheme.spaceLg),
+                        _buildSectionHeader(
+                          context,
+                          l.incomes_history_section_title,
+                        ),
+                        const SizedBox(height: AppTheme.spaceXs),
+                        if (groupedIncomes.isEmpty)
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 40),
+                              child: Text(l.incomes_no_history),
+                            ),
+                          )
+                        else
+                          ...groupedIncomes.keys
+                              .toList()
+                              .sorted((a, b) => b.compareTo(a))
+                              .map((monthKey) {
+                                final items = groupedIncomes[monthKey]!;
+                                return _MonthItemSection(
+                                  monthKey: monthKey,
+                                  items: items,
                                   isIncome: true,
+                                  onEdit: (record) {
+                                    if (record.shift != null) {
+                                      Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                          transitionDuration: const Duration(
+                                            milliseconds: 280,
+                                          ),
+                                          reverseTransitionDuration:
+                                              const Duration(milliseconds: 220),
+                                          pageBuilder:
+                                              (
+                                                _,
+                                                animation,
+                                                secondaryAnimation,
+                                              ) => AddShiftScreen(
+                                                shiftToEdit: record.shift,
+                                              ),
+                                          transitionsBuilder:
+                                              (
+                                                context,
+                                                animation,
+                                                secondaryAnimation,
+                                                child,
+                                              ) {
+                                                final curved = CurvedAnimation(
+                                                  parent: animation,
+                                                  curve: Curves.easeOutCubic,
+                                                );
+                                                return SlideTransition(
+                                                  position: Tween<Offset>(
+                                                    begin: const Offset(
+                                                      0.08,
+                                                      0,
+                                                    ),
+                                                    end: Offset.zero,
+                                                  ).animate(curved),
+                                                  child: FadeTransition(
+                                                    opacity: curved,
+                                                    child: child,
+                                                  ),
+                                                );
+                                              },
+                                        ),
+                                      );
+                                    } else if (record.standaloneExpense !=
+                                        null) {
+                                      _showItemDialog(
+                                        context,
+                                        item: record.standaloneExpense,
+                                        isIncome: true,
+                                      );
+                                    }
+                                  },
                                 );
-                              }
-                            },
-                          );
-                        }),
+                              }),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
           ],
         ),
       ),
