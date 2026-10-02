@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1175,4 +1174,76 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get analytics_insight_tips_ratio =>
       'Recurring expenses account for [[percent]]% of your total earnings.';
+
+  @override
+  String analytics_shifts_format(Object count) {
+    return '$count shifts';
+  }
+
+  @override
+  String analytics_hours_format(Object hours) {
+    return '${hours}h';
+  }
+
+  @override
+  String get analytics_no_shift_data_period => 'No shift data for this period';
+
+  @override
+  String get analytics_min_shifts_hourly =>
+      'At least 2 shifts required to show hourly wage trend';
+
+  @override
+  String get analytics_min_shifts_growth =>
+      'At least 2 shifts required to show cumulative growth';
+
+  @override
+  String get analytics_min_shifts_retention =>
+      'At least 2 shifts required to show net retention trend';
+
+  @override
+  String get analytics_no_job_data => 'No job data';
+
+  @override
+  String analytics_hours_suffix_format(Object hours) {
+    return '$hours hrs';
+  }
+
+  @override
+  String analytics_utilization_format(Object pct) {
+    return '$pct% utilization';
+  }
+
+  @override
+  String get common_previous => 'Previous';
+
+  @override
+  String get common_next => 'Next';
+
+  @override
+  String get analytics_tips_and_extra => 'Tips & Extra';
+
+  @override
+  String analytics_rate_boost_subtitle(Object boost) {
+    return '+$boost/h net extras';
+  }
+
+  @override
+  String get analytics_retention_subtitle => 'Retained after shift expenses';
+
+  @override
+  String analytics_net_extras_pct_subtitle(Object percent) {
+    return '$percent% of total net pay';
+  }
+
+  @override
+  String get common_unknown_job => 'Unknown Job';
+
+  @override
+  String get analytics_duration_range_short => '< 6 hours';
+
+  @override
+  String get analytics_duration_range_standard => '6–9 hours';
+
+  @override
+  String get analytics_duration_range_long => '> 9 hours';
 }

@@ -129,6 +129,7 @@ class AdaptiveScaffold extends StatelessWidget {
     if (isDesktopOrWide) {
       return Scaffold(
         body: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
               width: 240,
@@ -192,16 +193,18 @@ class AdaptiveScaffold extends StatelessWidget {
       ),
       drawer: Drawer(
         backgroundColor: Theme.of(context).cardTheme.color,
-        child: _SideMenuContent(
-          currentIndex: currentIndex,
-          onSelectTab: (index) {
-            Navigator.pop(context);
-            _onItemTapped(context, index);
-          },
-          onAddShift: () {
-            Navigator.pop(context);
-            _openAddShiftScreen(context);
-          },
+        child: SafeArea(
+          child: _SideMenuContent(
+            currentIndex: currentIndex,
+            onSelectTab: (index) {
+              Navigator.pop(context);
+              _onItemTapped(context, index);
+            },
+            onAddShift: () {
+              Navigator.pop(context);
+              _openAddShiftScreen(context);
+            },
+          ),
         ),
       ),
       body: body,
@@ -234,85 +237,94 @@ class _SideMenuContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
 
-    return Column(
-      children: [
-        const SizedBox(height: 24),
-        // App Logo & Brand Title
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  'assets/icon/app_icon.png',
-                  width: 38,
-                  height: 38,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
-                      const Icon(Icons.access_time_filled_rounded, size: 38),
-                ),
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 4),
+            // App Logo & Brand Title
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(
+                      'assets/icon/app_icon.png',
+                      width: 34,
+                      height: 34,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => const Icon(
+                        Icons.access_time_filled_rounded,
+                        size: 34,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    l.common_app_name,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              Text(
-                l.common_app_name,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
-                ),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 12),
+            const Divider(height: 1),
+            const SizedBox(height: 6),
+            // New Shift Action Item
+            _SideNavItem(
+              icon: Icons.add_rounded,
+              label: l.home_action_new_shift,
+              isSelected: false,
+              onTap: onAddShift,
+            ),
+            const SizedBox(height: 2),
+            const Divider(height: 1, indent: 16, endIndent: 16),
+            const SizedBox(height: 2),
+            // Nav items
+            _SideNavItem(
+              icon: Icons.home_rounded,
+              label: l.common_app_name,
+              isSelected: currentIndex == 0,
+              onTap: () => onSelectTab(0),
+            ),
+            _SideNavItem(
+              icon: Icons.calendar_month_rounded,
+              label: l.home_action_calendar,
+              isSelected: currentIndex == 1,
+              onTap: () => onSelectTab(1),
+            ),
+            _SideNavItem(
+              icon: Icons.bar_chart_rounded,
+              label: l.analytics_title,
+              isSelected: currentIndex == 2,
+              onTap: () => onSelectTab(2),
+            ),
+            _SideNavItem(
+              icon: Icons.receipt_long_rounded,
+              label: l.expenses_title,
+              isSelected: currentIndex == 3,
+              onTap: () => onSelectTab(3),
+            ),
+            const SizedBox(height: 12),
+            const Divider(height: 1),
+            const SizedBox(height: 6),
+            // Settings separated at the bottom
+            _SideNavItem(
+              icon: Icons.settings_outlined,
+              label: l.settings_title,
+              isSelected: currentIndex == 4,
+              onTap: () => onSelectTab(4),
+            ),
+          ],
         ),
-        const SizedBox(height: 20),
-        const Divider(height: 1),
-        const SizedBox(height: 12),
-        // New Shift Action Item
-        _SideNavItem(
-          icon: Icons.add_rounded,
-          label: l.home_action_new_shift,
-          isSelected: false,
-          onTap: onAddShift,
-        ),
-        const SizedBox(height: 4),
-        const Divider(height: 1, indent: 16, endIndent: 16),
-        const SizedBox(height: 4),
-        // Nav items
-        _SideNavItem(
-          icon: Icons.home_rounded,
-          label: l.common_app_name,
-          isSelected: currentIndex == 0,
-          onTap: () => onSelectTab(0),
-        ),
-        _SideNavItem(
-          icon: Icons.calendar_month_rounded,
-          label: l.home_action_calendar,
-          isSelected: currentIndex == 1,
-          onTap: () => onSelectTab(1),
-        ),
-        _SideNavItem(
-          icon: Icons.bar_chart_rounded,
-          label: l.analytics_title,
-          isSelected: currentIndex == 2,
-          onTap: () => onSelectTab(2),
-        ),
-        _SideNavItem(
-          icon: Icons.receipt_long_rounded,
-          label: l.expenses_title,
-          isSelected: currentIndex == 3,
-          onTap: () => onSelectTab(3),
-        ),
-        const Spacer(),
-        const Divider(height: 1),
-        // Settings separated at the bottom
-        _SideNavItem(
-          icon: Icons.settings_outlined,
-          label: l.settings_title,
-          isSelected: currentIndex == 4,
-          onTap: () => onSelectTab(4),
-        ),
-        const SizedBox(height: 16),
-      ],
+      ),
     );
   }
 }

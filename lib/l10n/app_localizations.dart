@@ -2311,6 +2311,120 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'ההוצאות הקבועות מהוות [[percent]]% מסך ההכנסות שלך.'**
   String get analytics_insight_tips_ratio;
+
+  /// No description provided for @analytics_shifts_format.
+  ///
+  /// In he, this message translates to:
+  /// **'{count} משמרות'**
+  String analytics_shifts_format(Object count);
+
+  /// No description provided for @analytics_hours_format.
+  ///
+  /// In he, this message translates to:
+  /// **'{hours} שעות'**
+  String analytics_hours_format(Object hours);
+
+  /// No description provided for @analytics_no_shift_data_period.
+  ///
+  /// In he, this message translates to:
+  /// **'אין נתוני משמרות לתקופה זו'**
+  String get analytics_no_shift_data_period;
+
+  /// No description provided for @analytics_min_shifts_hourly.
+  ///
+  /// In he, this message translates to:
+  /// **'דרושות לפחות 2 משמרות להצגת מגמת שכר שעתי'**
+  String get analytics_min_shifts_hourly;
+
+  /// No description provided for @analytics_min_shifts_growth.
+  ///
+  /// In he, this message translates to:
+  /// **'דרושות לפחות 2 משמרות להצגת צמיחה מצטברת'**
+  String get analytics_min_shifts_growth;
+
+  /// No description provided for @analytics_min_shifts_retention.
+  ///
+  /// In he, this message translates to:
+  /// **'דרושות לפחות 2 משמרות להצגת מגמת שמירת שכר'**
+  String get analytics_min_shifts_retention;
+
+  /// No description provided for @analytics_no_job_data.
+  ///
+  /// In he, this message translates to:
+  /// **'אין נתוני תפקיד'**
+  String get analytics_no_job_data;
+
+  /// No description provided for @analytics_hours_suffix_format.
+  ///
+  /// In he, this message translates to:
+  /// **'{hours} שעות'**
+  String analytics_hours_suffix_format(Object hours);
+
+  /// No description provided for @analytics_utilization_format.
+  ///
+  /// In he, this message translates to:
+  /// **'{pct}% מסך הניצולת'**
+  String analytics_utilization_format(Object pct);
+
+  /// No description provided for @common_previous.
+  ///
+  /// In he, this message translates to:
+  /// **'קודם'**
+  String get common_previous;
+
+  /// No description provided for @common_next.
+  ///
+  /// In he, this message translates to:
+  /// **'הבא'**
+  String get common_next;
+
+  /// No description provided for @analytics_tips_and_extra.
+  ///
+  /// In he, this message translates to:
+  /// **'טיפים+תוספות'**
+  String get analytics_tips_and_extra;
+
+  /// No description provided for @analytics_rate_boost_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'+{boost}/ש\' תוספות נטו'**
+  String analytics_rate_boost_subtitle(Object boost);
+
+  /// No description provided for @analytics_retention_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'נשאר בכיס לאחר הוצאות'**
+  String get analytics_retention_subtitle;
+
+  /// No description provided for @analytics_net_extras_pct_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'{percent}% מסך השכר נטו'**
+  String analytics_net_extras_pct_subtitle(Object percent);
+
+  /// No description provided for @common_unknown_job.
+  ///
+  /// In he, this message translates to:
+  /// **'תפקיד לא ידוע'**
+  String get common_unknown_job;
+
+  /// No description provided for @analytics_duration_range_short.
+  ///
+  /// In he, this message translates to:
+  /// **'< 6 שעות'**
+  String get analytics_duration_range_short;
+
+  /// No description provided for @analytics_duration_range_standard.
+  ///
+  /// In he, this message translates to:
+  /// **'6–9 שעות'**
+  String get analytics_duration_range_standard;
+
+  /// No description provided for @analytics_duration_range_long.
+  ///
+  /// In he, this message translates to:
+  /// **'> 9 שעות'**
+  String get analytics_duration_range_long;
 }
 
 class _AppLocalizationsDelegate

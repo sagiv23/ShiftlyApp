@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/theme/app_theme.dart';
 
 /// Data point for daily or monthly earnings bar chart
@@ -53,12 +54,13 @@ class EarningsBarChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (data.isEmpty) {
+      final l = AppLocalizations.of(context)!;
       return SizedBox(
         height: height,
-        child: const Center(
+        child: Center(
           child: Text(
-            'אין נתונים לתצוגה',
-            style: TextStyle(color: Colors.grey),
+            l.analytics_no_data,
+            style: const TextStyle(color: Colors.grey),
           ),
         ),
       );
@@ -394,10 +396,12 @@ class JobDonutChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (segments.isEmpty) {
+      final l = AppLocalizations.of(context)!;
       return SizedBox(
         height: size,
-        child: const Center(
-          child: Text('אין נתוני תפקיד', style: TextStyle(color: Colors.grey)),
+        child: Center(
+          child: Text(l.analytics_no_job_data,
+              style: const TextStyle(color: Colors.grey)),
         ),
       );
     }
@@ -535,12 +539,13 @@ class _HourlyWageLineChartWidgetState extends State<HourlyWageLineChartWidget> {
   @override
   Widget build(BuildContext context) {
     if (widget.data.length < 2) {
+      final l = AppLocalizations.of(context)!;
       return SizedBox(
         height: widget.height,
-        child: const Center(
+        child: Center(
           child: Text(
-            'דרושות לפחות 2 משמרות להצגת מגמת שכר שעתי',
-            style: TextStyle(color: Colors.grey),
+            l.analytics_min_shifts_hourly,
+            style: const TextStyle(color: Colors.grey),
           ),
         ),
       );
@@ -917,12 +922,13 @@ class _CumulativeEarningsLineChartWidgetState
   @override
   Widget build(BuildContext context) {
     if (widget.data.length < 2) {
+      final l = AppLocalizations.of(context)!;
       return SizedBox(
         height: widget.height,
-        child: const Center(
+        child: Center(
           child: Text(
-            'דרושות לפחות 2 משמרות להצגת צמיחה מצטברת',
-            style: TextStyle(color: Colors.grey),
+            l.analytics_min_shifts_growth,
+            style: const TextStyle(color: Colors.grey),
           ),
         ),
       );
@@ -1282,12 +1288,13 @@ class NetRetentionLineChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (data.length < 2) {
+      final l = AppLocalizations.of(context)!;
       return SizedBox(
         height: height,
-        child: const Center(
+        child: Center(
           child: Text(
-            'דרושות לפחות 2 משמרות להצגת מגמת שמירת שכר',
-            style: TextStyle(color: Colors.grey),
+            l.analytics_min_shifts_retention,
+            style: const TextStyle(color: Colors.grey),
           ),
         ),
       );
@@ -1549,18 +1556,19 @@ class TimeOfDayChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     double totalHours = 0;
     for (var s in segments) {
       totalHours += s.hours;
     }
 
     if (totalHours <= 0) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 16),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Center(
           child: Text(
-            'אין נתוני משמרות לתקופה זו',
-            style: TextStyle(color: Colors.grey),
+            l.analytics_no_shift_data_period,
+            style: const TextStyle(color: Colors.grey),
           ),
         ),
       );
@@ -1638,7 +1646,9 @@ class TimeOfDayChartWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '${seg.hours.toStringAsFixed(1)} שעות',
+                          l.analytics_hours_suffix_format(
+                            seg.hours.toStringAsFixed(1),
+                          ),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
@@ -1646,7 +1656,9 @@ class TimeOfDayChartWidget extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '${pct.toStringAsFixed(0)}% מסך הניצולת',
+                          l.analytics_utilization_format(
+                            pct.toStringAsFixed(0),
+                          ),
                           style: const TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -1700,18 +1712,19 @@ class ShiftDurationDistributionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     int totalCount = 0;
     for (var c in categories) {
       totalCount += c.count;
     }
 
     if (totalCount == 0) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 16),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Center(
           child: Text(
-            'אין נתוני משמרות לתקופה זו',
-            style: TextStyle(color: Colors.grey),
+            l.analytics_no_shift_data_period,
+            style: const TextStyle(color: Colors.grey),
           ),
         ),
       );
@@ -1780,22 +1793,26 @@ class ShiftDurationDistributionWidget extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '${cat.count} משמרות',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                        color: cat.color,
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        l.analytics_shifts_format('${cat.count}'),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          color: cat.color,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    Text(
-                      '${pct.toStringAsFixed(0)}%',
-                      style: const TextStyle(fontSize: 11, color: Colors.grey),
-                    ),
-                  ],
+                      Text(
+                        '${pct.toStringAsFixed(0)}%',
+                        style: const TextStyle(
+                            fontSize: 11, color: Colors.grey),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

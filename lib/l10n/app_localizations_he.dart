@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1167,4 +1166,76 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String get analytics_insight_tips_ratio =>
       'ההוצאות הקבועות מהוות [[percent]]% מסך ההכנסות שלך.';
+
+  @override
+  String analytics_shifts_format(Object count) {
+    return '$count משמרות';
+  }
+
+  @override
+  String analytics_hours_format(Object hours) {
+    return '$hours שעות';
+  }
+
+  @override
+  String get analytics_no_shift_data_period => 'אין נתוני משמרות לתקופה זו';
+
+  @override
+  String get analytics_min_shifts_hourly =>
+      'דרושות לפחות 2 משמרות להצגת מגמת שכר שעתי';
+
+  @override
+  String get analytics_min_shifts_growth =>
+      'דרושות לפחות 2 משמרות להצגת צמיחה מצטברת';
+
+  @override
+  String get analytics_min_shifts_retention =>
+      'דרושות לפחות 2 משמרות להצגת מגמת שמירת שכר';
+
+  @override
+  String get analytics_no_job_data => 'אין נתוני תפקיד';
+
+  @override
+  String analytics_hours_suffix_format(Object hours) {
+    return '$hours שעות';
+  }
+
+  @override
+  String analytics_utilization_format(Object pct) {
+    return '$pct% מסך הניצולת';
+  }
+
+  @override
+  String get common_previous => 'קודם';
+
+  @override
+  String get common_next => 'הבא';
+
+  @override
+  String get analytics_tips_and_extra => 'טיפים+תוספות';
+
+  @override
+  String analytics_rate_boost_subtitle(Object boost) {
+    return '+$boost/ש\' תוספות נטו';
+  }
+
+  @override
+  String get analytics_retention_subtitle => 'נשאר בכיס לאחר הוצאות';
+
+  @override
+  String analytics_net_extras_pct_subtitle(Object percent) {
+    return '$percent% מסך השכר נטו';
+  }
+
+  @override
+  String get common_unknown_job => 'תפקיד לא ידוע';
+
+  @override
+  String get analytics_duration_range_short => '< 6 שעות';
+
+  @override
+  String get analytics_duration_range_standard => '6–9 שעות';
+
+  @override
+  String get analytics_duration_range_long => '> 9 שעות';
 }

@@ -171,6 +171,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       filteredShifts,
       shiftProvider,
       jobTypes,
+      l,
     );
 
     // Prepare Time of Day Segments
@@ -408,7 +409,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   IconButton(
                     icon: const Icon(Icons.chevron_left_rounded),
                     onPressed: _previousPeriod,
-                    tooltip: 'קודם',
+                    tooltip: l.common_previous,
                   ),
                   Expanded(
                     child: Center(
@@ -425,7 +426,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   IconButton(
                     icon: const Icon(Icons.chevron_right_rounded),
                     onPressed: _nextPeriod,
-                    tooltip: 'הבא',
+                    tooltip: l.common_next,
                   ),
                 ] else
                   Expanded(
@@ -541,8 +542,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               title: l.analytics_stat_avg_rate,
               value: UIUtils.formatCurrency(avgRate, symbol: symbol),
               subtitle: rateBoost > 0
-                  ? '+${UIUtils.formatCurrency(rateBoost, symbol: symbol)}/ש\' תוספות נטו'
-                  : 'שכר בסיס',
+                  ? l.analytics_rate_boost_subtitle(
+                UIUtils.formatCurrency(rateBoost, symbol: symbol),
+              )
+                  : l.analytics_base_salary,
               icon: Icons.trending_up_rounded,
               gradientColors: const [Color(0xFF10B981), Color(0xFF059669)],
               isDark: isDark,
@@ -550,7 +553,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             _KpiCard(
               title: l.analytics_kpi_retention,
               value: '${retentionPct.toStringAsFixed(1)}%',
-              subtitle: 'נשאר בכיס לאחר הוצאות',
+              subtitle: l.analytics_retention_subtitle,
               icon: Icons.savings_rounded,
               gradientColors: const [Color(0xFF0EA5E9), Color(0xFF0284C7)],
               isDark: isDark,
@@ -559,7 +562,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               title: l.analytics_stat_tips,
               value: UIUtils.formatCurrency(netExtras, symbol: symbol),
               subtitle: totalNet > 0
-                  ? '${((netExtras / totalNet) * 100).toStringAsFixed(0)}% מסך השכר נטו'
+                  ? l.analytics_net_extras_pct_subtitle(
+                ((netExtras / totalNet) * 100).toStringAsFixed(0),
+              )
                   : '0%',
               icon: Icons.payments_rounded,
               gradientColors: const [Color(0xFFEC4899), Color(0xFFD97706)],
@@ -591,12 +596,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     }
     if (totalTodHours > 0) {
       final nightAndEvening = todSegments
-          .where((s) => !s.name.contains('בוקר') && !s.name.contains('Morning'))
+          .where((s) => s.icon != Icons.wb_sunny_rounded)
           .fold<double>(0, (sum, s) => sum + s.hours);
       final eveningPct = (nightAndEvening / totalTodHours * 100).round();
       if (eveningPct > 20) {
         insights.add(
-          '$eveningPct% מסך שעות העבודה שלך התבצעו במשמרות ערב ולילה.',
+          l.analytics_insight_night_boost.replaceFirst(
+            '[[percent]]',
+            '$eveningPct',
+          ),
         );
       }
     }
@@ -613,7 +621,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     // Insight 3: Long shift fatigue
     final longCategory = durationCategories.firstWhere(
-      (c) => c.label.contains('ארוכות') || c.label.contains('Long'),
+      (c) => c.icon == Icons.warning_amber_rounded,
       orElse: () => const ShiftDurationCategory(
         label: '',
         durationRange: '',
@@ -807,9 +815,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 // Legend
                 Row(
                   children: [
-                    _LegendDot(color: AppTheme.primary, label: 'בסיס'),
+                    _LegendDot(color: AppTheme.primary,
+                        label: l.analytics_base_salary),
                     const SizedBox(width: 8),
-                    _LegendDot(color: AppTheme.profit, label: 'טיפים+תוספות'),
+                    _LegendDot(color: AppTheme.profit,
+                        label: l.analytics_tips_and_extra),
                   ],
                 ),
               ],
@@ -910,9 +920,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }) {
     final centerTitle = _byEarningsForJobs
         ? UIUtils.formatCurrency(totalNet, symbol: symbol)
-        : '${totalHours.toStringAsFixed(1)} ש\'';
+        : l.analytics_hours_suffix_format(totalHours.toStringAsFixed(1));
 
-    final centerSubtitle = _byEarningsForJobs ? 'סה"כ שכר' : 'סה"כ שעות';
+    final centerSubtitle =
+    _byEarningsForJobs ? l.analytics_stat_total_net : l
+        .analytics_stat_total_hours;
 
     return Card(
       child: Padding(
@@ -1004,7 +1016,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                       seg.amount,
                                       symbol: symbol,
                                     )
-                                  : '${seg.hours.toStringAsFixed(1)} ש\'',
+                                  : l.analytics_hours_suffix_format(
+                                      seg.hours.toStringAsFixed(1),
+                                    ),
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -1192,6 +1206,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     List<Shift> shifts,
     ShiftProvider shiftProvider,
     List<JobType> jobTypes,
+    AppLocalizations l,
   ) {
     final Map<String, List<Shift>> jobShiftsMap = {};
     for (var shift in shifts) {
@@ -1234,7 +1249,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     jobShiftsMap.forEach((jobId, jobShifts) {
       final job = shiftProvider.getJobTypeById(jobId);
-      final jobName = job?.name ?? 'תפקיד לא ידוע';
+      final jobName = job?.name ?? l.common_unknown_job;
       final pay = jobValues[jobId] ?? 0;
       final hours = jobHours[jobId] ?? 0;
       final val = _byEarningsForJobs ? pay : hours;
@@ -1367,7 +1382,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     return [
       ShiftDurationCategory(
         label: l.analytics_duration_short,
-        durationRange: '< 6 שעות',
+        durationRange: l.analytics_duration_range_short,
         count: shortCount,
         hours: shortHours,
         avgEarnings: shortCount > 0 ? (shortPay / shortCount) : 0,
@@ -1377,7 +1392,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       ),
       ShiftDurationCategory(
         label: l.analytics_duration_standard,
-        durationRange: '6–9 שעות',
+        durationRange: l.analytics_duration_range_standard,
         count: stdCount,
         hours: stdHours,
         avgEarnings: stdCount > 0 ? (stdPay / stdCount) : 0,
@@ -1387,7 +1402,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       ),
       ShiftDurationCategory(
         label: l.analytics_duration_long,
-        durationRange: '> 9 שעות',
+        durationRange: l.analytics_duration_range_long,
         count: longCount,
         hours: longHours,
         avgEarnings: longCount > 0 ? (longPay / longCount) : 0,
@@ -1551,7 +1566,9 @@ class _SelectedPointDetailsCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                '${point.netHours.toStringAsFixed(1)} שעות',
+                l.analytics_hours_suffix_format(
+                  point.netHours.toStringAsFixed(1),
+                ),
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 13,
