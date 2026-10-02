@@ -11,7 +11,15 @@ app.use(cors());
 
 // Database connection
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://postgres:postgres@db:5432/shiftly'
+  connectionString: process.env.DATABASE_URL || 'postgresql://postgres:postgres@db:5432/shiftly',
+  ssl: process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('localhost') && !process.env.DATABASE_URL.includes('db:')
+    ? { rejectUnauthorized: false }
+    : false
+});
+
+// Root route
+app.get('/', (req, res) => {
+  res.send('Shiftly Backend is running successfully!');
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_key';

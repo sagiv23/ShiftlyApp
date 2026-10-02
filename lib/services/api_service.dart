@@ -1,20 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // בחירת כתובת השרת לפי הפלטפורמה
-  static String get _baseUrl {
-    if (kIsWeb) return 'http://localhost:3000/api';
-    try {
-      if (Platform.isAndroid) return 'http://10.0.2.2:3000/api';
-    } catch (e) {
-      // Platform.isAndroid might throw on web, but kIsWeb handles it
-    }
-    return 'http://localhost:3000/api'; // For Windows, iOS simulator, etc.
-  }
+  // כתובת השרת בענן (Render)
+  static const String _baseUrl = 'https://shiftly-server.onrender.com/';
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     final response = await http.post(
