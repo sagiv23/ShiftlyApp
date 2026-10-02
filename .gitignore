@@ -43,3 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment files and Node modules
+.env
+client_secrets.env
+**/server/.env
+server/node_modules/
+

@@ -22,6 +22,10 @@ app.get('/', (req, res) => {
   res.send('Shiftly Backend is running successfully!');
 });
 
+app.get('/api', (req, res) => {
+  res.json({ message: 'Shiftly API is active' });
+});
+
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_key';
 
 // Middleware to verify JWT

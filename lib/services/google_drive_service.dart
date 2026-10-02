@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 class GoogleDriveService {
   static const String _backupFileName = 'shiftly_backup.json';
 
-  // IMPORTANT: For Windows support, you can configure these via --dart-define
+  // Google Client IDs (Standard public client IDs for Google Sign-In)
   static const String _windowsClientId = String.fromEnvironment(
     'WINDOWS_CLIENT_ID',
     defaultValue:
@@ -19,8 +19,6 @@ class GoogleDriveService {
     'WINDOWS_CLIENT_SECRET',
     defaultValue: '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',
   );
-
-  // IMPORTANT: For Android/iOS, you can configure these via --dart-define
   static const String _mobileWebClientId = String.fromEnvironment(
     'MOBILE_WEB_CLIENT_ID',
     defaultValue:

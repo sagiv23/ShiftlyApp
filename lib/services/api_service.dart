@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   // כתובת השרת בענן (Render)
-  static const String _baseUrl = 'https://shiftly-server.onrender.com/';
+  static const String _baseUrl = 'https://shiftly-server.onrender.com/api';
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     final response = await http.post(
