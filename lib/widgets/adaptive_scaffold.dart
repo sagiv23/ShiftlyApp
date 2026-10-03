@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
+import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/screens/analytics_screen.dart';
 import 'package:shiftly/screens/calendar_screen.dart';
 import 'package:shiftly/screens/expenses_screen.dart';
 import 'package:shiftly/screens/home_screen.dart';
+import 'package:shiftly/screens/profile_screen.dart';
 import 'package:shiftly/screens/settings_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 
@@ -236,6 +239,7 @@ class _SideMenuContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    final auth = context.watch<AuthProvider>();
 
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
@@ -312,6 +316,22 @@ class _SideMenuContent extends StatelessWidget {
               isSelected: currentIndex == 3,
               onTap: () => onSelectTab(3),
             ),
+            if (auth.isLoggedIn) ...[
+              _SideNavItem(
+                icon: Icons.person_rounded,
+                label: l.side_menu_profile,
+                isSelected: false,
+                onTap: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                  );
+                },
+              ),
+            ],
             const SizedBox(height: 12),
             const Divider(height: 1),
             const SizedBox(height: 6),

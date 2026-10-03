@@ -400,8 +400,10 @@ class JobDonutChartWidget extends StatelessWidget {
       return SizedBox(
         height: size,
         child: Center(
-          child: Text(l.analytics_no_job_data,
-              style: const TextStyle(color: Colors.grey)),
+          child: Text(
+            l.analytics_no_job_data,
+            style: const TextStyle(color: Colors.grey),
+          ),
         ),
       );
     }
@@ -1809,7 +1811,9 @@ class ShiftDurationDistributionWidget extends StatelessWidget {
                       Text(
                         '${pct.toStringAsFixed(0)}%',
                         style: const TextStyle(
-                            fontSize: 11, color: Colors.grey),
+                          fontSize: 11,
+                          color: Colors.grey,
+                        ),
                       ),
                     ],
                   ),

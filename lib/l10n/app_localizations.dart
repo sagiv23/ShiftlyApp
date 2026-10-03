@@ -2425,6 +2425,72 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'> 9 שעות'**
   String get analytics_duration_range_long;
+
+  /// No description provided for @profile_title.
+  ///
+  /// In he, this message translates to:
+  /// **'פרופיל משתמש'**
+  String get profile_title;
+
+  /// No description provided for @profile_stats_title.
+  ///
+  /// In he, this message translates to:
+  /// **'סיכום נתונים שנשמרו'**
+  String get profile_stats_title;
+
+  /// No description provided for @profile_shifts_count.
+  ///
+  /// In he, this message translates to:
+  /// **'משמרות שנשמרו'**
+  String get profile_shifts_count;
+
+  /// No description provided for @profile_jobs_count.
+  ///
+  /// In he, this message translates to:
+  /// **'תפקידים מוגדרים'**
+  String get profile_jobs_count;
+
+  /// No description provided for @profile_expenses_count.
+  ///
+  /// In he, this message translates to:
+  /// **'הוצאות שנשמרו'**
+  String get profile_expenses_count;
+
+  /// No description provided for @profile_incomes_count.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנסות שנשמרו'**
+  String get profile_incomes_count;
+
+  /// No description provided for @side_menu_profile.
+  ///
+  /// In he, this message translates to:
+  /// **'פרופיל משתמש'**
+  String get side_menu_profile;
+
+  /// No description provided for @profile_old_password.
+  ///
+  /// In he, this message translates to:
+  /// **'סיסמה נוכחית'**
+  String get profile_old_password;
+
+  /// No description provided for @profile_new_password.
+  ///
+  /// In he, this message translates to:
+  /// **'סיסמה חדשה'**
+  String get profile_new_password;
+
+  /// No description provided for @profile_password_error.
+  ///
+  /// In he, this message translates to:
+  /// **'הסיסמה הנוכחית שגויה'**
+  String get profile_password_error;
+
+  /// No description provided for @profile_password_required.
+  ///
+  /// In he, this message translates to:
+  /// **'נא להזין סיסמה נוכחית'**
+  String get profile_password_required;
 }
 
 class _AppLocalizationsDelegate

@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1238,4 +1239,37 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get analytics_duration_range_long => '> 9 שעות';
+
+  @override
+  String get profile_title => 'פרופיל משתמש';
+
+  @override
+  String get profile_stats_title => 'סיכום נתונים שנשמרו';
+
+  @override
+  String get profile_shifts_count => 'משמרות שנשמרו';
+
+  @override
+  String get profile_jobs_count => 'תפקידים מוגדרים';
+
+  @override
+  String get profile_expenses_count => 'הוצאות שנשמרו';
+
+  @override
+  String get profile_incomes_count => 'הכנסות שנשמרו';
+
+  @override
+  String get side_menu_profile => 'פרופיל משתמש';
+
+  @override
+  String get profile_old_password => 'סיסמה נוכחית';
+
+  @override
+  String get profile_new_password => 'סיסמה חדשה';
+
+  @override
+  String get profile_password_error => 'הסיסמה הנוכחית שגויה';
+
+  @override
+  String get profile_password_required => 'נא להזין סיסמה נוכחית';
 }

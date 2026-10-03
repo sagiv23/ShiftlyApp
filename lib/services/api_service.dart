@@ -43,15 +43,22 @@ class ApiService {
   Future<Map<String, dynamic>> updateProfile(
     String token,
     String name,
-    String email,
-  ) async {
+    String email, {
+    String? oldPassword,
+    String? newPassword,
+  }) async {
+    final body = <String, dynamic>{'name': name, 'email': email};
+    if (newPassword != null && newPassword.isNotEmpty) {
+      body['oldPassword'] = oldPassword;
+      body['newPassword'] = newPassword;
+    }
     final response = await http.put(
       Uri.parse('$_baseUrl/auth/profile'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode({'name': name, 'email': email}),
+      body: jsonEncode(body),
     );
 
     if (response.statusCode == 200) {

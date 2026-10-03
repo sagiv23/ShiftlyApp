@@ -4,8 +4,6 @@ import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
 
-enum AuthType { guest, byos, shiftlyAccount }
-
 class AuthProvider with ChangeNotifier {
   final PersistenceService _persistence;
   final ApiService _apiService = ApiService();
@@ -13,18 +11,21 @@ class AuthProvider with ChangeNotifier {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   bool _isLoggedIn = false;
-  AuthType _authType = AuthType.guest;
+  bool _isByosConnected = false;
   String? _userName;
   String? _userEmail;
+  String? _byosEmail;
   String? _token;
 
   bool get isLoggedIn => _isLoggedIn;
 
-  AuthType get authType => _authType;
+  bool get isByosConnected => _isByosConnected;
 
   String? get userName => _userName;
 
   String? get userEmail => _userEmail;
+
+  String? get byosEmail => _byosEmail;
 
   String? get token => _token;
 
@@ -35,15 +36,18 @@ class AuthProvider with ChangeNotifier {
   void _loadAuthState() async {
     final box = _persistence.settingsBox;
     _isLoggedIn = box.get('isLoggedIn', defaultValue: false);
-    _authType = AuthType
-        .values[box.get('authType', defaultValue: AuthType.guest.index)];
+    _isByosConnected = box.get('isByosConnected', defaultValue: false);
     _userName = box.get('userName');
     _userEmail = box.get('userEmail');
+    _byosEmail = box.get('byosEmail');
     _token = await _secureStorage.read(key: 'token');
 
-    if (_isLoggedIn && _authType == AuthType.byos) {
-      // Restore Google Drive session on app startup
-      await _driveService.init();
+    if (_isByosConnected) {
+      try {
+        await _driveService.init();
+      } catch (e) {
+        debugPrint('Drive init failed: $e');
+      }
     }
     notifyListeners();
   }
@@ -52,16 +56,12 @@ class AuthProvider with ChangeNotifier {
     try {
       final email = await _driveService.signIn();
       if (email != null) {
-        _isLoggedIn = true;
-        _authType = AuthType.byos;
-        _userEmail = email;
-        _userName = null; // Anonymous on home screen
+        _isByosConnected = true;
+        _byosEmail = email;
 
         final box = _persistence.settingsBox;
-        await box.put('isLoggedIn', true);
-        await box.put('authType', _authType.index);
-        await box.put('userEmail', _userEmail);
-        await box.delete('userName');
+        await box.put('isByosConnected', true);
+        await box.put('byosEmail', _byosEmail ?? '');
         notifyListeners();
       }
     } catch (e) {
@@ -70,10 +70,24 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<void> disconnectBYOS() async {
+    try {
+      await _driveService.signOut();
+    } catch (e) {
+      debugPrint('Drive signOut failed: $e');
+    }
+    _isByosConnected = false;
+    _byosEmail = null;
+
+    final box = _persistence.settingsBox;
+    await box.put('isByosConnected', false);
+    await box.delete('byosEmail');
+    notifyListeners();
+  }
+
   Future<void> login(String email, String password) async {
     final data = await _apiService.login(email, password);
     _isLoggedIn = true;
-    _authType = AuthType.shiftlyAccount;
     _userEmail = data['user']['email'];
     _userName = data['user']['name'];
     _token = data['token'];
@@ -84,7 +98,6 @@ class AuthProvider with ChangeNotifier {
   Future<void> register(String name, String email, String password) async {
     final data = await _apiService.register(name, email, password);
     _isLoggedIn = true;
-    _authType = AuthType.shiftlyAccount;
     _userName = data['user']['name'];
     _userEmail = data['user']['email'];
     _token = data['token'];
@@ -95,38 +108,57 @@ class AuthProvider with ChangeNotifier {
   Future<void> _saveToPersistence() async {
     final box = _persistence.settingsBox;
     await box.put('isLoggedIn', true);
-    await box.put('authType', _authType.index);
-    await box.put('userEmail', _userEmail);
-    await box.put('userName', _userName);
+    await box.put('userEmail', _userEmail ?? '');
+    await box.put('userName', _userName ?? '');
     if (_token != null) {
       await _secureStorage.write(key: 'token', value: _token!);
     }
   }
 
-  Future<void> updateProfile(String name, String email) async {
+  Future<void> updateProfile(
+    String name,
+    String email, {
+    String? oldPassword,
+    String? newPassword,
+  }) async {
     if (_token == null) return;
-    final data = await _apiService.updateProfile(_token!, name, email);
+
+    if (newPassword != null && newPassword.isNotEmpty) {
+      if (oldPassword == null || oldPassword.isEmpty) {
+        throw Exception('profile_password_required');
+      }
+      try {
+        await _apiService.login(_userEmail!, oldPassword);
+      } catch (e) {
+        throw Exception('profile_password_error');
+      }
+    }
+
+    final data = await _apiService.updateProfile(
+      _token!,
+      name,
+      email,
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+    );
 
     _userName = data['name'];
     _userEmail = data['email'];
 
     final box = _persistence.settingsBox;
-    await box.put('userName', _userName);
-    await box.put('userEmail', _userEmail);
+    await box.put('userName', _userName ?? '');
+    await box.put('userEmail', _userEmail ?? '');
 
     notifyListeners();
   }
 
   Future<void> logout() async {
-    if (_authType == AuthType.byos) await _driveService.signOut();
     _isLoggedIn = false;
-    _authType = AuthType.guest;
     _userName = null;
     _userEmail = null;
     _token = null;
     final box = _persistence.settingsBox;
     await box.put('isLoggedIn', false);
-    await box.put('authType', _authType.index);
     await box.delete('userEmail');
     await box.delete('userName');
     await _secureStorage.delete(key: 'token');

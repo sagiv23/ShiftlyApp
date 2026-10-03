@@ -543,8 +543,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               value: UIUtils.formatCurrency(avgRate, symbol: symbol),
               subtitle: rateBoost > 0
                   ? l.analytics_rate_boost_subtitle(
-                UIUtils.formatCurrency(rateBoost, symbol: symbol),
-              )
+                      UIUtils.formatCurrency(rateBoost, symbol: symbol),
+                    )
                   : l.analytics_base_salary,
               icon: Icons.trending_up_rounded,
               gradientColors: const [Color(0xFF10B981), Color(0xFF059669)],
@@ -563,8 +563,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               value: UIUtils.formatCurrency(netExtras, symbol: symbol),
               subtitle: totalNet > 0
                   ? l.analytics_net_extras_pct_subtitle(
-                ((netExtras / totalNet) * 100).toStringAsFixed(0),
-              )
+                      ((netExtras / totalNet) * 100).toStringAsFixed(0),
+                    )
                   : '0%',
               icon: Icons.payments_rounded,
               gradientColors: const [Color(0xFFEC4899), Color(0xFFD97706)],
@@ -815,11 +815,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 // Legend
                 Row(
                   children: [
-                    _LegendDot(color: AppTheme.primary,
-                        label: l.analytics_base_salary),
+                    _LegendDot(
+                      color: AppTheme.primary,
+                      label: l.analytics_base_salary,
+                    ),
                     const SizedBox(width: 8),
-                    _LegendDot(color: AppTheme.profit,
-                        label: l.analytics_tips_and_extra),
+                    _LegendDot(
+                      color: AppTheme.profit,
+                      label: l.analytics_tips_and_extra,
+                    ),
                   ],
                 ),
               ],
@@ -922,9 +926,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         ? UIUtils.formatCurrency(totalNet, symbol: symbol)
         : l.analytics_hours_suffix_format(totalHours.toStringAsFixed(1));
 
-    final centerSubtitle =
-    _byEarningsForJobs ? l.analytics_stat_total_net : l
-        .analytics_stat_total_hours;
+    final centerSubtitle = _byEarningsForJobs
+        ? l.analytics_stat_total_net
+        : l.analytics_stat_total_hours;
 
     return Card(
       child: Padding(

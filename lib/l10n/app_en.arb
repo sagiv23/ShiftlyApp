@@ -387,5 +387,16 @@
   "common_unknown_job": "Unknown Job",
   "analytics_duration_range_short": "< 6 hours",
   "analytics_duration_range_standard": "6–9 hours",
-  "analytics_duration_range_long": "> 9 hours"
+  "analytics_duration_range_long": "> 9 hours",
+  "profile_title": "User Profile",
+  "profile_stats_title": "Saved Data Summary",
+  "profile_shifts_count": "Shifts Saved",
+  "profile_jobs_count": "Roles / Job Types",
+  "profile_expenses_count": "Expenses Saved",
+  "profile_incomes_count": "Incomes Saved",
+  "side_menu_profile": "User Profile",
+  "profile_old_password": "Current Password",
+  "profile_new_password": "New Password",
+  "profile_password_error": "Current password is incorrect",
+  "profile_password_required": "Please enter your current password"
 }

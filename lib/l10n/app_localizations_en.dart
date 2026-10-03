@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1246,4 +1247,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get analytics_duration_range_long => '> 9 hours';
+
+  @override
+  String get profile_title => 'User Profile';
+
+  @override
+  String get profile_stats_title => 'Saved Data Summary';
+
+  @override
+  String get profile_shifts_count => 'Shifts Saved';
+
+  @override
+  String get profile_jobs_count => 'Roles / Job Types';
+
+  @override
+  String get profile_expenses_count => 'Expenses Saved';
+
+  @override
+  String get profile_incomes_count => 'Incomes Saved';
+
+  @override
+  String get side_menu_profile => 'User Profile';
+
+  @override
+  String get profile_old_password => 'Current Password';
+
+  @override
+  String get profile_new_password => 'New Password';
+
+  @override
+  String get profile_password_error => 'Current password is incorrect';
+
+  @override
+  String get profile_password_required => 'Please enter your current password';
 }
