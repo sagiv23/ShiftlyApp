@@ -198,6 +198,7 @@ class ShiftProvider with ChangeNotifier {
           automaticExpenses: (shiftData['automatic_expenses'] as List?)
               ?.map((e) => AutomaticExpense.fromJson(e as Map<String, dynamic>))
               .toList(),
+          description: shiftData['description'] as String?,
         );
         await _persistence.shiftsBox.put(shift.id, shift);
       }
@@ -272,6 +273,7 @@ class ShiftProvider with ChangeNotifier {
       'automatic_expenses': shift.automaticExpenses
           ?.map((e) => {'description': e.description, 'amount': e.amount})
           .toList(),
+      'description': shift.description,
       'total_pay': shift.calculateTotalPay(rate),
     });
   }

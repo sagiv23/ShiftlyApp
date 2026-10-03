@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS shifts (
     unpaid_break_minutes DECIMAL(10, 2),
     hourly_rate DECIMAL(10, 2),
     automatic_expenses JSONB,
+    description TEXT,
     total_pay DECIMAL(10, 2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

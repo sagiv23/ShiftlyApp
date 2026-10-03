@@ -17,6 +17,12 @@ const pool = new Pool({
     : false
 });
 
+// Keeps existing cloud databases compatible when a new shift field is added.
+// `ADD COLUMN IF NOT EXISTS` makes this safe to run on every server start.
+const ensureSchema = async () => {
+  await pool.query('ALTER TABLE shifts ADD COLUMN IF NOT EXISTS description TEXT');
+};
+
 // Root route
 app.get('/', (req, res) => {
   res.send('Shiftly Backend is running successfully!');
@@ -161,12 +167,12 @@ app.post('/api/shifts', authenticateToken, async (req, res) => {
   const {
     id, job_type_id, date, start_time, end_time, tips,
     break_type, unpaid_break_minutes, hourly_rate,
-    automatic_expenses, total_pay
+    automatic_expenses, description, total_pay
   } = req.body;
   try {
     const result = await pool.query(
-      `INSERT INTO shifts (id, user_id, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, automatic_expenses, total_pay)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+      `INSERT INTO shifts (id, user_id, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, automatic_expenses, description, total_pay)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
        ON CONFLICT (id) DO UPDATE SET
        job_type_id = EXCLUDED.job_type_id,
        date = EXCLUDED.date,
@@ -177,9 +183,10 @@ app.post('/api/shifts', authenticateToken, async (req, res) => {
        unpaid_break_minutes = EXCLUDED.unpaid_break_minutes,
        hourly_rate = EXCLUDED.hourly_rate,
        automatic_expenses = EXCLUDED.automatic_expenses,
+       description = EXCLUDED.description,
        total_pay = EXCLUDED.total_pay
        RETURNING *`,
-      [id, req.user.userId, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, JSON.stringify(automatic_expenses), total_pay]
+      [id, req.user.userId, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, JSON.stringify(automatic_expenses), description, total_pay]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -245,4 +252,9 @@ process.on('uncaughtException', (error) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
+ensureSchema()
+  .then(() => app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`)))
+  .catch((error) => {
+    console.error('Failed to apply database schema updates:', error);
+    process.exit(1);
+  });
