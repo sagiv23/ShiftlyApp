@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -205,6 +206,25 @@ class ApiService {
 
     if (response.statusCode != 204) {
       throw Exception('Failed to delete expense from server');
+    }
+  }
+
+  Future<void> deleteAccount(String token) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$_baseUrl/auth/profile'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode != 200 && response.statusCode != 204) {
+        throw Exception(
+          jsonDecode(response.body)['error'] ?? 'Failed to delete account',
+        );
+      }
+    } catch (e) {
+      debugPrint('deleteAccount exception: $e');
     }
   }
 }

@@ -1280,4 +1280,83 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profile_password_required => 'Please enter your current password';
+
+  @override
+  String get shift_descriptions_title => 'Shift Summaries';
+
+  @override
+  String get shift_descriptions_empty => 'No shift summaries found';
+
+  @override
+  String get shift_description_label => 'Shift Summary / Description';
+
+  @override
+  String get shift_description_hint =>
+      'Enter notes or summary for this shift...';
+
+  @override
+  String get common_search_by_date => 'Search by date';
+
+  @override
+  String get common_clear_date_filter => 'Clear date filter';
+
+  @override
+  String get common_filter_date => 'Filter Date';
+
+  @override
+  String get profile_delete_account => 'Delete Account';
+
+  @override
+  String get profile_delete_account_sub =>
+      'Permanently delete your Shiftly user account';
+
+  @override
+  String get profile_delete_dialog_title => 'Delete Account';
+
+  @override
+  String get profile_delete_dialog_content =>
+      'Are you sure you want to delete your Shiftly account? This action cannot be undone.';
+
+  @override
+  String get profile_delete_final_title => 'Final Confirmation';
+
+  @override
+  String get profile_delete_final_content_1 =>
+      'Your user account and all server data will be permanently deleted.';
+
+  @override
+  String get profile_delete_final_content_2 =>
+      'This action is irreversible. Proceed with account deletion?';
+
+  @override
+  String get profile_delete_success => 'Account deleted successfully';
+
+  @override
+  String get settings_byos_delete_title => 'Delete BYOS Backup';
+
+  @override
+  String get settings_byos_delete_sub =>
+      'Permanently erase backup file from Google Drive';
+
+  @override
+  String get settings_byos_delete_dialog_title => 'Delete BYOS Data';
+
+  @override
+  String get settings_byos_delete_dialog_content =>
+      'Are you sure you want to delete your backup data from Google Drive?';
+
+  @override
+  String get settings_byos_delete_final_title => 'Final Warning';
+
+  @override
+  String get settings_byos_delete_final_content_1 =>
+      'Your backup file in Google Drive will be completely destroyed.';
+
+  @override
+  String get settings_byos_delete_final_content_2 =>
+      'Are you sure you want to permanently delete BYOS backup data?';
+
+  @override
+  String get settings_byos_delete_success =>
+      'BYOS backup data deleted successfully';
 }

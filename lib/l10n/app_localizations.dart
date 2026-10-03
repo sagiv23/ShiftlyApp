@@ -2491,6 +2491,144 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'נא להזין סיסמה נוכחית'**
   String get profile_password_required;
+
+  /// No description provided for @shift_descriptions_title.
+  ///
+  /// In he, this message translates to:
+  /// **'סיכומי משמרות'**
+  String get shift_descriptions_title;
+
+  /// No description provided for @shift_descriptions_empty.
+  ///
+  /// In he, this message translates to:
+  /// **'אין סיכומי משמרות להצגה'**
+  String get shift_descriptions_empty;
+
+  /// No description provided for @shift_description_label.
+  ///
+  /// In he, this message translates to:
+  /// **'תיאור / סיכום משמרת'**
+  String get shift_description_label;
+
+  /// No description provided for @shift_description_hint.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנס הערות או סיכום למשמרת זו...'**
+  String get shift_description_hint;
+
+  /// No description provided for @common_search_by_date.
+  ///
+  /// In he, this message translates to:
+  /// **'חיפוש לפי תאריך'**
+  String get common_search_by_date;
+
+  /// No description provided for @common_clear_date_filter.
+  ///
+  /// In he, this message translates to:
+  /// **'נקה סינון תאריך'**
+  String get common_clear_date_filter;
+
+  /// No description provided for @common_filter_date.
+  ///
+  /// In he, this message translates to:
+  /// **'סינון לפי תאריך'**
+  String get common_filter_date;
+
+  /// No description provided for @profile_delete_account.
+  ///
+  /// In he, this message translates to:
+  /// **'מחיקת חשבון משתמש'**
+  String get profile_delete_account;
+
+  /// No description provided for @profile_delete_account_sub.
+  ///
+  /// In he, this message translates to:
+  /// **'מחיקה לצמיתות של חשבון ה-Shiftly שלך'**
+  String get profile_delete_account_sub;
+
+  /// No description provided for @profile_delete_dialog_title.
+  ///
+  /// In he, this message translates to:
+  /// **'מחיקת חשבון'**
+  String get profile_delete_dialog_title;
+
+  /// No description provided for @profile_delete_dialog_content.
+  ///
+  /// In he, this message translates to:
+  /// **'האם תרצה למחוק את חשבון המשתמש שלך? פעולה זו אינה ניתנת לביטול.'**
+  String get profile_delete_dialog_content;
+
+  /// No description provided for @profile_delete_final_title.
+  ///
+  /// In he, this message translates to:
+  /// **'אישור סופי למחיקה'**
+  String get profile_delete_final_title;
+
+  /// No description provided for @profile_delete_final_content_1.
+  ///
+  /// In he, this message translates to:
+  /// **'חשבון המשתמש וכל נתוני השרת יימחקו לצמיתות.'**
+  String get profile_delete_final_content_1;
+
+  /// No description provided for @profile_delete_final_content_2.
+  ///
+  /// In he, this message translates to:
+  /// **'פעולה זו בלתי הפיכה. האם למחוק את החשבון?'**
+  String get profile_delete_final_content_2;
+
+  /// No description provided for @profile_delete_success.
+  ///
+  /// In he, this message translates to:
+  /// **'החשבון נמחק בהצלחה'**
+  String get profile_delete_success;
+
+  /// No description provided for @settings_byos_delete_title.
+  ///
+  /// In he, this message translates to:
+  /// **'מחיקת גיבוי BYOS'**
+  String get settings_byos_delete_title;
+
+  /// No description provided for @settings_byos_delete_sub.
+  ///
+  /// In he, this message translates to:
+  /// **'מחיקת קובץ הגיבוי מ-Google Drive לצמיתות'**
+  String get settings_byos_delete_sub;
+
+  /// No description provided for @settings_byos_delete_dialog_title.
+  ///
+  /// In he, this message translates to:
+  /// **'מחיקת נתוני BYOS'**
+  String get settings_byos_delete_dialog_title;
+
+  /// No description provided for @settings_byos_delete_dialog_content.
+  ///
+  /// In he, this message translates to:
+  /// **'האם תרצה למחוק את נתוני הגיבוי מ-Google Drive?'**
+  String get settings_byos_delete_dialog_content;
+
+  /// No description provided for @settings_byos_delete_final_title.
+  ///
+  /// In he, this message translates to:
+  /// **'אזהרה סופית'**
+  String get settings_byos_delete_final_title;
+
+  /// No description provided for @settings_byos_delete_final_content_1.
+  ///
+  /// In he, this message translates to:
+  /// **'קובץ הגיבוי שלך ב-Google Drive יימחק כליל.'**
+  String get settings_byos_delete_final_content_1;
+
+  /// No description provided for @settings_byos_delete_final_content_2.
+  ///
+  /// In he, this message translates to:
+  /// **'האם אתה בטוח שברצונך למחוק את הגיבוי לצמיתות?'**
+  String get settings_byos_delete_final_content_2;
+
+  /// No description provided for @settings_byos_delete_success.
+  ///
+  /// In he, this message translates to:
+  /// **'נתוני הגיבוי של BYOS נמחקו בהצלחה'**
+  String get settings_byos_delete_success;
 }
 
 class _AppLocalizationsDelegate

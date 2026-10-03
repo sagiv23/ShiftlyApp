@@ -164,4 +164,11 @@ class AuthProvider with ChangeNotifier {
     await _secureStorage.delete(key: 'token');
     notifyListeners();
   }
+
+  Future<void> deleteAccount() async {
+    if (_token != null) {
+      await _apiService.deleteAccount(_token!);
+    }
+    await logout();
+  }
 }

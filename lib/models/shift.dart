@@ -46,6 +46,9 @@ class Shift extends HiveObject {
   @HiveField(13)
   List<AutomaticExpense>? automaticIncomes;
 
+  @HiveField(14)
+  String? description;
+
   Shift({
     required this.id,
     required this.date,
@@ -60,6 +63,7 @@ class Shift extends HiveObject {
     this.automaticExpense = 0.0,
     this.automaticExpenses,
     this.automaticIncomes,
+    this.description,
   });
 
   Map<String, dynamic> toJson() => {
@@ -75,6 +79,7 @@ class Shift extends HiveObject {
     'hourlyRate': hourlyRate,
     'automaticExpenses': automaticExpenses?.map((e) => e.toJson()).toList(),
     'automaticIncomes': automaticIncomes?.map((e) => e.toJson()).toList(),
+    'description': description,
   };
 
   factory Shift.fromJson(Map<String, dynamic> json) => Shift(
@@ -105,6 +110,7 @@ class Shift extends HiveObject {
           (e) => AutomaticExpense.fromJson(Map<String, dynamic>.from(e as Map)),
         )
         .toList(),
+    description: json['description'],
   );
 
   double get totalAutomaticExpenses {

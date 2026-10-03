@@ -112,10 +112,111 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: AppTheme.spaceLg),
+            Text(
+              l.settings_section_danger,
+              style: Theme
+                  .of(
+                context,
+              )
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: AppTheme.spaceXs),
+            Card(
+              child: ListTile(
+                title: Text(
+                  l.profile_delete_account,
+                  style: const TextStyle(
+                    color: AppTheme.expense,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Text(l.profile_delete_account_sub),
+                leading: const Icon(
+                  Icons.delete_forever_rounded,
+                  color: AppTheme.expense,
+                ),
+                onTap: () => _handleDeleteAccount(context),
+              ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _handleDeleteAccount(BuildContext context) async {
+    final l = AppLocalizations.of(context)!;
+    // Step 1: First Confirmation
+    final confirmed = await UIUtils.showConfirmDialog(
+      context: context,
+      title: l.profile_delete_dialog_title,
+      content: l.profile_delete_dialog_content,
+      confirmLabel: l.common_continue,
+      isDestructive: true,
+    );
+
+    if (confirmed != true) return;
+    if (!context.mounted) return;
+
+    // Step 2: Second Confirmation (Final Warning)
+    final finalConfirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) =>
+          AlertDialog(
+            title: Row(
+              children: [
+                const Icon(
+                    Icons.warning_amber_rounded, color: AppTheme.expense),
+                const SizedBox(width: 8),
+                Expanded(child: Text(l.profile_delete_final_title)),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l.profile_delete_final_content_1),
+                const SizedBox(height: 16),
+                Text(
+                  l.profile_delete_final_content_2,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(
+                  l.common_cancel,
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.expense,
+                  foregroundColor: Colors.white,
+                ),
+                child: Text(l.common_delete),
+              ),
+            ],
+          ),
+    );
+
+    if (finalConfirm != true) return;
+    if (!context.mounted) return;
+
+    await context.read<AuthProvider>().deleteAccount();
+
+    if (!context.mounted) return;
+
+    UIUtils.showSnackBar(context, l.profile_delete_success);
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   void _showEditProfileDialog(BuildContext context) {
@@ -186,7 +287,10 @@ class ProfileScreen extends StatelessWidget {
                 );
                 if (context.mounted) {
                   Navigator.pop(ctx);
-                  UIUtils.showSnackBar(context, l.settings_user_update_success);
+                  UIUtils.showSnackBar(
+                    context,
+                    l.settings_user_update_success,
+                  );
                 }
               } catch (e) {
                 if (context.mounted) {

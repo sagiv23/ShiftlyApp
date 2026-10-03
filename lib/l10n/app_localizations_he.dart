@@ -1272,4 +1272,82 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get profile_password_required => 'נא להזין סיסמה נוכחית';
+
+  @override
+  String get shift_descriptions_title => 'סיכומי משמרות';
+
+  @override
+  String get shift_descriptions_empty => 'אין סיכומי משמרות להצגה';
+
+  @override
+  String get shift_description_label => 'תיאור / סיכום משמרת';
+
+  @override
+  String get shift_description_hint => 'הכנס הערות או סיכום למשמרת זו...';
+
+  @override
+  String get common_search_by_date => 'חיפוש לפי תאריך';
+
+  @override
+  String get common_clear_date_filter => 'נקה סינון תאריך';
+
+  @override
+  String get common_filter_date => 'סינון לפי תאריך';
+
+  @override
+  String get profile_delete_account => 'מחיקת חשבון משתמש';
+
+  @override
+  String get profile_delete_account_sub =>
+      'מחיקה לצמיתות של חשבון ה-Shiftly שלך';
+
+  @override
+  String get profile_delete_dialog_title => 'מחיקת חשבון';
+
+  @override
+  String get profile_delete_dialog_content =>
+      'האם תרצה למחוק את חשבון המשתמש שלך? פעולה זו אינה ניתנת לביטול.';
+
+  @override
+  String get profile_delete_final_title => 'אישור סופי למחיקה';
+
+  @override
+  String get profile_delete_final_content_1 =>
+      'חשבון המשתמש וכל נתוני השרת יימחקו לצמיתות.';
+
+  @override
+  String get profile_delete_final_content_2 =>
+      'פעולה זו בלתי הפיכה. האם למחוק את החשבון?';
+
+  @override
+  String get profile_delete_success => 'החשבון נמחק בהצלחה';
+
+  @override
+  String get settings_byos_delete_title => 'מחיקת גיבוי BYOS';
+
+  @override
+  String get settings_byos_delete_sub =>
+      'מחיקת קובץ הגיבוי מ-Google Drive לצמיתות';
+
+  @override
+  String get settings_byos_delete_dialog_title => 'מחיקת נתוני BYOS';
+
+  @override
+  String get settings_byos_delete_dialog_content =>
+      'האם תרצה למחוק את נתוני הגיבוי מ-Google Drive?';
+
+  @override
+  String get settings_byos_delete_final_title => 'אזהרה סופית';
+
+  @override
+  String get settings_byos_delete_final_content_1 =>
+      'קובץ הגיבוי שלך ב-Google Drive יימחק כליל.';
+
+  @override
+  String get settings_byos_delete_final_content_2 =>
+      'האם אתה בטוח שברצונך למחוק את הגיבוי לצמיתות?';
+
+  @override
+  String get settings_byos_delete_success =>
+      'נתוני הגיבוי של BYOS נמחקו בהצלחה';
 }

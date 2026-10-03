@@ -39,6 +39,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
 
   // Raw Paste State
   final TextEditingController _rawTextController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
 
   // Timer State
   final List<TextEditingController> _timerTipControllers = [];
@@ -104,6 +105,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       } else {
         _tipControllers.add(TextEditingController(text: '0'));
       }
+      _descriptionController.text = s.description ?? '';
     } else {
       _tipControllers.add(TextEditingController(text: '0'));
       _timerTipControllers.add(TextEditingController(text: '0'));
@@ -180,6 +182,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
 
   @override
   void dispose() {
+    _descriptionController.dispose();
     for (var c in _tipControllers) {
       c.dispose();
     }
@@ -327,6 +330,9 @@ class _AddShiftScreenState extends State<AddShiftScreen>
           ? BreakType.unpaid
           : BreakType.none,
       unpaidBreakMinutes: timerProvider.accumulatedUnpaidMinutes,
+      description: _descriptionController.text.trim().isEmpty
+          ? null
+          : _descriptionController.text.trim(),
     );
 
     shiftProvider.addShift(
@@ -402,6 +408,9 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       s.automaticIncomes = incomes;
       s.breakType = _selectedBreakType;
       s.unpaidBreakMinutes = settings.unpaidBreakDurationMinutes;
+      s.description = _descriptionController.text.trim().isEmpty
+          ? null
+          : _descriptionController.text.trim();
 
       if (!mounted) return;
       shiftProvider.updateShift(
@@ -431,6 +440,9 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         automaticIncomes: incomes,
         breakType: _selectedBreakType,
         unpaidBreakMinutes: settings.unpaidBreakDurationMinutes,
+        description: _descriptionController.text.trim().isEmpty
+            ? null
+            : _descriptionController.text.trim(),
       );
       if (!mounted) return;
       shiftProvider.addShift(
@@ -1077,6 +1089,20 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                 const SizedBox(height: AppTheme.spaceMd),
                 _buildAutoIncomesSection(symbol),
               ],
+            ),
+          ),
+          const SizedBox(height: AppTheme.spaceSm),
+          _FormSection(
+            title: l.shift_description_label,
+            icon: Icons.note_alt_rounded,
+            child: TextField(
+              controller: _descriptionController,
+              decoration: InputDecoration(
+                labelText: l.shift_description_label,
+                hintText: l.shift_description_hint,
+              ),
+              maxLines: 3,
+              minLines: 1,
             ),
           ),
           const SizedBox(height: AppTheme.spaceLg),

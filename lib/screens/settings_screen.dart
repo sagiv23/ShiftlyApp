@@ -8,6 +8,7 @@ import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/auth_screen.dart';
+import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/services/notification_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/ui_utils.dart';
@@ -268,7 +269,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       });
 
     return AdaptiveScaffold(
-      currentIndex: 4,
+      currentIndex: 5,
       title: l.settings_title,
       body: SafeArea(
         bottom: true,
@@ -552,6 +553,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ],
                         );
                       },
+                    ),
+                    const Divider(height: 24),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(
+                        Icons.delete_outline_rounded,
+                        color: AppTheme.expense,
+                      ),
+                      title: Text(
+                        l.settings_byos_delete_title,
+                        style: const TextStyle(
+                          color: AppTheme.expense,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      subtitle: Text(
+                        l.settings_byos_delete_sub,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      onTap: () => _handleDeleteBYOS(context),
                     ),
                   ],
                 ),
@@ -894,7 +916,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onTap: () => Navigator.push(
                     context,
                     PageRouteBuilder(
-                      pageBuilder: (_, __, ___) => const AuthScreen(),
+                      pageBuilder: (ctx, anim1, anim2) => const AuthScreen(),
                     ),
                   ),
                 ),
@@ -949,6 +971,77 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ],
     );
+  }
+
+  Future<void> _handleDeleteBYOS(BuildContext context) async {
+    final l = AppLocalizations.of(context)!;
+    // Step 1: First Confirmation
+    final confirmed = await UIUtils.showConfirmDialog(
+      context: context,
+      title: l.settings_byos_delete_dialog_title,
+      content: l.settings_byos_delete_dialog_content,
+      confirmLabel: l.common_continue,
+      isDestructive: true,
+    );
+
+    if (confirmed != true) return;
+    if (!context.mounted) return;
+
+    // Step 2: Second Confirmation (Final Warning)
+    final finalConfirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: AppTheme.expense),
+            const SizedBox(width: 8),
+            Expanded(child: Text(l.settings_byos_delete_final_title)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l.settings_byos_delete_final_content_1),
+            const SizedBox(height: 16),
+            Text(
+              l.settings_byos_delete_final_content_2,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(
+              l.common_cancel,
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.expense,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(l.common_delete),
+          ),
+        ],
+      ),
+    );
+
+    if (finalConfirm != true) return;
+    if (!context.mounted) return;
+
+    final driveService = GoogleDriveService();
+    await driveService.deleteBackup();
+    if (context.mounted && context.read<AuthProvider>().isByosConnected) {
+      await context.read<AuthProvider>().disconnectBYOS();
+    }
+
+    if (!context.mounted) return;
+
+    UIUtils.showSnackBar(context, l.settings_byos_delete_success);
   }
 
   Future<void> _handleFactoryReset(BuildContext context) async {

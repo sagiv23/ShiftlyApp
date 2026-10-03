@@ -28,6 +28,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
   final List<TextEditingController> _autoExpenseDescControllers = [];
   final List<TextEditingController> _autoIncomeAmountControllers = [];
   final List<TextEditingController> _autoIncomeDescControllers = [];
+  DateTime? _selectedDateFilter;
 
   @override
   void initState() {
@@ -388,6 +389,17 @@ class _ExpensesScreenState extends State<ExpensesScreen>
       }
     }
 
+    if (_selectedDateFilter != null) {
+      expenseRecords.removeWhere((r) =>
+      r.date.year != _selectedDateFilter!.year ||
+          r.date.month != _selectedDateFilter!.month ||
+          r.date.day != _selectedDateFilter!.day);
+      incomeRecords.removeWhere((r) =>
+      r.date.year != _selectedDateFilter!.year ||
+          r.date.month != _selectedDateFilter!.month ||
+          r.date.day != _selectedDateFilter!.day);
+    }
+
     final groupedExpenses = groupBy(
       expenseRecords,
       (r) => "${r.date.year}-${r.date.month.toString().padLeft(2, '0')}",
@@ -399,12 +411,68 @@ class _ExpensesScreenState extends State<ExpensesScreen>
     );
 
     return AdaptiveScaffold(
-      currentIndex: 3,
+      currentIndex: 4,
       title: l.expenses_title,
+      actions: [
+        if (_selectedDateFilter != null)
+          IconButton(
+            icon: const Icon(Icons.filter_alt_off_rounded),
+            tooltip: l.common_clear_date_filter,
+            onPressed: () => setState(() => _selectedDateFilter = null),
+          ),
+        IconButton(
+          icon: const Icon(Icons.calendar_today_rounded),
+          tooltip: l.common_search_by_date,
+          onPressed: () async {
+            final picked = await showDatePicker(
+              context: context,
+              initialDate: _selectedDateFilter ?? DateTime.now(),
+              firstDate: DateTime(2020),
+              lastDate: DateTime(2100),
+            );
+            if (picked != null) {
+              setState(() => _selectedDateFilter = picked);
+            }
+          },
+        ),
+      ],
       body: SafeArea(
         bottom: true,
         child: Column(
           children: [
+            if (_selectedDateFilter != null)
+              Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spaceSm,
+                  vertical: AppTheme.spaceXs,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spaceMd,
+                  vertical: AppTheme.spaceXs,
+                ),
+                decoration: BoxDecoration(
+                  color: AppTheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  border: Border.all(
+                    color: AppTheme.primary.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${l.common_filter_date}: ${DateFormat('dd/MM/yyyy')
+                          .format(_selectedDateFilter!)}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextButton(
+                      onPressed: () =>
+                          setState(() => _selectedDateFilter = null),
+                      child: Text(l.common_clear_date_filter),
+                    ),
+                  ],
+                ),
+              ),
             Container(
               margin: const EdgeInsets.fromLTRB(
                 AppTheme.spaceSm,

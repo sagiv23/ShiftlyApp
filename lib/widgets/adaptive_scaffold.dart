@@ -9,6 +9,7 @@ import 'package:shiftly/screens/expenses_screen.dart';
 import 'package:shiftly/screens/home_screen.dart';
 import 'package:shiftly/screens/profile_screen.dart';
 import 'package:shiftly/screens/settings_screen.dart';
+import 'package:shiftly/screens/shift_descriptions_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 
 class AdaptiveScaffold extends StatelessWidget {
@@ -47,9 +48,12 @@ class AdaptiveScaffold extends StatelessWidget {
         targetScreen = const AnalyticsScreen();
         break;
       case 3:
-        targetScreen = const ExpensesScreen();
+        targetScreen = const ShiftDescriptionsScreen();
         break;
       case 4:
+        targetScreen = const ExpensesScreen();
+        break;
+      case 5:
         targetScreen = const SettingsScreen();
         break;
       default:
@@ -109,7 +113,6 @@ class AdaptiveScaffold extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktopOrWide = screenWidth >= 768;
 
-    // 4 items on mobile bottom bar so text never truncates
     final navItems = [
       BottomNavigationBarItem(
         icon: const Icon(Icons.home_rounded, size: 22),
@@ -122,6 +125,10 @@ class AdaptiveScaffold extends StatelessWidget {
       BottomNavigationBarItem(
         icon: const Icon(Icons.bar_chart_rounded, size: 22),
         label: l.analytics_title,
+      ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.note_alt_rounded, size: 22),
+        label: l.shift_descriptions_title,
       ),
       BottomNavigationBarItem(
         icon: const Icon(Icons.receipt_long_rounded, size: 22),
@@ -212,7 +219,7 @@ class AdaptiveScaffold extends StatelessWidget {
       ),
       body: body,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex > 3 ? 0 : currentIndex,
+        currentIndex: currentIndex > 4 ? 0 : currentIndex,
         onTap: (index) => _onItemTapped(context, index),
         type: BottomNavigationBarType.fixed,
         selectedFontSize: 11,
@@ -311,10 +318,16 @@ class _SideMenuContent extends StatelessWidget {
               onTap: () => onSelectTab(2),
             ),
             _SideNavItem(
-              icon: Icons.receipt_long_rounded,
-              label: l.expenses_title,
+              icon: Icons.note_alt_rounded,
+              label: l.shift_descriptions_title,
               isSelected: currentIndex == 3,
               onTap: () => onSelectTab(3),
+            ),
+            _SideNavItem(
+              icon: Icons.receipt_long_rounded,
+              label: l.expenses_title,
+              isSelected: currentIndex == 4,
+              onTap: () => onSelectTab(4),
             ),
             if (auth.isLoggedIn) ...[
               _SideNavItem(
@@ -339,8 +352,8 @@ class _SideMenuContent extends StatelessWidget {
             _SideNavItem(
               icon: Icons.settings_outlined,
               label: l.settings_title,
-              isSelected: currentIndex == 4,
-              onTap: () => onSelectTab(4),
+              isSelected: currentIndex == 5,
+              onTap: () => onSelectTab(5),
             ),
           ],
         ),

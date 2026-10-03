@@ -169,4 +169,29 @@ class GoogleDriveService {
       return null;
     }
   }
+
+  Future<bool> deleteBackup() async {
+    final httpClient = await _getAuthenticatedClient();
+    if (httpClient == null) {
+      debugPrint('GoogleDrive: Cannot delete, authenticated client is null.');
+      return false;
+    }
+
+    final driveApi = drive.DriveApi(httpClient);
+    final fileList = await driveApi.files.list(
+      q: "name = '$_backupFileName'",
+      spaces: 'appDataFolder',
+    );
+
+    if (fileList.files?.isNotEmpty ?? false) {
+      for (var file in fileList.files!) {
+        if (file.id != null) {
+          await driveApi.files.delete(file.id!);
+        }
+      }
+      debugPrint('GoogleDrive: Backup file deleted.');
+      return true;
+    }
+    return false;
+  }
 }
