@@ -287,6 +287,40 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     return list;
   }
 
+  Future<bool> _confirmOverlappingShifts({
+    required DateTime start,
+    required DateTime end,
+    String? excludeShiftId,
+  }) async {
+    final shiftProvider = context.read<ShiftProvider>();
+    final overlaps = shiftProvider.findOverlappingShifts(
+      start: start,
+      end: end,
+      excludeShiftId: excludeShiftId,
+    );
+    if (overlaps.isEmpty) return true;
+
+    final l = AppLocalizations.of(context)!;
+    final details = overlaps
+        .map((shift) {
+          final jobName =
+              shiftProvider.getJobTypeById(shift.jobTypeId)?.name ??
+              l.add_shift_overlap_unknown_job;
+          final date = DateFormat('dd/MM/yyyy').format(shift.startTime);
+          final time =
+              '${DateFormat.Hm().format(shift.startTime)}–${DateFormat.Hm().format(shift.endTime)}';
+          return '• $jobName · $date · $time';
+        })
+        .join('\n');
+
+    return UIUtils.showConfirmDialog(
+      context: context,
+      title: l.add_shift_overlap_title,
+      content: l.add_shift_overlap_content(overlaps.length, details),
+      confirmLabel: l.add_shift_overlap_confirm,
+    );
+  }
+
   void _finishTimerShift() async {
     final timerProvider = context.read<TimerProvider>();
     final shiftProvider = context.read<ShiftProvider>();
@@ -334,6 +368,12 @@ class _AddShiftScreenState extends State<AddShiftScreen>
           ? null
           : _descriptionController.text.trim(),
     );
+
+    final overlapConfirmed = await _confirmOverlappingShifts(
+      start: shift.startTime,
+      end: shift.endTime,
+    );
+    if (!overlapConfirmed || !mounted) return;
 
     shiftProvider.addShift(
       shift,
@@ -394,6 +434,13 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     if (expenses == null) return;
     final incomes = _getIncomeList();
     if (incomes == null) return;
+
+    final overlapConfirmed = await _confirmOverlappingShifts(
+      start: start,
+      end: end,
+      excludeShiftId: widget.shiftToEdit?.id,
+    );
+    if (!overlapConfirmed || !mounted) return;
 
     if (widget.shiftToEdit != null) {
       final s = widget.shiftToEdit!;
@@ -502,6 +549,11 @@ class _AddShiftScreenState extends State<AddShiftScreen>
               .map((e) => e.copyWith())
               .toList();
         }
+        final overlapConfirmed = await _confirmOverlappingShifts(
+          start: shift.startTime,
+          end: shift.endTime,
+        );
+        if (!overlapConfirmed) continue;
         if (!mounted) continue;
         shiftProvider.addShift(
           shift,

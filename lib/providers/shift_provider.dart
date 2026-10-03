@@ -295,6 +295,25 @@ class ShiftProvider with ChangeNotifier {
       _persistence.shiftsBox.values.toList()
         ..sort((a, b) => b.date.compareTo(a.date));
 
+  /// Returns saved shifts whose actual time range intersects [start]–[end].
+  /// Adjacent shifts (for example 08:00–12:00 and 12:00–16:00) are not
+  /// considered overlapping.
+  List<Shift> findOverlappingShifts({
+    required DateTime start,
+    required DateTime end,
+    String? excludeShiftId,
+  }) {
+    return shifts
+        .where(
+          (shift) =>
+              shift.id != excludeShiftId &&
+              shift.startTime.isBefore(end) &&
+              start.isBefore(shift.endTime),
+        )
+        .toList()
+      ..sort((a, b) => a.startTime.compareTo(b.startTime));
+  }
+
   List<Shift> get filteredShifts {
     final allShifts = shifts;
     final ShiftFilter? filter = _activeFilter;

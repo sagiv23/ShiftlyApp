@@ -694,6 +694,20 @@ class AppLocalizationsHe extends AppLocalizations {
   String get add_shift_shift_saved => 'המשמרת נשמרה בהצלחה';
 
   @override
+  String get add_shift_overlap_title => 'חפיפה בין משמרות';
+
+  @override
+  String add_shift_overlap_content(num count, String details) {
+    return 'נמצאו $count משמרות חופפות:\n\n$details\n\nלשמור בכל זאת?';
+  }
+
+  @override
+  String get add_shift_overlap_confirm => 'שמור בכל זאת';
+
+  @override
+  String get add_shift_overlap_unknown_job => 'עבודה לא ידועה';
+
+  @override
   String get add_shift_pick_a_job => 'בחר סוג עבודה קודם';
 
   @override

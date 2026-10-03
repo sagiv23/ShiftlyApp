@@ -696,6 +696,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get add_shift_shift_saved => 'Shift saved successfully';
 
   @override
+  String get add_shift_overlap_title => 'Overlapping shift';
+
+  @override
+  String add_shift_overlap_content(num count, String details) {
+    return 'This shift overlaps $count existing shift(s):\n\n$details\n\nSave it anyway?';
+  }
+
+  @override
+  String get add_shift_overlap_confirm => 'Save anyway';
+
+  @override
+  String get add_shift_overlap_unknown_job => 'Unknown job';
+
+  @override
   String get add_shift_pick_a_job => 'Please select a job type first';
 
   @override

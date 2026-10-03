@@ -217,6 +217,16 @@
   "add_shift_shift_ended_edit_dialog_desc": "Are you sure you want to save the shift details?",
   "add_shift_shift_edit_dialog_title": "Update Shift",
   "add_shift_shift_saved": "Shift saved successfully",
+  "add_shift_overlap_title": "Overlapping shift",
+  "add_shift_overlap_content": "This shift overlaps {count} existing shift(s):\n\n{details}\n\nSave it anyway?",
+  "@add_shift_overlap_content": {
+    "placeholders": {
+      "count": { "type": "num" },
+      "details": { "type": "String" }
+    }
+  },
+  "add_shift_overlap_confirm": "Save anyway",
+  "add_shift_overlap_unknown_job": "Unknown job",
   "add_shift_pick_a_job": "Please select a job type first",
   "add_shift_delete_title": "Delete Shift",
   "add_shift_delete_desc": "Are you sure you want to delete the shift from",

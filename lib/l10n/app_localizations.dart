@@ -1400,6 +1400,30 @@ abstract class AppLocalizations {
   /// **'המשמרת נשמרה בהצלחה'**
   String get add_shift_shift_saved;
 
+  /// No description provided for @add_shift_overlap_title.
+  ///
+  /// In he, this message translates to:
+  /// **'חפיפה בין משמרות'**
+  String get add_shift_overlap_title;
+
+  /// No description provided for @add_shift_overlap_content.
+  ///
+  /// In he, this message translates to:
+  /// **'נמצאו {count} משמרות חופפות:\n\n{details}\n\nלשמור בכל זאת?'**
+  String add_shift_overlap_content(num count, String details);
+
+  /// No description provided for @add_shift_overlap_confirm.
+  ///
+  /// In he, this message translates to:
+  /// **'שמור בכל זאת'**
+  String get add_shift_overlap_confirm;
+
+  /// No description provided for @add_shift_overlap_unknown_job.
+  ///
+  /// In he, this message translates to:
+  /// **'עבודה לא ידועה'**
+  String get add_shift_overlap_unknown_job;
+
   /// No description provided for @add_shift_pick_a_job.
   ///
   /// In he, this message translates to:
