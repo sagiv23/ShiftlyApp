@@ -49,7 +49,9 @@ class ShiftProvider with ChangeNotifier {
       try {
         final data = {
           'shifts': shifts.map((s) => s.toJson()).toList(),
-          'expenses': expenses.map((e) => e.toJson()).toList(),
+          'expenses': _persistence.expensesBox.values
+              .map((e) => e.toJson())
+              .toList(),
           'jobTypes': jobTypes.map((j) => j.toJson()).toList(),
         };
         await _driveService.uploadBackup(data);

@@ -420,7 +420,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                             .restoreFromBYOS();
                                         if (context.mounted) {
                                           if (results['shifts']! > 0 ||
-                                              results['jobs']! > 0) {
+                                              results['jobs']! > 0 ||
+                                              results['expenses']! > 0) {
                                             UIUtils.showSnackBar(
                                               context,
                                               l.settings_restore_success
@@ -494,7 +495,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     .restoreFromBYOS();
                                 if (context.mounted) {
                                   if (results['shifts']! > 0 ||
-                                      results['jobs']! > 0) {
+                                      results['jobs']! > 0 ||
+                                      results['expenses']! > 0) {
                                     UIUtils.showSnackBar(
                                       context,
                                       l.settings_restore_success
@@ -527,28 +529,79 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ),
                     ],
-                    const Divider(height: 24),
                     // Saved stats summary in BYOS / settings
                     Builder(
                       builder: (context) {
                         final sp = context.watch<ShiftProvider>();
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
+                        final shiftsCount = sp.shifts.length;
+                        final jobsCount = sp.jobTypes.length;
+                        final expensesCount = sp.expenses.length;
+                        final incomesCount = sp.incomes.length;
+                        final descriptionsCount = sp.shifts
+                            .where(
+                              (s) =>
+                                  s.description != null &&
+                                  s.description!.trim().isNotEmpty,
+                            )
+                            .length;
+
+                        final items = <Widget>[];
+                        if (shiftsCount > 0) {
+                          items.add(
                             _buildStatItem(
                               context,
                               l.profile_shifts_count,
-                              '${sp.shifts.length}',
+                              '$shiftsCount',
                             ),
+                          );
+                        }
+                        if (jobsCount > 0) {
+                          items.add(
                             _buildStatItem(
                               context,
                               l.profile_jobs_count,
-                              '${sp.jobTypes.length}',
+                              '$jobsCount',
                             ),
+                          );
+                        }
+                        if (expensesCount > 0) {
+                          items.add(
                             _buildStatItem(
                               context,
                               l.profile_expenses_count,
-                              '${sp.expenses.length}',
+                              '$expensesCount',
+                            ),
+                          );
+                        }
+                        if (incomesCount > 0) {
+                          items.add(
+                            _buildStatItem(
+                              context,
+                              l.profile_incomes_count,
+                              '$incomesCount',
+                            ),
+                          );
+                        }
+                        if (descriptionsCount > 0) {
+                          items.add(
+                            _buildStatItem(
+                              context,
+                              l.shift_descriptions_title,
+                              '$descriptionsCount',
+                            ),
+                          );
+                        }
+
+                        if (items.isEmpty) return const SizedBox.shrink();
+
+                        return Column(
+                          children: [
+                            const Divider(height: 24),
+                            Wrap(
+                              alignment: WrapAlignment.spaceAround,
+                              spacing: 16,
+                              runSpacing: 12,
+                              children: items,
                             ),
                           ],
                         );
@@ -613,36 +666,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const Divider(height: 1, indent: 56),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          l.settings_field_theme,
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(height: 12),
-                        SegmentedButton<ThemeMode>(
-                          segments: [
-                            ButtonSegment(
-                              value: ThemeMode.system,
-                              label: Text(l.settings_theme_system),
-                              icon: const Icon(Icons.brightness_auto_rounded),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.palette_outlined,
+                              color: AppTheme.primaryDark,
                             ),
-                            ButtonSegment(
-                              value: ThemeMode.light,
-                              label: Text(l.settings_theme_light),
-                              icon: const Icon(Icons.light_mode_rounded),
-                            ),
-                            ButtonSegment(
-                              value: ThemeMode.dark,
-                              label: Text(l.settings_theme_dark),
-                              icon: const Icon(Icons.dark_mode_rounded),
+                            const SizedBox(width: 16),
+                            Text(
+                              l.settings_field_theme,
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
                           ],
-                          selected: {settings.themeMode},
-                          onSelectionChanged: (val) =>
-                              settings.setThemeMode(val.first),
+                        ),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: SegmentedButton<ThemeMode>(
+                            segments: [
+                              ButtonSegment(
+                                value: ThemeMode.system,
+                                label: Text(l.settings_theme_system),
+                                icon: const Icon(Icons.brightness_auto_rounded),
+                              ),
+                              ButtonSegment(
+                                value: ThemeMode.light,
+                                label: Text(l.settings_theme_light),
+                                icon: const Icon(Icons.light_mode_rounded),
+                              ),
+                              ButtonSegment(
+                                value: ThemeMode.dark,
+                                label: Text(l.settings_theme_dark),
+                                icon: const Icon(Icons.dark_mode_rounded),
+                              ),
+                            ],
+                            selected: {settings.themeMode},
+                            onSelectionChanged: (val) =>
+                                settings.setThemeMode(val.first),
+                          ),
                         ),
                       ],
                     ),

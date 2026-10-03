@@ -19,6 +19,63 @@ class ProfileScreen extends StatelessWidget {
     final jobsCount = shiftProvider.jobTypes.length;
     final expensesCount = shiftProvider.expenses.length;
     final incomesCount = shiftProvider.incomes.length;
+    final descriptionsCount = shiftProvider.shifts
+        .where(
+          (s) => s.description != null && s.description!.trim().isNotEmpty,
+        )
+        .length;
+
+    final statRows = <Widget>[];
+    if (shiftsCount > 0) {
+      statRows.add(
+        _StatRow(
+          icon: Icons.access_time_filled_rounded,
+          label: l.profile_shifts_count,
+          value: shiftsCount.toString(),
+          color: AppTheme.primary,
+        ),
+      );
+    }
+    if (jobsCount > 0) {
+      statRows.add(
+        _StatRow(
+          icon: Icons.badge_rounded,
+          label: l.profile_jobs_count,
+          value: jobsCount.toString(),
+          color: Colors.orange,
+        ),
+      );
+    }
+    if (expensesCount > 0) {
+      statRows.add(
+        _StatRow(
+          icon: Icons.receipt_long_rounded,
+          label: l.profile_expenses_count,
+          value: expensesCount.toString(),
+          color: AppTheme.expense,
+        ),
+      );
+    }
+    if (incomesCount > 0) {
+      statRows.add(
+        _StatRow(
+          icon: Icons.account_balance_wallet_rounded,
+          label: l.profile_incomes_count,
+          value: incomesCount.toString(),
+          color: AppTheme.profit,
+        ),
+      );
+    }
+    if (descriptionsCount > 0) {
+      statRows.add(
+        _StatRow(
+          icon: Icons.note_alt_rounded,
+          label: l.shift_descriptions_title,
+          value: descriptionsCount.toString(),
+          color: Colors.purple,
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text(l.profile_title), centerTitle: true),
@@ -67,51 +124,30 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: AppTheme.spaceLg),
-            // Statistics Summary Card
-            Text(
-              l.profile_stats_title,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: AppTheme.spaceXs),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppTheme.spaceMd),
-                child: Column(
-                  children: [
-                    _StatRow(
-                      icon: Icons.access_time_filled_rounded,
-                      label: l.profile_shifts_count,
-                      value: shiftsCount.toString(),
-                      color: AppTheme.primary,
-                    ),
-                    const Divider(height: 24),
-                    _StatRow(
-                      icon: Icons.badge_rounded,
-                      label: l.profile_jobs_count,
-                      value: jobsCount.toString(),
-                      color: Colors.orange,
-                    ),
-                    const Divider(height: 24),
-                    _StatRow(
-                      icon: Icons.receipt_long_rounded,
-                      label: l.profile_expenses_count,
-                      value: expensesCount.toString(),
-                      color: AppTheme.expense,
-                    ),
-                    const Divider(height: 24),
-                    _StatRow(
-                      icon: Icons.account_balance_wallet_rounded,
-                      label: l.profile_incomes_count,
-                      value: incomesCount.toString(),
-                      color: AppTheme.profit,
-                    ),
-                  ],
+            if (statRows.isNotEmpty) ...[
+              const SizedBox(height: AppTheme.spaceLg),
+              // Statistics Summary Card
+              Text(
+                l.profile_stats_title,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: AppTheme.spaceXs),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppTheme.spaceMd),
+                  child: Column(
+                    children: [
+                      for (int i = 0; i < statRows.length; i++) ...[
+                        if (i > 0) const Divider(height: 24),
+                        statRows[i],
+                      ],
+                    ],
+                  ),
                 ),
               ),
-            ),
+            ],
             const SizedBox(height: AppTheme.spaceLg),
             Text(
               l.settings_section_danger,
