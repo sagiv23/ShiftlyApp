@@ -36,10 +36,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     final settings = context.read<SettingsProvider>();
     _paidController = TextEditingController(
-      text: settings.paidBreakDurationMinutes.toStringAsFixed(0),
+      text: settings.paidBreakDurationMinutes > 0
+          ? settings.paidBreakDurationMinutes.toStringAsFixed(0)
+          : '',
     );
     _unpaidController = TextEditingController(
-      text: settings.unpaidBreakDurationMinutes.toStringAsFixed(0),
+      text: settings.unpaidBreakDurationMinutes > 0
+          ? settings.unpaidBreakDurationMinutes.toStringAsFixed(0)
+          : '',
     );
   }
 
@@ -56,7 +60,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final l = AppLocalizations.of(context)!;
     final nameController = TextEditingController(text: job?.name ?? '');
     final rateController = TextEditingController(
-      text: (job?.hourlyRate ?? 40.22).toString(),
+      text: (job != null && job.hourlyRate > 0)
+          ? job.hourlyRate.toString()
+          : '',
     );
     DateTime effectiveDate = DateTime.now();
 
@@ -76,14 +82,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 TextField(
                   controller: nameController,
                   decoration: InputDecoration(
-                    labelText: l.onboarding_auto_expenses_desc_label,
+                    labelText: l.settings_job_name_label,
+                    hintText: l.settings_job_name_label,
                   ),
                 ),
                 const SizedBox(height: AppTheme.spaceSm),
                 TextField(
                   controller: rateController,
                   decoration: InputDecoration(
-                    labelText: l.onboarding_auto_expenses_amount_label,
+                    labelText: l.settings_job_rate_label,
+                    hintText: '0',
                   ),
                   keyboardType: TextInputType.number,
                 ),
@@ -940,6 +948,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         controller: _paidController,
                         decoration: InputDecoration(
                           labelText: l.settings_field_paid_break,
+                          hintText: '0',
                           prefixIcon: const Icon(Icons.timer_outlined),
                         ),
                         keyboardType: TextInputType.number,
@@ -949,6 +958,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         controller: _unpaidController,
                         decoration: InputDecoration(
                           labelText: l.settings_field_unpaid_break,
+                          hintText: '0',
                           prefixIcon: const Icon(Icons.coffee_outlined),
                         ),
                         keyboardType: TextInputType.number,
@@ -959,9 +969,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         child: ElevatedButton(
                           onPressed: () async {
                             final paid =
-                                double.tryParse(_paidController.text) ?? 20.0;
+                                double.tryParse(_paidController.text) ?? 0.0;
                             final unpaid =
-                                double.tryParse(_unpaidController.text) ?? 45.0;
+                                double.tryParse(_unpaidController.text) ?? 0.0;
 
                             final confirmed = await UIUtils.showConfirmDialog(
                               context: context,

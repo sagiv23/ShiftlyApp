@@ -378,12 +378,18 @@ class _ProfileScreenState extends State<ProfileScreen>
             children: [
               TextField(
                 controller: nameController,
-                decoration: InputDecoration(labelText: l.settings_user_name),
+                decoration: InputDecoration(
+                  labelText: l.settings_user_name,
+                  hintText: l.settings_user_name,
+                ),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: emailController,
-                decoration: InputDecoration(labelText: l.settings_user_email),
+                decoration: InputDecoration(
+                  labelText: l.settings_user_email,
+                  hintText: 'name@example.com',
+                ),
                 keyboardType: TextInputType.emailAddress,
               ),
               const Divider(height: 32),
@@ -400,13 +406,19 @@ class _ProfileScreenState extends State<ProfileScreen>
               const SizedBox(height: 8),
               TextField(
                 controller: oldPasswordController,
-                decoration: InputDecoration(labelText: l.profile_old_password),
+                decoration: InputDecoration(
+                  labelText: l.profile_old_password,
+                  hintText: '••••••••',
+                ),
                 obscureText: true,
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: newPasswordController,
-                decoration: InputDecoration(labelText: l.profile_new_password),
+                decoration: InputDecoration(
+                  labelText: l.profile_new_password,
+                  hintText: '••••••••',
+                ),
                 obscureText: true,
               ),
             ],

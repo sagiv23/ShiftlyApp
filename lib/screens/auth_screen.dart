@@ -273,6 +273,7 @@ class _AuthScreenState extends State<AuthScreen>
                             style: const TextStyle(color: Colors.white),
                             decoration: _buildInputDecoration(
                               label: l.auth_full_name_label,
+                              hint: l.auth_full_name_label,
                               icon: Icons.person_outline,
                             ),
                             validator: (value) =>
@@ -290,6 +291,7 @@ class _AuthScreenState extends State<AuthScreen>
                         keyboardType: TextInputType.emailAddress,
                         decoration: _buildInputDecoration(
                           label: l.auth_email_label,
+                          hint: 'name@example.com',
                           icon: Icons.email_outlined,
                         ),
                         validator: (value) {
@@ -307,6 +309,7 @@ class _AuthScreenState extends State<AuthScreen>
                         obscureText: true,
                         decoration: _buildInputDecoration(
                           label: l.auth_password_label,
+                          hint: '••••••••',
                           icon: Icons.lock_outline,
                         ),
                         validator: (value) {
@@ -382,9 +385,12 @@ class _AuthScreenState extends State<AuthScreen>
   InputDecoration _buildInputDecoration({
     required String label,
     required IconData icon,
+    String? hint,
   }) {
     return InputDecoration(
       labelText: label,
+      hintText: hint ?? label,
+      hintStyle: const TextStyle(color: Colors.white38),
       labelStyle: const TextStyle(color: Colors.white70),
       prefixIcon: Icon(icon, color: Colors.white70),
       enabledBorder: OutlineInputBorder(

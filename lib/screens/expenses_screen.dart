@@ -44,28 +44,32 @@ class _ExpensesScreenState extends State<ExpensesScreen>
     final settings = context.read<SettingsProvider>();
     for (var e in settings.defaultAutomaticExpenses) {
       _autoExpenseAmountControllers.add(
-        TextEditingController(text: e.amount.toStringAsFixed(0)),
+        TextEditingController(
+          text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
+        ),
       );
       _autoExpenseDescControllers.add(
         TextEditingController(text: e.description),
       );
     }
     if (_autoExpenseAmountControllers.isEmpty) {
-      _autoExpenseAmountControllers.add(TextEditingController(text: '0'));
-      _autoExpenseDescControllers.add(TextEditingController(text: ''));
+      _autoExpenseAmountControllers.add(TextEditingController());
+      _autoExpenseDescControllers.add(TextEditingController());
     }
 
     for (var e in settings.defaultAutomaticIncomes) {
       _autoIncomeAmountControllers.add(
-        TextEditingController(text: e.amount.toStringAsFixed(0)),
+        TextEditingController(
+          text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
+        ),
       );
       _autoIncomeDescControllers.add(
         TextEditingController(text: e.description),
       );
     }
     if (_autoIncomeAmountControllers.isEmpty) {
-      _autoIncomeAmountControllers.add(TextEditingController(text: '0'));
-      _autoIncomeDescControllers.add(TextEditingController(text: ''));
+      _autoIncomeAmountControllers.add(TextEditingController());
+      _autoIncomeDescControllers.add(TextEditingController());
     }
   }
 
@@ -169,7 +173,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
       text: item?.description ?? '',
     );
     final amountController = TextEditingController(
-      text: item?.amount.toString() ?? '',
+      text: (item != null && item.amount > 0) ? item.amount.toString() : '',
     );
     DateTime selectedDate = item?.date ?? DateTime.now();
 
@@ -222,6 +226,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                   controller: amountController,
                   decoration: InputDecoration(
                     labelText: '${l.expenses_total_label} ($symbol)',
+                    hintText: '0',
                     prefixIcon: Icon(
                       isIncome
                           ? Icons.attach_money_rounded
@@ -563,10 +568,10 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                                   TextButton.icon(
                                     onPressed: () => setState(() {
                                       _autoExpenseAmountControllers.add(
-                                        TextEditingController(text: '0'),
+                                        TextEditingController(),
                                       );
                                       _autoExpenseDescControllers.add(
-                                        TextEditingController(text: ''),
+                                        TextEditingController(),
                                       );
                                     }),
                                     icon: const Icon(
@@ -691,10 +696,10 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                                   TextButton.icon(
                                     onPressed: () => setState(() {
                                       _autoIncomeAmountControllers.add(
-                                        TextEditingController(text: '0'),
+                                        TextEditingController(),
                                       );
                                       _autoIncomeDescControllers.add(
-                                        TextEditingController(text: ''),
+                                        TextEditingController(),
                                       );
                                     }),
                                     icon: const Icon(
@@ -823,7 +828,10 @@ class _ExpensesScreenState extends State<ExpensesScreen>
             flex: 1,
             child: TextField(
               controller: amountControllers[index],
-              decoration: InputDecoration(labelText: symbol),
+              decoration: InputDecoration(
+                labelText: symbol,
+                hintText: '0',
+              ),
               keyboardType: TextInputType.number,
             ),
           ),

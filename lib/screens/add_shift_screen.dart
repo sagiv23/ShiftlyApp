@@ -81,7 +81,9 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       final expenses = s.automaticExpenses ?? [];
       for (var e in expenses) {
         _autoExpenseAmountControllers.add(
-          TextEditingController(text: e.amount.toStringAsFixed(0)),
+          TextEditingController(
+            text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
+          ),
         );
         _autoExpenseDescControllers.add(
           TextEditingController(text: e.description),
@@ -91,7 +93,9 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       final incomes = s.automaticIncomes ?? [];
       for (var e in incomes) {
         _autoIncomeAmountControllers.add(
-          TextEditingController(text: e.amount.toStringAsFixed(0)),
+          TextEditingController(
+            text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
+          ),
         );
         _autoIncomeDescControllers.add(
           TextEditingController(text: e.description),
@@ -101,7 +105,9 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       if (s.individualTips != null && s.individualTips!.isNotEmpty) {
         for (var tip in s.individualTips!) {
           _tipControllers.add(
-            TextEditingController(text: tip.toStringAsFixed(0)),
+            TextEditingController(
+              text: tip > 0 ? tip.toStringAsFixed(0) : '',
+            ),
           );
         }
       } else if (s.tips > 0) {
@@ -109,26 +115,30 @@ class _AddShiftScreenState extends State<AddShiftScreen>
           TextEditingController(text: s.tips.toStringAsFixed(0)),
         );
       } else {
-        _tipControllers.add(TextEditingController(text: '0'));
+        _tipControllers.add(TextEditingController());
       }
       if (s.wageSegments != null) {
         for (var seg in s.wageSegments!) {
           _segmentStartTimes.add(TimeOfDay.fromDateTime(seg.startTime));
           _segmentEndTimes.add(TimeOfDay.fromDateTime(seg.endTime));
           _segmentPercentageControllers.add(
-            TextEditingController(text: seg.percentage.toStringAsFixed(0)),
+            TextEditingController(
+              text: seg.percentage > 0 ? seg.percentage.toStringAsFixed(0) : '',
+            ),
           );
         }
       }
       _descriptionController.text = s.description ?? '';
     } else {
-      _tipControllers.add(TextEditingController(text: '0'));
-      _timerTipControllers.add(TextEditingController(text: '0'));
+      _tipControllers.add(TextEditingController());
+      _timerTipControllers.add(TextEditingController());
 
       if (settings.automaticExpenseEnabled) {
         for (var e in settings.defaultAutomaticExpenses) {
           _autoExpenseAmountControllers.add(
-            TextEditingController(text: e.amount.toStringAsFixed(0)),
+            TextEditingController(
+              text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
+            ),
           );
           _autoExpenseDescControllers.add(
             TextEditingController(text: e.description),
@@ -139,7 +149,9 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       if (settings.automaticIncomeEnabled) {
         for (var e in settings.defaultAutomaticIncomes) {
           _autoIncomeAmountControllers.add(
-            TextEditingController(text: e.amount.toStringAsFixed(0)),
+            TextEditingController(
+              text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
+            ),
           );
           _autoIncomeDescControllers.add(
             TextEditingController(text: e.description),
@@ -163,11 +175,15 @@ class _AddShiftScreenState extends State<AddShiftScreen>
 
         _tipControllers.clear();
         _tipControllers.add(
-          TextEditingController(text: timer.tips.toStringAsFixed(0)),
+          TextEditingController(
+            text: timer.tips > 0 ? timer.tips.toStringAsFixed(0) : '',
+          ),
         );
         _timerTipControllers.clear();
         _timerTipControllers.add(
-          TextEditingController(text: timer.tips.toStringAsFixed(0)),
+          TextEditingController(
+            text: timer.tips > 0 ? timer.tips.toStringAsFixed(0) : '',
+          ),
         );
       } else {
         _selectedDate = DateTime.now();
@@ -188,7 +204,9 @@ class _AddShiftScreenState extends State<AddShiftScreen>
           _selectedJobTypeId = timer.jobTypeId ?? _selectedJobTypeId;
           _timerTipControllers.clear();
           _timerTipControllers.add(
-            TextEditingController(text: timer.tips.toStringAsFixed(0)),
+            TextEditingController(
+              text: timer.tips > 0 ? timer.tips.toStringAsFixed(0) : '',
+            ),
           );
         }
       }
@@ -1093,7 +1111,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                     _segmentStartTimes.add(_startTime);
                     _segmentEndTimes.add(_endTime);
                     _segmentPercentageControllers.add(
-                      TextEditingController(text: '150'),
+                      TextEditingController(),
                     );
                   });
                 },
@@ -1176,6 +1194,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                         style: const TextStyle(fontSize: 13),
                         decoration: InputDecoration(
                           labelText: l.add_shift_wage_segment_percentage,
+                          hintText: '150',
                           isDense: true,
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 8,
@@ -1577,7 +1596,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         }),
         TextButton.icon(
           onPressed: () => setState(() {
-            controllers.add(TextEditingController(text: '0'));
+            controllers.add(TextEditingController());
           }),
           icon: const Icon(Icons.add_circle_outline_rounded),
           label: Text(l.add_shift_tips_add_button),
@@ -1633,6 +1652,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                     controller: _autoExpenseDescControllers[index],
                     decoration: InputDecoration(
                       labelText: l.onboarding_auto_expenses_desc_label,
+                      hintText: l.default_expenses_trips,
                     ),
                     onChanged: (_) => setState(() {}),
                   ),
@@ -1642,7 +1662,10 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                   flex: 1,
                   child: TextField(
                     controller: _autoExpenseAmountControllers[index],
-                    decoration: InputDecoration(labelText: symbol),
+                    decoration: InputDecoration(
+                      labelText: symbol,
+                      hintText: '0',
+                    ),
                     keyboardType: TextInputType.number,
                     onChanged: (_) => setState(() {}),
                   ),
@@ -1663,8 +1686,8 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         }),
         TextButton.icon(
           onPressed: () => setState(() {
-            _autoExpenseAmountControllers.add(TextEditingController(text: '0'));
-            _autoExpenseDescControllers.add(TextEditingController(text: ''));
+            _autoExpenseAmountControllers.add(TextEditingController());
+            _autoExpenseDescControllers.add(TextEditingController());
           }),
           icon: const Icon(Icons.add_circle_outline_rounded),
           label: Text(l.add_shift_expenses_add_button),
@@ -1720,6 +1743,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                     controller: _autoIncomeDescControllers[index],
                     decoration: InputDecoration(
                       labelText: l.onboarding_auto_expenses_desc_label,
+                      hintText: l.default_expenses_trips,
                     ),
                     onChanged: (_) => setState(() {}),
                   ),
@@ -1729,7 +1753,10 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                   flex: 1,
                   child: TextField(
                     controller: _autoIncomeAmountControllers[index],
-                    decoration: InputDecoration(labelText: symbol),
+                    decoration: InputDecoration(
+                      labelText: symbol,
+                      hintText: '0',
+                    ),
                     keyboardType: TextInputType.number,
                     onChanged: (_) => setState(() {}),
                   ),
@@ -1750,8 +1777,8 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         }),
         TextButton.icon(
           onPressed: () => setState(() {
-            _autoIncomeAmountControllers.add(TextEditingController(text: '0'));
-            _autoIncomeDescControllers.add(TextEditingController(text: ''));
+            _autoIncomeAmountControllers.add(TextEditingController());
+            _autoIncomeDescControllers.add(TextEditingController());
           }),
           icon: const Icon(Icons.add_circle_outline_rounded),
           label: Text(l.add_shift_incomes_add_button),

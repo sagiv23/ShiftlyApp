@@ -57,26 +57,30 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     for (var e in settings.defaultAutomaticExpenses) {
       _autoAmountControllers.add(
-        TextEditingController(text: e.amount.toStringAsFixed(0)),
+        TextEditingController(
+          text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
+        ),
       );
       _autoDescControllers.add(TextEditingController(text: e.description));
     }
     if (_autoAmountControllers.isEmpty) {
-      _autoAmountControllers.add(TextEditingController(text: '20'));
-      _autoDescControllers.add(TextEditingController(text: ''));
+      _autoAmountControllers.add(TextEditingController());
+      _autoDescControllers.add(TextEditingController());
     }
 
     for (var e in settings.defaultAutomaticIncomes) {
       _autoIncomeAmountControllers.add(
-        TextEditingController(text: e.amount.toStringAsFixed(0)),
+        TextEditingController(
+          text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
+        ),
       );
       _autoIncomeDescControllers.add(
         TextEditingController(text: e.description),
       );
     }
     if (_autoIncomeAmountControllers.isEmpty) {
-      _autoIncomeAmountControllers.add(TextEditingController(text: '0'));
-      _autoIncomeDescControllers.add(TextEditingController(text: ''));
+      _autoIncomeAmountControllers.add(TextEditingController());
+      _autoIncomeDescControllers.add(TextEditingController());
     }
   }
 
@@ -498,8 +502,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           TextButton.icon(
             onPressed: () => setState(() {
-              _autoAmountControllers.add(TextEditingController(text: '0'));
-              _autoDescControllers.add(TextEditingController(text: ''));
+              _autoAmountControllers.add(TextEditingController());
+              _autoDescControllers.add(TextEditingController());
             }),
             icon: const Icon(Icons.add_circle_outline_rounded),
             label: Text(l.onboarding_auto_expenses_add_button),
@@ -521,6 +525,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               controller: _autoDescControllers[index],
               decoration: InputDecoration(
                 labelText: l.onboarding_auto_expenses_desc_label,
+                hintText: l.default_expenses_trips,
               ),
             ),
           ),
@@ -529,7 +534,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             flex: 1,
             child: TextField(
               controller: _autoAmountControllers[index],
-              decoration: InputDecoration(labelText: symbol),
+              decoration: InputDecoration(
+                labelText: symbol,
+                hintText: '0',
+              ),
               keyboardType: TextInputType.number,
             ),
           ),
@@ -588,9 +596,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           TextButton.icon(
             onPressed: () => setState(() {
               _autoIncomeAmountControllers.add(
-                TextEditingController(text: '0'),
+                TextEditingController(),
               );
-              _autoIncomeDescControllers.add(TextEditingController(text: ''));
+              _autoIncomeDescControllers.add(TextEditingController());
             }),
             icon: const Icon(Icons.add_circle_outline_rounded),
             label: Text(l.onboarding_auto_incomes_add_button),
@@ -612,6 +620,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               controller: _autoIncomeDescControllers[index],
               decoration: InputDecoration(
                 labelText: l.onboarding_auto_expenses_desc_label,
+                hintText: l.default_expenses_trips,
               ),
             ),
           ),
@@ -620,7 +629,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             flex: 1,
             child: TextField(
               controller: _autoIncomeAmountControllers[index],
-              decoration: InputDecoration(labelText: symbol),
+              decoration: InputDecoration(
+                labelText: symbol,
+                hintText: '0',
+              ),
               keyboardType: TextInputType.number,
             ),
           ),
@@ -780,8 +792,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _editJobType(JobType job) {
     final l = AppLocalizations.of(context)!;
     final nameController = TextEditingController(text: job.name);
+    final rate = job.getRateForDate(DateTime.now());
     final rateController = TextEditingController(
-      text: job.getRateForDate(DateTime.now()).toString(),
+      text: rate > 0 ? rate.toString() : '',
     );
     DateTime effectiveDate = DateTime.now();
     showDialog(
@@ -795,13 +808,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               TextField(
                 controller: nameController,
                 decoration: InputDecoration(
-                  labelText: l.onboarding_auto_expenses_desc_label,
+                  labelText: l.settings_job_name_label,
+                  hintText: l.settings_job_name_label,
                 ),
               ),
               TextField(
                 controller: rateController,
                 decoration: InputDecoration(
-                  labelText: l.onboarding_auto_expenses_amount_label,
+                  labelText: l.settings_job_rate_label,
+                  hintText: '0',
                 ),
                 keyboardType: TextInputType.number,
               ),
@@ -872,13 +887,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             TextField(
               controller: nameController,
               decoration: InputDecoration(
-                labelText: l.onboarding_auto_expenses_desc_label,
+                labelText: l.settings_job_name_label,
+                hintText: l.settings_job_name_label,
               ),
             ),
             TextField(
               controller: rateController,
               decoration: InputDecoration(
-                labelText: l.onboarding_auto_expenses_amount_label,
+                labelText: l.settings_job_rate_label,
+                hintText: '0',
               ),
               keyboardType: TextInputType.number,
             ),
