@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/providers/settings_provider.dart';
-import 'package:shiftly/screens/home_screen.dart';
+import 'package:shiftly/screens/main_screen.dart';
 import 'package:shiftly/screens/onboarding_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_page_route.dart';
@@ -126,7 +126,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     final settings = context.read<SettingsProvider>();
     final Widget nextScreen = settings.hasCompletedOnboarding
-        ? const HomeScreen()
+        ? const MainScreen()
         : const OnboardingScreen();
 
     if (!mounted) return;

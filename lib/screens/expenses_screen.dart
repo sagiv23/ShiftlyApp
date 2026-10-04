@@ -779,6 +779,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'expenses_fab',
         onPressed: () => _showItemDialog(context, isIncome: isIncomeTab),
         backgroundColor: isIncomeTab
             ? AppTheme.profitSoft

@@ -173,6 +173,7 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'home_fab',
         onPressed: () => Navigator.push(
           context,
           AppPageRoute.slideUp(const AddShiftScreen()),

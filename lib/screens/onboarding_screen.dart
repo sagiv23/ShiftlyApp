@@ -7,7 +7,7 @@ import 'package:shiftly/models/job_type.dart';
 import 'package:shiftly/models/wage_entry.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
-import 'package:shiftly/screens/home_screen.dart';
+import 'package:shiftly/screens/main_screen.dart';
 import 'package:shiftly/services/notification_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_page_route.dart';
@@ -201,7 +201,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     Navigator.pushReplacement(
       context,
       AppPageRoute.fadeScale(
-        const HomeScreen(),
+        const MainScreen(),
         duration: const Duration(milliseconds: 450),
       ),
     );
