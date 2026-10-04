@@ -48,7 +48,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
 
     return AdaptiveScaffold(
-      currentIndex: 1,
+      currentIndex: 0,
       title: l.home_action_calendar,
       body: SafeArea(
         bottom: true,

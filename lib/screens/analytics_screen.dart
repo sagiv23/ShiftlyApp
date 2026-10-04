@@ -246,7 +246,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
 
     return AdaptiveScaffold(
-      currentIndex: 2,
+      currentIndex: 1,
       title: l.analytics_title,
       body: SafeArea(
         bottom: true,

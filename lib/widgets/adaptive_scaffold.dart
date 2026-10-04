@@ -40,19 +40,19 @@ class AdaptiveScaffold extends StatelessWidget {
     Widget targetScreen;
     switch (index) {
       case 0:
-        targetScreen = const HomeScreen();
-        break;
-      case 1:
         targetScreen = const CalendarScreen();
         break;
-      case 2:
+      case 1:
         targetScreen = const AnalyticsScreen();
         break;
+      case 2:
+        targetScreen = const HomeScreen();
+        break;
       case 3:
-        targetScreen = const ShiftDescriptionsScreen();
+        targetScreen = const ExpensesScreen();
         break;
       case 4:
-        targetScreen = const ExpensesScreen();
+        targetScreen = const ShiftDescriptionsScreen();
         break;
       case 5:
         targetScreen = const SettingsScreen();
@@ -78,27 +78,30 @@ class AdaptiveScaffold extends StatelessWidget {
     final l = AppLocalizations.of(context)!;
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktopOrWide = screenWidth >= 768;
+    final isHebrew = Localizations
+        .localeOf(context)
+        .languageCode == 'he';
 
     final navItems = [
       BottomNavigationBarItem(
-        icon: const Icon(Icons.home_rounded, size: 22),
-        label: l.common_app_name,
-      ),
-      BottomNavigationBarItem(
         icon: const Icon(Icons.calendar_month_rounded, size: 22),
-        label: l.home_action_calendar,
+        label: isHebrew ? 'לוח' : 'Calendar',
       ),
       BottomNavigationBarItem(
         icon: const Icon(Icons.bar_chart_rounded, size: 22),
-        label: l.analytics_title,
+        label: isHebrew ? 'אנליטיקה' : 'Analytics',
       ),
       BottomNavigationBarItem(
-        icon: const Icon(Icons.note_alt_rounded, size: 22),
-        label: l.shift_descriptions_title,
+        icon: const Icon(Icons.home_rounded, size: 26),
+        label: isHebrew ? 'בית' : 'Home',
       ),
       BottomNavigationBarItem(
         icon: const Icon(Icons.receipt_long_rounded, size: 22),
-        label: l.expenses_title,
+        label: isHebrew ? 'הוצאות' : 'Expenses',
+      ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.note_alt_rounded, size: 22),
+        label: isHebrew ? 'סיכומים' : 'Summaries',
       ),
     ];
 
@@ -185,11 +188,17 @@ class AdaptiveScaffold extends StatelessWidget {
       ),
       body: body,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex > 4 ? 0 : currentIndex,
+        currentIndex: currentIndex > 4 ? 2 : currentIndex,
         onTap: (index) => _onItemTapped(context, index),
         type: BottomNavigationBarType.fixed,
         selectedFontSize: 11,
         unselectedFontSize: 11,
+        selectedItemColor: AppTheme.primary,
+        unselectedItemColor: Theme
+            .of(context)
+            .colorScheme
+            .onSurface
+            .withValues(alpha: 0.6),
         items: navItems,
       ),
       floatingActionButton: floatingActionButton,
@@ -264,36 +273,36 @@ class _SideMenuContent extends StatelessWidget {
             const SizedBox(height: 2),
             const Divider(height: 1, indent: 16, endIndent: 16),
             const SizedBox(height: 2),
-            // Nav items
+            // Nav items (Home is index 2, Calendar is 0, Analytics is 1, Shift Descriptions is 4, Expenses is 3)
             _SideNavItem(
               icon: Icons.home_rounded,
               label: l.common_app_name,
-              isSelected: currentIndex == 0,
-              onTap: () => onSelectTab(0),
-            ),
-            _SideNavItem(
-              icon: Icons.calendar_month_rounded,
-              label: l.home_action_calendar,
-              isSelected: currentIndex == 1,
-              onTap: () => onSelectTab(1),
-            ),
-            _SideNavItem(
-              icon: Icons.bar_chart_rounded,
-              label: l.analytics_title,
               isSelected: currentIndex == 2,
               onTap: () => onSelectTab(2),
             ),
             _SideNavItem(
+              icon: Icons.calendar_month_rounded,
+              label: l.home_action_calendar,
+              isSelected: currentIndex == 0,
+              onTap: () => onSelectTab(0),
+            ),
+            _SideNavItem(
+              icon: Icons.bar_chart_rounded,
+              label: l.analytics_title,
+              isSelected: currentIndex == 1,
+              onTap: () => onSelectTab(1),
+            ),
+            _SideNavItem(
               icon: Icons.note_alt_rounded,
               label: l.shift_descriptions_title,
-              isSelected: currentIndex == 3,
-              onTap: () => onSelectTab(3),
+              isSelected: currentIndex == 4,
+              onTap: () => onSelectTab(4),
             ),
             _SideNavItem(
               icon: Icons.receipt_long_rounded,
               label: l.expenses_title,
-              isSelected: currentIndex == 4,
-              onTap: () => onSelectTab(4),
+              isSelected: currentIndex == 3,
+              onTap: () => onSelectTab(3),
             ),
             if (auth.isLoggedIn) ...[
               _SideNavItem(

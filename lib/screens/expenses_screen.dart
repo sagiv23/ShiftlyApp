@@ -412,7 +412,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
     );
 
     return AdaptiveScaffold(
-      currentIndex: 4,
+      currentIndex: 3,
       title: l.expenses_title,
       actions: [
         if (_selectedDateFilter != null)

@@ -69,7 +69,7 @@ class HomeScreen extends StatelessWidget {
     }
 
     return AdaptiveScaffold(
-      currentIndex: 0,
+      currentIndex: 2,
       titleWidget: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

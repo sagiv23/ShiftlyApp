@@ -49,7 +49,7 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
     );
 
     return AdaptiveScaffold(
-      currentIndex: 3,
+      currentIndex: 4,
       title: l.shift_descriptions_title,
       actions: [
         if (_selectedDateFilter != null)
