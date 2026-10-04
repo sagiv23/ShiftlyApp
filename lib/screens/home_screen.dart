@@ -465,73 +465,75 @@ class _GrandTotalCard extends StatelessWidget {
                         color: Colors.white.withValues(alpha: 0.12),
                       ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Expanded(
-                          child: _HeaderInfoItem(
-                            label: l.common_shifts_count,
-                            value: totalShifts.toString(),
-                          ),
-                        ),
-                        _VerticalDivider(),
-                        Expanded(
-                          child: _HeaderInfoItem(
-                            label: l.home_total_card_hours,
-                            value: totalHours.toStringAsFixed(2),
-                          ),
-                        ),
-                        _VerticalDivider(),
-                        Expanded(
-                          child: _HeaderInfoItem(
-                            label: l.home_total_card_base,
-                            value: UIUtils.formatCurrency(
-                              totalBase,
-                              symbol: symbol,
+                    child: IntrinsicHeight(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            child: _HeaderInfoItem(
+                              label: l.common_shifts_count,
+                              value: totalShifts.toString(),
                             ),
-                            amount: totalBase,
                           ),
-                        ),
-                        if (totalTips > 0) ...[
                           _VerticalDivider(),
                           Expanded(
                             child: _HeaderInfoItem(
-                              label: l.home_total_card_tips,
-                              value: UIUtils.formatCurrency(
-                                totalTips,
-                                symbol: symbol,
-                              ),
-                              amount: totalTips,
+                              label: l.home_total_card_hours,
+                              value: totalHours.toStringAsFixed(2),
                             ),
                           ),
-                        ],
-                        if (totalIncomes > 0) ...[
                           _VerticalDivider(),
                           Expanded(
                             child: _HeaderInfoItem(
-                              label: l.expenses_tab_incomes,
+                              label: l.home_total_card_base,
                               value: UIUtils.formatCurrency(
-                                totalIncomes,
+                                totalBase,
                                 symbol: symbol,
                               ),
-                              amount: totalIncomes,
+                              amount: totalBase,
                             ),
                           ),
-                        ],
-                        if (totalExpenses > 0) ...[
-                          _VerticalDivider(),
-                          Expanded(
-                            child: _HeaderInfoItem(
-                              label: l.home_total_card_expenses,
-                              value: UIUtils.formatCurrency(
-                                totalExpenses,
-                                symbol: symbol,
+                          if (totalTips > 0) ...[
+                            _VerticalDivider(),
+                            Expanded(
+                              child: _HeaderInfoItem(
+                                label: l.home_total_card_tips,
+                                value: UIUtils.formatCurrency(
+                                  totalTips,
+                                  symbol: symbol,
+                                ),
+                                amount: totalTips,
                               ),
-                              amount: -totalExpenses,
                             ),
-                          ),
+                          ],
+                          if (totalIncomes > 0) ...[
+                            _VerticalDivider(),
+                            Expanded(
+                              child: _HeaderInfoItem(
+                                label: l.expenses_tab_incomes,
+                                value: UIUtils.formatCurrency(
+                                  totalIncomes,
+                                  symbol: symbol,
+                                ),
+                                amount: totalIncomes,
+                              ),
+                            ),
+                          ],
+                          if (totalExpenses > 0) ...[
+                            _VerticalDivider(),
+                            Expanded(
+                              child: _HeaderInfoItem(
+                                label: l.home_total_card_expenses,
+                                value: UIUtils.formatCurrency(
+                                  totalExpenses,
+                                  symbol: symbol,
+                                ),
+                                amount: -totalExpenses,
+                              ),
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ],
@@ -566,19 +568,19 @@ class _HeaderInfoItem extends StatelessWidget {
             label,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.7),
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: FontWeight.w500,
             ),
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 2),
         FittedBox(
           fit: BoxFit.scaleDown,
           child: Text(
             value,
             style: TextStyle(
               color: (amount ?? 0) < 0 ? const Color(0xFFFECACA) : Colors.white,
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: FontWeight.bold,
               fontFeatures: const [FontFeature.tabularFigures()],
             ),
@@ -811,25 +813,39 @@ class _SummaryItem extends StatelessWidget {
       textColor = accent;
     }
 
-    return Column(
-      children: [
-        Text(
-          label,
-          style: Theme.of(
-            context,
-          ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+            const SizedBox(height: 2),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: isBold ? 14 : 12,
+                  fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
+                  color: textColor,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: isBold ? 16 : 14,
-            fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
-            color: textColor,
-            fontFeatures: const [FontFeature.tabularFigures()],
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
@@ -839,42 +855,45 @@ class _ShiftTile extends StatelessWidget {
 
   const _ShiftTile({required this.shift});
 
-  Future<void> _deleteShift(BuildContext context) async {
+  Future<void> _deleteShift(BuildContext context,
+      {bool skipDialog = false}) async {
     final l = AppLocalizations.of(context)!;
     final shiftProvider = context.read<ShiftProvider>();
     final dateStr = DateFormat('dd/MM/yyyy').format(shift.date);
-    final confirm = await UIUtils.showConfirmDialog(
-      context: context,
-      title: l.add_shift_delete_title,
-      content: '${l.add_shift_delete_desc} $dateStr?',
-      isDestructive: true,
-      confirmLabel: l.common_delete,
-    );
-    if (!context.mounted) return;
 
-    if (confirm == true) {
-      shiftProvider.deleteShift(shift.id);
-      UIUtils.showSnackBar(
-        context,
-        '$dateStr ${l.add_shift_delete_msg}',
-        action: SnackBarAction(
-          label: l.common_cancel,
-          onPressed: () {
-            shiftProvider.addShift(
-              shift,
-              l10n: {
-                'title': l.notification_reminder_title,
-                'body': l.notification_reminder_body,
-                'hours': l.common_hours_suffix,
-                'minutes': l.common_min_suffix,
-                'channelName': l.notification_channel_reminders_name,
-                'channelDesc': l.notification_channel_reminders_desc,
-              },
-            );
-          },
-        ),
+    if (!skipDialog) {
+      final confirm = await UIUtils.showConfirmDialog(
+        context: context,
+        title: l.add_shift_delete_title,
+        content: '${l.add_shift_delete_desc} $dateStr?',
+        isDestructive: true,
+        confirmLabel: l.common_delete,
       );
+      if (!context.mounted) return;
+      if (confirm != true) return;
     }
+
+    shiftProvider.deleteShift(shift.id);
+    UIUtils.showSnackBar(
+      context,
+      '$dateStr ${l.add_shift_delete_msg}',
+      action: SnackBarAction(
+        label: l.common_cancel,
+        onPressed: () {
+          shiftProvider.addShift(
+            shift,
+            l10n: {
+              'title': l.notification_reminder_title,
+              'body': l.notification_reminder_body,
+              'hours': l.common_hours_suffix,
+              'minutes': l.common_min_suffix,
+              'channelName': l.notification_channel_reminders_name,
+              'channelDesc': l.notification_channel_reminders_desc,
+            },
+          );
+        },
+      ),
+    );
   }
 
   void _editShift(BuildContext context) {
@@ -1092,6 +1111,7 @@ class _ShiftTile extends StatelessWidget {
           color: AppTheme.expenseSoft,
         ),
       ),
+
       confirmDismiss: (direction) async {
         final dateStr = DateFormat('dd/MM/yyyy').format(shift.date);
         return await UIUtils.showConfirmDialog(
@@ -1102,7 +1122,7 @@ class _ShiftTile extends StatelessWidget {
           confirmLabel: l.common_delete,
         );
       },
-      onDismissed: (_) => _deleteShift(context),
+      onDismissed: (_) => _deleteShift(context, skipDialog: true),
       child: tileContent,
     );
   }

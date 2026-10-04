@@ -1754,7 +1754,7 @@ class ShiftDurationDistributionWidget extends StatelessWidget {
                   ),
                   child: Icon(cat.icon, color: cat.color, size: 20),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1766,16 +1766,16 @@ class ShiftDurationDistributionWidget extends StatelessWidget {
                               cat.label,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 13,
+                                fontSize: 12,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          const SizedBox(width: 6),
+                          const SizedBox(width: 4),
                           Text(
                             '(${cat.durationRange})',
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 10,
                               color: Colors.grey.shade600,
                             ),
                           ),
@@ -1794,29 +1794,27 @@ class ShiftDurationDistributionWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 12),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        l.analytics_shifts_format('${cat.count}'),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                          color: cat.color,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+                const SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l.analytics_shifts_format('${cat.count}'),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        color: cat.color,
                       ),
-                      Text(
-                        '${pct.toStringAsFixed(0)}%',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey,
-                        ),
+                    ),
+                    Text(
+                      '${pct.toStringAsFixed(0)}%',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),

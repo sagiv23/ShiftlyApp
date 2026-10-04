@@ -1142,16 +1142,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get analytics_chart_tod_subtitle =>
-      'Comparing hours between Morning, Evening, and Night shifts';
+      'Comparing hours across time of day segments';
 
   @override
-  String get analytics_chart_tod_morning => 'Morning (06:00-14:00)';
+  String get analytics_chart_tod_dawn => 'Dawn (04:00-06:00)';
 
   @override
-  String get analytics_chart_tod_evening => 'Evening (14:00-20:00)';
+  String get analytics_chart_tod_morning => 'Morning (06:00-12:00)';
 
   @override
-  String get analytics_chart_tod_night => 'Night (20:00-06:00)';
+  String get analytics_chart_tod_noon => 'Noon (12:00-16:00)';
+
+  @override
+  String get analytics_chart_tod_afternoon => 'Afternoon (16:00-18:00)';
+
+  @override
+  String get analytics_chart_tod_evening => 'Evening (18:00-22:00)';
+
+  @override
+  String get analytics_chart_tod_night => 'Night (22:00-06:00)';
 
   @override
   String get analytics_chart_duration_title =>

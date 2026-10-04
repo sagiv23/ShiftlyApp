@@ -247,42 +247,45 @@ class _CalendarShiftTile extends StatelessWidget {
 
   const _CalendarShiftTile({required this.shift});
 
-  Future<void> _deleteShift(BuildContext context) async {
+  Future<void> _deleteShift(BuildContext context,
+      {bool skipDialog = false}) async {
     final l = AppLocalizations.of(context)!;
     final shiftProvider = context.read<ShiftProvider>();
     final dateStr = DateFormat('dd/MM/yyyy').format(shift.date);
-    final confirm = await UIUtils.showConfirmDialog(
-      context: context,
-      title: l.common_delete_shit_short,
-      content: '${l.common_delete_shit_expanded} $dateStr?',
-      isDestructive: true,
-      confirmLabel: l.common_delete,
-    );
-    if (!context.mounted) return;
 
-    if (confirm == true) {
-      shiftProvider.deleteShift(shift.id);
-      UIUtils.showSnackBar(
-        context,
-        '$dateStr ${l.common_delete_shift_after}',
-        action: SnackBarAction(
-          label: l.common_cancel,
-          onPressed: () {
-            shiftProvider.addShift(
-              shift,
-              l10n: {
-                'title': l.notification_reminder_title,
-                'body': l.notification_reminder_body,
-                'hours': l.common_hours_suffix,
-                'minutes': l.common_min_suffix,
-                'channelName': l.notification_channel_reminders_name,
-                'channelDesc': l.notification_channel_reminders_desc,
-              },
-            );
-          },
-        ),
+    if (!skipDialog) {
+      final confirm = await UIUtils.showConfirmDialog(
+        context: context,
+        title: l.common_delete_shit_short,
+        content: '${l.common_delete_shit_expanded} $dateStr?',
+        isDestructive: true,
+        confirmLabel: l.common_delete,
       );
+      if (!context.mounted) return;
+      if (confirm != true) return;
     }
+
+    shiftProvider.deleteShift(shift.id);
+    UIUtils.showSnackBar(
+      context,
+      '$dateStr ${l.common_delete_shift_after}',
+      action: SnackBarAction(
+        label: l.common_cancel,
+        onPressed: () {
+          shiftProvider.addShift(
+            shift,
+            l10n: {
+              'title': l.notification_reminder_title,
+              'body': l.notification_reminder_body,
+              'hours': l.common_hours_suffix,
+              'minutes': l.common_min_suffix,
+              'channelName': l.notification_channel_reminders_name,
+              'channelDesc': l.notification_channel_reminders_desc,
+            },
+          );
+        },
+      ),
+    );
   }
 
   void _editShift(BuildContext context) {
@@ -304,132 +307,210 @@ class _CalendarShiftTile extends StatelessWidget {
     final job = shiftProvider.getJobTypeById(shift.jobTypeId);
     final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
     final pay = shift.calculateTotalPay(rate);
-
-    String breakInfo = "";
-    if ((shift.breakType ?? BreakType.none) == BreakType.paid) {
-      breakInfo =
-          " (${settings.paidBreakDurationMinutes.toStringAsFixed(0)} ${l.common_min_suffix} ${l.add_shift_manual_paid_break})";
-    } else if ((shift.breakType ?? BreakType.none) == BreakType.unpaid) {
-      breakInfo =
-          " (${(shift.unpaidBreakMinutes ?? settings.unpaidBreakDurationMinutes).toStringAsFixed(0)} ${l.common_min_suffix} ${l.add_shift_manual_unpaid_break})";
-    }
+    final isDark = Theme
+        .of(context)
+        .brightness == Brightness.dark;
+    final breakType = shift.breakType ?? BreakType.none;
 
     Widget tileContent = Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      margin: const EdgeInsets.only(bottom: AppTheme.spaceSm),
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         border: Border.all(
-          color: Theme.of(
-            context,
-          ).colorScheme.outlineVariant.withValues(alpha: 0.5),
+          color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,
-        child: ListTile(
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
           onTap: () => _editShift(context),
-          leading: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Theme.of(
-                context,
-              ).colorScheme.primaryContainer.withValues(alpha: 0.4),
-              borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.spaceSm,
+              vertical: AppTheme.spaceXs,
             ),
-            child: Icon(
-              Icons.work_rounded,
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
-            ),
-          ),
-          title: Text(
-            "${job?.name ?? l.common_error}$breakInfo",
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          subtitle: Text(
-            "${DateFormat.Hm().format(shift.startTime)} - ${DateFormat.Hm().format(shift.endTime)} | "
-            "${shift.netHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
-            style: const TextStyle(fontSize: 12),
-          ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
+            child: Row(
+              children: [
+                // Date badge
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        DateFormat.d().format(shift.date),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: AppTheme.primaryDark,
+                          height: 1,
+                        ),
+                      ),
+                      Text(
+                        DateFormat.E(l.localeName).format(shift.date),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Theme
+                              .of(
+                            context,
+                          )
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.5),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            AppTheme.iconForJobName(job?.name),
+                            size: 16,
+                            color: AppTheme.primaryDark,
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              job?.name ?? l.common_error,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "${DateFormat.Hm().format(
+                            shift.startTime)} – ${DateFormat.Hm().format(
+                            shift.endTime)}  ·  ${shift.netHours
+                            .toStringAsFixed(2)} ${l.common_hours_suffix}",
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .bodySmall,
+                      ),
+                      if (shift.tips > 0 ||
+                          shift.totalAutomaticIncomes > 0 ||
+                          shift.totalAutomaticExpenses > 0 ||
+                          breakType != BreakType.none) ...[
+                        const SizedBox(height: 6),
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 4,
+                          children: [
+                            if (shift.tips > 0)
+                              _ShiftTag(
+                                label:
+                                '+${UIUtils.formatCurrency(
+                                    shift.tips, symbol: symbol)}',
+                                icon: Icons.payments_outlined,
+                                color: AppTheme.profit,
+                              ),
+                            if (shift.totalAutomaticIncomes > 0)
+                              _ShiftTag(
+                                label:
+                                '+${UIUtils.formatCurrency(
+                                    shift.totalAutomaticIncomes,
+                                    symbol: symbol)}',
+                                icon: Icons.account_balance_wallet_rounded,
+                                color: AppTheme.profit,
+                              ),
+                            if (breakType == BreakType.paid)
+                              _ShiftTag(
+                                label:
+                                "${settings.paidBreakDurationMinutes
+                                    .toStringAsFixed(0)} ${l
+                                    .common_min_suffix} ${l
+                                    .add_shift_manual_paid_break}",
+                                icon: Icons.timer_outlined,
+                                color: AppTheme.primary,
+                              ),
+                            if (breakType == BreakType.unpaid)
+                              _ShiftTag(
+                                label:
+                                "${(shift.unpaidBreakMinutes ??
+                                    settings.unpaidBreakDurationMinutes)
+                                    .toStringAsFixed(0)} ${l
+                                    .common_min_suffix} ${l
+                                    .add_shift_manual_unpaid_break}",
+                                icon: Icons.coffee_outlined,
+                                color: AppTheme.warningSoft,
+                              ),
+                            if (shift.totalAutomaticExpenses > 0)
+                              _ShiftTag(
+                                label:
+                                '-${UIUtils.formatCurrency(
+                                    shift.totalAutomaticExpenses,
+                                    symbol: symbol)}',
+                                icon: Icons.money_off_rounded,
+                                color: AppTheme.expense,
+                              ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spaceXs),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
                     UIUtils.formatCurrency(pay, symbol: symbol),
                     style: UIUtils.getCurrencyStyle(
                       context,
                       pay,
-                      positiveColor: Theme.of(context).colorScheme.primary,
+                      positiveColor: AppTheme.primaryDark,
                       baseStyle: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
+                        fontFeatures: [FontFeature.tabularFigures()],
                       ),
                     ),
                   ),
-                  if (shift.tips > 0)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 4,
-                        vertical: 1,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade50,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        "+${UIUtils.formatCurrency(shift.tips, symbol: symbol)}",
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.green.shade700,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                ),
+                if (isWide) ...[
+                  const SizedBox(width: 4),
+                  IconButton(
+                    icon: const Icon(Icons.edit_outlined, size: 20),
+                    tooltip: l.common_edit,
+                    onPressed: () => _editShift(context),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.delete_outline_rounded,
+                      size: 20,
+                      color: AppTheme.expenseSoft,
                     ),
-                  if (shift.totalAutomaticExpenses > 0)
-                    Container(
-                      margin: const EdgeInsets.only(top: 2),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 4,
-                        vertical: 1,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppTheme.expense.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        "-${UIUtils.formatCurrency(shift.totalAutomaticExpenses, symbol: symbol)}",
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: AppTheme.expenseSoft,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                    tooltip: l.common_delete,
+                    onPressed: () => _deleteShift(context),
+                  ),
                 ],
-              ),
-              if (isWide) ...[
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.edit_outlined, size: 20),
-                  tooltip: l.common_edit,
-                  onPressed: () => _editShift(context),
-                ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.delete_outline_rounded,
-                    size: 20,
-                    color: Colors.red,
-                  ),
-                  tooltip: l.common_delete,
-                  onPressed: () => _deleteShift(context),
-                ),
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -443,27 +524,70 @@ class _CalendarShiftTile extends StatelessWidget {
       key: Key(shift.id),
       direction: DismissDirection.startToEnd,
       background: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        margin: const EdgeInsets.only(bottom: AppTheme.spaceSm),
         decoration: BoxDecoration(
-          color: Colors.red.shade100,
-          borderRadius: BorderRadius.circular(16),
+          color: AppTheme.expense.withValues(alpha: isDark ? 0.2 : 0.15),
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         ),
         alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 24),
-        child: Icon(Icons.delete_sweep_rounded, color: Colors.red.shade700),
+        padding: const EdgeInsets.only(right: AppTheme.spaceMd),
+        child: const Icon(
+          Icons.delete_sweep_rounded,
+          color: AppTheme.expenseSoft,
+        ),
       ),
+
       confirmDismiss: (direction) async {
         final dateStr = DateFormat('dd/MM/yyyy').format(shift.date);
         return await UIUtils.showConfirmDialog(
           context: context,
-          title: l.common_delete_shit_short,
-          content: '${l.common_delete_shit_expanded} $dateStr?',
+          title: l.add_shift_delete_title,
+          content: '${l.add_shift_delete_desc} $dateStr?',
           isDestructive: true,
           confirmLabel: l.common_delete,
         );
       },
-      onDismissed: (_) => _deleteShift(context),
+      onDismissed: (_) => _deleteShift(context, skipDialog: true),
       child: tileContent,
+    );
+  }
+}
+
+class _ShiftTag extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final Color color;
+
+  const _ShiftTag({
+    required this.label,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 0.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 10, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

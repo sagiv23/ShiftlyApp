@@ -599,21 +599,23 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }) {
     final insights = <String>[];
 
-    // Insight 1: Night/Evening hours ratio
+    // Insight 1: Off-peak / Evening & Night hours ratio
     double totalTodHours = 0;
     for (var s in todSegments) {
       totalTodHours += s.hours;
     }
     if (totalTodHours > 0) {
-      final nightAndEvening = todSegments
-          .where((s) => s.icon != Icons.wb_sunny_rounded)
+      final offPeakHours = todSegments
+          .where((s) =>
+      s.timeRange == '04:00-06:00' || s.timeRange == '18:00-22:00' ||
+          s.timeRange == '22:00-06:00')
           .fold<double>(0, (sum, s) => sum + s.hours);
-      final eveningPct = (nightAndEvening / totalTodHours * 100).round();
-      if (eveningPct > 20) {
+      final offPeakPct = (offPeakHours / totalTodHours * 100).round();
+      if (offPeakPct > 20) {
         insights.add(
           l.analytics_insight_night_boost.replaceFirst(
             '[[percent]]',
-            '$eveningPct',
+            '$offPeakPct',
           ),
         );
       }
@@ -1290,7 +1292,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     ShiftProvider shiftProvider,
     AppLocalizations l,
   ) {
+    double dawnMinutes = 0;
     double morningMinutes = 0;
+    double noonMinutes = 0;
+    double afternoonMinutes = 0;
     double eveningMinutes = 0;
     double nightMinutes = 0;
 
@@ -1314,12 +1319,23 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         }
       }
 
-      int mCount = 0, eCount = 0, nCount = 0;
+      int dawnCount = 0,
+          mCount = 0,
+          noonCount = 0,
+          aftCount = 0,
+          eCount = 0,
+          nCount = 0;
       while (current.isBefore(end)) {
         final hour = current.hour;
-        if (hour >= 6 && hour < 14) {
+        if (hour >= 4 && hour < 6) {
+          dawnCount++;
+        } else if (hour >= 6 && hour < 12) {
           mCount++;
-        } else if (hour >= 14 && hour < 20) {
+        } else if (hour >= 12 && hour < 16) {
+          noonCount++;
+        } else if (hour >= 16 && hour < 18) {
+          aftCount++;
+        } else if (hour >= 18 && hour < 22) {
           eCount++;
         } else {
           nCount++;
@@ -1327,38 +1343,62 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         current = current.add(const Duration(minutes: 1));
       }
 
+      dawnMinutes += dawnCount * unpaidBreakRatio;
       morningMinutes += mCount * unpaidBreakRatio;
+      noonMinutes += noonCount * unpaidBreakRatio;
+      afternoonMinutes += aftCount * unpaidBreakRatio;
       eveningMinutes += eCount * unpaidBreakRatio;
       nightMinutes += nCount * unpaidBreakRatio;
     }
 
+    final dawnHours = dawnMinutes / 60.0;
     final morningHours = morningMinutes / 60.0;
+    final noonHours = noonMinutes / 60.0;
+    final afternoonHours = afternoonMinutes / 60.0;
     final eveningHours = eveningMinutes / 60.0;
     final nightHours = nightMinutes / 60.0;
 
     return [
       TimeOfDaySegment(
-        name: l.analytics_chart_tod_morning,
-        timeRange: '06:00-14:00',
-        hours: morningHours,
-        color: const Color(0xFFF59E0B),
-        // Amber Sun
-        icon: Icons.wb_sunny_rounded,
-      ),
-      TimeOfDaySegment(
-        name: l.analytics_chart_tod_evening,
-        timeRange: '14:00-20:00',
-        hours: eveningHours,
-        color: const Color(0xFF0284C7),
-        // Sky Blue
+        name: l.analytics_chart_tod_dawn,
+        timeRange: '04:00-06:00',
+        hours: dawnHours,
+        color: const Color(0xFFFF7043),
         icon: Icons.wb_twilight_rounded,
       ),
       TimeOfDaySegment(
+        name: l.analytics_chart_tod_morning,
+        timeRange: '06:00-12:00',
+        hours: morningHours,
+        color: const Color(0xFFF59E0B),
+        icon: Icons.wb_sunny_rounded,
+      ),
+      TimeOfDaySegment(
+        name: l.analytics_chart_tod_noon,
+        timeRange: '12:00-16:00',
+        hours: noonHours,
+        color: const Color(0xFF00ACC1),
+        icon: Icons.light_mode_rounded,
+      ),
+      TimeOfDaySegment(
+        name: l.analytics_chart_tod_afternoon,
+        timeRange: '16:00-18:00',
+        hours: afternoonHours,
+        color: const Color(0xFF388E3C),
+        icon: Icons.wb_twilight,
+      ),
+      TimeOfDaySegment(
+        name: l.analytics_chart_tod_evening,
+        timeRange: '18:00-22:00',
+        hours: eveningHours,
+        color: const Color(0xFF0284C7),
+        icon: Icons.nights_stay_rounded,
+      ),
+      TimeOfDaySegment(
         name: l.analytics_chart_tod_night,
-        timeRange: '20:00-06:00',
+        timeRange: '22:00-06:00',
         hours: nightHours,
         color: const Color(0xFF6366F1),
-        // Deep Indigo
         icon: Icons.nightlight_round,
       ),
     ];

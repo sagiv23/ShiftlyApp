@@ -1134,17 +1134,25 @@ class AppLocalizationsHe extends AppLocalizations {
   String get analytics_chart_tod_title => 'פילוח לפי שעות היממה';
 
   @override
-  String get analytics_chart_tod_subtitle =>
-      'השוואת שעות בין משמרות בוקר, ערב ולילה';
+  String get analytics_chart_tod_subtitle => 'השוואת שעות עבודה לפי פלחי היממה';
 
   @override
-  String get analytics_chart_tod_morning => 'בוקר (06:00-14:00)';
+  String get analytics_chart_tod_dawn => 'לפנות בוקר (04:00-06:00)';
 
   @override
-  String get analytics_chart_tod_evening => 'ערב (14:00-20:00)';
+  String get analytics_chart_tod_morning => 'בוקר (06:00-12:00)';
 
   @override
-  String get analytics_chart_tod_night => 'לילה (20:00-06:00)';
+  String get analytics_chart_tod_noon => 'צהריים (12:00-16:00)';
+
+  @override
+  String get analytics_chart_tod_afternoon => 'אחר הצהריים (16:00-18:00)';
+
+  @override
+  String get analytics_chart_tod_evening => 'ערב (18:00-22:00)';
+
+  @override
+  String get analytics_chart_tod_night => 'לילה (22:00-06:00)';
 
   @override
   String get analytics_chart_duration_title => 'התפלגות אורך משמרות ועומס';
