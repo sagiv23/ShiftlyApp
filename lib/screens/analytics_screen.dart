@@ -129,10 +129,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final retentionPct = totalGross > 0
         ? ((grandTotalNet / totalGross) * 100)
         : 100.0;
-    final tipYieldPerHour = totalNetHours > 0
-        ? (totalTips / totalNetHours)
-        : 0.0;
-
     // Monthly Projection
     double projectedEom = grandTotalNet;
     if (_periodMode == AnalyticsPeriodMode.monthly) {
@@ -270,8 +266,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 switchInCurve: Curves.easeOutCubic,
                 switchOutCurve: Curves.easeInCubic,
                 child: KeyedSubtree(
-                  key: ValueKey('$_periodMode-$_selectedJobId-${_selectedDate
-                      .year}-${_selectedDate.month}'),
+                  key: ValueKey(
+                    '$_periodMode-$_selectedJobId-${_selectedDate.year}-${_selectedDate.month}',
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -283,13 +280,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         totalNet: grandTotalNet,
                         totalHours: totalNetHours,
                         avgRate: avgEffectiveRate,
-                        totalTips: totalTips,
+                        totalExpenses: totalExpenses,
                         shiftCount: shiftCount,
                         projectedEom: projectedEom,
                         retentionPct: retentionPct,
-                        tipYield: tipYieldPerHour,
                         rateBoost: rateBoost,
-                        netExtras: totalTips + totalIncomes - totalExpenses,
                       ),
                       const SizedBox(height: AppTheme.spaceMd),
 
@@ -336,26 +331,25 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                           jobDonutCard,
                           const SizedBox(height: AppTheme.spaceSm),
                         ],
-                      ] else
-                        ...[
-                          // Mobile Stacked Cards
-                          earningsBarCard,
+                      ] else ...[
+                        // Mobile Stacked Cards
+                        earningsBarCard,
+                        const SizedBox(height: AppTheme.spaceSm),
+                        cumulativeLineCard,
+                        const SizedBox(height: AppTheme.spaceSm),
+                        if (todCard != null) ...[
+                          todCard,
                           const SizedBox(height: AppTheme.spaceSm),
-                          cumulativeLineCard,
-                          const SizedBox(height: AppTheme.spaceSm),
-                          if (todCard != null) ...[
-                            todCard,
-                            const SizedBox(height: AppTheme.spaceSm),
-                          ],
-                          if (durationCard != null) ...[
-                            durationCard,
-                            const SizedBox(height: AppTheme.spaceSm),
-                          ],
-                          if (jobDonutCard != null) ...[
-                            jobDonutCard,
-                            const SizedBox(height: AppTheme.spaceSm),
-                          ],
                         ],
+                        if (durationCard != null) ...[
+                          durationCard,
+                          const SizedBox(height: AppTheme.spaceSm),
+                        ],
+                        if (jobDonutCard != null) ...[
+                          jobDonutCard,
+                          const SizedBox(height: AppTheme.spaceSm),
+                        ],
+                      ],
                     ],
                   ),
                 ),
@@ -523,13 +517,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     required double totalNet,
     required double totalHours,
     required double avgRate,
-    required double totalTips,
+    required double totalExpenses,
     required int shiftCount,
     required double projectedEom,
     required double retentionPct,
-    required double tipYield,
     required double rateBoost,
-    required double netExtras,
   }) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -542,7 +534,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: AppTheme.spaceSm,
           crossAxisSpacing: AppTheme.spaceSm,
-          childAspectRatio: constraints.maxWidth > 700 ? 1.5 : 1.35,
+          // Give the two-column mobile layout enough vertical room for
+          // localized titles and subtitles to wrap instead of being clipped.
+          childAspectRatio: constraints.maxWidth > 700 ? 1.5 : 1.15,
           children: [
             _KpiCard(
               title: l.analytics_stat_total_net,
@@ -576,14 +570,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             ),
             _KpiCard(
               title: l.analytics_stat_tips,
-              value: UIUtils.formatCurrency(netExtras, symbol: symbol),
+              value: UIUtils.formatCurrency(totalExpenses, symbol: symbol),
               subtitle: totalNet > 0
                   ? l.analytics_net_extras_pct_subtitle(
-                      ((netExtras / totalNet) * 100).toStringAsFixed(0),
+                      ((totalExpenses / totalNet) * 100).toStringAsFixed(0),
                     )
                   : '0%',
-              icon: Icons.payments_rounded,
-              gradientColors: const [Color(0xFFEC4899), Color(0xFFD97706)],
+              icon: Icons.receipt_long_rounded,
+              gradientColors: const [Color(0xFFEF4444), Color(0xFFDC2626)],
               isDark: isDark,
             ),
           ],
@@ -1488,7 +1482,7 @@ class _KpiCard extends StatelessWidget {
                       context,
                     ).colorScheme.onSurface.withValues(alpha: 0.75),
                   ),
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -1528,7 +1522,7 @@ class _KpiCard extends StatelessWidget {
                 context,
               ).colorScheme.onSurface.withValues(alpha: 0.55),
             ),
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
         ],
