@@ -431,5 +431,13 @@
   "settings_byos_delete_final_title": "Final Warning",
   "settings_byos_delete_final_content_1": "Your backup file in Google Drive will be completely destroyed.",
   "settings_byos_delete_final_content_2": "Are you sure you want to permanently delete BYOS backup data?",
-  "settings_byos_delete_success": "BYOS backup data deleted successfully"
+  "settings_byos_delete_success": "BYOS backup data deleted successfully",
+  "add_shift_wage_segments_title": "Hourly Wage Percentage Segments (Optional)",
+  "add_shift_wage_segments_subtitle": "Define periods with different wage percentages (e.g. 150%)",
+  "add_shift_wage_segments_add": "Add Period",
+  "add_shift_wage_segment_start": "Start",
+  "add_shift_wage_segment_end": "End",
+  "add_shift_wage_segment_percentage": "Wage %",
+  "error_segment_invalid_time": "Segment end time must be after start time",
+  "error_segment_overlap": "There is an overlap in time ranges"
 }

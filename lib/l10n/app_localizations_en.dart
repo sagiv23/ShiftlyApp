@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1372,4 +1373,31 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settings_byos_delete_success =>
       'BYOS backup data deleted successfully';
+
+  @override
+  String get add_shift_wage_segments_title =>
+      'Hourly Wage Percentage Segments (Optional)';
+
+  @override
+  String get add_shift_wage_segments_subtitle =>
+      'Define periods with different wage percentages (e.g. 150%)';
+
+  @override
+  String get add_shift_wage_segments_add => 'Add Period';
+
+  @override
+  String get add_shift_wage_segment_start => 'Start';
+
+  @override
+  String get add_shift_wage_segment_end => 'End';
+
+  @override
+  String get add_shift_wage_segment_percentage => 'Wage %';
+
+  @override
+  String get error_segment_invalid_time =>
+      'Segment end time must be after start time';
+
+  @override
+  String get error_segment_overlap => 'There is an overlap in time ranges';
 }

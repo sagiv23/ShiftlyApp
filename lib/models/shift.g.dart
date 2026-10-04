@@ -31,13 +31,14 @@ class ShiftAdapter extends TypeAdapter<Shift> {
       automaticExpenses: (fields[12] as List?)?.cast<AutomaticExpense>(),
       automaticIncomes: (fields[13] as List?)?.cast<AutomaticExpense>(),
       description: fields[14] as String?,
+      wageSegments: (fields[15] as List?)?.cast<ShiftWageSegment>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Shift obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -65,7 +66,9 @@ class ShiftAdapter extends TypeAdapter<Shift> {
       ..writeByte(13)
       ..write(obj.automaticIncomes)
       ..writeByte(14)
-      ..write(obj.description);
+      ..write(obj.description)
+      ..writeByte(15)
+      ..write(obj.wageSegments);
   }
 
   @override

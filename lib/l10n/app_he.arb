@@ -431,5 +431,13 @@
   "settings_byos_delete_final_title": "אזהרה סופית",
   "settings_byos_delete_final_content_1": "קובץ הגיבוי שלך ב-Google Drive יימחק כליל.",
   "settings_byos_delete_final_content_2": "האם אתה בטוח שברצונך למחוק את הגיבוי לצמיתות?",
-  "settings_byos_delete_success": "נתוני הגיבוי של BYOS נמחקו בהצלחה"
+  "settings_byos_delete_success": "נתוני הגיבוי של BYOS נמחקו בהצלחה",
+  "add_shift_wage_segments_title": "אחוזי שכר לפי שעות (אופציונלי)",
+  "add_shift_wage_segments_subtitle": "הגדר תקופות עם אחוזי שכר שונים (למשל 150%)",
+  "add_shift_wage_segments_add": "הוסף תקופה",
+  "add_shift_wage_segment_start": "התחלה",
+  "add_shift_wage_segment_end": "סיום",
+  "add_shift_wage_segment_percentage": "שכר %",
+  "error_segment_invalid_time": "שעת הסיום בטווח השכר חייבת להיות אחרי שעת ההתחלה",
+  "error_segment_overlap": "קיימת חפיפה בטווחי השעות"
 }

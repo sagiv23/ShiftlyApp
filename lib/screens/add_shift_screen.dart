@@ -6,6 +6,7 @@ import 'package:shiftly/models/automatic_expense.dart';
 import 'package:shiftly/models/break_type.dart';
 import 'package:shiftly/models/job_type.dart';
 import 'package:shiftly/models/shift.dart';
+import 'package:shiftly/models/shift_wage_segment.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/providers/timer_provider.dart';
@@ -36,6 +37,11 @@ class _AddShiftScreenState extends State<AddShiftScreen>
   String? _selectedJobTypeId;
   final List<TextEditingController> _tipControllers = [];
   late BreakType _selectedBreakType;
+
+  // Wage Segments State
+  final List<TimeOfDay> _segmentStartTimes = [];
+  final List<TimeOfDay> _segmentEndTimes = [];
+  final List<TextEditingController> _segmentPercentageControllers = [];
 
   // Raw Paste State
   final TextEditingController _rawTextController = TextEditingController();
@@ -104,6 +110,15 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         );
       } else {
         _tipControllers.add(TextEditingController(text: '0'));
+      }
+      if (s.wageSegments != null) {
+        for (var seg in s.wageSegments!) {
+          _segmentStartTimes.add(TimeOfDay.fromDateTime(seg.startTime));
+          _segmentEndTimes.add(TimeOfDay.fromDateTime(seg.endTime));
+          _segmentPercentageControllers.add(
+            TextEditingController(text: seg.percentage.toStringAsFixed(0)),
+          );
+        }
       }
       _descriptionController.text = s.description ?? '';
     } else {
@@ -199,6 +214,9 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       c.dispose();
     }
     for (var c in _autoIncomeDescControllers) {
+      c.dispose();
+    }
+    for (var c in _segmentPercentageControllers) {
       c.dispose();
     }
     _rawTextController.dispose();
@@ -435,6 +453,57 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     final incomes = _getIncomeList();
     if (incomes == null) return;
 
+    List<ShiftWageSegment> wageSegments = [];
+    for (int i = 0; i < _segmentStartTimes.length; i++) {
+      final sTime = _segmentStartTimes[i];
+      final eTime = _segmentEndTimes[i];
+      final pct =
+          double.tryParse(_segmentPercentageControllers[i].text) ?? 100.0;
+
+      DateTime segStart = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        sTime.hour,
+        sTime.minute,
+      );
+      DateTime segEnd = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        eTime.hour,
+        eTime.minute,
+      );
+      if (segEnd.isBefore(segStart)) {
+        segEnd = segEnd.add(const Duration(days: 1));
+      }
+
+      if (!segStart.isBefore(segEnd)) {
+        UIUtils.showSnackBar(
+          context,
+          l.error_segment_invalid_time,
+          isError: true,
+        );
+        return;
+      }
+
+      wageSegments.add(
+        ShiftWageSegment(startTime: segStart, endTime: segEnd, percentage: pct),
+      );
+    }
+
+    for (int i = 0; i < wageSegments.length; i++) {
+      for (int j = i + 1; j < wageSegments.length; j++) {
+        final s1 = wageSegments[i];
+        final s2 = wageSegments[j];
+        if (s1.startTime.isBefore(s2.endTime) &&
+            s2.startTime.isBefore(s1.endTime)) {
+          UIUtils.showSnackBar(context, l.error_segment_overlap, isError: true);
+          return;
+        }
+      }
+    }
+
     final overlapConfirmed = await _confirmOverlappingShifts(
       start: start,
       end: end,
@@ -458,6 +527,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       s.description = _descriptionController.text.trim().isEmpty
           ? null
           : _descriptionController.text.trim();
+      s.wageSegments = wageSegments;
 
       if (!mounted) return;
       shiftProvider.updateShift(
@@ -490,6 +560,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         description: _descriptionController.text.trim().isEmpty
             ? null
             : _descriptionController.text.trim(),
+        wageSegments: wageSegments,
       );
       if (!mounted) return;
       shiftProvider.addShift(
@@ -1004,6 +1075,141 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     );
   }
 
+  Widget _buildWageSegmentsSection() {
+    final l = AppLocalizations.of(context)!;
+    return _FormSection(
+      title: l.add_shift_wage_segments_title,
+      icon: Icons.percent_rounded,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: Text(l.add_shift_wage_segments_subtitle)),
+              const SizedBox(width: 8),
+              TextButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _segmentStartTimes.add(_startTime);
+                    _segmentEndTimes.add(_endTime);
+                    _segmentPercentageControllers.add(
+                      TextEditingController(text: '150'),
+                    );
+                  });
+                },
+                icon: const Icon(Icons.add, size: 16),
+                label: Text(l.add_shift_wage_segments_add),
+              ),
+            ],
+          ),
+          if (_segmentStartTimes.isNotEmpty) const SizedBox(height: 8),
+          for (int i = 0; i < _segmentStartTimes.length; i++)
+            Card(
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: InkWell(
+                        onTap: () async {
+                          final picked = await showTimePicker(
+                            context: context,
+                            initialTime: _segmentStartTimes[i],
+                          );
+                          if (picked != null && mounted) {
+                            setState(() => _segmentStartTimes[i] = picked);
+                          }
+                        },
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: l.add_shift_wage_segment_start,
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 8,
+                            ),
+                          ),
+                          child: Text(
+                            _segmentStartTimes[i].format(context),
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      flex: 2,
+                      child: InkWell(
+                        onTap: () async {
+                          final picked = await showTimePicker(
+                            context: context,
+                            initialTime: _segmentEndTimes[i],
+                          );
+                          if (picked != null && mounted) {
+                            setState(() => _segmentEndTimes[i] = picked);
+                          }
+                        },
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: l.add_shift_wage_segment_end,
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 8,
+                            ),
+                          ),
+                          child: Text(
+                            _segmentEndTimes[i].format(context),
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SizedBox(
+                      width: 80,
+                      child: TextField(
+                        controller: _segmentPercentageControllers[i],
+                        keyboardType: TextInputType.number,
+                        style: const TextStyle(fontSize: 13),
+                        decoration: InputDecoration(
+                          labelText: l.add_shift_wage_segment_percentage,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 10,
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      constraints: const BoxConstraints(),
+                      padding: const EdgeInsets.all(6),
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _segmentStartTimes.removeAt(i);
+                          _segmentEndTimes.removeAt(i);
+                          _segmentPercentageControllers[i].dispose();
+                          _segmentPercentageControllers.removeAt(i);
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildManualForm(List<JobType> jobs) {
     final settings = context.read<SettingsProvider>();
     final symbol = settings.currencySymbol;
@@ -1073,6 +1279,8 @@ class _AddShiftScreenState extends State<AddShiftScreen>
               ],
             ),
           ),
+          const SizedBox(height: AppTheme.spaceSm),
+          _buildWageSegmentsSection(),
           if (settings.breaksEnabled) ...[
             const SizedBox(height: AppTheme.spaceSm),
             _FormSection(

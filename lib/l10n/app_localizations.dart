@@ -2653,6 +2653,54 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'נתוני הגיבוי של BYOS נמחקו בהצלחה'**
   String get settings_byos_delete_success;
+
+  /// No description provided for @add_shift_wage_segments_title.
+  ///
+  /// In he, this message translates to:
+  /// **'אחוזי שכר לפי שעות (אופציונלי)'**
+  String get add_shift_wage_segments_title;
+
+  /// No description provided for @add_shift_wage_segments_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'הגדר תקופות עם אחוזי שכר שונים (למשל 150%)'**
+  String get add_shift_wage_segments_subtitle;
+
+  /// No description provided for @add_shift_wage_segments_add.
+  ///
+  /// In he, this message translates to:
+  /// **'הוסף תקופה'**
+  String get add_shift_wage_segments_add;
+
+  /// No description provided for @add_shift_wage_segment_start.
+  ///
+  /// In he, this message translates to:
+  /// **'התחלה'**
+  String get add_shift_wage_segment_start;
+
+  /// No description provided for @add_shift_wage_segment_end.
+  ///
+  /// In he, this message translates to:
+  /// **'סיום'**
+  String get add_shift_wage_segment_end;
+
+  /// No description provided for @add_shift_wage_segment_percentage.
+  ///
+  /// In he, this message translates to:
+  /// **'שכר %'**
+  String get add_shift_wage_segment_percentage;
+
+  /// No description provided for @error_segment_invalid_time.
+  ///
+  /// In he, this message translates to:
+  /// **'שעת הסיום בטווח השכר חייבת להיות אחרי שעת ההתחלה'**
+  String get error_segment_invalid_time;
+
+  /// No description provided for @error_segment_overlap.
+  ///
+  /// In he, this message translates to:
+  /// **'קיימת חפיפה בטווחי השעות'**
+  String get error_segment_overlap;
 }
 
 class _AppLocalizationsDelegate

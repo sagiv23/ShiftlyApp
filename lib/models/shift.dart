@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:shiftly/models/automatic_expense.dart';
+import 'package:shiftly/models/shift_wage_segment.dart';
 
 import 'break_type.dart';
 
@@ -49,6 +50,9 @@ class Shift extends HiveObject {
   @HiveField(14)
   String? description;
 
+  @HiveField(15)
+  List<ShiftWageSegment>? wageSegments;
+
   Shift({
     required this.id,
     required this.date,
@@ -64,6 +68,7 @@ class Shift extends HiveObject {
     this.automaticExpenses,
     this.automaticIncomes,
     this.description,
+    this.wageSegments,
   });
 
   Map<String, dynamic> toJson() => {
@@ -80,6 +85,7 @@ class Shift extends HiveObject {
     'automaticExpenses': automaticExpenses?.map((e) => e.toJson()).toList(),
     'automaticIncomes': automaticIncomes?.map((e) => e.toJson()).toList(),
     'description': description,
+    'wageSegments': wageSegments?.map((e) => e.toJson()).toList(),
   };
 
   factory Shift.fromJson(Map<String, dynamic> json) => Shift(
@@ -111,6 +117,11 @@ class Shift extends HiveObject {
         )
         .toList(),
     description: json['description'],
+    wageSegments: (json['wageSegments'] as List?)
+        ?.map(
+          (e) => ShiftWageSegment.fromJson(Map<String, dynamic>.from(e as Map)),
+        )
+        .toList(),
   );
 
   double get totalAutomaticExpenses {
@@ -158,10 +169,60 @@ class Shift extends HiveObject {
     return hourlyRate ?? fallbackRate;
   }
 
+  double calculateBaseSalary(double currentHourlyRate) {
+    final rate = effectiveHourlyRate(currentHourlyRate);
+    if (wageSegments == null || wageSegments!.isEmpty) {
+      return netHours * rate;
+    }
+
+    final grossDuration = durationHours;
+    if (grossDuration <= 0) return 0.0;
+
+    final netRatio = netHours / grossDuration;
+
+    List<DateTime> points = [startTime, endTime];
+    for (var seg in wageSegments!) {
+      DateTime segStart = seg.startTime.isBefore(startTime)
+          ? startTime
+          : (seg.startTime.isAfter(endTime) ? endTime : seg.startTime);
+      DateTime segEnd = seg.endTime.isBefore(startTime)
+          ? startTime
+          : (seg.endTime.isAfter(endTime) ? endTime : seg.endTime);
+      if (segStart.isBefore(segEnd)) {
+        points.add(segStart);
+        points.add(segEnd);
+      }
+    }
+    points.sort();
+    points = points.toSet().toList();
+
+    double totalWeightedPay = 0.0;
+
+    for (int i = 0; i < points.length - 1; i++) {
+      DateTime t1 = points[i];
+      DateTime t2 = points[i + 1];
+      double hours = t2.difference(t1).inSeconds / 3600.0;
+      if (hours <= 0) continue;
+
+      double percentage = 100.0; // default
+      for (var seg in wageSegments!) {
+        if (!t1.isBefore(seg.startTime) && !t2.isAfter(seg.endTime)) {
+          percentage = seg.percentage;
+          break;
+        }
+      }
+
+      totalWeightedPay += hours * rate * (percentage / 100.0);
+    }
+
+    return totalWeightedPay * netRatio;
+  }
+
   double calculateTotalPay(double currentHourlyRate) {
-    return (netHours * effectiveHourlyRate(currentHourlyRate)) +
+    return calculateBaseSalary(currentHourlyRate) +
         tips +
         totalAutomaticIncomes -
         totalAutomaticExpenses;
   }
 }
+

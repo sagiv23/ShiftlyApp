@@ -21,7 +21,7 @@ class ExpenseAdapter extends TypeAdapter<Expense> {
       date: fields[1] as DateTime,
       description: fields[2] as String,
       amount: fields[3] as double,
-      isIncome: fields[4] as bool? ?? false,
+      isIncome: fields[4] as bool,
     );
   }
 

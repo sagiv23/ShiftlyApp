@@ -325,109 +325,112 @@ class _CalendarShiftTile extends StatelessWidget {
           ).colorScheme.outlineVariant.withValues(alpha: 0.5),
         ),
       ),
-      child: ListTile(
-        onTap: () => _editShift(context),
-        leading: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: Theme.of(
-              context,
-            ).colorScheme.primaryContainer.withValues(alpha: 0.4),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            Icons.work_rounded,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-          ),
-        ),
-        title: Text(
-          "${job?.name ?? l.common_error}$breakInfo",
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-        ),
-        subtitle: Text(
-          "${DateFormat.Hm().format(shift.startTime)} - ${DateFormat.Hm().format(shift.endTime)} | "
-          "${shift.netHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
-          style: const TextStyle(fontSize: 12),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  UIUtils.formatCurrency(pay, symbol: symbol),
-                  style: UIUtils.getCurrencyStyle(
-                    context,
-                    pay,
-                    positiveColor: Theme.of(context).colorScheme.primary,
-                    baseStyle: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-                if (shift.tips > 0)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 1,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade50,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      "+${UIUtils.formatCurrency(shift.tips, symbol: symbol)}",
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.green.shade700,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                if (shift.totalAutomaticExpenses > 0)
-                  Container(
-                    margin: const EdgeInsets.only(top: 2),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 1,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppTheme.expense.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      "-${UIUtils.formatCurrency(shift.totalAutomaticExpenses, symbol: symbol)}",
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: AppTheme.expenseSoft,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-              ],
+      child: Material(
+        color: Colors.transparent,
+        child: ListTile(
+          onTap: () => _editShift(context),
+          leading: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: Theme.of(
+                context,
+              ).colorScheme.primaryContainer.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(8),
             ),
-            if (isWide) ...[
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.edit_outlined, size: 20),
-                tooltip: l.common_edit,
-                onPressed: () => _editShift(context),
+            child: Icon(
+              Icons.work_rounded,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+            ),
+          ),
+          title: Text(
+            "${job?.name ?? l.common_error}$breakInfo",
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+          subtitle: Text(
+            "${DateFormat.Hm().format(shift.startTime)} - ${DateFormat.Hm().format(shift.endTime)} | "
+            "${shift.netHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
+            style: const TextStyle(fontSize: 12),
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    UIUtils.formatCurrency(pay, symbol: symbol),
+                    style: UIUtils.getCurrencyStyle(
+                      context,
+                      pay,
+                      positiveColor: Theme.of(context).colorScheme.primary,
+                      baseStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  if (shift.tips > 0)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 1,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        "+${UIUtils.formatCurrency(shift.tips, symbol: symbol)}",
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.green.shade700,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  if (shift.totalAutomaticExpenses > 0)
+                    Container(
+                      margin: const EdgeInsets.only(top: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 1,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppTheme.expense.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        "-${UIUtils.formatCurrency(shift.totalAutomaticExpenses, symbol: symbol)}",
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: AppTheme.expenseSoft,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                ],
               ),
-              IconButton(
-                icon: const Icon(
-                  Icons.delete_outline_rounded,
-                  size: 20,
-                  color: Colors.red,
+              if (isWide) ...[
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: const Icon(Icons.edit_outlined, size: 20),
+                  tooltip: l.common_edit,
+                  onPressed: () => _editShift(context),
                 ),
-                tooltip: l.common_delete,
-                onPressed: () => _deleteShift(context),
-              ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.delete_outline_rounded,
+                    size: 20,
+                    color: Colors.red,
+                  ),
+                  tooltip: l.common_delete,
+                  onPressed: () => _deleteShift(context),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

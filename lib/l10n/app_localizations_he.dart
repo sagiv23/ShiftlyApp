@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1363,4 +1364,30 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String get settings_byos_delete_success =>
       'נתוני הגיבוי של BYOS נמחקו בהצלחה';
+
+  @override
+  String get add_shift_wage_segments_title => 'אחוזי שכר לפי שעות (אופציונלי)';
+
+  @override
+  String get add_shift_wage_segments_subtitle =>
+      'הגדר תקופות עם אחוזי שכר שונים (למשל 150%)';
+
+  @override
+  String get add_shift_wage_segments_add => 'הוסף תקופה';
+
+  @override
+  String get add_shift_wage_segment_start => 'התחלה';
+
+  @override
+  String get add_shift_wage_segment_end => 'סיום';
+
+  @override
+  String get add_shift_wage_segment_percentage => 'שכר %';
+
+  @override
+  String get error_segment_invalid_time =>
+      'שעת הסיום בטווח השכר חייבת להיות אחרי שעת ההתחלה';
+
+  @override
+  String get error_segment_overlap => 'קיימת חפיפה בטווחי השעות';
 }
