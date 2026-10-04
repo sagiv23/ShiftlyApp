@@ -6,8 +6,71 @@ import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animController;
+  late Animation<double> _userCardFade;
+  late Animation<Offset> _userCardSlide;
+  late Animation<double> _statsFade;
+  late Animation<Offset> _statsSlide;
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
+
+    _userCardFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
+
+    _userCardSlide = Tween<Offset>(
+      begin: const Offset(0, 0.12),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
+      ),
+    );
+
+    _statsFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0.3, 0.9, curve: Curves.easeOut),
+      ),
+    );
+
+    _statsSlide = Tween<Offset>(
+      begin: const Offset(0, 0.12),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0.3, 0.9, curve: Curves.easeOutCubic),
+      ),
+    );
+
+    _animController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,97 +147,139 @@ class ProfileScreen extends StatelessWidget {
           padding: const EdgeInsets.all(AppTheme.spaceMd),
           children: [
             // User Info Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppTheme.spaceMd),
-                child: Column(
-                  children: [
-                    const CircleAvatar(
-                      radius: 36,
-                      backgroundColor: AppTheme.primary,
-                      child: Icon(
-                        Icons.person_rounded,
-                        size: 40,
-                        color: Colors.white,
-                      ),
+            SlideTransition(
+              position: _userCardSlide,
+              child: FadeTransition(
+                opacity: _userCardFade,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppTheme.spaceMd),
+                    child: Column(
+                      children: [
+                        const CircleAvatar(
+                          radius: 36,
+                          backgroundColor: AppTheme.primary,
+                          child: Icon(
+                            Icons.person_rounded,
+                            size: 40,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          auth.userName ?? l.settings_user_name,
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          auth.userEmail ?? '',
+                          style: TextStyle(
+                            color: Theme
+                                .of(
+                              context,
+                            )
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.7),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ScalePress(
+                          onTap: () => _showEditProfileDialog(context),
+                          child: OutlinedButton.icon(
+                            onPressed: () => _showEditProfileDialog(context),
+                            icon: const Icon(Icons.edit_outlined, size: 18),
+                            label: Text(l.settings_user_edit_title),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      auth.userName ?? l.settings_user_name,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      auth.userEmail ?? '',
-                      style: TextStyle(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.7),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    OutlinedButton.icon(
-                      onPressed: () => _showEditProfileDialog(context),
-                      icon: const Icon(Icons.edit_outlined, size: 18),
-                      label: Text(l.settings_user_edit_title),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
             if (statRows.isNotEmpty) ...[
               const SizedBox(height: AppTheme.spaceLg),
               // Statistics Summary Card
-              Text(
-                l.profile_stats_title,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: AppTheme.spaceXs),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppTheme.spaceMd),
+              SlideTransition(
+                position: _statsSlide,
+                child: FadeTransition(
+                  opacity: _statsFade,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (int i = 0; i < statRows.length; i++) ...[
-                        if (i > 0) const Divider(height: 24),
-                        statRows[i],
-                      ],
+                      Text(
+                        l.profile_stats_title,
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: AppTheme.spaceXs),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(AppTheme.spaceMd),
+                          child: Column(
+                            children: [
+                              for (int i = 0; i < statRows.length; i++) ...[
+                                if (i > 0) const Divider(height: 24),
+                                statRows[i],
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
             ],
             const SizedBox(height: AppTheme.spaceLg),
-            Text(
-              l.settings_section_danger,
-              style: Theme
-                  .of(
-                context,
-              )
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: AppTheme.spaceXs),
-            Card(
-              child: ListTile(
-                title: Text(
-                  l.profile_delete_account,
-                  style: const TextStyle(
-                    color: AppTheme.expense,
-                    fontWeight: FontWeight.bold,
-                  ),
+            SlideTransition(
+              position: _statsSlide,
+              child: FadeTransition(
+                opacity: _statsFade,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l.settings_section_danger,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: AppTheme.spaceXs),
+                    Card(
+                      child: ScalePress(
+                        onTap: () => _handleDeleteAccount(context),
+                        child: ListTile(
+                          title: Text(
+                            l.profile_delete_account,
+                            style: const TextStyle(
+                              color: AppTheme.expense,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text(l.profile_delete_account_sub),
+                          leading: const Icon(
+                            Icons.delete_forever_rounded,
+                            color: AppTheme.expense,
+                          ),
+                          onTap: () => _handleDeleteAccount(context),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                subtitle: Text(l.profile_delete_account_sub),
-                leading: const Icon(
-                  Icons.delete_forever_rounded,
-                  color: AppTheme.expense,
-                ),
-                onTap: () => _handleDeleteAccount(context),
               ),
             ),
           ],
@@ -185,7 +290,6 @@ class ProfileScreen extends StatelessWidget {
 
   Future<void> _handleDeleteAccount(BuildContext context) async {
     final l = AppLocalizations.of(context)!;
-    // Step 1: First Confirmation
     final confirmed = await UIUtils.showConfirmDialog(
       context: context,
       title: l.profile_delete_dialog_title,
@@ -197,7 +301,6 @@ class ProfileScreen extends StatelessWidget {
     if (confirmed != true) return;
     if (!context.mounted) return;
 
-    // Step 2: Second Confirmation (Final Warning)
     final finalConfirm = await showDialog<bool>(
       context: context,
       builder: (ctx) =>
@@ -205,7 +308,9 @@ class ProfileScreen extends StatelessWidget {
             title: Row(
               children: [
                 const Icon(
-                    Icons.warning_amber_rounded, color: AppTheme.expense),
+                  Icons.warning_amber_rounded,
+                  color: AppTheme.expense,
+                ),
                 const SizedBox(width: 8),
                 Expanded(child: Text(l.profile_delete_final_title)),
               ],
@@ -330,10 +435,8 @@ class ProfileScreen extends StatelessWidget {
                 }
               } catch (e) {
                 if (context.mounted) {
-                  final errKey = e
-                      .toString()
-                      .replaceAll('Exception: ', '')
-                      .trim();
+                  final errKey =
+                  e.toString().replaceAll('Exception: ', '').trim();
                   String msg = errKey;
                   if (errKey == 'profile_password_error') {
                     msg = l.profile_password_error;

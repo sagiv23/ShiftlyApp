@@ -8,6 +8,7 @@ import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -287,25 +288,7 @@ class _CalendarShiftTile extends StatelessWidget {
   void _editShift(BuildContext context) {
     Navigator.push(
       context,
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 280),
-        reverseTransitionDuration: const Duration(milliseconds: 220),
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            AddShiftScreen(shiftToEdit: shift),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          final curved = CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutCubic,
-          );
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0.08, 0),
-              end: Offset.zero,
-            ).animate(curved),
-            child: FadeTransition(opacity: curved, child: child),
-          );
-        },
-      ),
+      AppPageRoute.slideHorizontal(AddShiftScreen(shiftToEdit: shift)),
     );
   }
 

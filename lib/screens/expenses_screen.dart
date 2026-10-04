@@ -10,6 +10,7 @@ import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:uuid/uuid.dart';
@@ -615,45 +616,10 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                                     if (record.shift != null) {
                                       Navigator.push(
                                         context,
-                                        PageRouteBuilder(
-                                          transitionDuration: const Duration(
-                                            milliseconds: 280,
+                                        AppPageRoute.slideHorizontal(
+                                          AddShiftScreen(
+                                            shiftToEdit: record.shift,
                                           ),
-                                          reverseTransitionDuration:
-                                              const Duration(milliseconds: 220),
-                                          pageBuilder:
-                                              (
-                                                _,
-                                                animation,
-                                                secondaryAnimation,
-                                              ) => AddShiftScreen(
-                                                shiftToEdit: record.shift,
-                                              ),
-                                          transitionsBuilder:
-                                              (
-                                                context,
-                                                animation,
-                                                secondaryAnimation,
-                                                child,
-                                              ) {
-                                                final curved = CurvedAnimation(
-                                                  parent: animation,
-                                                  curve: Curves.easeOutCubic,
-                                                );
-                                                return SlideTransition(
-                                                  position: Tween<Offset>(
-                                                    begin: const Offset(
-                                                      0.08,
-                                                      0,
-                                                    ),
-                                                    end: Offset.zero,
-                                                  ).animate(curved),
-                                                  child: FadeTransition(
-                                                    opacity: curved,
-                                                    child: child,
-                                                  ),
-                                                );
-                                              },
                                         ),
                                       );
                                     } else if (record.standaloneExpense !=
@@ -786,45 +752,10 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                                     if (record.shift != null) {
                                       Navigator.push(
                                         context,
-                                        PageRouteBuilder(
-                                          transitionDuration: const Duration(
-                                            milliseconds: 280,
+                                        AppPageRoute.slideHorizontal(
+                                          AddShiftScreen(
+                                            shiftToEdit: record.shift,
                                           ),
-                                          reverseTransitionDuration:
-                                              const Duration(milliseconds: 220),
-                                          pageBuilder:
-                                              (
-                                                _,
-                                                animation,
-                                                secondaryAnimation,
-                                              ) => AddShiftScreen(
-                                                shiftToEdit: record.shift,
-                                              ),
-                                          transitionsBuilder:
-                                              (
-                                                context,
-                                                animation,
-                                                secondaryAnimation,
-                                                child,
-                                              ) {
-                                                final curved = CurvedAnimation(
-                                                  parent: animation,
-                                                  curve: Curves.easeOutCubic,
-                                                );
-                                                return SlideTransition(
-                                                  position: Tween<Offset>(
-                                                    begin: const Offset(
-                                                      0.08,
-                                                      0,
-                                                    ),
-                                                    end: Offset.zero,
-                                                  ).animate(curved),
-                                                  child: FadeTransition(
-                                                    opacity: curved,
-                                                    child: child,
-                                                  ),
-                                                );
-                                              },
                                         ),
                                       );
                                     } else if (record.standaloneExpense !=

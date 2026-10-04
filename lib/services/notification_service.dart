@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart'
     show debugPrint, defaultTargetPlatform, kIsWeb, TargetPlatform;
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:shiftly/main.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
+import 'package:shiftly/utils/app_page_route.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -62,15 +62,15 @@ class NotificationService {
 
               if (details.actionId == 'stop_shift') {
                 navigatorKey.currentState?.push(
-                  MaterialPageRoute(
-                    builder: (_) => const AddShiftScreen(initialTabIndex: 0),
+                  AppPageRoute.slideUp(
+                    const AddShiftScreen(initialTabIndex: 0),
                   ),
                 );
               }
             } else {
               navigatorKey.currentState?.push(
-                MaterialPageRoute(
-                  builder: (_) => const AddShiftScreen(initialTabIndex: 0),
+                AppPageRoute.slideUp(
+                  const AddShiftScreen(initialTabIndex: 0),
                 ),
               );
             }

@@ -12,6 +12,7 @@ import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/providers/timer_provider.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/export_bottom_sheet.dart';
@@ -174,26 +175,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.push(
           context,
-          PageRouteBuilder(
-            transitionDuration: const Duration(milliseconds: 300),
-            reverseTransitionDuration: const Duration(milliseconds: 250),
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                const AddShiftScreen(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-                  final curved = CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeOutCubic,
-                  );
-                  return SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(0, 0.12),
-                      end: Offset.zero,
-                    ).animate(curved),
-                    child: FadeTransition(opacity: curved, child: child),
-                  );
-                },
-          ),
+          AppPageRoute.slideUp(const AddShiftScreen()),
         ),
         label: Text(l.home_action_new_shift),
         icon: const Icon(Icons.add_rounded),
@@ -273,25 +255,7 @@ class _ActiveTimerBanner extends StatelessWidget {
     return ScalePress(
       onTap: () => Navigator.push(
         context,
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 280),
-          reverseTransitionDuration: const Duration(milliseconds: 220),
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const AddShiftScreen(initialTabIndex: 0),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            final curved = CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOutCubic,
-            );
-            return SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0, 0.08),
-                end: Offset.zero,
-              ).animate(curved),
-              child: FadeTransition(opacity: curved, child: child),
-            );
-          },
-        ),
+        AppPageRoute.slideUp(const AddShiftScreen(initialTabIndex: 0)),
       ),
       child: Container(
         margin: const EdgeInsets.fromLTRB(
@@ -915,25 +879,7 @@ class _ShiftTile extends StatelessWidget {
   void _editShift(BuildContext context) {
     Navigator.push(
       context,
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 280),
-        reverseTransitionDuration: const Duration(milliseconds: 220),
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            AddShiftScreen(shiftToEdit: shift),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          final curved = CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutCubic,
-          );
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0.08, 0),
-              end: Offset.zero,
-            ).animate(curved),
-            child: FadeTransition(opacity: curved, child: child),
-          );
-        },
-      ),
+      AppPageRoute.slideHorizontal(AddShiftScreen(shiftToEdit: shift)),
     );
   }
 

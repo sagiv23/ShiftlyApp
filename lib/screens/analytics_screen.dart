@@ -264,86 +264,102 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               _buildFilterHeader(context, l, jobTypes),
               const SizedBox(height: AppTheme.spaceSm),
 
-              // 2. Summary KPI Cards
-              _buildKpiGrid(
-                context,
-                l: l,
-                symbol: symbol,
-                totalNet: grandTotalNet,
-                totalHours: totalNetHours,
-                avgRate: avgEffectiveRate,
-                totalTips: totalTips,
-                shiftCount: shiftCount,
-                projectedEom: projectedEom,
-                retentionPct: retentionPct,
-                tipYield: tipYieldPerHour,
-                rateBoost: rateBoost,
-                netExtras: totalTips + totalIncomes - totalExpenses,
-              ),
-              const SizedBox(height: AppTheme.spaceMd),
-
-              // 3. Smart Insights Card
-              if (shiftCount > 0) ...[
-                smartInsightsCard,
-                const SizedBox(height: AppTheme.spaceMd),
-              ],
-
-              // Responsive Chart Layout (Multi-column for wide screen, Stacked for mobile)
-              if (isWideScreen) ...[
-                // Row 1: Earnings Bar Chart & Cumulative Growth Line Chart
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: earningsBarCard),
-                    const SizedBox(width: AppTheme.spaceSm),
-                    Expanded(child: cumulativeLineCard),
-                  ],
-                ),
-                const SizedBox(height: AppTheme.spaceSm),
-
-                // Row 2: Time of Day Breakdown & Shift Duration Distribution
-                if (todCard != null || durationCard != null) ...[
-                  Row(
+              // Animated Transition for Analytics Content
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 320),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                child: KeyedSubtree(
+                  key: ValueKey('$_periodMode-$_selectedJobId-${_selectedDate
+                      .year}-${_selectedDate.month}'),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (todCard != null)
-                        Expanded(child: todCard)
-                      else
-                        const Spacer(),
-                      const SizedBox(width: AppTheme.spaceSm),
-                      if (durationCard != null)
-                        Expanded(child: durationCard)
-                      else
-                        const Spacer(),
+                      // 2. Summary KPI Cards
+                      _buildKpiGrid(
+                        context,
+                        l: l,
+                        symbol: symbol,
+                        totalNet: grandTotalNet,
+                        totalHours: totalNetHours,
+                        avgRate: avgEffectiveRate,
+                        totalTips: totalTips,
+                        shiftCount: shiftCount,
+                        projectedEom: projectedEom,
+                        retentionPct: retentionPct,
+                        tipYield: tipYieldPerHour,
+                        rateBoost: rateBoost,
+                        netExtras: totalTips + totalIncomes - totalExpenses,
+                      ),
+                      const SizedBox(height: AppTheme.spaceMd),
+
+                      // 3. Smart Insights Card
+                      if (shiftCount > 0) ...[
+                        smartInsightsCard,
+                        const SizedBox(height: AppTheme.spaceMd),
+                      ],
+
+                      // Responsive Chart Layout (Multi-column for wide screen, Stacked for mobile)
+                      if (isWideScreen) ...[
+                        // Row 1: Earnings Bar Chart & Cumulative Growth Line Chart
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: earningsBarCard),
+                            const SizedBox(width: AppTheme.spaceSm),
+                            Expanded(child: cumulativeLineCard),
+                          ],
+                        ),
+                        const SizedBox(height: AppTheme.spaceSm),
+
+                        // Row 2: Time of Day Breakdown & Shift Duration Distribution
+                        if (todCard != null || durationCard != null) ...[
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (todCard != null)
+                                Expanded(child: todCard)
+                              else
+                                const Spacer(),
+                              const SizedBox(width: AppTheme.spaceSm),
+                              if (durationCard != null)
+                                Expanded(child: durationCard)
+                              else
+                                const Spacer(),
+                            ],
+                          ),
+                          const SizedBox(height: AppTheme.spaceSm),
+                        ],
+
+                        // Row 3: Job Donut Card
+                        if (jobDonutCard != null) ...[
+                          jobDonutCard,
+                          const SizedBox(height: AppTheme.spaceSm),
+                        ],
+                      ] else
+                        ...[
+                          // Mobile Stacked Cards
+                          earningsBarCard,
+                          const SizedBox(height: AppTheme.spaceSm),
+                          cumulativeLineCard,
+                          const SizedBox(height: AppTheme.spaceSm),
+                          if (todCard != null) ...[
+                            todCard,
+                            const SizedBox(height: AppTheme.spaceSm),
+                          ],
+                          if (durationCard != null) ...[
+                            durationCard,
+                            const SizedBox(height: AppTheme.spaceSm),
+                          ],
+                          if (jobDonutCard != null) ...[
+                            jobDonutCard,
+                            const SizedBox(height: AppTheme.spaceSm),
+                          ],
+                        ],
                     ],
                   ),
-                  const SizedBox(height: AppTheme.spaceSm),
-                ],
-
-                // Row 3: Job Donut Card
-                if (jobDonutCard != null) ...[
-                  jobDonutCard,
-                  const SizedBox(height: AppTheme.spaceSm),
-                ],
-              ] else ...[
-                // Mobile Stacked Cards
-                earningsBarCard,
-                const SizedBox(height: AppTheme.spaceSm),
-                cumulativeLineCard,
-                const SizedBox(height: AppTheme.spaceSm),
-                if (todCard != null) ...[
-                  todCard,
-                  const SizedBox(height: AppTheme.spaceSm),
-                ],
-                if (durationCard != null) ...[
-                  durationCard,
-                  const SizedBox(height: AppTheme.spaceSm),
-                ],
-                if (jobDonutCard != null) ...[
-                  jobDonutCard,
-                  const SizedBox(height: AppTheme.spaceSm),
-                ],
-              ],
+                ),
+              ),
             ],
           ),
         ),

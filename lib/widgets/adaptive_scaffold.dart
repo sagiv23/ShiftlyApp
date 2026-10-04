@@ -11,6 +11,7 @@ import 'package:shiftly/screens/profile_screen.dart';
 import 'package:shiftly/screens/settings_screen.dart';
 import 'package:shiftly/screens/shift_descriptions_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_page_route.dart';
 
 class AdaptiveScaffold extends StatelessWidget {
   final int currentIndex;
@@ -61,49 +62,14 @@ class AdaptiveScaffold extends StatelessWidget {
     }
     Navigator.pushReplacement(
       context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => targetScreen,
-        transitionDuration: const Duration(milliseconds: 220),
-        reverseTransitionDuration: const Duration(milliseconds: 180),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          final curved = CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutCubic,
-          );
-          return FadeTransition(
-            opacity: curved,
-            child: ScaleTransition(
-              scale: Tween<double>(begin: 0.985, end: 1.0).animate(curved),
-              child: child,
-            ),
-          );
-        },
-      ),
+      AppPageRoute.fadeScale(targetScreen),
     );
   }
 
   static void _openAddShiftScreen(BuildContext context) {
     Navigator.push(
       context,
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 300),
-        reverseTransitionDuration: const Duration(milliseconds: 250),
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const AddShiftScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          final curved = CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutCubic,
-          );
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 0.12),
-              end: Offset.zero,
-            ).animate(curved),
-            child: FadeTransition(opacity: curved, child: child),
-          );
-        },
-      ),
+      AppPageRoute.slideUp(const AddShiftScreen()),
     );
   }
 
@@ -340,7 +306,7 @@ class _SideMenuContent extends StatelessWidget {
                   }
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                    AppPageRoute.slideHorizontal(const ProfileScreen()),
                   );
                 },
               ),

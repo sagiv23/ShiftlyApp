@@ -11,6 +11,7 @@ import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/services/notification_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:uuid/uuid.dart';
@@ -980,9 +981,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   subtitle: Text(l.settings_byos_login_shiftly_sub),
                   onTap: () => Navigator.push(
                     context,
-                    PageRouteBuilder(
-                      pageBuilder: (ctx, anim1, anim2) => const AuthScreen(),
-                    ),
+                    AppPageRoute.slideUp(const AuthScreen()),
                   ),
                 ),
               ),

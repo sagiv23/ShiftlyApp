@@ -10,6 +10,7 @@ import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/home_screen.dart';
 import 'package:shiftly/services/notification_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/app_icon.dart';
 import 'package:uuid/uuid.dart';
@@ -199,23 +200,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (!mounted) return;
     Navigator.pushReplacement(
       context,
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 380),
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const HomeScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          final curved = CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutCubic,
-          );
-          return FadeTransition(
-            opacity: curved,
-            child: ScaleTransition(
-              scale: Tween<double>(begin: 0.96, end: 1.0).animate(curved),
-              child: child,
-            ),
-          );
-        },
+      AppPageRoute.fadeScale(
+        const HomeScreen(),
+        duration: const Duration(milliseconds: 450),
       ),
     );
   }

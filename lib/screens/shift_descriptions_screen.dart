@@ -7,6 +7,7 @@ import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 
 class ShiftDescriptionsScreen extends StatefulWidget {
@@ -183,9 +184,8 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                                   onTap: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(
-                                        builder: (_) =>
-                                            AddShiftScreen(shiftToEdit: shift),
+                                      AppPageRoute.slideHorizontal(
+                                        AddShiftScreen(shiftToEdit: shift),
                                       ),
                                     );
                                   },

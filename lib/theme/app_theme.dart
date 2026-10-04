@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shiftly/utils/app_page_route.dart';
 
 /// Design tokens and Material 3 themes for Shiftly.
 class AppTheme {
@@ -95,11 +95,11 @@ class AppTheme {
       visualDensity: VisualDensity.standard,
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
-          TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
-          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.windows: ZoomPageTransitionsBuilder(),
-          TargetPlatform.linux: ZoomPageTransitionsBuilder(),
+          TargetPlatform.android: SmoothPageTransitionsBuilder(),
+          TargetPlatform.iOS: SmoothPageTransitionsBuilder(),
+          TargetPlatform.macOS: SmoothPageTransitionsBuilder(),
+          TargetPlatform.windows: SmoothPageTransitionsBuilder(),
+          TargetPlatform.linux: SmoothPageTransitionsBuilder(),
         },
       ),
       textTheme: baseText.copyWith(
