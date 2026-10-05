@@ -438,9 +438,9 @@ class _GrandTotalCard extends StatelessWidget {
                   Text(
                     l.home_total_card_title,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.85),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: AppTheme.spaceXs),
@@ -448,14 +448,14 @@ class _GrandTotalCard extends StatelessWidget {
                     UIUtils.formatCurrency(net, symbol: symbol),
                     style: AppTheme.monoNumber.copyWith(
                       color: net < 0 ? const Color(0xFFFECACA) : Colors.white,
-                      fontSize: 40,
+                      fontSize: 42,
                       height: 1.1,
                     ),
                   ),
                   const SizedBox(height: AppTheme.spaceSm),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      vertical: 14,
+                      vertical: 12,
                       horizontal: AppTheme.spaceXs,
                     ),
                     decoration: BoxDecoration(
@@ -465,75 +465,96 @@ class _GrandTotalCard extends StatelessWidget {
                         color: Colors.white.withValues(alpha: 0.12),
                       ),
                     ),
-                    child: IntrinsicHeight(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Expanded(
-                            child: _HeaderInfoItem(
-                              label: l.common_shifts_count,
-                              value: totalShifts.toString(),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IntrinsicHeight(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Expanded(
+                                child: _HeaderInfoItem(
+                                  label: l.common_shifts_count,
+                                  value: totalShifts.toString(),
+                                ),
+                              ),
+                              _VerticalDivider(),
+                              Expanded(
+                                child: _HeaderInfoItem(
+                                  label: l.home_total_card_hours,
+                                  value: totalHours.toStringAsFixed(2),
+                                ),
+                              ),
+                              _VerticalDivider(),
+                              Expanded(
+                                child: _HeaderInfoItem(
+                                  label: l.home_total_card_base,
+                                  value: UIUtils.formatCurrency(
+                                    totalBase,
+                                    symbol: symbol,
+                                  ),
+                                  amount: totalBase,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (totalTips > 0 || totalIncomes > 0 || totalExpenses > 0) ...[
+                          const SizedBox(height: 8),
+                          Container(
+                            height: 1,
+                            color: Colors.white.withValues(alpha: 0.1),
+                          ),
+                          const SizedBox(height: 8),
+                          IntrinsicHeight(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                if (totalTips > 0) ...[
+                                  Expanded(
+                                    child: _HeaderInfoItem(
+                                      label: l.home_total_card_tips,
+                                      value: UIUtils.formatCurrency(
+                                        totalTips,
+                                        symbol: symbol,
+                                      ),
+                                      amount: totalTips,
+                                    ),
+                                  ),
+                                ],
+                                if (totalTips > 0 && (totalIncomes > 0 || totalExpenses > 0))
+                                  _VerticalDivider(),
+                                if (totalIncomes > 0) ...[
+                                  Expanded(
+                                    child: _HeaderInfoItem(
+                                      label: l.expenses_tab_incomes,
+                                      value: UIUtils.formatCurrency(
+                                        totalIncomes,
+                                        symbol: symbol,
+                                      ),
+                                      amount: totalIncomes,
+                                    ),
+                                  ),
+                                ],
+                                if (totalIncomes > 0 && totalExpenses > 0)
+                                  _VerticalDivider(),
+                                if (totalExpenses > 0) ...[
+                                  Expanded(
+                                    child: _HeaderInfoItem(
+                                      label: l.home_total_card_expenses,
+                                      value: UIUtils.formatCurrency(
+                                        totalExpenses,
+                                        symbol: symbol,
+                                      ),
+                                      amount: -totalExpenses,
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
-                          _VerticalDivider(),
-                          Expanded(
-                            child: _HeaderInfoItem(
-                              label: l.home_total_card_hours,
-                              value: totalHours.toStringAsFixed(2),
-                            ),
-                          ),
-                          _VerticalDivider(),
-                          Expanded(
-                            child: _HeaderInfoItem(
-                              label: l.home_total_card_base,
-                              value: UIUtils.formatCurrency(
-                                totalBase,
-                                symbol: symbol,
-                              ),
-                              amount: totalBase,
-                            ),
-                          ),
-                          if (totalTips > 0) ...[
-                            _VerticalDivider(),
-                            Expanded(
-                              child: _HeaderInfoItem(
-                                label: l.home_total_card_tips,
-                                value: UIUtils.formatCurrency(
-                                  totalTips,
-                                  symbol: symbol,
-                                ),
-                                amount: totalTips,
-                              ),
-                            ),
-                          ],
-                          if (totalIncomes > 0) ...[
-                            _VerticalDivider(),
-                            Expanded(
-                              child: _HeaderInfoItem(
-                                label: l.expenses_tab_incomes,
-                                value: UIUtils.formatCurrency(
-                                  totalIncomes,
-                                  symbol: symbol,
-                                ),
-                                amount: totalIncomes,
-                              ),
-                            ),
-                          ],
-                          if (totalExpenses > 0) ...[
-                            _VerticalDivider(),
-                            Expanded(
-                              child: _HeaderInfoItem(
-                                label: l.home_total_card_expenses,
-                                value: UIUtils.formatCurrency(
-                                  totalExpenses,
-                                  symbol: symbol,
-                                ),
-                                amount: -totalExpenses,
-                              ),
-                            ),
-                          ],
                         ],
-                      ),
+                      ],
                     ),
                   ),
                 ],
@@ -567,20 +588,20 @@ class _HeaderInfoItem extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.7),
-              fontSize: 10,
+              color: Colors.white.withValues(alpha: 0.9),
+              fontSize: 11,
               fontWeight: FontWeight.w500,
             ),
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 4),
         FittedBox(
           fit: BoxFit.scaleDown,
           child: Text(
             value,
             style: TextStyle(
               color: (amount ?? 0) < 0 ? const Color(0xFFFECACA) : Colors.white,
-              fontSize: 12,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
               fontFeatures: const [FontFeature.tabularFigures()],
             ),
@@ -705,78 +726,97 @@ class _MonthExpansionSection extends StatelessWidget {
           childrenPadding: const EdgeInsets.only(bottom: AppTheme.spaceXs),
           title: Text(
             "$monthName $year",
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               color: AppTheme.primaryDark,
+              fontSize: 18,
             ),
           ),
           subtitle: Padding(
             padding: const EdgeInsets.only(top: 4),
             child: Text(
               "$monthShiftCount ${l.common_shifts_count}  · ${l.home_shift_list_net_total}: ${UIUtils.formatCurrency(net, symbol: symbol)} ·  ${totalNetHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
-              style: Theme.of(context).textTheme.bodySmall,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.75),
+              ),
             ),
           ),
           children: [
             const Divider(height: 1, indent: 20, endIndent: 20),
             Padding(
               padding: const EdgeInsets.all(AppTheme.spaceSm),
-              child: IntrinsicHeight(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _SummaryItem(
-                      label: l.home_total_card_base,
-                      value: UIUtils.formatCurrency(
-                        totalBaseSalary,
-                        symbol: symbol,
-                      ),
-                      amount: totalBaseSalary,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _SummaryItem(
+                          label: l.home_total_card_base,
+                          value: UIUtils.formatCurrency(
+                            totalBaseSalary,
+                            symbol: symbol,
+                          ),
+                          amount: totalBaseSalary,
+                        ),
+                        if (totalTips > 0) ...[
+                          const VerticalDivider(width: 1, indent: 4, endIndent: 4),
+                          _SummaryItem(
+                            label: l.home_total_card_tips,
+                            value: UIUtils.formatCurrency(
+                              totalTips,
+                              symbol: symbol,
+                            ),
+                            amount: totalTips,
+                            accent: AppTheme.profit,
+                          ),
+                        ],
+                        if (totalMonthIncomes > 0) ...[
+                          const VerticalDivider(width: 1, indent: 4, endIndent: 4),
+                          _SummaryItem(
+                            label: l.expenses_tab_incomes,
+                            value: UIUtils.formatCurrency(
+                              totalMonthIncomes,
+                              symbol: symbol,
+                            ),
+                            amount: totalMonthIncomes,
+                            accent: AppTheme.profit,
+                          ),
+                        ],
+                      ],
                     ),
-                    if (totalTips > 0) ...[
-                      const VerticalDivider(width: 1, indent: 4, endIndent: 4),
-                      _SummaryItem(
-                        label: l.home_total_card_tips,
-                        value: UIUtils.formatCurrency(
-                          totalTips,
-                          symbol: symbol,
+                  ),
+                  const SizedBox(height: 8),
+                  const Divider(height: 1, indent: 10, endIndent: 10),
+                  const SizedBox(height: 8),
+                  IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        if (totalMonthExpenses > 0) ...[
+                          _SummaryItem(
+                            label: l.home_total_card_expenses,
+                            value: UIUtils.formatCurrency(
+                              totalMonthExpenses,
+                              symbol: symbol,
+                            ),
+                            amount: -totalMonthExpenses,
+                          ),
+                          const VerticalDivider(width: 1, indent: 4, endIndent: 4),
+                        ],
+                        _SummaryItem(
+                          label: l.common_net,
+                          value: UIUtils.formatCurrency(net, symbol: symbol),
+                          isBold: true,
+                          amount: net,
                         ),
-                        amount: totalTips,
-                        accent: AppTheme.profit,
-                      ),
-                    ],
-                    if (totalMonthIncomes > 0) ...[
-                      const VerticalDivider(width: 1, indent: 4, endIndent: 4),
-                      _SummaryItem(
-                        label: l.expenses_tab_incomes,
-                        value: UIUtils.formatCurrency(
-                          totalMonthIncomes,
-                          symbol: symbol,
-                        ),
-                        amount: totalMonthIncomes,
-                        accent: AppTheme.profit,
-                      ),
-                    ],
-                    if (totalMonthExpenses > 0) ...[
-                      const VerticalDivider(width: 1, indent: 4, endIndent: 4),
-                      _SummaryItem(
-                        label: l.home_total_card_expenses,
-                        value: UIUtils.formatCurrency(
-                          totalMonthExpenses,
-                          symbol: symbol,
-                        ),
-                        amount: -totalMonthExpenses,
-                      ),
-                    ],
-                    const VerticalDivider(width: 1, indent: 4, endIndent: 4),
-                    _SummaryItem(
-                      label: l.common_net,
-                      value: UIUtils.formatCurrency(net, symbol: symbol),
-                      isBold: true,
-                      amount: net,
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             ...shifts.map((shift) => _ShiftTile(shift: shift)),
@@ -824,19 +864,19 @@ class _SummaryItem extends StatelessWidget {
               child: Text(
                 label,
                 style: const TextStyle(
-                  fontSize: 10,
+                  fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: Colors.grey,
                 ),
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
                 value,
                 style: TextStyle(
-                  fontSize: isBold ? 14 : 12,
+                  fontSize: isBold ? 17 : 14,
                   fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
                   color: textColor,
                   fontFeatures: const [FontFeature.tabularFigures()],

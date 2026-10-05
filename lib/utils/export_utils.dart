@@ -4,6 +4,7 @@ import 'package:file_saver/file_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/providers/shift_provider.dart';
+import 'package:shiftly/utils/ui_utils.dart';
 
 class ExportUtils {
   static Future<String?> exportShifts({
@@ -124,29 +125,29 @@ class ExportUtils {
         'Time: ${DateFormat('HH:mm').format(shift.startTime)} - ${DateFormat('HH:mm').format(shift.endTime)} (${shift.netHours.toStringAsFixed(2)} hrs)',
       );
       if (shift.tips > 0) {
-        buffer.writeln('Tips: +$symbol${shift.tips.toStringAsFixed(2)}');
+        buffer.writeln('Tips: +${UIUtils.formatCurrency(shift.tips, symbol: symbol)}');
       }
       if (shift.totalAutomaticIncomes > 0) {
         buffer.writeln(
-          'Incomes: +$symbol${shift.totalAutomaticIncomes.toStringAsFixed(2)}',
+          'Incomes: +${UIUtils.formatCurrency(shift.totalAutomaticIncomes, symbol: symbol)}',
         );
       }
       if (shift.totalAutomaticExpenses > 0) {
         buffer.writeln(
-          'Expenses: -$symbol${shift.totalAutomaticExpenses.toStringAsFixed(2)}',
+          'Expenses: -${UIUtils.formatCurrency(shift.totalAutomaticExpenses, symbol: symbol)}',
         );
       }
-      buffer.writeln('Total: $symbol${pay.toStringAsFixed(2)}');
+      buffer.writeln('Total: ${UIUtils.formatCurrency(pay, symbol: symbol)}');
       buffer.writeln('----------------------------------------');
     }
 
     buffer.writeln('\n=== SUMMARY ===');
     buffer.writeln('Total Hours: ${totalHours.toStringAsFixed(2)}');
-    buffer.writeln('Base Salary: $symbol${totalBase.toStringAsFixed(2)}');
-    buffer.writeln('Tips: $symbol${totalTips.toStringAsFixed(2)}');
-    buffer.writeln('Incomes: $symbol${totalIncomes.toStringAsFixed(2)}');
-    buffer.writeln('Expenses: $symbol${totalExpenses.toStringAsFixed(2)}');
-    buffer.writeln('Net Total: $symbol${grandTotalNet.toStringAsFixed(2)}');
+    buffer.writeln('Base Salary: ${UIUtils.formatCurrency(totalBase, symbol: symbol)}');
+    buffer.writeln('Tips: ${UIUtils.formatCurrency(totalTips, symbol: symbol)}');
+    buffer.writeln('Incomes: ${UIUtils.formatCurrency(totalIncomes, symbol: symbol)}');
+    buffer.writeln('Expenses: ${UIUtils.formatCurrency(totalExpenses, symbol: symbol)}');
+    buffer.writeln('Net Total: ${UIUtils.formatCurrency(grandTotalNet, symbol: symbol)}');
 
     return buffer.toString();
   }

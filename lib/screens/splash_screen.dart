@@ -198,16 +198,16 @@ class _SplashScreenState extends State<SplashScreen>
                           children: [
                             // Ambient Radial Glow behind Icon
                             Container(
-                              width: 190,
-                              height: 190,
+                              width: 230,
+                              height: 230,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
                                     color: AppTheme.primary.withValues(
                                         alpha: glowOpacity),
-                                    blurRadius: 50,
-                                    spreadRadius: 15,
+                                    blurRadius: 60,
+                                    spreadRadius: 20,
                                   ),
                                 ],
                               ),
@@ -218,7 +218,7 @@ class _SplashScreenState extends State<SplashScreen>
                               child: ScaleTransition(
                                 scale: _iconScale,
                                 child: EssentialWorkIcon(
-                                  size: 140,
+                                  size: 180,
                                   symbol: currencySymbol,
                                 ),
                               ),
@@ -239,7 +239,7 @@ class _SplashScreenState extends State<SplashScreen>
                         l.common_app_name,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 48,
+                          fontSize: 70,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.5,
                           shadows: [
@@ -264,7 +264,7 @@ class _SplashScreenState extends State<SplashScreen>
                         l.common_tagline,
                         style: const TextStyle(
                           color: AppTheme.primary,
-                          fontSize: 16,
+                          fontSize: 25,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.8,
                         ),
