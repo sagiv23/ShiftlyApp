@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/providers/auth_provider.dart';
@@ -189,6 +190,51 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 .withValues(alpha: 0.7),
                           ),
                         ),
+                        if (auth.userCreatedAt != null) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            l.profile_created_at.replaceAll(
+                              '[[date]]',
+                              DateFormat('dd/MM/yyyy').format(
+                                DateTime.tryParse(auth.userCreatedAt!) ??
+                                    DateTime.now(),
+                              ),
+                            ),
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Theme
+                                  .of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.6),
+                            ),
+                          ),
+                        ],
+                        if (auth.userBirthDate != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            l.profile_birth_date_display
+                                .replaceAll(
+                              '[[date]]',
+                              DateFormat('dd/MM/yyyy').format(
+                                DateTime.tryParse(auth.userBirthDate!) ??
+                                    DateTime.now(),
+                              ),
+                            )
+                                .replaceAll(
+                              '[[age]]',
+                              auth.userAge?.toString() ?? '',
+                            ),
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Theme
+                                  .of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.6),
+                            ),
+                          ),
+                        ],
                         const SizedBox(height: 16),
                         ScalePress(
                           onTap: () => _showEditProfileDialog(context),
@@ -367,101 +413,162 @@ class _ProfileScreenState extends State<ProfileScreen>
     final emailController = TextEditingController(text: auth.userEmail);
     final oldPasswordController = TextEditingController();
     final newPasswordController = TextEditingController();
+    DateTime? editBirthDate = auth.userBirthDate != null
+        ? DateTime.tryParse(auth.userBirthDate!)
+        : null;
 
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.settings_user_edit_title),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  labelText: l.settings_user_name,
-                  hintText: l.settings_user_name,
+      builder: (ctx) =>
+          StatefulBuilder(
+            builder: (dialogContext, setDialogState) =>
+                AlertDialog(
+                  title: Text(l.settings_user_edit_title),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          controller: nameController,
+                          decoration: InputDecoration(
+                            labelText: l.settings_user_name,
+                            hintText: l.settings_user_name,
+                          ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  labelText: l.settings_user_email,
-                  hintText: 'name@example.com',
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: emailController,
+                          decoration: InputDecoration(
+                            labelText: l.settings_user_email,
+                            hintText: 'name@example.com',
+                          ),
+                          keyboardType: TextInputType.emailAddress,
                 ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const Divider(height: 32),
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: Text(
-                  l.settings_user_password,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                        const SizedBox(height: 16),
+                        InkWell(
+                          onTap: () async {
+                            final picked = await showDatePicker(
+                              context: context,
+                              initialDate: editBirthDate ??
+                                  DateTime.now().subtract(
+                                    const Duration(days: 365 * 18),
+                                  ),
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime.now(),
+                            );
+                            if (picked != null) {
+                              setDialogState(() {
+                                editBirthDate = picked;
+                              });
+                            }
+                          },
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: l.auth_birth_date_label,
+                              hintText: l.auth_birth_date_label,
+                              suffixIcon: const Icon(
+                                Icons.calendar_today_rounded,
+                                size: 18,
+                              ),
+                            ),
+                            child: Text(
+                              editBirthDate == null
+                                  ? l.auth_birth_date_label
+                                  : DateFormat('dd/MM/yyyy').format(
+                                  editBirthDate!),
+                            ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: oldPasswordController,
-                decoration: InputDecoration(
-                  labelText: l.profile_old_password,
-                  hintText: '••••••••',
+                        const Divider(height: 32),
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Text(
+                            l.settings_user_password,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
                 ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: newPasswordController,
-                decoration: InputDecoration(
-                  labelText: l.profile_new_password,
-                  hintText: '••••••••',
+                        const SizedBox(height: 8),
+                        TextField(
+                          controller: oldPasswordController,
+                          decoration: InputDecoration(
+                            labelText: l.profile_old_password,
+                            hintText: '••••••••',
+                          ),
+                          obscureText: true,
                 ),
-                obscureText: true,
-              ),
-            ],
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: newPasswordController,
+                          decoration: InputDecoration(
+                            labelText: l.profile_new_password,
+                            hintText: '••••••••',
+                          ),
+                          obscureText: true,
+                        ),
+                      ],
+                    ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(l.common_cancel),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              try {
-                await context.read<AuthProvider>().updateProfile(
-                  nameController.text.trim(),
-                  emailController.text.trim(),
-                  oldPassword: oldPasswordController.text.trim(),
-                  newPassword: newPasswordController.text.trim(),
-                );
-                if (context.mounted) {
-                  Navigator.pop(ctx);
-                  UIUtils.showSnackBar(
-                    context,
-                    l.settings_user_update_success,
-                  );
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: Text(l.common_cancel),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (editBirthDate != null) {
+                          final now = DateTime.now();
+                          int age = now.year - editBirthDate!.year;
+                          if (now.month < editBirthDate!.month ||
+                              (now.month == editBirthDate!.month &&
+                                  now.day < editBirthDate!.day)) {
+                            age--;
+                          }
+                          if (age < 12) {
+                            UIUtils.showSnackBar(
+                              context,
+                              l.auth_error_underage,
+                              isError: true,
+                            );
+                            return;
+                          }
                 }
-              } catch (e) {
-                if (context.mounted) {
-                  final errKey =
-                  e.toString().replaceAll('Exception: ', '').trim();
-                  String msg = errKey;
-                  if (errKey == 'profile_password_error') {
-                    msg = l.profile_password_error;
-                  } else if (errKey == 'profile_password_required') {
-                    msg = l.profile_password_required;
+
+                        try {
+                          await context.read<AuthProvider>().updateProfile(
+                            nameController.text.trim(),
+                            emailController.text.trim(),
+                            oldPassword: oldPasswordController.text.trim(),
+                            newPassword: newPasswordController.text.trim(),
+                            birthDate: editBirthDate,
+                          );
+                          if (context.mounted) {
+                            Navigator.pop(ctx);
+                            UIUtils.showSnackBar(
+                              context,
+                              l.settings_user_update_success,
+                            );
                   }
-                  UIUtils.showSnackBar(context, msg, isError: true);
+                        } catch (e) {
+                          if (context.mounted) {
+                            final errKey =
+                            e.toString().replaceAll('Exception: ', '').trim();
+                            String msg = errKey;
+                            if (errKey == 'profile_password_error') {
+                              msg = l.profile_password_error;
+                            } else if (errKey == 'profile_password_required') {
+                              msg = l.profile_password_required;
+                            }
+                            UIUtils.showSnackBar(context, msg, isError: true);
+                          }
                 }
-              }
-            },
-            child: Text(l.common_save),
-          ),
-        ],
+                      },
+                      child: Text(l.common_save),
+                    ),
+                  ],
+                ),
       ),
     );
   }

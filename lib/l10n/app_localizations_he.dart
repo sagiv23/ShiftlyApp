@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -911,6 +912,15 @@ class AppLocalizationsHe extends AppLocalizations {
   String get auth_register_success => 'החשבון נוצר בהצלחה';
 
   @override
+  String get auth_birth_date_label => 'תאריך לידה';
+
+  @override
+  String get auth_error_underage => 'על המשתמש להיות מעל גיל 12';
+
+  @override
+  String get auth_error_birth_date_empty => 'נא לבחור תאריך לידה';
+
+  @override
   String get home_welcome_back => 'שלום, [[name]]';
 
   @override
@@ -1286,6 +1296,13 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get profile_title => 'פרופיל משתמש';
+
+  @override
+  String get profile_created_at => 'חשבון נוצר בתאריך: [[date]]';
+
+  @override
+  String get profile_birth_date_display =>
+      'תאריך לידה: [[date]] (גיל: [[age]])';
 
   @override
   String get profile_stats_title => 'סיכום נתונים שנשמרו';

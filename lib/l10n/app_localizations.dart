@@ -1820,6 +1820,24 @@ abstract class AppLocalizations {
   /// **'החשבון נוצר בהצלחה'**
   String get auth_register_success;
 
+  /// No description provided for @auth_birth_date_label.
+  ///
+  /// In he, this message translates to:
+  /// **'תאריך לידה'**
+  String get auth_birth_date_label;
+
+  /// No description provided for @auth_error_underage.
+  ///
+  /// In he, this message translates to:
+  /// **'על המשתמש להיות מעל גיל 12'**
+  String get auth_error_underage;
+
+  /// No description provided for @auth_error_birth_date_empty.
+  ///
+  /// In he, this message translates to:
+  /// **'נא לבחור תאריך לידה'**
+  String get auth_error_birth_date_empty;
+
   /// No description provided for @home_welcome_back.
   ///
   /// In he, this message translates to:
@@ -2515,6 +2533,18 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'פרופיל משתמש'**
   String get profile_title;
+
+  /// No description provided for @profile_created_at.
+  ///
+  /// In he, this message translates to:
+  /// **'חשבון נוצר בתאריך: [[date]]'**
+  String get profile_created_at;
+
+  /// No description provided for @profile_birth_date_display.
+  ///
+  /// In he, this message translates to:
+  /// **'תאריך לידה: [[date]] (גיל: [[age]])'**
+  String get profile_birth_date_display;
 
   /// No description provided for @profile_stats_title.
   ///

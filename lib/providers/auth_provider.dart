@@ -16,6 +16,8 @@ class AuthProvider with ChangeNotifier {
   String? _userEmail;
   String? _byosEmail;
   String? _token;
+  String? _userCreatedAt;
+  String? _userBirthDate;
 
   bool get isLoggedIn => _isLoggedIn;
 
@@ -29,6 +31,23 @@ class AuthProvider with ChangeNotifier {
 
   String? get token => _token;
 
+  String? get userCreatedAt => _userCreatedAt;
+
+  String? get userBirthDate => _userBirthDate;
+
+  int? get userAge {
+    if (_userBirthDate == null) return null;
+    final birth = DateTime.tryParse(_userBirthDate!);
+    if (birth == null) return null;
+    final now = DateTime.now();
+    int age = now.year - birth.year;
+    if (now.month < birth.month ||
+        (now.month == birth.month && now.day < birth.day)) {
+      age--;
+    }
+    return age >= 0 ? age : null;
+  }
+
   AuthProvider(this._persistence) {
     _loadAuthState();
   }
@@ -40,7 +59,14 @@ class AuthProvider with ChangeNotifier {
     _userName = box.get('userName');
     _userEmail = box.get('userEmail');
     _byosEmail = box.get('byosEmail');
+    _userCreatedAt = box.get('userCreatedAt');
+    _userBirthDate = box.get('userBirthDate');
     _token = await _secureStorage.read(key: 'token');
+
+    if (_isLoggedIn && (_userCreatedAt == null || _userCreatedAt!.isEmpty)) {
+      _userCreatedAt = DateTime.now().toIso8601String();
+      await box.put('userCreatedAt', _userCreatedAt!);
+    }
 
     if (_isByosConnected) {
       try {
@@ -91,16 +117,43 @@ class AuthProvider with ChangeNotifier {
     _userEmail = data['user']['email'];
     _userName = data['user']['name'];
     _token = data['token'];
+    _userCreatedAt =
+        data['user']['created_at'] ??
+        data['user']['createdAt'] ??
+        _persistence.settingsBox.get('userCreatedAt') ??
+        DateTime.now().toIso8601String();
+    _userBirthDate =
+        data['user']['birth_date'] ??
+        data['user']['birthDate'] ??
+        _persistence.settingsBox.get('userBirthDate');
     await _saveToPersistence();
     notifyListeners();
   }
 
-  Future<void> register(String name, String email, String password) async {
-    final data = await _apiService.register(name, email, password);
+  Future<void> register(
+    String name,
+    String email,
+    String password, {
+    DateTime? birthDate,
+  }) async {
+    final data = await _apiService.register(
+      name,
+      email,
+      password,
+      birthDate: birthDate,
+    );
     _isLoggedIn = true;
     _userName = data['user']['name'];
     _userEmail = data['user']['email'];
     _token = data['token'];
+    _userCreatedAt =
+        data['user']['created_at'] ??
+        data['user']['createdAt'] ??
+        DateTime.now().toIso8601String();
+    _userBirthDate =
+        birthDate?.toIso8601String() ??
+        data['user']['birth_date'] ??
+        data['user']['birthDate'];
     await _saveToPersistence();
     notifyListeners();
   }
@@ -110,6 +163,12 @@ class AuthProvider with ChangeNotifier {
     await box.put('isLoggedIn', true);
     await box.put('userEmail', _userEmail ?? '');
     await box.put('userName', _userName ?? '');
+    if (_userCreatedAt != null) {
+      await box.put('userCreatedAt', _userCreatedAt!);
+    }
+    if (_userBirthDate != null) {
+      await box.put('userBirthDate', _userBirthDate!);
+    }
     if (_token != null) {
       await _secureStorage.write(key: 'token', value: _token!);
     }
@@ -120,6 +179,7 @@ class AuthProvider with ChangeNotifier {
     String email, {
     String? oldPassword,
     String? newPassword,
+    DateTime? birthDate,
   }) async {
     if (_token == null) return;
 
@@ -140,14 +200,39 @@ class AuthProvider with ChangeNotifier {
       email,
       oldPassword: oldPassword,
       newPassword: newPassword,
+      birthDate: birthDate,
     );
 
-    _userName = data['name'];
-    _userEmail = data['email'];
+    _userName = data['name'] ?? data['user']?['name'];
+    _userEmail = data['email'] ?? data['user']?['email'];
+    final createdAtVal =
+        data['created_at'] ??
+        data['createdAt'] ??
+        data['user']?['created_at'] ??
+        data['user']?['createdAt'];
+    if (createdAtVal != null) {
+      _userCreatedAt = createdAtVal;
+    }
+
+    final birthVal =
+        birthDate?.toIso8601String() ??
+        data['birth_date'] ??
+        data['birthDate'] ??
+        data['user']?['birth_date'] ??
+        data['user']?['birthDate'];
+    if (birthVal != null) {
+      _userBirthDate = birthVal;
+    }
 
     final box = _persistence.settingsBox;
     await box.put('userName', _userName ?? '');
     await box.put('userEmail', _userEmail ?? '');
+    if (_userCreatedAt != null) {
+      await box.put('userCreatedAt', _userCreatedAt!);
+    }
+    if (_userBirthDate != null) {
+      await box.put('userBirthDate', _userBirthDate!);
+    }
 
     notifyListeners();
   }
@@ -157,10 +242,14 @@ class AuthProvider with ChangeNotifier {
     _userName = null;
     _userEmail = null;
     _token = null;
+    _userCreatedAt = null;
+    _userBirthDate = null;
     final box = _persistence.settingsBox;
     await box.put('isLoggedIn', false);
     await box.delete('userEmail');
     await box.delete('userName');
+    await box.delete('userCreatedAt');
+    await box.delete('userBirthDate');
     await _secureStorage.delete(key: 'token');
     notifyListeners();
   }

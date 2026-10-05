@@ -239,7 +239,7 @@ class _SplashScreenState extends State<SplashScreen>
                         l.common_app_name,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 70,
+                          fontSize: 60,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.5,
                           shadows: [
@@ -264,7 +264,7 @@ class _SplashScreenState extends State<SplashScreen>
                         l.common_tagline,
                         style: const TextStyle(
                           color: AppTheme.primary,
-                          fontSize: 25,
+                          fontSize: 20,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.8,
                         ),

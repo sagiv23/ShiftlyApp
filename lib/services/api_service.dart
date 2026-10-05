@@ -24,12 +24,21 @@ class ApiService {
   Future<Map<String, dynamic>> register(
     String name,
     String email,
-    String password,
-  ) async {
+    String password, {
+    DateTime? birthDate,
+  }) async {
+    final body = <String, dynamic>{
+      'name': name,
+      'email': email,
+      'password': password,
+    };
+    if (birthDate != null) {
+      body['birthDate'] = birthDate.toIso8601String();
+    }
     final response = await http.post(
       Uri.parse('$_baseUrl/auth/register'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'name': name, 'email': email, 'password': password}),
+      body: jsonEncode(body),
     );
 
     if (response.statusCode == 201) {
@@ -47,11 +56,15 @@ class ApiService {
     String email, {
     String? oldPassword,
     String? newPassword,
+    DateTime? birthDate,
   }) async {
     final body = <String, dynamic>{'name': name, 'email': email};
     if (newPassword != null && newPassword.isNotEmpty) {
       body['oldPassword'] = oldPassword;
       body['newPassword'] = newPassword;
+    }
+    if (birthDate != null) {
+      body['birthDate'] = birthDate.toIso8601String();
     }
     final response = await http.put(
       Uri.parse('$_baseUrl/auth/profile'),

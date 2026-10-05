@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/providers/auth_provider.dart';
@@ -34,6 +35,7 @@ class _AuthScreenState extends State<AuthScreen>
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
+  DateTime? _selectedBirthDate;
 
   @override
   void initState() {
@@ -103,10 +105,39 @@ class _AuthScreenState extends State<AuthScreen>
           _passwordController.text.trim(),
         );
       } else {
+        if (_selectedBirthDate == null) {
+          UIUtils.showSnackBar(
+            context,
+            l.auth_error_birth_date_empty,
+            isError: true,
+          );
+          setState(() => _isLoading = false);
+          return;
+        }
+
+        final now = DateTime.now();
+        int age = now.year - _selectedBirthDate!.year;
+        if (now.month < _selectedBirthDate!.month ||
+            (now.month == _selectedBirthDate!.month &&
+                now.day < _selectedBirthDate!.day)) {
+          age--;
+        }
+
+        if (age < 12) {
+          UIUtils.showSnackBar(
+            context,
+            l.auth_error_underage,
+            isError: true,
+          );
+          setState(() => _isLoading = false);
+          return;
+        }
+
         await authProvider.register(
           _nameController.text.trim(),
           _emailController.text.trim(),
           _passwordController.text.trim(),
+          birthDate: _selectedBirthDate,
         );
       }
 
@@ -261,26 +292,70 @@ class _AuthScreenState extends State<AuthScreen>
                       ),
                       const SizedBox(height: 32),
 
-                      // Animated Expansion for Full Name Field
+                      // Animated Expansion for Full Name & Date of Birth Fields
                       AnimatedSize(
                         duration: const Duration(milliseconds: 320),
                         curve: Curves.easeInOutCubic,
                         child: !isLogin
-                            ? Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: TextFormField(
-                            controller: _nameController,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: _buildInputDecoration(
-                              label: l.auth_full_name_label,
-                              hint: l.auth_full_name_label,
-                              icon: Icons.person_outline,
+                            ? Column(
+                          children: [
+                            TextFormField(
+                              controller: _nameController,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: _buildInputDecoration(
+                                label: l.auth_full_name_label,
+                                hint: l.auth_full_name_label,
+                                icon: Icons.person_outline,
+                              ),
+                              validator: (value) =>
+                              value == null || value.isEmpty
+                                  ? l.auth_error_name_empty
+                                  : null,
                             ),
-                            validator: (value) =>
-                            value == null || value.isEmpty
-                                ? l.auth_error_name_empty
-                                : null,
-                          ),
+                            const SizedBox(height: 16),
+                            InkWell(
+                              onTap: () async {
+                                final picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: _selectedBirthDate ??
+                                      DateTime.now().subtract(
+                                        const Duration(days: 365 * 18),
+                                      ),
+                                  firstDate: DateTime(1900),
+                                  lastDate: DateTime.now(),
+                                );
+                                if (picked != null) {
+                                  setState(() {
+                                    _selectedBirthDate = picked;
+                                  });
+                                }
+                              },
+                              child: InputDecorator(
+                                decoration: _buildInputDecoration(
+                                  label: l.auth_birth_date_label,
+                                  hint: l.auth_birth_date_label,
+                                  icon: Icons.cake_outlined,
+                                ).copyWith(
+                                  suffixIcon: const Icon(
+                                    Icons.calendar_today_rounded,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                                child: Text(
+                                  _selectedBirthDate == null
+                                      ? l.auth_birth_date_label
+                                      : DateFormat('dd/MM/yyyy')
+                                      .format(_selectedBirthDate!),
+                                  style: TextStyle(
+                                    color: _selectedBirthDate == null
+                                        ? Colors.white38
+                                        : Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
                         )
                             : const SizedBox.shrink(),
                       ),

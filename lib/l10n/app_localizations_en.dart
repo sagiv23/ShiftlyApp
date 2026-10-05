@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -917,6 +918,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get auth_register_success => 'Account created successfully';
 
   @override
+  String get auth_birth_date_label => 'Date of Birth';
+
+  @override
+  String get auth_error_underage => 'User must be at least 12 years old';
+
+  @override
+  String get auth_error_birth_date_empty => 'Please select your date of birth';
+
+  @override
   String get home_welcome_back => 'Hello, [[name]]';
 
   @override
@@ -981,7 +991,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings_byos_login_shiftly_sub => 'Full sync in our cloud';
 
   @override
-  String get settings_byos_method_title => 'שיטת BYOS (Google Drive)';
+  String get settings_byos_method_title => 'BYOS Method (Google Drive)';
 
   @override
   String get settings_byos_method_sub => 'Backup to your private cloud';
@@ -1295,6 +1305,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profile_title => 'User Profile';
+
+  @override
+  String get profile_created_at => 'Account created: [[date]]';
+
+  @override
+  String get profile_birth_date_display =>
+      'Date of birth: [[date]] (Age: [[age]])';
 
   @override
   String get profile_stats_title => 'Saved Data Summary';
