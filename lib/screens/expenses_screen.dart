@@ -270,27 +270,117 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                   return;
                 }
 
-                final confirmTemplate = isIncome
-                    ? l.incomes_save_income_confirm_content
-                    : l.expenses_save_expense_confirm_content;
-
-                final confirmed = await UIUtils.showConfirmDialog(
-                  context: context,
-                  title: titleText,
-                  content: confirmTemplate
-                      .replaceAll('[[desc]]', desc)
-                      .replaceAll(
-                        '[[amount]]',
-                        UIUtils.formatCurrency(amount, symbol: symbol),
-                      ),
-                  cancelLabel: l.common_cancel,
-                  confirmLabel: l.common_save,
-                );
-
-                if (confirmed != true || !context.mounted) return;
-
                 final provider = context.read<ShiftProvider>();
-                if (item == null) {
+                if (item != null) {
+                  item.description = desc;
+                  item.amount = amount;
+                  item.date = selectedDate;
+                  provider.updateExpense(item);
+                  Navigator.pop(ctx);
+                  return;
+                }
+
+                final shiftsOnDay = provider.shifts
+                    .where((s) => isSameDay(s.date, selectedDate))
+                    .toList();
+                final typeStr = isIncome
+                    ? (l.localeName.startsWith('he') ? 'הכנסה' : 'income')
+                    : (l.localeName.startsWith('he') ? 'הוצאה' : 'expense');
+
+                if (shiftsOnDay.isNotEmpty) {
+                  final action = await showDialog<String>(
+                    context: context,
+                    builder: (linkCtx) =>
+                        AlertDialog(
+                          title: Text(l.expenses_link_shift_dialog_title),
+                          content: Text(
+                            l.expenses_link_shift_dialog_content
+                                .replaceAll('[[type]]', typeStr),
+                      ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(linkCtx, 'cancel'),
+                              child: Text(l.common_cancel),
+                            ),
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(linkCtx, 'standalone'),
+                              child: Text(l.expenses_save_standalone_button),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(linkCtx, 'link'),
+                              child: Text(l.expenses_link_shift_button),
+                            ),
+                          ],
+                        ),
+                  );
+
+                  if (action == 'cancel' || action == null ||
+                      !context.mounted) {
+                    return;
+                  }
+
+                  Navigator.pop(ctx);
+
+                  if (action == 'link') {
+                    final shift = shiftsOnDay.first;
+                    if (isIncome) {
+                      shift.automaticIncomes ??= [];
+                      shift.automaticIncomes!.add(
+                        AutomaticExpense(description: desc, amount: amount),
+                      );
+                    } else {
+                      shift.automaticExpenses ??= [];
+                      shift.automaticExpenses!.add(
+                        AutomaticExpense(description: desc, amount: amount),
+                      );
+                    }
+                    provider.updateShift(shift);
+                    UIUtils.showSnackBar(
+                      context,
+                      isIncome ? l.incomes_deleted_msg.replaceAll(
+                          'deleted', 'linked') : l.expenses_deleted_msg,
+                    );
+                  } else {
+                    provider.addExpense(
+                      Expense(
+                        id: const Uuid().v4(),
+                        date: selectedDate,
+                        description: desc,
+                        amount: amount,
+                        isIncome: isIncome,
+                      ),
+                    );
+                  }
+                } else {
+                  final createAnyway = await showDialog<bool>(
+                    context: context,
+                    builder: (noShiftCtx) =>
+                        AlertDialog(
+                          title: Text(l.expenses_no_shift_dialog_title),
+                          content: Text(
+                            l.expenses_no_shift_dialog_content
+                                .replaceAll('[[type]]', typeStr),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(noShiftCtx, false),
+                              child: Text(l.common_cancel),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(noShiftCtx, true),
+                              child: Text(l.expenses_create_anyway_button),
+                            ),
+                          ],
+                        ),
+                  );
+
+                  if (createAnyway != true || !context.mounted) {
+                    return;
+                  }
+
+                  Navigator.pop(ctx);
+
                   provider.addExpense(
                     Expense(
                       id: const Uuid().v4(),
@@ -300,13 +390,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                       isIncome: isIncome,
                     ),
                   );
-                } else {
-                  item.description = desc;
-                  item.amount = amount;
-                  item.date = selectedDate;
-                  provider.updateExpense(item);
                 }
-                Navigator.pop(ctx);
               },
               child: Text(l.common_save),
             ),
@@ -1173,4 +1257,9 @@ class _ItemTile extends StatelessWidget {
       child: cardWidget,
     );
   }
+}
+
+bool isSameDay(DateTime? a, DateTime? b) {
+  if (a == null || b == null) return false;
+  return a.year == b.year && a.month == b.month && a.day == b.day;
 }

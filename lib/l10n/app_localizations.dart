@@ -1004,6 +1004,48 @@ abstract class AppLocalizations {
   /// **'הוצאה נמחקה'**
   String get expenses_deleted_msg;
 
+  /// No description provided for @expenses_link_shift_dialog_title.
+  ///
+  /// In he, this message translates to:
+  /// **'שיוך למשמרת'**
+  String get expenses_link_shift_dialog_title;
+
+  /// No description provided for @expenses_link_shift_dialog_content.
+  ///
+  /// In he, this message translates to:
+  /// **'נמצאה משמרת בתאריך זה. האם תרצה לשייך את ה[[type]] למשמרת או לשמור כעצמאי?'**
+  String get expenses_link_shift_dialog_content;
+
+  /// No description provided for @expenses_link_shift_button.
+  ///
+  /// In he, this message translates to:
+  /// **'שייך למשמרת'**
+  String get expenses_link_shift_button;
+
+  /// No description provided for @expenses_save_standalone_button.
+  ///
+  /// In he, this message translates to:
+  /// **'שמור כעצמאי'**
+  String get expenses_save_standalone_button;
+
+  /// No description provided for @expenses_no_shift_dialog_title.
+  ///
+  /// In he, this message translates to:
+  /// **'אין משמרת בתאריך'**
+  String get expenses_no_shift_dialog_title;
+
+  /// No description provided for @expenses_no_shift_dialog_content.
+  ///
+  /// In he, this message translates to:
+  /// **'אין משמרת בתאריך זה. האם בכל זאת ליצור את ה[[type]]?'**
+  String get expenses_no_shift_dialog_content;
+
+  /// No description provided for @expenses_create_anyway_button.
+  ///
+  /// In he, this message translates to:
+  /// **'צור בכל זאת'**
+  String get expenses_create_anyway_button;
+
   /// No description provided for @expenses_auto_incomes_updated_msg.
   ///
   /// In he, this message translates to:

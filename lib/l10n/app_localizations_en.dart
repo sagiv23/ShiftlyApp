@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -484,6 +485,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expenses_deleted_msg => 'Expense deleted';
+
+  @override
+  String get expenses_link_shift_dialog_title => 'Link to Shift';
+
+  @override
+  String get expenses_link_shift_dialog_content =>
+      'A shift was found on this date. Would you like to link this [[type]] to the shift or save it as standalone?';
+
+  @override
+  String get expenses_link_shift_button => 'Link to Shift';
+
+  @override
+  String get expenses_save_standalone_button => 'Save Standalone';
+
+  @override
+  String get expenses_no_shift_dialog_title => 'No Shift Found';
+
+  @override
+  String get expenses_no_shift_dialog_content =>
+      'There is no shift on this date. Do you still want to create this [[type]]?';
+
+  @override
+  String get expenses_create_anyway_button => 'Create Anyway';
 
   @override
   String get expenses_auto_incomes_updated_msg =>

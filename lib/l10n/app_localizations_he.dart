@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -482,6 +483,29 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get expenses_deleted_msg => 'הוצאה נמחקה';
+
+  @override
+  String get expenses_link_shift_dialog_title => 'שיוך למשמרת';
+
+  @override
+  String get expenses_link_shift_dialog_content =>
+      'נמצאה משמרת בתאריך זה. האם תרצה לשייך את ה[[type]] למשמרת או לשמור כעצמאי?';
+
+  @override
+  String get expenses_link_shift_button => 'שייך למשמרת';
+
+  @override
+  String get expenses_save_standalone_button => 'שמור כעצמאי';
+
+  @override
+  String get expenses_no_shift_dialog_title => 'אין משמרת בתאריך';
+
+  @override
+  String get expenses_no_shift_dialog_content =>
+      'אין משמרת בתאריך זה. האם בכל זאת ליצור את ה[[type]]?';
+
+  @override
+  String get expenses_create_anyway_button => 'צור בכל זאת';
 
   @override
   String get expenses_auto_incomes_updated_msg =>
