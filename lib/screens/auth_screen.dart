@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
+import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
@@ -143,17 +144,44 @@ class _AuthScreenState extends State<AuthScreen>
 
       if (!mounted) return;
 
+      final settingsProvider = context.read<SettingsProvider>();
+      shiftProvider.updateAuthStatus(
+        authProvider.token,
+        authProvider.isByosConnected,
+        settingsProvider.autoSyncEnabled,
+      );
+
       final remoteShifts = await ApiService().getShifts(authProvider.token!);
       bool? keepLocal;
 
       if (remoteShifts.isNotEmpty && shiftProvider.shifts.isNotEmpty) {
+        final overlapDetails = _findOverlappingDetails(
+          remoteShifts,
+          shiftProvider.shifts,
+          shiftProvider,
+          l,
+        );
+
         if (mounted) {
+          final String dialogTitle;
+          final String dialogContent;
+          if (overlapDetails.isNotEmpty) {
+            dialogTitle = l.add_shift_overlap_title;
+            dialogContent =
+            '${l.auth_sync_dialog_content}\n\nנמצאו ${overlapDetails
+                .length} משמרות בחפיפת שעות:\n${overlapDetails.take(5).join(
+                '\n')}${overlapDetails.length > 5 ? '\n...' : ''}';
+          } else {
+            dialogTitle = l.auth_sync_dialog_title;
+            dialogContent = l.auth_sync_dialog_content;
+          }
+
           keepLocal = await showDialog<bool>(
             context: context,
             barrierDismissible: false,
             builder: (ctx) => AlertDialog(
-              title: Text(l.auth_sync_dialog_title),
-              content: Text(l.auth_sync_dialog_content),
+              title: Text(dialogTitle),
+              content: SingleChildScrollView(child: Text(dialogContent)),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx, false),
@@ -190,6 +218,36 @@ class _AuthScreenState extends State<AuthScreen>
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  List<String> _findOverlappingDetails(List<dynamic> remoteShifts,
+      List<Shift> localShifts,
+      ShiftProvider shiftProvider,
+      AppLocalizations l,) {
+    final details = <String>[];
+    for (var local in localShifts) {
+      for (var remote in remoteShifts) {
+        try {
+          final remoteStart = DateTime.parse(remote['start_time']);
+          final remoteEnd = DateTime.parse(remote['end_time']);
+          if (local.startTime.isBefore(remoteEnd) &&
+              local.endTime.isAfter(remoteStart)) {
+            final jobName =
+                shiftProvider
+                    .getJobTypeById(local.jobTypeId)
+                    ?.name ??
+                    l.add_shift_overlap_unknown_job;
+            final dateStr = DateFormat('dd/MM/yyyy').format(local.date);
+            final timeStr =
+                '${DateFormat('HH:mm').format(local.startTime)} - ${DateFormat(
+                'HH:mm').format(local.endTime)}';
+            details.add('• $jobName ($dateStr, $timeStr)');
+            break;
+          }
+        } catch (_) {}
+      }
+    }
+    return details;
   }
 
   @override

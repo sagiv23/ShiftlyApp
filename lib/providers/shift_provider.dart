@@ -143,7 +143,7 @@ class ShiftProvider with ChangeNotifier {
   Future<void> syncWithServer({bool? keepLocal}) async {
     if (_authToken == null) return;
     try {
-      // 1. Get remote data
+      // 1. Get remote data (expenses includes both expenses and special incomes with is_income flag)
       final remoteJobTypes = await _apiService.getJobTypes(_authToken!);
       final remoteExpenses = await _apiService.getExpenses(_authToken!);
       final remoteShifts = await _apiService.getShifts(_authToken!);
@@ -172,6 +172,7 @@ class ShiftProvider with ChangeNotifier {
           date: DateTime.parse(expData['date']),
           description: expData['description'],
           amount: double.parse(expData['amount'].toString()),
+          isIncome: expData['is_income'] == true,
         );
         await _persistence.expensesBox.put(exp.id, exp);
       }
@@ -203,17 +204,69 @@ class ShiftProvider with ChangeNotifier {
         await _persistence.shiftsBox.put(shift.id, shift);
       }
 
-      // 4. Upload local to server (if user chose to keep local or merge)
+      // 4. Upload local to server via Batch Endpoints (Optimizes DB WAL & tuple bloat)
       if (keepLocal != false) {
-        for (var job in jobTypes) {
-          await _syncJobTypeToServer(job);
-        }
-        for (var exp in expenses) {
-          await _syncExpenseToServer(exp);
-        }
-        for (var shift in shifts) {
-          await _syncShiftToServer(shift);
-        }
+        final jobTypeItems = jobTypes.map((job) =>
+        {
+          'id': job.id,
+          'name': job.name,
+          'hourly_rate': job.hourlyRate,
+          'wage_history': job.wageHistory
+              ?.map((e) =>
+          {
+            'startDate': e.startDate.toIso8601String(),
+            'hourlyRate': e.hourlyRate,
+          })
+              .toList(),
+        }).toList();
+        await _apiService.batchUpsertJobTypes(_authToken!, jobTypeItems);
+
+        // Include both expenses (is_income = false) and incomes (is_income = true)
+        final allFinancialItems = [
+          ...expenses.map((exp) =>
+          {
+            'id': exp.id,
+            'date': exp.date.toIso8601String().split('T')[0],
+            'description': exp.description,
+            'amount': exp.amount,
+            'is_income': false,
+          }),
+          ...incomes.map((inc) =>
+          {
+            'id': inc.id,
+            'date': inc.date.toIso8601String().split('T')[0],
+            'description': inc.description,
+            'amount': inc.amount,
+            'is_income': true,
+          }),
+        ];
+        await _apiService.batchUpsertExpenses(_authToken!, allFinancialItems);
+
+        final shiftItems = shifts.map((shift) {
+          final job = getJobTypeById(shift.jobTypeId);
+          final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ??
+              0.0;
+          return {
+            'id': shift.id,
+            'job_type_id': shift.jobTypeId,
+            'date': shift.date.toIso8601String().split('T')[0],
+            'start_time': shift.startTime.toIso8601String(),
+            'end_time': shift.endTime.toIso8601String(),
+            'tips': shift.tips,
+            'break_type': shift.breakType
+                ?.toString()
+                .split('.')
+                .last,
+            'unpaid_break_minutes': shift.unpaidBreakMinutes,
+            'hourly_rate': rate,
+            'automatic_expenses': shift.automaticExpenses
+                ?.map((e) => {'description': e.description, 'amount': e.amount})
+                .toList(),
+            'description': shift.description,
+            'total_pay': shift.calculateTotalPay(rate),
+          };
+        }).toList();
+        await _apiService.batchUpsertShifts(_authToken!, shiftItems);
       }
 
       notifyListeners();

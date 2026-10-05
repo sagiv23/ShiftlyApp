@@ -120,6 +120,25 @@ class ApiService {
     }
   }
 
+  Future<void> batchUpsertJobTypes(
+    String token,
+    List<Map<String, dynamic>> items,
+  ) async {
+    if (items.isEmpty) return;
+    final response = await http.post(
+      Uri.parse('$_baseUrl/job-types/batch'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'items': items}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to batch sync job types to server');
+    }
+  }
+
   Future<void> deleteJobType(String token, String jobTypeId) async {
     final response = await http.delete(
       Uri.parse('$_baseUrl/job-types/$jobTypeId'),
@@ -164,6 +183,25 @@ class ApiService {
     }
   }
 
+  Future<void> batchUpsertShifts(
+    String token,
+    List<Map<String, dynamic>> items,
+  ) async {
+    if (items.isEmpty) return;
+    final response = await http.post(
+      Uri.parse('$_baseUrl/shifts/batch'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'items': items}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to batch sync shifts to server');
+    }
+  }
+
   Future<void> deleteShift(String token, String shiftId) async {
     final response = await http.delete(
       Uri.parse('$_baseUrl/shifts/$shiftId'),
@@ -175,7 +213,7 @@ class ApiService {
     }
   }
 
-  // --- Expense Methods ---
+  // --- Expense & Special Income Methods (Unified Table) ---
 
   Future<List<dynamic>> getExpenses(String token) async {
     final response = await http.get(
@@ -208,6 +246,25 @@ class ApiService {
 
     if (response.statusCode != 200) {
       throw Exception('Failed to sync expense to server');
+    }
+  }
+
+  Future<void> batchUpsertExpenses(
+    String token,
+    List<Map<String, dynamic>> items,
+  ) async {
+    if (items.isEmpty) return;
+    final response = await http.post(
+      Uri.parse('$_baseUrl/expenses/batch'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'items': items}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to batch sync expenses to server');
     }
   }
 

@@ -7,14 +7,15 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Job Types table (linked to users)
+-- Create Job Types table (linked to users, primary key includes user_id)
 CREATE TABLE IF NOT EXISTS job_types (
-    id VARCHAR(50) PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    id VARCHAR(50) NOT NULL,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(100) NOT NULL,
     hourly_rate DECIMAL(10, 2),
     wage_history JSONB,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id, user_id)
 );
 
 -- Create Shifts table (linked to users)
@@ -35,12 +36,19 @@ CREATE TABLE IF NOT EXISTS shifts (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Expenses table (linked to users)
-CREATE TABLE IF NOT EXISTS expenses (
+-- Create Financial Transactions table (unified for Expenses and Special Incomes)
+CREATE TABLE IF NOT EXISTS financial_transactions (
     id UUID PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     date DATE NOT NULL,
     description TEXT,
     amount DECIMAL(10, 2) NOT NULL,
+    is_income BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Performance & Storage Optimization Indexes (Eliminate Full Table Scans)
+CREATE INDEX IF NOT EXISTS idx_shifts_user_id ON shifts(user_id);
+CREATE INDEX IF NOT EXISTS idx_shifts_user_date ON shifts(user_id, date DESC);
+CREATE INDEX IF NOT EXISTS idx_job_types_user_id ON job_types(user_id);
+CREATE INDEX IF NOT EXISTS idx_financial_transactions_user_id ON financial_transactions(user_id);
