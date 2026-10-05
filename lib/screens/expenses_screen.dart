@@ -956,7 +956,10 @@ class _ItemTile extends StatelessWidget {
     required this.symbol,
   });
 
-  Future<void> _deleteRecord(BuildContext context) async {
+  Future<void> _deleteRecord(
+    BuildContext context, {
+    bool skipDialog = false,
+  }) async {
     final shiftProvider = context.read<ShiftProvider>();
     final l = AppLocalizations.of(context)!;
     final deleteTitle = isIncome
@@ -969,68 +972,69 @@ class _ItemTile extends StatelessWidget {
         ? l.incomes_deleted_msg
         : l.expenses_deleted_msg;
 
-    final confirm = await UIUtils.showConfirmDialog(
-      context: context,
-      title: deleteTitle,
-      content: deleteConfirmText
-          .replaceAll('[[desc]]', record.description)
-          .replaceAll(
-            '[[amount]]',
-            UIUtils.formatCurrency(record.amount, symbol: symbol),
-          ),
-      isDestructive: true,
-      confirmLabel: l.common_delete,
-      cancelLabel: l.common_cancel,
-    );
-    if (!context.mounted) return;
-
-    if (confirm == true) {
-      if (record.shift != null && record.shiftIndex != null) {
-        final shift = record.shift!;
-        if (isIncome) {
-          shift.automaticIncomes?.removeAt(record.shiftIndex!);
-        } else {
-          shift.automaticExpenses?.removeAt(record.shiftIndex!);
-        }
-        shiftProvider.updateShift(shift);
-      } else if (record.standaloneExpense != null) {
-        shiftProvider.deleteExpense(record.standaloneExpense!.id);
-      }
-      UIUtils.showSnackBar(
-        context,
-        deletedMsg,
-        action: SnackBarAction(
-          label: l.common_cancel,
-          onPressed: () {
-            if (record.shift != null && record.shiftIndex != null) {
-              final shift = record.shift!;
-              if (isIncome) {
-                shift.automaticIncomes ??= [];
-                shift.automaticIncomes!.insert(
-                  record.shiftIndex!,
-                  AutomaticExpense(
-                    description: record.description,
-                    amount: record.amount,
-                  ),
-                );
-              } else {
-                shift.automaticExpenses ??= [];
-                shift.automaticExpenses!.insert(
-                  record.shiftIndex!,
-                  AutomaticExpense(
-                    description: record.description,
-                    amount: record.amount,
-                  ),
-                );
-              }
-              shiftProvider.updateShift(shift);
-            } else if (record.standaloneExpense != null) {
-              shiftProvider.addExpense(record.standaloneExpense!);
-            }
-          },
-        ),
+    if (!skipDialog) {
+      final confirm = await UIUtils.showConfirmDialog(
+        context: context,
+        title: deleteTitle,
+        content: deleteConfirmText
+            .replaceAll('[[desc]]', record.description)
+            .replaceAll(
+              '[[amount]]',
+              UIUtils.formatCurrency(record.amount, symbol: symbol),
+            ),
+        isDestructive: true,
+        confirmLabel: l.common_delete,
+        cancelLabel: l.common_cancel,
       );
+      if (!context.mounted) return;
+      if (confirm != true) return;
     }
+
+    if (record.shift != null && record.shiftIndex != null) {
+      final shift = record.shift!;
+      if (isIncome) {
+        shift.automaticIncomes?.removeAt(record.shiftIndex!);
+      } else {
+        shift.automaticExpenses?.removeAt(record.shiftIndex!);
+      }
+      shiftProvider.updateShift(shift);
+    } else if (record.standaloneExpense != null) {
+      shiftProvider.deleteExpense(record.standaloneExpense!.id);
+    }
+    UIUtils.showSnackBar(
+      context,
+      deletedMsg,
+      action: SnackBarAction(
+        label: l.common_cancel,
+        onPressed: () {
+          if (record.shift != null && record.shiftIndex != null) {
+            final shift = record.shift!;
+            if (isIncome) {
+              shift.automaticIncomes ??= [];
+              shift.automaticIncomes!.insert(
+                record.shiftIndex!,
+                AutomaticExpense(
+                  description: record.description,
+                  amount: record.amount,
+                ),
+              );
+            } else {
+              shift.automaticExpenses ??= [];
+              shift.automaticExpenses!.insert(
+                record.shiftIndex!,
+                AutomaticExpense(
+                  description: record.description,
+                  amount: record.amount,
+                ),
+              );
+            }
+            shiftProvider.updateShift(shift);
+          } else if (record.standaloneExpense != null) {
+            shiftProvider.addExpense(record.standaloneExpense!);
+          }
+        },
+      ),
+    );
   }
 
   @override
@@ -1165,7 +1169,7 @@ class _ItemTile extends StatelessWidget {
         confirmLabel: l.common_delete,
         cancelLabel: l.common_cancel,
       ),
-      onDismissed: (_) => _deleteRecord(context),
+      onDismissed: (_) => _deleteRecord(context, skipDialog: true),
       child: cardWidget,
     );
   }
