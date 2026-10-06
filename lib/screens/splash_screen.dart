@@ -43,8 +43,7 @@ class _SplashScreenState extends State<SplashScreen>
     _floatController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 3200),
-    )
-      ..repeat(reverse: true);
+    )..repeat(reverse: true);
 
     // Staggered intro animations
     _iconScale = Tween<double>(begin: 0.3, end: 1.0).animate(
@@ -68,15 +67,13 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    _titleSlide = Tween<Offset>(
-      begin: const Offset(0, 0.35),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _mainController,
-        curve: const Interval(0.35, 0.75, curve: Curves.easeOutCubic),
-      ),
-    );
+    _titleSlide = Tween<Offset>(begin: const Offset(0, 0.35), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _mainController,
+            curve: const Interval(0.35, 0.75, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _titleFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -85,15 +82,13 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    _taglineSlide = Tween<Offset>(
-      begin: const Offset(0, 0.35),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _mainController,
-        curve: const Interval(0.50, 0.88, curve: Curves.easeOutCubic),
-      ),
-    );
+    _taglineSlide =
+        Tween<Offset>(begin: const Offset(0, 0.35), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _mainController,
+            curve: const Interval(0.50, 0.88, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _taglineFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -142,9 +137,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    final currencySymbol = context
-        .watch<SettingsProvider>()
-        .currencySymbol;
+    final currencySymbol = context.watch<SettingsProvider>().currencySymbol;
 
     return Scaffold(
       body: Stack(
@@ -182,14 +175,18 @@ class _SplashScreenState extends State<SplashScreen>
                 children: [
                   // App Icon with Glow Aura and Gentle Floating Motion
                   AnimatedBuilder(
-                    animation: Listenable.merge(
-                        [_mainController, _floatController]),
+                    animation: Listenable.merge([
+                      _mainController,
+                      _floatController,
+                    ]),
                     builder: (context, child) {
-                      final floatY = math.sin(
-                          _floatController.value * 2 * math.pi) * 5.0;
-                      final glowOpacity = _iconGlow.value *
-                          (0.4 + (0.2 * math.sin(_floatController.value *
-                              math.pi)));
+                      final floatY =
+                          math.sin(_floatController.value * 2 * math.pi) * 5.0;
+                      final glowOpacity =
+                          _iconGlow.value *
+                          (0.4 +
+                              (0.2 *
+                                  math.sin(_floatController.value * math.pi)));
 
                       return Transform.translate(
                         offset: Offset(0, floatY),
@@ -205,7 +202,8 @@ class _SplashScreenState extends State<SplashScreen>
                                 boxShadow: [
                                   BoxShadow(
                                     color: AppTheme.primary.withValues(
-                                        alpha: glowOpacity),
+                                      alpha: glowOpacity,
+                                    ),
                                     blurRadius: 60,
                                     spreadRadius: 20,
                                   ),
@@ -283,7 +281,8 @@ class _SplashScreenState extends State<SplashScreen>
                         color: AppTheme.primary,
                         strokeWidth: 3,
                         backgroundColor: AppTheme.primary.withValues(
-                            alpha: 0.15),
+                          alpha: 0.15,
+                        ),
                       ),
                     ),
                   ),

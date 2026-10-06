@@ -166,7 +166,9 @@ class Shift extends HiveObject {
   }
 
   /// Prefer the snapshotted rate; fall back to [fallbackRate] for legacy shifts.
-  double effectiveHourlyRate([double fallbackRate = AppConstants.defaultHourlyRate]) {
+  double effectiveHourlyRate([
+    double fallbackRate = AppConstants.defaultHourlyRate,
+  ]) {
     return hourlyRate ?? fallbackRate;
   }
 
@@ -226,4 +228,3 @@ class Shift extends HiveObject {
         totalAutomaticExpenses;
   }
 }
-

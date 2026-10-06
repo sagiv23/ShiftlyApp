@@ -186,37 +186,39 @@ void main() {
 
   group('Shift Wage Segments', () {
     test(
-        'calculate pay correctly with percentage segments (e.g. 150% then 100%)', () {
-      final start = DateTime(2026, 10, 3, 18, 0); // Saturday 18:00
-      final end = DateTime(2026, 10, 4, 2, 0); // Sunday 02:00 (8 hours total)
+      'calculate pay correctly with percentage segments (e.g. 150% then 100%)',
+      () {
+        final start = DateTime(2026, 10, 3, 18, 0); // Saturday 18:00
+        final end = DateTime(2026, 10, 4, 2, 0); // Sunday 02:00 (8 hours total)
 
-      // Segment 1: 18:00 to 20:30 (2.5 hours) at 150%
-      // Segment 2: 20:30 to 02:00 (5.5 hours) at 100%
-      final shift = Shift(
-        id: 's_seg',
-        date: start,
-        startTime: start,
-        endTime: end,
-        jobTypeId: 'j1',
-        hourlyRate: 40.0,
-        wageSegments: [
-          ShiftWageSegment(
-            startTime: DateTime(2026, 10, 3, 18, 0),
-            endTime: DateTime(2026, 10, 3, 20, 30),
-            percentage: 150.0,
-          ),
-          ShiftWageSegment(
-            startTime: DateTime(2026, 10, 3, 20, 30),
-            endTime: DateTime(2026, 10, 4, 2, 0),
-            percentage: 100.0,
-          ),
-        ],
-      );
+        // Segment 1: 18:00 to 20:30 (2.5 hours) at 150%
+        // Segment 2: 20:30 to 02:00 (5.5 hours) at 100%
+        final shift = Shift(
+          id: 's_seg',
+          date: start,
+          startTime: start,
+          endTime: end,
+          jobTypeId: 'j1',
+          hourlyRate: 40.0,
+          wageSegments: [
+            ShiftWageSegment(
+              startTime: DateTime(2026, 10, 3, 18, 0),
+              endTime: DateTime(2026, 10, 3, 20, 30),
+              percentage: 150.0,
+            ),
+            ShiftWageSegment(
+              startTime: DateTime(2026, 10, 3, 20, 30),
+              endTime: DateTime(2026, 10, 4, 2, 0),
+              percentage: 100.0,
+            ),
+          ],
+        );
 
-      // 2.5 hours * 40.0 * 1.5 = 150.0
-      // 5.5 hours * 40.0 * 1.0 = 220.0
-      // Total expected = 150.0 + 220.0 = 370.0
-      expect(shift.calculateBaseSalary(40.0), 370.0);
-    });
+        // 2.5 hours * 40.0 * 1.5 = 150.0
+        // 5.5 hours * 40.0 * 1.0 = 220.0
+        // Total expected = 150.0 + 220.0 = 370.0
+        expect(shift.calculateBaseSalary(40.0), 370.0);
+      },
+    );
   });
 }

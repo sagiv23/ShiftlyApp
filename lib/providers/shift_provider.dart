@@ -207,46 +207,52 @@ class ShiftProvider with ChangeNotifier {
 
       // 4. Upload local to server via Batch Endpoints (Optimizes DB WAL & tuple bloat)
       if (keepLocal != false) {
-        final jobTypeItems = jobTypes.map((job) =>
-        {
-          'id': job.id,
-          'name': job.name,
-          'hourly_rate': job.hourlyRate,
-          'wage_history': job.wageHistory
-              ?.map((e) =>
-          {
-            'startDate': e.startDate.toIso8601String(),
-            'hourlyRate': e.hourlyRate,
-          })
-              .toList(),
-        }).toList();
+        final jobTypeItems = jobTypes
+            .map(
+              (job) => {
+                'id': job.id,
+                'name': job.name,
+                'hourly_rate': job.hourlyRate,
+                'wage_history': job.wageHistory
+                    ?.map(
+                      (e) => {
+                        'startDate': e.startDate.toIso8601String(),
+                        'hourlyRate': e.hourlyRate,
+                      },
+                    )
+                    .toList(),
+              },
+            )
+            .toList();
         await _apiService.batchUpsertJobTypes(_authToken!, jobTypeItems);
 
         // Include both expenses (is_income = false) and incomes (is_income = true)
         final allFinancialItems = [
-          ...expenses.map((exp) =>
-          {
-            'id': exp.id,
-            'date': exp.date.toIso8601String().split('T')[0],
-            'description': exp.description,
-            'amount': exp.amount,
-            'is_income': false,
-          }),
-          ...incomes.map((inc) =>
-          {
-            'id': inc.id,
-            'date': inc.date.toIso8601String().split('T')[0],
-            'description': inc.description,
-            'amount': inc.amount,
-            'is_income': true,
-          }),
+          ...expenses.map(
+            (exp) => {
+              'id': exp.id,
+              'date': exp.date.toIso8601String().split('T')[0],
+              'description': exp.description,
+              'amount': exp.amount,
+              'is_income': false,
+            },
+          ),
+          ...incomes.map(
+            (inc) => {
+              'id': inc.id,
+              'date': inc.date.toIso8601String().split('T')[0],
+              'description': inc.description,
+              'amount': inc.amount,
+              'is_income': true,
+            },
+          ),
         ];
         await _apiService.batchUpsertExpenses(_authToken!, allFinancialItems);
 
         final shiftItems = shifts.map((shift) {
           final job = getJobTypeById(shift.jobTypeId);
-          final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ??
-              0.0;
+          final rate =
+              shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 0.0;
           return {
             'id': shift.id,
             'job_type_id': shift.jobTypeId,
@@ -254,10 +260,7 @@ class ShiftProvider with ChangeNotifier {
             'start_time': shift.startTime.toIso8601String(),
             'end_time': shift.endTime.toIso8601String(),
             'tips': shift.tips,
-            'break_type': shift.breakType
-                ?.toString()
-                .split('.')
-                .last,
+            'break_type': shift.breakType?.toString().split('.').last,
             'unpaid_break_minutes': shift.unpaidBreakMinutes,
             'hourly_rate': rate,
             'automatic_expenses': shift.automaticExpenses
@@ -377,7 +380,10 @@ class ShiftProvider with ChangeNotifier {
 
     return allShifts.where((shift) {
       final job = getJobTypeById(shift.jobTypeId);
-      final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? AppConstants.defaultHourlyRate;
+      final rate =
+          shift.hourlyRate ??
+          job?.getRateForDate(shift.date) ??
+          AppConstants.defaultHourlyRate;
       final totalPay = shift.calculateTotalPay(rate);
 
       if (filter.minWage != null && totalPay < filter.minWage!) return false;
@@ -602,7 +608,10 @@ class ShiftProvider with ChangeNotifier {
     return shifts
         .map((s) {
           final job = getJobTypeById(s.jobTypeId);
-          final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? AppConstants.defaultHourlyRate;
+          final rate =
+              s.hourlyRate ??
+              job?.getRateForDate(s.date) ??
+              AppConstants.defaultHourlyRate;
           return s.calculateTotalPay(rate);
         })
         .reduce((a, b) => a > b ? a : b);

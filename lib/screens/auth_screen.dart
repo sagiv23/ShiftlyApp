@@ -24,8 +24,7 @@ class AuthScreen extends StatefulWidget {
   State<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen>
-    with TickerProviderStateMixin {
+class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   AuthMode _authMode = AuthMode.login;
   bool _isLoading = false;
@@ -51,25 +50,19 @@ class _AuthScreenState extends State<AuthScreen>
     _glowController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2800),
-    )
-      ..repeat(reverse: true);
+    )..repeat(reverse: true);
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _entranceController,
-        curve: Curves.easeOut,
-      ),
+      CurvedAnimation(parent: _entranceController, curve: Curves.easeOut),
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.1),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _entranceController,
-        curve: Curves.easeOutCubic,
-      ),
-    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _entranceController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     _entranceController.forward();
   }
@@ -127,11 +120,7 @@ class _AuthScreenState extends State<AuthScreen>
         }
 
         if (age < 12) {
-          UIUtils.showSnackBar(
-            context,
-            l.auth_error_underage,
-            isError: true,
-          );
+          UIUtils.showSnackBar(context, l.auth_error_underage, isError: true);
           setState(() => _isLoading = false);
           return;
         }
@@ -170,9 +159,7 @@ class _AuthScreenState extends State<AuthScreen>
           if (overlapDetails.isNotEmpty) {
             dialogTitle = l.add_shift_overlap_title;
             dialogContent =
-            '${l.auth_sync_dialog_content}\n\nנמצאו ${overlapDetails
-                .length} משמרות בחפיפת שעות:\n${overlapDetails.take(5).join(
-                '\n')}${overlapDetails.length > 5 ? '\n...' : ''}';
+                '${l.auth_sync_dialog_content}\n\nנמצאו ${overlapDetails.length} משמרות בחפיפת שעות:\n${overlapDetails.take(5).join('\n')}${overlapDetails.length > 5 ? '\n...' : ''}';
           } else {
             dialogTitle = l.auth_sync_dialog_title;
             dialogContent = l.auth_sync_dialog_content;
@@ -222,10 +209,12 @@ class _AuthScreenState extends State<AuthScreen>
     }
   }
 
-  List<String> _findOverlappingDetails(List<dynamic> remoteShifts,
-      List<Shift> localShifts,
-      ShiftProvider shiftProvider,
-      AppLocalizations l,) {
+  List<String> _findOverlappingDetails(
+    List<dynamic> remoteShifts,
+    List<Shift> localShifts,
+    ShiftProvider shiftProvider,
+    AppLocalizations l,
+  ) {
     final details = <String>[];
     for (var local in localShifts) {
       for (var remote in remoteShifts) {
@@ -235,14 +224,11 @@ class _AuthScreenState extends State<AuthScreen>
           if (local.startTime.isBefore(remoteEnd) &&
               local.endTime.isAfter(remoteStart)) {
             final jobName =
-                shiftProvider
-                    .getJobTypeById(local.jobTypeId)
-                    ?.name ??
-                    l.add_shift_overlap_unknown_job;
+                shiftProvider.getJobTypeById(local.jobTypeId)?.name ??
+                l.add_shift_overlap_unknown_job;
             final dateStr = DateFormat('dd/MM/yyyy').format(local.date);
             final timeStr =
-                '${DateFormat('HH:mm').format(local.startTime)} - ${DateFormat(
-                'HH:mm').format(local.endTime)}';
+                '${DateFormat('HH:mm').format(local.startTime)} - ${DateFormat('HH:mm').format(local.endTime)}';
             details.add('• $jobName ($dateStr, $timeStr)');
             break;
           }
@@ -293,7 +279,8 @@ class _AuthScreenState extends State<AuthScreen>
                       AnimatedBuilder(
                         animation: _glowController,
                         builder: (context, child) {
-                          final glow = 0.3 +
+                          final glow =
+                              0.3 +
                               (0.2 * math.sin(_glowController.value * math.pi));
                           return Stack(
                             alignment: Alignment.center,
@@ -306,7 +293,8 @@ class _AuthScreenState extends State<AuthScreen>
                                   boxShadow: [
                                     BoxShadow(
                                       color: AppTheme.primary.withValues(
-                                          alpha: glow),
+                                        alpha: glow,
+                                      ),
                                       blurRadius: 36,
                                       spreadRadius: 8,
                                     ),
@@ -358,59 +346,63 @@ class _AuthScreenState extends State<AuthScreen>
                         curve: Curves.easeInOutCubic,
                         child: !isLogin
                             ? Column(
-                          children: [
-                            TextFormField(
-                              controller: _nameController,
-                              style: const TextStyle(color: Colors.white),
-                              decoration: _buildInputDecoration(
-                                label: l.auth_full_name_label,
-                                hint: l.auth_full_name_label,
-                                icon: Icons.person_outline,
-                              ),
-                              validator: (value) =>
-                              value == null || value.isEmpty
-                                  ? l.auth_error_name_empty
-                                  : null,
-                            ),
-                            const SizedBox(height: 16),
-                            InkWell(
-                              onTap: () async {
-                                final picked = await AppDatePicker.showBirthDatePicker(
-                                  context: context,
-                                  initialDate: _selectedBirthDate,
-                                );
-                                if (picked != null) {
-                                  setState(() {
-                                    _selectedBirthDate = picked;
-                                  });
-                                }
-                              },
-                              child: InputDecorator(
-                                decoration: _buildInputDecoration(
-                                  label: l.auth_birth_date_label,
-                                  hint: l.auth_birth_date_label,
-                                  icon: Icons.cake_outlined,
-                                ).copyWith(
-                                  suffixIcon: const Icon(
-                                    Icons.calendar_today_rounded,
-                                    color: Colors.white70,
+                                children: [
+                                  TextFormField(
+                                    controller: _nameController,
+                                    style: const TextStyle(color: Colors.white),
+                                    decoration: _buildInputDecoration(
+                                      label: l.auth_full_name_label,
+                                      hint: l.auth_full_name_label,
+                                      icon: Icons.person_outline,
+                                    ),
+                                    validator: (value) =>
+                                        value == null || value.isEmpty
+                                        ? l.auth_error_name_empty
+                                        : null,
                                   ),
-                                ),
-                                child: Text(
-                                  _selectedBirthDate == null
-                                      ? l.auth_birth_date_label
-                                      : AppConstants.formatDate(_selectedBirthDate),
-                                  style: TextStyle(
-                                    color: _selectedBirthDate == null
-                                        ? Colors.white38
-                                        : Colors.white,
+                                  const SizedBox(height: 16),
+                                  InkWell(
+                                    onTap: () async {
+                                      final picked =
+                                          await AppDatePicker.showBirthDatePicker(
+                                            context: context,
+                                            initialDate: _selectedBirthDate,
+                                          );
+                                      if (picked != null) {
+                                        setState(() {
+                                          _selectedBirthDate = picked;
+                                        });
+                                      }
+                                    },
+                                    child: InputDecorator(
+                                      decoration:
+                                          _buildInputDecoration(
+                                            label: l.auth_birth_date_label,
+                                            hint: l.auth_birth_date_label,
+                                            icon: Icons.cake_outlined,
+                                          ).copyWith(
+                                            suffixIcon: const Icon(
+                                              Icons.calendar_today_rounded,
+                                              color: Colors.white70,
+                                            ),
+                                          ),
+                                      child: Text(
+                                        _selectedBirthDate == null
+                                            ? l.auth_birth_date_label
+                                            : AppConstants.formatDate(
+                                                _selectedBirthDate,
+                                              ),
+                                        style: TextStyle(
+                                          color: _selectedBirthDate == null
+                                              ? Colors.white38
+                                              : Colors.white,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-                        )
+                                  const SizedBox(height: 16),
+                                ],
+                              )
                             : const SizedBox.shrink(),
                       ),
 
@@ -466,22 +458,22 @@ class _AuthScreenState extends State<AuthScreen>
                             ),
                             child: _isLoading
                                 ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: Color(0xFF0F172A),
-                                strokeWidth: 2.5,
-                              ),
-                            )
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      color: Color(0xFF0F172A),
+                                      strokeWidth: 2.5,
+                                    ),
+                                  )
                                 : Text(
-                              isLogin
-                                  ? l.auth_login_button
-                                  : l.auth_register_button,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                                    isLogin
+                                        ? l.auth_login_button
+                                        : l.auth_register_button,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),

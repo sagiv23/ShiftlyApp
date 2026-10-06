@@ -29,7 +29,9 @@ class ExportUtils {
       mimeType = MimeType.text;
     }
 
-    final timestamp = DateFormat(AppConstants.dateFormatFileTimestamp).format(DateTime.now());
+    final timestamp = DateFormat(
+      AppConstants.dateFormatFileTimestamp,
+    ).format(DateTime.now());
     final fileName = 'shiftly_export_$timestamp';
 
     try {
@@ -57,7 +59,10 @@ class ExportUtils {
 
     for (var shift in shifts) {
       final job = shiftProvider.getJobTypeById(shift.jobTypeId);
-      final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? AppConstants.defaultHourlyRate;
+      final rate =
+          shift.hourlyRate ??
+          job?.getRateForDate(shift.date) ??
+          AppConstants.defaultHourlyRate;
       final pay = shift.calculateTotalPay(rate);
       final dateStr = AppConstants.formatDate(shift.date);
       final startStr = AppConstants.formatTime(shift.startTime);
@@ -98,7 +103,10 @@ class ExportUtils {
 
     for (var shift in shifts) {
       final job = shiftProvider.getJobTypeById(shift.jobTypeId);
-      final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? AppConstants.defaultHourlyRate;
+      final rate =
+          shift.hourlyRate ??
+          job?.getRateForDate(shift.date) ??
+          AppConstants.defaultHourlyRate;
       final pay = shift.calculateTotalPay(rate);
       totalHours += shift.netHours;
       totalBase += shift.netHours * rate;
@@ -113,7 +121,9 @@ class ExportUtils {
         'Time: ${AppConstants.formatTime(shift.startTime)} - ${AppConstants.formatTime(shift.endTime)} (${shift.netHours.toStringAsFixed(2)} hrs)',
       );
       if (shift.tips > 0) {
-        buffer.writeln('Tips: +${UIUtils.formatCurrency(shift.tips, symbol: symbol)}');
+        buffer.writeln(
+          'Tips: +${UIUtils.formatCurrency(shift.tips, symbol: symbol)}',
+        );
       }
       if (shift.totalAutomaticIncomes > 0) {
         buffer.writeln(
@@ -133,15 +143,23 @@ class ExportUtils {
 
     buffer.writeln('\n=== SUMMARY ===');
     buffer.writeln('Total Hours: ${totalHours.toStringAsFixed(2)} hrs');
-    buffer.writeln('Base Salary: ${UIUtils.formatCurrency(totalBase, symbol: symbol)}');
+    buffer.writeln(
+      'Base Salary: ${UIUtils.formatCurrency(totalBase, symbol: symbol)}',
+    );
     if (totalTips > 0) {
-      buffer.writeln('Total Tips: +${UIUtils.formatCurrency(totalTips, symbol: symbol)}');
+      buffer.writeln(
+        'Total Tips: +${UIUtils.formatCurrency(totalTips, symbol: symbol)}',
+      );
     }
     if (totalIncomes > 0) {
-      buffer.writeln('Total Incomes: +${UIUtils.formatCurrency(totalIncomes, symbol: symbol)}');
+      buffer.writeln(
+        'Total Incomes: +${UIUtils.formatCurrency(totalIncomes, symbol: symbol)}',
+      );
     }
     if (totalExpenses > 0) {
-      buffer.writeln('Total Expenses: -${UIUtils.formatCurrency(totalExpenses, symbol: symbol)}');
+      buffer.writeln(
+        'Total Expenses: -${UIUtils.formatCurrency(totalExpenses, symbol: symbol)}',
+      );
     }
     buffer.writeln(
       'Grand Total Net: ${UIUtils.formatCurrency(grandTotalNet, symbol: symbol)}',

@@ -29,8 +29,11 @@ class BarDataPoint {
   });
 
   double get netExtras => tips + extraIncomes - expenses;
+
   double get totalGross => basePay + tips + extraIncomes;
+
   double get totalNet => totalGross - expenses;
+
   double get effectiveHourlyRate => netHours > 0 ? (totalNet / netHours) : 0;
 }
 
@@ -1809,10 +1812,7 @@ class ShiftDurationDistributionWidget extends StatelessWidget {
                     ),
                     Text(
                       '${pct.toStringAsFixed(0)}%',
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey,
-                      ),
+                      style: const TextStyle(fontSize: 11, color: Colors.grey),
                     ),
                   ],
                 ),

@@ -111,7 +111,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     for (var shift in filteredShifts) {
       final job = shiftProvider.getJobTypeById(shift.jobTypeId);
-      final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? AppConstants.defaultHourlyRate;
+      final rate =
+          shift.hourlyRate ??
+          job?.getRateForDate(shift.date) ??
+          AppConstants.defaultHourlyRate;
       totalNetHours += shift.netHours;
       totalBaseSalary += shift.netHours * rate;
       totalTips += shift.tips;
@@ -608,9 +611,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     }
     if (totalTodHours > 0) {
       final offPeakHours = todSegments
-          .where((s) =>
-      s.timeRange == '04:00-06:00' || s.timeRange == '18:00-22:00' ||
-          s.timeRange == '22:00-06:00')
+          .where(
+            (s) =>
+                s.timeRange == '04:00-06:00' ||
+                s.timeRange == '18:00-22:00' ||
+                s.timeRange == '22:00-06:00',
+          )
           .fold<double>(0, (sum, s) => sum + s.hours);
       final offPeakPct = (offPeakHours / totalTodHours * 100).round();
       if (offPeakPct > 20) {
@@ -1094,7 +1100,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         double base = 0, tips = 0, incomes = 0, expenses = 0, hours = 0;
         for (var s in dayShifts) {
           final job = shiftProvider.getJobTypeById(s.jobTypeId);
-          final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? AppConstants.defaultHourlyRate;
+          final rate =
+              s.hourlyRate ??
+              job?.getRateForDate(s.date) ??
+              AppConstants.defaultHourlyRate;
           hours += s.netHours;
           base += s.netHours * rate;
           tips += s.tips;
@@ -1131,7 +1140,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         double base = 0, tips = 0, incomes = 0, expenses = 0, hours = 0;
         for (var s in monthShifts) {
           final job = shiftProvider.getJobTypeById(s.jobTypeId);
-          final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? AppConstants.defaultHourlyRate;
+          final rate =
+              s.hourlyRate ??
+              job?.getRateForDate(s.date) ??
+              AppConstants.defaultHourlyRate;
           hours += s.netHours;
           base += s.netHours * rate;
           tips += s.tips;
@@ -1171,7 +1183,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         double base = 0, tips = 0, incomes = 0, expenses = 0, hours = 0;
         for (var s in monthShifts) {
           final job = shiftProvider.getJobTypeById(s.jobTypeId);
-          final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? AppConstants.defaultHourlyRate;
+          final rate =
+              s.hourlyRate ??
+              job?.getRateForDate(s.date) ??
+              AppConstants.defaultHourlyRate;
           hours += s.netHours;
           base += s.netHours * rate;
           tips += s.tips;
@@ -1240,7 +1255,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       double hours = 0;
       for (var s in jobShifts) {
         final job = shiftProvider.getJobTypeById(s.jobTypeId);
-        final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? AppConstants.defaultHourlyRate;
+        final rate =
+            s.hourlyRate ??
+            job?.getRateForDate(s.date) ??
+            AppConstants.defaultHourlyRate;
         jobPay += s.calculateTotalPay(rate);
         hours += s.netHours;
       }
@@ -1417,7 +1435,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     for (var s in shifts) {
       final job = shiftProvider.getJobTypeById(s.jobTypeId);
-      final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? AppConstants.defaultHourlyRate;
+      final rate =
+          s.hourlyRate ??
+          job?.getRateForDate(s.date) ??
+          AppConstants.defaultHourlyRate;
       final pay = s.calculateTotalPay(rate);
 
       if (s.netHours < 6) {

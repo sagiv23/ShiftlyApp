@@ -12,6 +12,7 @@ import 'package:shiftly/widgets/adaptive_scaffold.dart';
 
 class MainScreen extends StatefulWidget {
   final int initialIndex;
+
   const MainScreen({super.key, this.initialIndex = 2});
 
   @override
@@ -44,10 +45,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   static void _openAddShiftScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      AppPageRoute.slideUp(const AddShiftScreen()),
-    );
+    Navigator.push(context, AppPageRoute.slideUp(const AddShiftScreen()));
   }
 
   @override
@@ -82,10 +80,7 @@ class _MainScreenState extends State<MainScreen> {
                 currentIndex: activeIndex,
                 onTabSelected: _onItemTapped,
                 onAddShift: () => _openAddShiftScreen(context),
-                child: IndexedStack(
-                  index: _currentIndex,
-                  children: _screens,
-                ),
+                child: IndexedStack(index: _currentIndex, children: _screens),
               ),
             ),
           ],
@@ -97,10 +92,7 @@ class _MainScreenState extends State<MainScreen> {
       currentIndex: activeIndex,
       onTabSelected: _onItemTapped,
       onAddShift: () => _openAddShiftScreen(context),
-      child: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
+      child: IndexedStack(index: _currentIndex, children: _screens),
     );
   }
 }

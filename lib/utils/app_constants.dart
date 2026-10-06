@@ -56,6 +56,7 @@ class AppConstants {
   static final DateTime minPickerDate = DateTime(2020);
   static final DateTime maxPickerDate = DateTime(2100);
   static final DateTime minBirthDate = DateTime(1900);
+
   static DateTime get defaultBirthDate =>
       DateTime.now().subtract(const Duration(days: 365 * 18));
 }

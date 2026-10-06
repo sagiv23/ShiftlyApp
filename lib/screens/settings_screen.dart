@@ -104,9 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     l.add_shift_manual_date_label,
                     style: const TextStyle(fontSize: 14),
                   ),
-                  subtitle: Text(
-                    AppConstants.formatDate(effectiveDate),
-                  ),
+                  subtitle: Text(AppConstants.formatDate(effectiveDate)),
                   trailing: const Icon(Icons.calendar_today_rounded, size: 20),
                   onTap: () async {
                     final picked = await AppDatePicker.showSingleDatePicker(
@@ -304,8 +302,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           (auth.userName?.isNotEmpty == true
                                   ? auth.userName![0]
                                   : (auth.userEmail?.isNotEmpty == true
-                                      ? auth.userEmail![0]
-                                      : 'U'))
+                                        ? auth.userEmail![0]
+                                        : 'U'))
                               .toUpperCase(),
                           style: const TextStyle(
                             color: Colors.white,

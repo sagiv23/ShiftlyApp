@@ -54,17 +54,12 @@ class AdaptiveScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    final screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    final screenWidth = MediaQuery.of(context).size.width;
     final isDesktopOrWide = screenWidth >= 768;
     final scope = MainScreenScope.of(context);
     final effectiveIndex = scope?.currentIndex ?? currentIndex;
     final activeIndex = effectiveIndex > 4 ? 2 : effectiveIndex;
-    final isHebrew = Localizations
-        .localeOf(context)
-        .languageCode == 'he';
+    final isHebrew = Localizations.localeOf(context).languageCode == 'he';
 
     final navItems = [
       BottomNavigationBarItem(
@@ -94,16 +89,13 @@ class AdaptiveScaffold extends StatelessWidget {
         appBar: AppBar(
           centerTitle: true,
           title:
-          titleWidget ??
+              titleWidget ??
               (title != null ? Text(title!) : Text(l.common_app_name)),
           bottom: bottom,
           actions: actions,
         ),
         drawer: Drawer(
-          backgroundColor: Theme
-              .of(context)
-              .cardTheme
-              .color,
+          backgroundColor: Theme.of(context).cardTheme.color,
           child: SafeArea(
             child: SideMenuContent(
               currentIndex: activeIndex,
@@ -126,11 +118,9 @@ class AdaptiveScaffold extends StatelessWidget {
           selectedFontSize: 11,
           unselectedFontSize: 11,
           selectedItemColor: AppTheme.primary,
-          unselectedItemColor: Theme
-              .of(context)
-              .colorScheme
-              .onSurface
-              .withValues(alpha: 0.6),
+          unselectedItemColor: Theme.of(
+            context,
+          ).colorScheme.onSurface.withValues(alpha: 0.6),
           items: navItems,
         ),
         floatingActionButton: floatingActionButton,
@@ -191,8 +181,7 @@ class SideMenuContent extends StatelessWidget {
                       width: 34,
                       height: 34,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) =>
-                      const Icon(
+                      errorBuilder: (_, _, _) => const Icon(
                         Icons.access_time_filled_rounded,
                         size: 34,
                       ),
@@ -201,11 +190,7 @@ class SideMenuContent extends StatelessWidget {
                   const SizedBox(width: 12),
                   Text(
                     l.common_app_name,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .titleLarge
-                        ?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       letterSpacing: -0.5,
                     ),

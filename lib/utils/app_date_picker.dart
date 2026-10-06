@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' as mat;
+
 import '../theme/app_theme.dart';
 import 'app_constants.dart';
 
@@ -37,8 +38,13 @@ class AppDatePicker {
                 borderRadius: mat.BorderRadius.circular(AppTheme.radiusLg),
               ),
               dayStyle: const mat.TextStyle(fontWeight: mat.FontWeight.w500),
-              todayBorder: const mat.BorderSide(color: AppTheme.primary, width: 1.5),
-              todayForegroundColor: mat.WidgetStateProperty.all(AppTheme.primaryDark),
+              todayBorder: const mat.BorderSide(
+                color: AppTheme.primary,
+                width: 1.5,
+              ),
+              todayForegroundColor: mat.WidgetStateProperty.all(
+                AppTheme.primaryDark,
+              ),
             ),
           ),
           child: child!,

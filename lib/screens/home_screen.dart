@@ -138,10 +138,10 @@ class HomeScreen extends StatelessWidget {
               child: groupedShifts.isEmpty && timerProvider.startTime == null
                   ? (shiftProvider.activeFilter?.isActive == true
                         ? _FilterEmptyState()
-                  : EmptyStateWidget(
-                title: l.home_empty_state_title,
-                subtitle: l.home_empty_state_subtitle,
-              ))
+                        : EmptyStateWidget(
+                            title: l.home_empty_state_title,
+                            subtitle: l.home_empty_state_subtitle,
+                          ))
                   : ListView.builder(
                       padding: const EdgeInsets.fromLTRB(
                         AppTheme.spaceSm,
@@ -414,7 +414,9 @@ class _MonthExpansionSection extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.75),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.75),
               ),
             ),
           ),
@@ -438,7 +440,11 @@ class _MonthExpansionSection extends StatelessWidget {
                           amount: totalBaseSalary,
                         ),
                         if (totalTips > 0) ...[
-                          const VerticalDivider(width: 1, indent: 4, endIndent: 4),
+                          const VerticalDivider(
+                            width: 1,
+                            indent: 4,
+                            endIndent: 4,
+                          ),
                           _SummaryItem(
                             label: l.home_total_card_tips,
                             value: UIUtils.formatCurrency(
@@ -450,7 +456,11 @@ class _MonthExpansionSection extends StatelessWidget {
                           ),
                         ],
                         if (totalMonthIncomes > 0) ...[
-                          const VerticalDivider(width: 1, indent: 4, endIndent: 4),
+                          const VerticalDivider(
+                            width: 1,
+                            indent: 4,
+                            endIndent: 4,
+                          ),
                           _SummaryItem(
                             label: l.expenses_tab_incomes,
                             value: UIUtils.formatCurrency(
@@ -480,7 +490,11 @@ class _MonthExpansionSection extends StatelessWidget {
                             ),
                             amount: -totalMonthExpenses,
                           ),
-                          const VerticalDivider(width: 1, indent: 4, endIndent: 4),
+                          const VerticalDivider(
+                            width: 1,
+                            indent: 4,
+                            endIndent: 4,
+                          ),
                         ],
                         _SummaryItem(
                           label: l.common_net,

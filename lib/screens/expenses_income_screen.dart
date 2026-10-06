@@ -290,32 +290,33 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                 if (shiftsOnDay.isNotEmpty) {
                   final action = await showDialog<String>(
                     context: context,
-                    builder: (linkCtx) =>
-                        AlertDialog(
-                          title: Text(l.expenses_link_shift_dialog_title),
-                          content: Text(
-                            l.expenses_link_shift_dialog_content
-                                .replaceAll('[[type]]', typeStr),
-                      ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(linkCtx, 'cancel'),
-                              child: Text(l.common_cancel),
-                            ),
-                            TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(linkCtx, 'standalone'),
-                              child: Text(l.expenses_save_standalone_button),
-                            ),
-                            ElevatedButton(
-                              onPressed: () => Navigator.pop(linkCtx, 'link'),
-                              child: Text(l.expenses_link_shift_button),
-                            ),
-                          ],
+                    builder: (linkCtx) => AlertDialog(
+                      title: Text(l.expenses_link_shift_dialog_title),
+                      content: Text(
+                        l.expenses_link_shift_dialog_content.replaceAll(
+                          '[[type]]',
+                          typeStr,
                         ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(linkCtx, 'cancel'),
+                          child: Text(l.common_cancel),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(linkCtx, 'standalone'),
+                          child: Text(l.expenses_save_standalone_button),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(linkCtx, 'link'),
+                          child: Text(l.expenses_link_shift_button),
+                        ),
+                      ],
+                    ),
                   );
 
-                  if (action == 'cancel' || action == null ||
+                  if (action == 'cancel' ||
+                      action == null ||
                       !context.mounted) {
                     return;
                   }
@@ -338,8 +339,12 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                     provider.updateShift(shift);
                     UIUtils.showSnackBar(
                       context,
-                      isIncome ? l.incomes_deleted_msg.replaceAll(
-                          'deleted', 'linked') : l.expenses_deleted_msg,
+                      isIncome
+                          ? l.incomes_deleted_msg.replaceAll(
+                              'deleted',
+                              'linked',
+                            )
+                          : l.expenses_deleted_msg,
                     );
                   } else {
                     provider.addExpense(
@@ -355,24 +360,25 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                 } else {
                   final createAnyway = await showDialog<bool>(
                     context: context,
-                    builder: (noShiftCtx) =>
-                        AlertDialog(
-                          title: Text(l.expenses_no_shift_dialog_title),
-                          content: Text(
-                            l.expenses_no_shift_dialog_content
-                                .replaceAll('[[type]]', typeStr),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(noShiftCtx, false),
-                              child: Text(l.common_cancel),
-                            ),
-                            ElevatedButton(
-                              onPressed: () => Navigator.pop(noShiftCtx, true),
-                              child: Text(l.expenses_create_anyway_button),
-                            ),
-                          ],
+                    builder: (noShiftCtx) => AlertDialog(
+                      title: Text(l.expenses_no_shift_dialog_title),
+                      content: Text(
+                        l.expenses_no_shift_dialog_content.replaceAll(
+                          '[[type]]',
+                          typeStr,
                         ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(noShiftCtx, false),
+                          child: Text(l.common_cancel),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(noShiftCtx, true),
+                          child: Text(l.expenses_create_anyway_button),
+                        ),
+                      ],
+                    ),
                   );
 
                   if (createAnyway != true || !context.mounted) {
@@ -480,14 +486,18 @@ class _ExpensesScreenState extends State<ExpensesScreen>
     }
 
     if (_selectedDateFilter != null) {
-      expenseRecords.removeWhere((r) =>
-      r.date.year != _selectedDateFilter!.year ||
-          r.date.month != _selectedDateFilter!.month ||
-          r.date.day != _selectedDateFilter!.day);
-      incomeRecords.removeWhere((r) =>
-      r.date.year != _selectedDateFilter!.year ||
-          r.date.month != _selectedDateFilter!.month ||
-          r.date.day != _selectedDateFilter!.day);
+      expenseRecords.removeWhere(
+        (r) =>
+            r.date.year != _selectedDateFilter!.year ||
+            r.date.month != _selectedDateFilter!.month ||
+            r.date.day != _selectedDateFilter!.day,
+      );
+      incomeRecords.removeWhere(
+        (r) =>
+            r.date.year != _selectedDateFilter!.year ||
+            r.date.month != _selectedDateFilter!.month ||
+            r.date.day != _selectedDateFilter!.day,
+      );
     }
 
     final groupedExpenses = groupBy(
@@ -549,8 +559,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${l.common_filter_date}: ${DateFormat('dd/MM/yyyy')
-                          .format(_selectedDateFilter!)}',
+                      '${l.common_filter_date}: ${DateFormat('dd/MM/yyyy').format(_selectedDateFilter!)}',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     TextButton(
@@ -910,10 +919,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
             flex: 1,
             child: TextField(
               controller: amountControllers[index],
-              decoration: InputDecoration(
-                labelText: symbol,
-                hintText: '0',
-              ),
+              decoration: InputDecoration(labelText: symbol, hintText: '0'),
               keyboardType: TextInputType.number,
             ),
           ),
@@ -988,8 +994,7 @@ class _MonthItemSection extends StatelessWidget {
           ),
         ),
         ...items.map(
-              (record) =>
-              ExpenseTile(
+          (record) => ExpenseTile(
             record: record,
             isIncome: isIncome,
             onTap: () => onEdit(record),

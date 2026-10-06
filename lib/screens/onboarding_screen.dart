@@ -535,10 +535,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             flex: 1,
             child: TextField(
               controller: _autoAmountControllers[index],
-              decoration: InputDecoration(
-                labelText: symbol,
-                hintText: '0',
-              ),
+              decoration: InputDecoration(labelText: symbol, hintText: '0'),
               keyboardType: TextInputType.number,
             ),
           ),
@@ -596,9 +593,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           TextButton.icon(
             onPressed: () => setState(() {
-              _autoIncomeAmountControllers.add(
-                TextEditingController(),
-              );
+              _autoIncomeAmountControllers.add(TextEditingController());
               _autoIncomeDescControllers.add(TextEditingController());
             }),
             icon: const Icon(Icons.add_circle_outline_rounded),
@@ -630,10 +625,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             flex: 1,
             child: TextField(
               controller: _autoIncomeAmountControllers[index],
-              decoration: InputDecoration(
-                labelText: symbol,
-                hintText: '0',
-              ),
+              decoration: InputDecoration(labelText: symbol, hintText: '0'),
               keyboardType: TextInputType.number,
             ),
           ),

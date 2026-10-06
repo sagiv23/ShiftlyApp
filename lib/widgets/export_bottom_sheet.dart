@@ -164,19 +164,18 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                         color: Colors.transparent,
                         child: ListTile(
                           title: Text(l.export_start_date),
-                          subtitle: Text(
-                            AppConstants.formatDate(_startDate),
-                          ),
+                          subtitle: Text(AppConstants.formatDate(_startDate)),
                           trailing: const Icon(Icons.calendar_today_rounded),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                             side: BorderSide(color: Colors.grey.shade400),
                           ),
                           onTap: () async {
-                            final picked = await AppDatePicker.showSingleDatePicker(
-                              context: context,
-                              initialDate: _startDate,
-                            );
+                            final picked =
+                                await AppDatePicker.showSingleDatePicker(
+                                  context: context,
+                                  initialDate: _startDate,
+                                );
                             if (picked != null) {
                               setState(() => _startDate = picked);
                             }
@@ -190,19 +189,18 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                         color: Colors.transparent,
                         child: ListTile(
                           title: Text(l.export_end_date),
-                          subtitle: Text(
-                            AppConstants.formatDate(_endDate),
-                          ),
+                          subtitle: Text(AppConstants.formatDate(_endDate)),
                           trailing: const Icon(Icons.calendar_today_rounded),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                             side: BorderSide(color: Colors.grey.shade400),
                           ),
                           onTap: () async {
-                            final picked = await AppDatePicker.showSingleDatePicker(
-                              context: context,
-                              initialDate: _endDate,
-                            );
+                            final picked =
+                                await AppDatePicker.showSingleDatePicker(
+                                  context: context,
+                                  initialDate: _endDate,
+                                );
                             if (picked != null) {
                               setState(() => _endDate = picked);
                             }

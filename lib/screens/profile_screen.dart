@@ -39,15 +39,13 @@ class _ProfileScreenState extends State<ProfileScreen>
       ),
     );
 
-    _userCardSlide = Tween<Offset>(
-      begin: const Offset(0, 0.12),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
-      ),
-    );
+    _userCardSlide =
+        Tween<Offset>(begin: const Offset(0, 0.12), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animController,
+            curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _statsFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -56,15 +54,13 @@ class _ProfileScreenState extends State<ProfileScreen>
       ),
     );
 
-    _statsSlide = Tween<Offset>(
-      begin: const Offset(0, 0.12),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animController,
-        curve: const Interval(0.3, 0.9, curve: Curves.easeOutCubic),
-      ),
-    );
+    _statsSlide = Tween<Offset>(begin: const Offset(0, 0.12), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _animController,
+            curve: const Interval(0.3, 0.9, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _animController.forward();
   }
@@ -86,9 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     final expensesCount = shiftProvider.expenses.length;
     final incomesCount = shiftProvider.incomes.length;
     final descriptionsCount = shiftProvider.shifts
-        .where(
-          (s) => s.description != null && s.description!.trim().isNotEmpty,
-        )
+        .where((s) => s.description != null && s.description!.trim().isNotEmpty)
         .length;
 
     final statRows = <Widget>[];
@@ -171,25 +165,16 @@ class _ProfileScreenState extends State<ProfileScreen>
                         const SizedBox(height: 12),
                         Text(
                           auth.userName ?? l.settings_user_name,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .titleLarge
-                              ?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           auth.userEmail ?? '',
                           style: TextStyle(
-                            color: Theme
-                                .of(
+                            color: Theme.of(
                               context,
-                            )
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.7),
+                            ).colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                         ),
                         if (auth.userCreatedAt != null) ...[
@@ -204,11 +189,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                             ),
                             style: TextStyle(
                               fontSize: 13,
-                              color: Theme
-                                  .of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.6),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                           ),
                         ],
@@ -217,23 +200,21 @@ class _ProfileScreenState extends State<ProfileScreen>
                           Text(
                             l.profile_birth_date_display
                                 .replaceAll(
-                              '[[date]]',
-                              DateFormat('dd/MM/yyyy').format(
-                                DateTime.tryParse(auth.userBirthDate!) ??
-                                    DateTime.now(),
-                              ),
-                            )
+                                  '[[date]]',
+                                  DateFormat('dd/MM/yyyy').format(
+                                    DateTime.tryParse(auth.userBirthDate!) ??
+                                        DateTime.now(),
+                                  ),
+                                )
                                 .replaceAll(
-                              '[[age]]',
-                              auth.userAge?.toString() ?? '',
-                            ),
+                                  '[[age]]',
+                                  auth.userAge?.toString() ?? '',
+                                ),
                             style: TextStyle(
                               fontSize: 13,
-                              color: Theme
-                                  .of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.6),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                           ),
                         ],
@@ -264,10 +245,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     children: [
                       Text(
                         l.profile_stats_title,
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .titleMedium
+                        style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: AppTheme.spaceXs),
@@ -299,11 +277,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                   children: [
                     Text(
                       l.settings_section_danger,
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: AppTheme.spaceXs),
                     Card(
@@ -351,48 +327,44 @@ class _ProfileScreenState extends State<ProfileScreen>
 
     final finalConfirm = await showDialog<bool>(
       context: context,
-      builder: (ctx) =>
-          AlertDialog(
-            title: Row(
-              children: [
-                const Icon(
-                  Icons.warning_amber_rounded,
-                  color: AppTheme.expense,
-                ),
-                const SizedBox(width: 8),
-                Expanded(child: Text(l.profile_delete_final_title)),
-              ],
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: AppTheme.expense),
+            const SizedBox(width: 8),
+            Expanded(child: Text(l.profile_delete_final_title)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l.profile_delete_final_content_1),
+            const SizedBox(height: 16),
+            Text(
+              l.profile_delete_final_content_2,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(l.profile_delete_final_content_1),
-                const SizedBox(height: 16),
-                Text(
-                  l.profile_delete_final_content_2,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(
+              l.common_cancel,
+              style: const TextStyle(color: Colors.grey),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: Text(
-                  l.common_cancel,
-                  style: const TextStyle(color: Colors.grey),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.expense,
-                  foregroundColor: Colors.white,
-                ),
-                child: Text(l.common_delete),
-              ),
-            ],
           ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.expense,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(l.common_delete),
+          ),
+        ],
+      ),
     );
 
     if (finalConfirm != true) return;
@@ -421,150 +393,150 @@ class _ProfileScreenState extends State<ProfileScreen>
 
     showDialog(
       context: context,
-      builder: (ctx) =>
-          StatefulBuilder(
-            builder: (dialogContext, setDialogState) =>
-                AlertDialog(
-                  title: Text(l.settings_user_edit_title),
-                  content: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextField(
-                          controller: nameController,
-                          decoration: InputDecoration(
-                            labelText: l.settings_user_name,
-                            hintText: l.settings_user_name,
-                          ),
+      builder: (ctx) => StatefulBuilder(
+        builder: (dialogContext, setDialogState) => AlertDialog(
+          title: Text(l.settings_user_edit_title),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    labelText: l.settings_user_name,
+                    hintText: l.settings_user_name,
+                  ),
                 ),
-                        const SizedBox(height: 16),
-                        TextField(
-                          controller: emailController,
-                          decoration: InputDecoration(
-                            labelText: l.settings_user_email,
-                            hintText: 'name@example.com',
-                          ),
-                          keyboardType: TextInputType.emailAddress,
+                const SizedBox(height: 16),
+                TextField(
+                  controller: emailController,
+                  decoration: InputDecoration(
+                    labelText: l.settings_user_email,
+                    hintText: 'name@example.com',
+                  ),
+                  keyboardType: TextInputType.emailAddress,
                 ),
-                        const SizedBox(height: 16),
-                        InkWell(
-                          onTap: () async {
-                            final picked = await AppDatePicker.showBirthDatePicker(
-                              context: context,
-                              initialDate: editBirthDate,
-                            );
-                            if (picked != null) {
-                              setDialogState(() {
-                                editBirthDate = picked;
-                              });
-                            }
-                          },
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              labelText: l.auth_birth_date_label,
-                              hintText: l.auth_birth_date_label,
-                              suffixIcon: const Icon(
-                                Icons.calendar_today_rounded,
-                                size: 18,
-                              ),
-                            ),
-                            child: Text(
-                              editBirthDate == null
-                                  ? l.auth_birth_date_label
-                                  : AppConstants.formatDate(editBirthDate),
-                            ),
-                          ),
-                        ),
-                        const Divider(height: 32),
-                        Align(
-                          alignment: AlignmentDirectional.centerStart,
-                          child: Text(
-                            l.settings_user_password,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                ),
-                        const SizedBox(height: 8),
-                        TextField(
-                          controller: oldPasswordController,
-                          decoration: InputDecoration(
-                            labelText: l.profile_old_password,
-                            hintText: '••••••••',
-                          ),
-                          obscureText: true,
-                ),
-                        const SizedBox(height: 16),
-                        TextField(
-                          controller: newPasswordController,
-                          decoration: InputDecoration(
-                            labelText: l.profile_new_password,
-                            hintText: '••••••••',
-                          ),
-                          obscureText: true,
-                        ),
-                      ],
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () async {
+                    final picked = await AppDatePicker.showBirthDatePicker(
+                      context: context,
+                      initialDate: editBirthDate,
+                    );
+                    if (picked != null) {
+                      setDialogState(() {
+                        editBirthDate = picked;
+                      });
+                    }
+                  },
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: l.auth_birth_date_label,
+                      hintText: l.auth_birth_date_label,
+                      suffixIcon: const Icon(
+                        Icons.calendar_today_rounded,
+                        size: 18,
+                      ),
                     ),
+                    child: Text(
+                      editBirthDate == null
+                          ? l.auth_birth_date_label
+                          : AppConstants.formatDate(editBirthDate),
+                    ),
+                  ),
+                ),
+                const Divider(height: 32),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    l.settings_user_password,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: oldPasswordController,
+                  decoration: InputDecoration(
+                    labelText: l.profile_old_password,
+                    hintText: '••••••••',
+                  ),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: newPasswordController,
+                  decoration: InputDecoration(
+                    labelText: l.profile_new_password,
+                    hintText: '••••••••',
+                  ),
+                  obscureText: true,
+                ),
+              ],
+            ),
           ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: Text(l.common_cancel),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (editBirthDate != null) {
-                          final now = DateTime.now();
-                          int age = now.year - editBirthDate!.year;
-                          if (now.month < editBirthDate!.month ||
-                              (now.month == editBirthDate!.month &&
-                                  now.day < editBirthDate!.day)) {
-                            age--;
-                          }
-                          if (age < 12) {
-                            UIUtils.showSnackBar(
-                              context,
-                              l.auth_error_underage,
-                              isError: true,
-                            );
-                            return;
-                          }
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l.common_cancel),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (editBirthDate != null) {
+                  final now = DateTime.now();
+                  int age = now.year - editBirthDate!.year;
+                  if (now.month < editBirthDate!.month ||
+                      (now.month == editBirthDate!.month &&
+                          now.day < editBirthDate!.day)) {
+                    age--;
+                  }
+                  if (age < 12) {
+                    UIUtils.showSnackBar(
+                      context,
+                      l.auth_error_underage,
+                      isError: true,
+                    );
+                    return;
+                  }
                 }
 
-                        try {
-                          await context.read<AuthProvider>().updateProfile(
-                            nameController.text.trim(),
-                            emailController.text.trim(),
-                            oldPassword: oldPasswordController.text.trim(),
-                            newPassword: newPasswordController.text.trim(),
-                            birthDate: editBirthDate,
-                          );
-                          if (context.mounted) {
-                            Navigator.pop(ctx);
-                            UIUtils.showSnackBar(
-                              context,
-                              l.settings_user_update_success,
-                            );
+                try {
+                  await context.read<AuthProvider>().updateProfile(
+                    nameController.text.trim(),
+                    emailController.text.trim(),
+                    oldPassword: oldPasswordController.text.trim(),
+                    newPassword: newPasswordController.text.trim(),
+                    birthDate: editBirthDate,
+                  );
+                  if (context.mounted) {
+                    Navigator.pop(ctx);
+                    UIUtils.showSnackBar(
+                      context,
+                      l.settings_user_update_success,
+                    );
                   }
-                        } catch (e) {
-                          if (context.mounted) {
-                            final errKey =
-                            e.toString().replaceAll('Exception: ', '').trim();
-                            String msg = errKey;
-                            if (errKey == 'profile_password_error') {
-                              msg = l.profile_password_error;
-                            } else if (errKey == 'profile_password_required') {
-                              msg = l.profile_password_required;
-                            }
-                            UIUtils.showSnackBar(context, msg, isError: true);
-                          }
+                } catch (e) {
+                  if (context.mounted) {
+                    final errKey = e
+                        .toString()
+                        .replaceAll('Exception: ', '')
+                        .trim();
+                    String msg = errKey;
+                    if (errKey == 'profile_password_error') {
+                      msg = l.profile_password_error;
+                    } else if (errKey == 'profile_password_required') {
+                      msg = l.profile_password_required;
+                    }
+                    UIUtils.showSnackBar(context, msg, isError: true);
+                  }
                 }
-                      },
-                      child: Text(l.common_save),
-                    ),
-                  ],
-                ),
+              },
+              child: Text(l.common_save),
+            ),
+          ],
+        ),
       ),
     );
   }

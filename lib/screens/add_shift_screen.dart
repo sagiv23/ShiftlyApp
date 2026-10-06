@@ -107,9 +107,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       if (s.individualTips != null && s.individualTips!.isNotEmpty) {
         for (var tip in s.individualTips!) {
           _tipControllers.add(
-            TextEditingController(
-              text: tip > 0 ? tip.toStringAsFixed(0) : '',
-            ),
+            TextEditingController(text: tip > 0 ? tip.toStringAsFixed(0) : ''),
           );
         }
       } else if (s.tips > 0) {
@@ -734,7 +732,8 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     final isReviewMode = timerProvider.startTime != null && !isRunning;
     final job = shiftProvider.getJobTypeById(timerProvider.jobTypeId ?? "");
     final livePay = timerProvider.calculateLivePay(
-      job?.getRateForDate(timerProvider.startTime ?? DateTime.now()) ?? AppConstants.defaultHourlyRate,
+      job?.getRateForDate(timerProvider.startTime ?? DateTime.now()) ??
+          AppConstants.defaultHourlyRate,
     );
 
     String formatDuration(Duration d) {
@@ -1112,9 +1111,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                   setState(() {
                     _segmentStartTimes.add(_startTime);
                     _segmentEndTimes.add(_endTime);
-                    _segmentPercentageControllers.add(
-                      TextEditingController(),
-                    );
+                    _segmentPercentageControllers.add(TextEditingController());
                   });
                 },
                 icon: const Icon(Icons.add, size: 16),

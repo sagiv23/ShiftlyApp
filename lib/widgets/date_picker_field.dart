@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../l10n/app_localizations.dart';
 import '../utils/app_constants.dart';
 import '../utils/app_date_picker.dart';
@@ -66,10 +67,9 @@ class DatePickerField extends StatelessWidget {
           formattedText,
           style: selectedDate == null
               ? TextStyle(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.5),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.5),
                 )
               : null,
         ),

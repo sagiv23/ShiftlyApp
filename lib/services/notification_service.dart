@@ -69,9 +69,7 @@ class NotificationService {
               }
             } else {
               navigatorKey.currentState?.push(
-                AppPageRoute.slideUp(
-                  const AddShiftScreen(initialTabIndex: 0),
-                ),
+                AppPageRoute.slideUp(const AddShiftScreen(initialTabIndex: 0)),
               );
             }
           } catch (e) {
