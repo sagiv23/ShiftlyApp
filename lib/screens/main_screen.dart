@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/screens/analytics_screen.dart';
 import 'package:shiftly/screens/calendar_screen.dart';
-import 'package:shiftly/screens/expenses_screen.dart';
+import 'package:shiftly/screens/expenses_income_screen.dart';
 import 'package:shiftly/screens/home_screen.dart';
 import 'package:shiftly/screens/settings_screen.dart';
 import 'package:shiftly/screens/shift_descriptions_screen.dart';

@@ -8,9 +8,11 @@ import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/analytics_charts.dart';
+import 'package:shiftly/widgets/kpi_card.dart';
 
 enum AnalyticsPeriodMode { monthly, yearly, allTime }
 
@@ -109,7 +111,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     for (var shift in filteredShifts) {
       final job = shiftProvider.getJobTypeById(shift.jobTypeId);
-      final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
+      final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? AppConstants.defaultHourlyRate;
       totalNetHours += shift.netHours;
       totalBaseSalary += shift.netHours * rate;
       totalTips += shift.tips;
@@ -538,7 +540,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           // localized titles and subtitles to wrap instead of being clipped.
           childAspectRatio: constraints.maxWidth > 700 ? 1.5 : 1.15,
           children: [
-            _KpiCard(
+            KpiCard(
               title: l.analytics_stat_total_net,
               value: UIUtils.formatCurrency(totalNet, symbol: symbol),
               subtitle: _periodMode == AnalyticsPeriodMode.monthly
@@ -548,7 +550,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               gradientColors: const [Color(0xFF6366F1), Color(0xFF4F46E5)],
               isDark: isDark,
             ),
-            _KpiCard(
+            KpiCard(
               title: l.analytics_stat_avg_rate,
               value: UIUtils.formatCurrency(avgRate, symbol: symbol),
               subtitle: rateBoost > 0
@@ -560,7 +562,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               gradientColors: const [Color(0xFF10B981), Color(0xFF059669)],
               isDark: isDark,
             ),
-            _KpiCard(
+            KpiCard(
               title: l.analytics_kpi_retention,
               value: '${retentionPct.toStringAsFixed(1)}%',
               subtitle: l.analytics_retention_subtitle,
@@ -568,7 +570,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               gradientColors: const [Color(0xFF0EA5E9), Color(0xFF0284C7)],
               isDark: isDark,
             ),
-            _KpiCard(
+            KpiCard(
               title: l.analytics_stat_tips,
               value: UIUtils.formatCurrency(totalExpenses, symbol: symbol),
               subtitle: totalNet > 0
@@ -1092,7 +1094,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         double base = 0, tips = 0, incomes = 0, expenses = 0, hours = 0;
         for (var s in dayShifts) {
           final job = shiftProvider.getJobTypeById(s.jobTypeId);
-          final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? 40.22;
+          final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? AppConstants.defaultHourlyRate;
           hours += s.netHours;
           base += s.netHours * rate;
           tips += s.tips;
@@ -1129,7 +1131,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         double base = 0, tips = 0, incomes = 0, expenses = 0, hours = 0;
         for (var s in monthShifts) {
           final job = shiftProvider.getJobTypeById(s.jobTypeId);
-          final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? 40.22;
+          final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? AppConstants.defaultHourlyRate;
           hours += s.netHours;
           base += s.netHours * rate;
           tips += s.tips;
@@ -1169,7 +1171,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         double base = 0, tips = 0, incomes = 0, expenses = 0, hours = 0;
         for (var s in monthShifts) {
           final job = shiftProvider.getJobTypeById(s.jobTypeId);
-          final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? 40.22;
+          final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? AppConstants.defaultHourlyRate;
           hours += s.netHours;
           base += s.netHours * rate;
           tips += s.tips;
@@ -1238,7 +1240,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       double hours = 0;
       for (var s in jobShifts) {
         final job = shiftProvider.getJobTypeById(s.jobTypeId);
-        final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? 40.22;
+        final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? AppConstants.defaultHourlyRate;
         jobPay += s.calculateTotalPay(rate);
         hours += s.netHours;
       }
@@ -1415,7 +1417,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     for (var s in shifts) {
       final job = shiftProvider.getJobTypeById(s.jobTypeId);
-      final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? 40.22;
+      final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? AppConstants.defaultHourlyRate;
       final pay = s.calculateTotalPay(rate);
 
       if (s.netHours < 6) {
@@ -1465,109 +1467,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         icon: Icons.warning_amber_rounded,
       ),
     ];
-  }
-}
-
-class _KpiCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final String subtitle;
-  final IconData icon;
-  final List<Color> gradientColors;
-  final bool isDark;
-
-  const _KpiCard({
-    required this.title,
-    required this.value,
-    required this.subtitle,
-    required this.icon,
-    required this.gradientColors,
-    required this.isDark,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final mainColor = gradientColors.first;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        border: Border.all(
-          color: mainColor.withValues(alpha: isDark ? 0.35 : 0.25),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: mainColor.withValues(alpha: 0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.75),
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: gradientColors,
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, size: 15, color: Colors.white),
-              ),
-            ],
-          ),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerRight,
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: mainColor,
-                fontFeatures: const [FontFeature.tabularFigures()],
-              ),
-            ),
-          ),
-          Text(
-            subtitle,
-            style: TextStyle(
-              fontSize: 10,
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.55),
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:shiftly/models/automatic_expense.dart';
 import 'package:shiftly/models/shift_wage_segment.dart';
+import 'package:shiftly/utils/app_constants.dart';
 
 import 'break_type.dart';
 
@@ -165,7 +166,7 @@ class Shift extends HiveObject {
   }
 
   /// Prefer the snapshotted rate; fall back to [fallbackRate] for legacy shifts.
-  double effectiveHourlyRate([double fallbackRate = 40.22]) {
+  double effectiveHourlyRate([double fallbackRate = AppConstants.defaultHourlyRate]) {
     return hourlyRate ?? fallbackRate;
   }
 

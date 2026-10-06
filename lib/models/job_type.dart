@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:shiftly/models/wage_entry.dart';
+import 'package:shiftly/utils/app_constants.dart';
 
 part 'job_type.g.dart';
 
@@ -20,7 +21,7 @@ class JobType extends HiveObject {
   JobType({
     required this.id,
     required this.name,
-    this.hourlyRate = 40.22,
+    this.hourlyRate = AppConstants.defaultHourlyRate,
     this.wageHistory,
   });
 

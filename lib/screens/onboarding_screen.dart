@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/models/automatic_expense.dart';
@@ -10,6 +9,8 @@ import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/main_screen.dart';
 import 'package:shiftly/services/notification_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
+import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/app_icon.dart';
@@ -822,14 +823,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               ListTile(
                 title: Text(l.common_back),
-                subtitle: Text(DateFormat('dd/MM/yyyy').format(effectiveDate)),
+                subtitle: Text(AppConstants.formatDate(effectiveDate)),
                 trailing: const Icon(Icons.calendar_today_rounded),
                 onTap: () async {
-                  final picked = await showDatePicker(
+                  final picked = await AppDatePicker.showSingleDatePicker(
                     context: context,
                     initialDate: effectiveDate,
-                    firstDate: DateTime(2020),
-                    lastDate: DateTime(2100),
                   );
                   if (picked != null) {
                     setDialogState(() => effectiveDate = picked);

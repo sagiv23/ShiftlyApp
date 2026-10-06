@@ -10,6 +10,8 @@ import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
+import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/app_icon.dart';
 
@@ -373,14 +375,9 @@ class _AuthScreenState extends State<AuthScreen>
                             const SizedBox(height: 16),
                             InkWell(
                               onTap: () async {
-                                final picked = await showDatePicker(
+                                final picked = await AppDatePicker.showBirthDatePicker(
                                   context: context,
-                                  initialDate: _selectedBirthDate ??
-                                      DateTime.now().subtract(
-                                        const Duration(days: 365 * 18),
-                                      ),
-                                  firstDate: DateTime(1900),
-                                  lastDate: DateTime.now(),
+                                  initialDate: _selectedBirthDate,
                                 );
                                 if (picked != null) {
                                   setState(() {
@@ -402,8 +399,7 @@ class _AuthScreenState extends State<AuthScreen>
                                 child: Text(
                                   _selectedBirthDate == null
                                       ? l.auth_birth_date_label
-                                      : DateFormat('dd/MM/yyyy')
-                                      .format(_selectedBirthDate!),
+                                      : AppConstants.formatDate(_selectedBirthDate),
                                   style: TextStyle(
                                     color: _selectedBirthDate == null
                                         ? Colors.white38

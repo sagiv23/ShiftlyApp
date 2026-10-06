@@ -5,14 +5,16 @@ import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/models/automatic_expense.dart';
 import 'package:shiftly/models/expense.dart';
-import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
+import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
+import 'package:shiftly/widgets/expense_income_tile.dart';
 import 'package:uuid/uuid.dart';
 
 class ExpensesScreen extends StatefulWidget {
@@ -200,13 +202,11 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                     Icons.calendar_today_rounded,
                     color: Colors.blue,
                   ),
-                  title: Text(DateFormat('dd/MM/yyyy').format(selectedDate)),
+                  title: Text(AppConstants.formatDate(selectedDate)),
                   onTap: () async {
-                    final picked = await showDatePicker(
+                    final picked = await AppDatePicker.showSingleDatePicker(
                       context: context,
                       initialDate: selectedDate,
-                      firstDate: DateTime(2020),
-                      lastDate: DateTime(2100),
                     );
                     if (picked != null) {
                       setDialogState(() => selectedDate = picked);
@@ -408,10 +408,10 @@ class _ExpensesScreenState extends State<ExpensesScreen>
     final isIncomeTab = _tabController.index == 1;
 
     // Collect all expenses (standalone + shift automatic expenses)
-    final List<_ItemRecord> expenseRecords = [];
+    final List<ExpenseRecord> expenseRecords = [];
     for (var e in shiftProvider.expenses) {
       expenseRecords.add(
-        _ItemRecord(
+        ExpenseRecord(
           id: e.id,
           date: e.date,
           description: e.description,
@@ -428,7 +428,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
         for (int i = 0; i < shift.automaticExpenses!.length; i++) {
           final ae = shift.automaticExpenses![i];
           expenseRecords.add(
-            _ItemRecord(
+            ExpenseRecord(
               id: 'shift_exp_${shift.id}_$i',
               date: shift.date,
               description: ae.description,
@@ -444,10 +444,10 @@ class _ExpensesScreenState extends State<ExpensesScreen>
     }
 
     // Collect all incomes (standalone special incomes + shift automatic incomes)
-    final List<_ItemRecord> incomeRecords = [];
+    final List<ExpenseRecord> incomeRecords = [];
     for (var e in shiftProvider.incomes) {
       incomeRecords.add(
-        _ItemRecord(
+        ExpenseRecord(
           id: e.id,
           date: e.date,
           description: e.description,
@@ -464,7 +464,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
         for (int i = 0; i < shift.automaticIncomes!.length; i++) {
           final ai = shift.automaticIncomes![i];
           incomeRecords.add(
-            _ItemRecord(
+            ExpenseRecord(
               id: 'shift_inc_${shift.id}_$i',
               date: shift.date,
               description: ai.description,
@@ -514,11 +514,9 @@ class _ExpensesScreenState extends State<ExpensesScreen>
           icon: const Icon(Icons.calendar_today_rounded),
           tooltip: l.common_search_by_date,
           onPressed: () async {
-            final picked = await showDatePicker(
+            final picked = await AppDatePicker.showSingleDatePicker(
               context: context,
               initialDate: _selectedDateFilter ?? DateTime.now(),
-              firstDate: DateTime(2020),
-              lastDate: DateTime(2100),
             );
             if (picked != null) {
               setState(() => _selectedDateFilter = picked);
@@ -943,35 +941,11 @@ class _ExpensesScreenState extends State<ExpensesScreen>
   }
 }
 
-class _ItemRecord {
-  final String id;
-  final DateTime date;
-  final String description;
-  final double amount;
-  final bool isIncome;
-  final Shift? shift;
-  final int? shiftIndex;
-  final String? shiftInfo;
-  final Expense? standaloneExpense;
-
-  _ItemRecord({
-    required this.id,
-    required this.date,
-    required this.description,
-    required this.amount,
-    required this.isIncome,
-    this.shift,
-    this.shiftIndex,
-    this.shiftInfo,
-    this.standaloneExpense,
-  });
-}
-
 class _MonthItemSection extends StatelessWidget {
   final String monthKey;
-  final List<_ItemRecord> items;
+  final List<ExpenseRecord> items;
   final bool isIncome;
-  final Function(_ItemRecord) onEdit;
+  final Function(ExpenseRecord) onEdit;
 
   const _MonthItemSection({
     required this.monthKey,
@@ -1014,7 +988,8 @@ class _MonthItemSection extends StatelessWidget {
           ),
         ),
         ...items.map(
-          (record) => _ItemTile(
+              (record) =>
+              ExpenseTile(
             record: record,
             isIncome: isIncome,
             onTap: () => onEdit(record),
@@ -1023,238 +998,6 @@ class _MonthItemSection extends StatelessWidget {
         ),
         const Divider(),
       ],
-    );
-  }
-}
-
-class _ItemTile extends StatelessWidget {
-  final _ItemRecord record;
-  final bool isIncome;
-  final VoidCallback onTap;
-  final String symbol;
-
-  const _ItemTile({
-    required this.record,
-    required this.isIncome,
-    required this.onTap,
-    required this.symbol,
-  });
-
-  Future<void> _deleteRecord(
-    BuildContext context, {
-    bool skipDialog = false,
-  }) async {
-    final shiftProvider = context.read<ShiftProvider>();
-    final l = AppLocalizations.of(context)!;
-    final deleteTitle = isIncome
-        ? l.incomes_dialog_delete_title
-        : l.expenses_dialog_delete_title;
-    final deleteConfirmText = isIncome
-        ? l.incomes_delete_income_confirm_content
-        : l.expenses_delete_expense_confirm_content;
-    final deletedMsg = isIncome
-        ? l.incomes_deleted_msg
-        : l.expenses_deleted_msg;
-
-    if (!skipDialog) {
-      final confirm = await UIUtils.showConfirmDialog(
-        context: context,
-        title: deleteTitle,
-        content: deleteConfirmText
-            .replaceAll('[[desc]]', record.description)
-            .replaceAll(
-              '[[amount]]',
-              UIUtils.formatCurrency(record.amount, symbol: symbol),
-            ),
-        isDestructive: true,
-        confirmLabel: l.common_delete,
-        cancelLabel: l.common_cancel,
-      );
-      if (!context.mounted) return;
-      if (confirm != true) return;
-    }
-
-    if (record.shift != null && record.shiftIndex != null) {
-      final shift = record.shift!;
-      if (isIncome) {
-        shift.automaticIncomes?.removeAt(record.shiftIndex!);
-      } else {
-        shift.automaticExpenses?.removeAt(record.shiftIndex!);
-      }
-      shiftProvider.updateShift(shift);
-    } else if (record.standaloneExpense != null) {
-      shiftProvider.deleteExpense(record.standaloneExpense!.id);
-    }
-    UIUtils.showSnackBar(
-      context,
-      deletedMsg,
-      action: SnackBarAction(
-        label: l.common_cancel,
-        onPressed: () {
-          if (record.shift != null && record.shiftIndex != null) {
-            final shift = record.shift!;
-            if (isIncome) {
-              shift.automaticIncomes ??= [];
-              shift.automaticIncomes!.insert(
-                record.shiftIndex!,
-                AutomaticExpense(
-                  description: record.description,
-                  amount: record.amount,
-                ),
-              );
-            } else {
-              shift.automaticExpenses ??= [];
-              shift.automaticExpenses!.insert(
-                record.shiftIndex!,
-                AutomaticExpense(
-                  description: record.description,
-                  amount: record.amount,
-                ),
-              );
-            }
-            shiftProvider.updateShift(shift);
-          } else if (record.standaloneExpense != null) {
-            shiftProvider.addExpense(record.standaloneExpense!);
-          }
-        },
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isWide = screenWidth >= 768;
-
-    Widget cardWidget = Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        onTap: onTap,
-        leading: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: (isIncome ? AppTheme.profit : AppTheme.expense).withValues(
-              alpha: 0.12,
-            ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(
-            record.shift != null
-                ? Icons.work_outline_rounded
-                : (isIncome
-                      ? Icons.account_balance_wallet_rounded
-                      : Icons.money_off_rounded),
-            color: isIncome ? AppTheme.profitSoft : AppTheme.expenseSoft,
-            size: 20,
-          ),
-        ),
-        title: Row(
-          children: [
-            Expanded(
-              child: Text(
-                record.description,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            if (record.shiftInfo != null)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppTheme.primary.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  record.shiftInfo!,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryDark,
-                  ),
-                ),
-              ),
-          ],
-        ),
-        subtitle: Text(DateFormat('dd/MM/yyyy').format(record.date)),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              UIUtils.formatCurrency(record.amount, symbol: symbol),
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: isIncome ? AppTheme.profitSoft : AppTheme.expenseSoft,
-                fontFeatures: const [FontFeature.tabularFigures()],
-              ),
-            ),
-            if (isWide) ...[
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.edit_outlined, size: 20),
-                tooltip: AppLocalizations.of(context)!.common_edit,
-                onPressed: onTap,
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.delete_outline_rounded,
-                  size: 20,
-                  color: AppTheme.expenseSoft,
-                ),
-                tooltip: AppLocalizations.of(context)!.common_delete,
-                onPressed: () => _deleteRecord(context),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-
-    if (isWide) {
-      return cardWidget;
-    }
-
-    final l = AppLocalizations.of(context)!;
-    final deleteTitle = isIncome
-        ? l.incomes_dialog_delete_title
-        : l.expenses_dialog_delete_title;
-    final deleteConfirmText = isIncome
-        ? l.incomes_delete_income_confirm_content
-        : l.expenses_delete_expense_confirm_content;
-
-    return Dismissible(
-      key: Key(record.id),
-      direction: DismissDirection.startToEnd,
-      background: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        decoration: BoxDecoration(
-          color: (isIncome ? AppTheme.profit : AppTheme.expense).withValues(
-            alpha: 0.18,
-          ),
-          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-        ),
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: AppTheme.spaceMd),
-        child: Icon(
-          Icons.delete_sweep_rounded,
-          color: isIncome ? AppTheme.profitSoft : AppTheme.expenseSoft,
-        ),
-      ),
-      confirmDismiss: (direction) async => await UIUtils.showConfirmDialog(
-        context: context,
-        title: deleteTitle,
-        content: deleteConfirmText
-            .replaceAll('[[desc]]', record.description)
-            .replaceAll(
-              '[[amount]]',
-              UIUtils.formatCurrency(record.amount, symbol: symbol),
-            ),
-        isDestructive: true,
-        confirmLabel: l.common_delete,
-        cancelLabel: l.common_cancel,
-      ),
-      onDismissed: (_) => _deleteRecord(context, skipDialog: true),
-      child: cardWidget,
     );
   }
 }

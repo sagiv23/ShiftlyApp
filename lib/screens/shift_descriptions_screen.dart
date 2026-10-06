@@ -7,6 +7,8 @@ import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
+import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 
@@ -62,11 +64,9 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
           icon: const Icon(Icons.calendar_today_rounded),
           tooltip: l.common_search_by_date,
           onPressed: () async {
-            final picked = await showDatePicker(
+            final picked = await AppDatePicker.showSingleDatePicker(
               context: context,
               initialDate: _selectedDateFilter ?? DateTime.now(),
-              firstDate: DateTime(2020),
-              lastDate: DateTime(2100),
             );
             if (picked != null) {
               setState(() => _selectedDateFilter = picked);
@@ -96,7 +96,7 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${l.common_filter_date}: ${DateFormat('dd/MM/yyyy').format(_selectedDateFilter!)}',
+                      '${l.common_filter_date}: ${AppConstants.formatDate(_selectedDateFilter!)}',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     TextButton(

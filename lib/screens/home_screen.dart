@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
-import 'package:shiftly/models/break_type.dart';
 import 'package:shiftly/models/job_type.dart';
 import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/models/shift_filter.dart';
@@ -12,10 +11,14 @@ import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/providers/timer_provider.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
+import 'package:shiftly/widgets/empty_state_widget.dart';
 import 'package:shiftly/widgets/export_bottom_sheet.dart';
+import 'package:shiftly/widgets/grand_total_card.dart';
+import 'package:shiftly/widgets/shift_tile.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -135,7 +138,10 @@ class HomeScreen extends StatelessWidget {
               child: groupedShifts.isEmpty && timerProvider.startTime == null
                   ? (shiftProvider.activeFilter?.isActive == true
                         ? _FilterEmptyState()
-                        : _EmptyState())
+                  : EmptyStateWidget(
+                title: l.home_empty_state_title,
+                subtitle: l.home_empty_state_subtitle,
+              ))
                   : ListView.builder(
                       padding: const EdgeInsets.fromLTRB(
                         AppTheme.spaceSm,
@@ -148,7 +154,7 @@ class HomeScreen extends StatelessWidget {
                           : groupedShifts.length + 1,
                       itemBuilder: (context, index) {
                         if (index == 0) {
-                          return _GrandTotalCard(
+                          return GrandTotalCard(
                             totalHours: grandTotalNetHours,
                             totalBase: grandTotalBaseSalary,
                             totalTips: grandTotalTips,
@@ -181,48 +187,6 @@ class HomeScreen extends StatelessWidget {
         label: Text(l.home_action_new_shift),
         icon: const Icon(Icons.add_rounded),
         tooltip: l.home_action_new_shift,
-      ),
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context)!;
-    return Center(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spaceLg),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spaceMd),
-                decoration: BoxDecoration(
-                  color: AppTheme.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.history_rounded,
-                  size: 56,
-                  color: AppTheme.primary.withValues(alpha: 0.7),
-                ),
-              ),
-              const SizedBox(height: AppTheme.spaceSm),
-              Text(
-                l.home_empty_state_title,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: AppTheme.spaceXs),
-              Text(
-                l.home_empty_state_subtitle,
-                style: Theme.of(context).textTheme.bodySmall,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -330,295 +294,6 @@ class _ActiveTimerBanner extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _GrandTotalCard extends StatelessWidget {
-  final double totalHours;
-  final double totalBase;
-  final double totalTips;
-  final double totalExpenses;
-  final double totalIncomes;
-  final int totalShifts;
-
-  const _GrandTotalCard({
-    required this.totalHours,
-    required this.totalBase,
-    required this.totalTips,
-    required this.totalExpenses,
-    required this.totalIncomes,
-    required this.totalShifts,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final net = totalBase + totalTips + totalIncomes - totalExpenses;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final l = AppLocalizations.of(context)!;
-    final symbol = context.watch<SettingsProvider>().currencySymbol;
-
-    return Container(
-      margin: const EdgeInsets.only(
-        bottom: AppTheme.spaceMd,
-        top: AppTheme.spaceXs,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppTheme.radiusXl),
-        gradient: LinearGradient(
-          colors: isDark
-              ? [
-                  const Color(0xFF0EA5E9),
-                  const Color(0xFF0369A1),
-                  const Color(0xFF1E293B),
-                ]
-              : [
-                  const Color(0xFF38BDF8),
-                  const Color(0xFF0EA5E9),
-                  const Color(0xFF0284C7),
-                ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primary.withValues(alpha: isDark ? 0.25 : 0.35),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppTheme.radiusXl),
-        child: Stack(
-          children: [
-            // Soft glass overlay
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.white.withValues(alpha: isDark ? 0.08 : 0.18),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: -40,
-              left: -30,
-              child: Container(
-                width: 140,
-                height: 140,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.08),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: -50,
-              right: -20,
-              child: Container(
-                width: 160,
-                height: 160,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.06),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(AppTheme.spaceMd),
-              child: Column(
-                children: [
-                  Text(
-                    l.home_total_card_title,
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  Text(
-                    UIUtils.formatCurrency(net, symbol: symbol),
-                    style: AppTheme.monoNumber.copyWith(
-                      color: net < 0 ? const Color(0xFFFECACA) : Colors.white,
-                      fontSize: 42,
-                      height: 1.1,
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spaceSm),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: AppTheme.spaceXs,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.14),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.12),
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IntrinsicHeight(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Expanded(
-                                child: _HeaderInfoItem(
-                                  label: l.common_shifts_count,
-                                  value: totalShifts.toString(),
-                                ),
-                              ),
-                              _VerticalDivider(),
-                              Expanded(
-                                child: _HeaderInfoItem(
-                                  label: l.home_total_card_hours,
-                                  value: totalHours.toStringAsFixed(2),
-                                ),
-                              ),
-                              _VerticalDivider(),
-                              Expanded(
-                                child: _HeaderInfoItem(
-                                  label: l.home_total_card_base,
-                                  value: UIUtils.formatCurrency(
-                                    totalBase,
-                                    symbol: symbol,
-                                  ),
-                                  amount: totalBase,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        if (totalTips > 0 || totalIncomes > 0 || totalExpenses > 0) ...[
-                          const SizedBox(height: 8),
-                          Container(
-                            height: 1,
-                            color: Colors.white.withValues(alpha: 0.1),
-                          ),
-                          const SizedBox(height: 8),
-                          IntrinsicHeight(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                if (totalTips > 0) ...[
-                                  Expanded(
-                                    child: _HeaderInfoItem(
-                                      label: l.home_total_card_tips,
-                                      value: UIUtils.formatCurrency(
-                                        totalTips,
-                                        symbol: symbol,
-                                      ),
-                                      amount: totalTips,
-                                    ),
-                                  ),
-                                ],
-                                if (totalTips > 0 && (totalIncomes > 0 || totalExpenses > 0))
-                                  _VerticalDivider(),
-                                if (totalIncomes > 0) ...[
-                                  Expanded(
-                                    child: _HeaderInfoItem(
-                                      label: l.expenses_tab_incomes,
-                                      value: UIUtils.formatCurrency(
-                                        totalIncomes,
-                                        symbol: symbol,
-                                      ),
-                                      amount: totalIncomes,
-                                    ),
-                                  ),
-                                ],
-                                if (totalIncomes > 0 && totalExpenses > 0)
-                                  _VerticalDivider(),
-                                if (totalExpenses > 0) ...[
-                                  Expanded(
-                                    child: _HeaderInfoItem(
-                                      label: l.home_total_card_expenses,
-                                      value: UIUtils.formatCurrency(
-                                        totalExpenses,
-                                        symbol: symbol,
-                                      ),
-                                      amount: -totalExpenses,
-                                    ),
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _HeaderInfoItem extends StatelessWidget {
-  final String label;
-  final String value;
-  final double? amount;
-
-  const _HeaderInfoItem({
-    required this.label,
-    required this.value,
-    this.amount,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            label,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.9),
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-        const SizedBox(height: 4),
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            value,
-            style: TextStyle(
-              color: (amount ?? 0) < 0 ? const Color(0xFFFECACA) : Colors.white,
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _VerticalDivider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 28,
-      width: 1,
-      color: Colors.white.withValues(alpha: 0.2),
     );
   }
 }
@@ -819,7 +494,7 @@ class _MonthExpansionSection extends StatelessWidget {
                 ],
               ),
             ),
-            ...shifts.map((shift) => _ShiftTile(shift: shift)),
+            ...shifts.map((shift) => ShiftTile(shift: shift)),
           ],
         ),
       ),
@@ -890,366 +565,18 @@ class _SummaryItem extends StatelessWidget {
   }
 }
 
-class _ShiftTile extends StatelessWidget {
-  final Shift shift;
-
-  const _ShiftTile({required this.shift});
-
-  Future<void> _deleteShift(BuildContext context,
-      {bool skipDialog = false}) async {
-    final l = AppLocalizations.of(context)!;
-    final shiftProvider = context.read<ShiftProvider>();
-    final dateStr = DateFormat('dd/MM/yyyy').format(shift.date);
-
-    if (!skipDialog) {
-      final confirm = await UIUtils.showConfirmDialog(
-        context: context,
-        title: l.add_shift_delete_title,
-        content: '${l.add_shift_delete_desc} $dateStr?',
-        isDestructive: true,
-        confirmLabel: l.common_delete,
-      );
-      if (!context.mounted) return;
-      if (confirm != true) return;
-    }
-
-    shiftProvider.deleteShift(shift.id);
-    UIUtils.showSnackBar(
-      context,
-      '$dateStr ${l.add_shift_delete_msg}',
-      action: SnackBarAction(
-        label: l.common_cancel,
-        onPressed: () {
-          shiftProvider.addShift(
-            shift,
-            l10n: {
-              'title': l.notification_reminder_title,
-              'body': l.notification_reminder_body,
-              'hours': l.common_hours_suffix,
-              'minutes': l.common_min_suffix,
-              'channelName': l.notification_channel_reminders_name,
-              'channelDesc': l.notification_channel_reminders_desc,
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  void _editShift(BuildContext context) {
-    Navigator.push(
-      context,
-      AppPageRoute.slideHorizontal(AddShiftScreen(shiftToEdit: shift)),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isWide = screenWidth >= 768;
-
-    final shiftProvider = context.read<ShiftProvider>();
-    final settings = context.watch<SettingsProvider>();
-    final l = AppLocalizations.of(context)!;
-    final job = shiftProvider.getJobTypeById(shift.jobTypeId);
-    final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
-    final pay = shift.calculateTotalPay(rate);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final breakType = shift.breakType ?? BreakType.none;
-
-    Widget tileContent = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-          onTap: () => _editShift(context),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spaceXs,
-              vertical: 10,
-            ),
-            child: Row(
-              children: [
-                // Date badge
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: AppTheme.primary.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        DateFormat.d().format(shift.date),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: AppTheme.primaryDark,
-                          height: 1,
-                        ),
-                      ),
-                      Text(
-                        DateFormat.E(l.localeName).format(shift.date),
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.5),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            AppTheme.iconForJobName(job?.name),
-                            size: 16,
-                            color: AppTheme.primaryDark,
-                          ),
-                          const SizedBox(width: 6),
-                          Flexible(
-                            child: Text(
-                              job?.name ?? l.common_error,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "${DateFormat.Hm().format(shift.startTime)} – ${DateFormat.Hm().format(shift.endTime)}  ·  ${shift.netHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      if (shift.tips > 0 ||
-                          shift.totalAutomaticIncomes > 0 ||
-                          shift.totalAutomaticExpenses > 0 ||
-                          breakType != BreakType.none) ...[
-                        const SizedBox(height: 6),
-                        Wrap(
-                          spacing: 6,
-                          runSpacing: 4,
-                          children: [
-                            if (shift.tips > 0)
-                              _ShiftTag(
-                                label:
-                                    '+${UIUtils.formatCurrency(shift.tips, symbol: settings.currencySymbol)}',
-                                icon: Icons.payments_outlined,
-                                color: AppTheme.profit,
-                              ),
-                            if (shift.totalAutomaticIncomes > 0)
-                              _ShiftTag(
-                                label:
-                                    '+${UIUtils.formatCurrency(shift.totalAutomaticIncomes, symbol: settings.currencySymbol)}',
-                                icon: Icons.account_balance_wallet_rounded,
-                                color: AppTheme.profit,
-                              ),
-                            if (breakType == BreakType.paid)
-                              _ShiftTag(
-                                label:
-                                    "${settings.paidBreakDurationMinutes.toStringAsFixed(0)} ${l.common_min_suffix} ${l.add_shift_manual_paid_break}",
-                                icon: Icons.timer_outlined,
-                                color: AppTheme.primary,
-                              ),
-                            if (breakType == BreakType.unpaid)
-                              _ShiftTag(
-                                label:
-                                    "${(shift.unpaidBreakMinutes ?? settings.unpaidBreakDurationMinutes).toStringAsFixed(0)} ${l.common_min_suffix} ${l.add_shift_manual_unpaid_break}",
-                                icon: Icons.coffee_outlined,
-                                color: AppTheme.warningSoft,
-                              ),
-                            if (shift.totalAutomaticExpenses > 0)
-                              _ShiftTag(
-                                label:
-                                    '-${UIUtils.formatCurrency(shift.totalAutomaticExpenses, symbol: settings.currencySymbol)}',
-                                icon: Icons.money_off_rounded,
-                                color: AppTheme.expense,
-                              ),
-                          ],
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spaceXs),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    UIUtils.formatCurrency(
-                      pay,
-                      symbol: settings.currencySymbol,
-                    ),
-                    style: UIUtils.getCurrencyStyle(
-                      context,
-                      pay,
-                      positiveColor: AppTheme.primaryDark,
-                      baseStyle: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        fontFeatures: [FontFeature.tabularFigures()],
-                      ),
-                    ),
-                  ),
-                ),
-                if (isWide) ...[
-                  const SizedBox(width: 4),
-                  IconButton(
-                    icon: const Icon(Icons.edit_outlined, size: 20),
-                    tooltip: l.common_edit,
-                    onPressed: () => _editShift(context),
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.delete_outline_rounded,
-                      size: 20,
-                      color: AppTheme.expenseSoft,
-                    ),
-                    tooltip: l.common_delete,
-                    onPressed: () => _deleteShift(context),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-
-    if (isWide) {
-      return tileContent;
-    }
-
-    return Dismissible(
-      key: Key(shift.id),
-      direction: DismissDirection.startToEnd,
-      background: Container(
-        margin: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spaceSm,
-          vertical: AppTheme.spaceXs / 2,
-        ),
-        decoration: BoxDecoration(
-          color: AppTheme.expense.withValues(alpha: isDark ? 0.2 : 0.15),
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        ),
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: AppTheme.spaceMd),
-        child: const Icon(
-          Icons.delete_sweep_rounded,
-          color: AppTheme.expenseSoft,
-        ),
-      ),
-
-      confirmDismiss: (direction) async {
-        final dateStr = DateFormat('dd/MM/yyyy').format(shift.date);
-        return await UIUtils.showConfirmDialog(
-          context: context,
-          title: l.add_shift_delete_title,
-          content: '${l.add_shift_delete_desc} $dateStr?',
-          isDestructive: true,
-          confirmLabel: l.common_delete,
-        );
-      },
-      onDismissed: (_) => _deleteShift(context, skipDialog: true),
-      child: tileContent,
-    );
-  }
-}
-
-class _ShiftTag extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Color color;
-
-  const _ShiftTag({
-    required this.label,
-    required this.icon,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: isDark ? 0.18 : 0.12),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 12, color: color),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _FilterEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    return Center(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spaceLg),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spaceMd),
-                decoration: BoxDecoration(
-                  color: AppTheme.warningSoft.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.filter_list_off_rounded,
-                  size: 56,
-                  color: AppTheme.warningSoft.withValues(alpha: 0.7),
-                ),
-              ),
-              const SizedBox(height: AppTheme.spaceSm),
-              Text(
-                l.filter_empty_state_title,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: AppTheme.spaceXs),
-              Text(
-                l.filter_empty_state_subtitle,
-                style: Theme.of(context).textTheme.bodySmall,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppTheme.spaceMd),
-              TextButton.icon(
-                onPressed: () => context.read<ShiftProvider>().clearFilter(),
-                icon: const Icon(Icons.clear_all_rounded),
-                label: Text(l.filter_clear_all),
-              ),
-            ],
-          ),
-        ),
+    return EmptyStateWidget(
+      icon: Icons.filter_list_off_rounded,
+      title: l.filter_empty_state_title,
+      subtitle: l.filter_empty_state_subtitle,
+      action: TextButton.icon(
+        onPressed: () => context.read<ShiftProvider>().clearFilter(),
+        icon: const Icon(Icons.clear_all_rounded),
+        label: Text(l.filter_clear_all),
       ),
     );
   }
@@ -1623,10 +950,8 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                     ),
                     trailing: const Icon(Icons.calendar_today_rounded),
                     onTap: () async {
-                      final range = await showDateRangePicker(
+                      final range = await AppDatePicker.showDateRangePicker(
                         context: context,
-                        firstDate: DateTime(2020),
-                        lastDate: DateTime(2100),
                         initialDateRange:
                             _filter.startDate != null && _filter.endDate != null
                             ? DateTimeRange(

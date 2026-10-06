@@ -12,6 +12,8 @@ import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/providers/timer_provider.dart';
 import 'package:shiftly/services/shift_parser.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
+import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:uuid/uuid.dart';
 
@@ -342,7 +344,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
           final jobName =
               shiftProvider.getJobTypeById(shift.jobTypeId)?.name ??
               l.add_shift_overlap_unknown_job;
-          final date = DateFormat('dd/MM/yyyy').format(shift.startTime);
+          final date = AppConstants.formatDate(shift.startTime);
           final time =
               '${DateFormat.Hm().format(shift.startTime)}–${DateFormat.Hm().format(shift.endTime)}';
           return '• $jobName · $date · $time';
@@ -732,7 +734,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     final isReviewMode = timerProvider.startTime != null && !isRunning;
     final job = shiftProvider.getJobTypeById(timerProvider.jobTypeId ?? "");
     final livePay = timerProvider.calculateLivePay(
-      job?.getRateForDate(timerProvider.startTime ?? DateTime.now()) ?? 40.22,
+      job?.getRateForDate(timerProvider.startTime ?? DateTime.now()) ?? AppConstants.defaultHourlyRate,
     );
 
     String formatDuration(Duration d) {
@@ -1252,13 +1254,11 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                 _PickerTile(
                   icon: Icons.calendar_month_rounded,
                   title: l.add_shift_manual_date_label,
-                  value: DateFormat('dd/MM/yyyy').format(_selectedDate),
+                  value: AppConstants.formatDate(_selectedDate),
                   onTap: () async {
-                    final picked = await showDatePicker(
+                    final picked = await AppDatePicker.showSingleDatePicker(
                       context: context,
                       initialDate: _selectedDate,
-                      firstDate: DateTime(2020),
-                      lastDate: DateTime(2100),
                     );
                     if (picked != null && mounted) {
                       setState(() => _selectedDate = picked);

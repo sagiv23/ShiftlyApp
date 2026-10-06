@@ -10,6 +10,7 @@ import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/services/notification_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
+import 'package:shiftly/utils/app_constants.dart';
 
 class ShiftProvider with ChangeNotifier {
   final PersistenceService _persistence;
@@ -376,7 +377,7 @@ class ShiftProvider with ChangeNotifier {
 
     return allShifts.where((shift) {
       final job = getJobTypeById(shift.jobTypeId);
-      final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
+      final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? AppConstants.defaultHourlyRate;
       final totalPay = shift.calculateTotalPay(rate);
 
       if (filter.minWage != null && totalPay < filter.minWage!) return false;
@@ -601,7 +602,7 @@ class ShiftProvider with ChangeNotifier {
     return shifts
         .map((s) {
           final job = getJobTypeById(s.jobTypeId);
-          final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? 40.22;
+          final rate = s.hourlyRate ?? job?.getRateForDate(s.date) ?? AppConstants.defaultHourlyRate;
           return s.calculateTotalPay(rate);
         })
         .reduce((a, b) => a > b ? a : b);

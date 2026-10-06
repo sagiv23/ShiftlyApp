@@ -8,6 +8,7 @@ import 'package:shiftly/models/job_type.dart';
 import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/models/shift_wage_segment.dart';
 import 'package:shiftly/models/wage_entry.dart';
+import 'package:shiftly/utils/app_constants.dart';
 
 class PersistenceService {
   static const String shiftsBoxName = 'shifts';
@@ -40,9 +41,9 @@ class PersistenceService {
       final localeCode = settings.get('locale', defaultValue: 'he');
       final l = lookupAppLocalizations(Locale(localeCode));
 
-      double buffetRate = 40.22;
+      double buffetRate = AppConstants.defaultHourlyRate;
       double stewardRate = 37.20;
-      double unloadingRate = 40.22;
+      double unloadingRate = AppConstants.defaultHourlyRate;
 
       final epoch = DateTime(2020, 1, 1);
       final defaultJobs = [
@@ -85,9 +86,9 @@ class PersistenceService {
     // Re-seed default job types
     final l = lookupAppLocalizations(Locale(localeCode));
 
-    double buffetRate = 40.22;
+    double buffetRate = AppConstants.defaultHourlyRate;
     double stewardRate = 37.20;
-    double unloadingRate = 40.22;
+    double unloadingRate = AppConstants.defaultHourlyRate;
 
     final epoch = DateTime(2020, 1, 1);
     final defaultJobs = [

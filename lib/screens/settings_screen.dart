@@ -12,6 +12,8 @@ import 'package:shiftly/screens/profile_screen.dart';
 import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/services/notification_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
+import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
@@ -103,15 +105,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: const TextStyle(fontSize: 14),
                   ),
                   subtitle: Text(
-                    DateFormat('dd/MM/yyyy').format(effectiveDate),
+                    AppConstants.formatDate(effectiveDate),
                   ),
                   trailing: const Icon(Icons.calendar_today_rounded, size: 20),
                   onTap: () async {
-                    final picked = await showDatePicker(
+                    final picked = await AppDatePicker.showSingleDatePicker(
                       context: context,
                       initialDate: effectiveDate,
-                      firstDate: DateTime(2020),
-                      lastDate: DateTime(2100),
                     );
                     if (picked != null) {
                       setDialogState(() => effectiveDate = picked);

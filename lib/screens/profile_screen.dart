@@ -5,6 +5,8 @@ import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
+import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -447,14 +449,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                         const SizedBox(height: 16),
                         InkWell(
                           onTap: () async {
-                            final picked = await showDatePicker(
+                            final picked = await AppDatePicker.showBirthDatePicker(
                               context: context,
-                              initialDate: editBirthDate ??
-                                  DateTime.now().subtract(
-                                    const Duration(days: 365 * 18),
-                                  ),
-                              firstDate: DateTime(1900),
-                              lastDate: DateTime.now(),
+                              initialDate: editBirthDate,
                             );
                             if (picked != null) {
                               setDialogState(() {
@@ -474,11 +471,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                             child: Text(
                               editBirthDate == null
                                   ? l.auth_birth_date_label
-                                  : DateFormat('dd/MM/yyyy').format(
-                                  editBirthDate!),
+                                  : AppConstants.formatDate(editBirthDate),
                             ),
-                  ),
-                ),
+                          ),
+                        ),
                         const Divider(height: 32),
                         Align(
                           alignment: AlignmentDirectional.centerStart,

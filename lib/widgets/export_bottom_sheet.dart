@@ -7,6 +7,8 @@ import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
+import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/export_utils.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 
@@ -163,7 +165,7 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                         child: ListTile(
                           title: Text(l.export_start_date),
                           subtitle: Text(
-                            DateFormat('dd/MM/yyyy').format(_startDate),
+                            AppConstants.formatDate(_startDate),
                           ),
                           trailing: const Icon(Icons.calendar_today_rounded),
                           shape: RoundedRectangleBorder(
@@ -171,11 +173,9 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                             side: BorderSide(color: Colors.grey.shade400),
                           ),
                           onTap: () async {
-                            final picked = await showDatePicker(
+                            final picked = await AppDatePicker.showSingleDatePicker(
                               context: context,
                               initialDate: _startDate,
-                              firstDate: DateTime(2020),
-                              lastDate: DateTime(2100),
                             );
                             if (picked != null) {
                               setState(() => _startDate = picked);
@@ -191,7 +191,7 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                         child: ListTile(
                           title: Text(l.export_end_date),
                           subtitle: Text(
-                            DateFormat('dd/MM/yyyy').format(_endDate),
+                            AppConstants.formatDate(_endDate),
                           ),
                           trailing: const Icon(Icons.calendar_today_rounded),
                           shape: RoundedRectangleBorder(
@@ -199,11 +199,9 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                             side: BorderSide(color: Colors.grey.shade400),
                           ),
                           onTap: () async {
-                            final picked = await showDatePicker(
+                            final picked = await AppDatePicker.showSingleDatePicker(
                               context: context,
                               initialDate: _endDate,
-                              firstDate: DateTime(2020),
-                              lastDate: DateTime(2100),
                             );
                             if (picked != null) {
                               setState(() => _endDate = picked);
