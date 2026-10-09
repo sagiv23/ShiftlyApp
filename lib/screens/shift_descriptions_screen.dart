@@ -10,6 +10,7 @@ import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
+import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 
 class ShiftDescriptionsScreen extends StatefulWidget {
@@ -108,7 +109,9 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                 ),
               ),
             Expanded(
-              child: groupedShifts.isEmpty
+              child: PageEntranceAnimation(
+                delayFraction: 0.1,
+                child: groupedShifts.isEmpty
                   ? Center(
                       child: Padding(
                         padding: const EdgeInsets.all(32),
@@ -250,6 +253,7 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                         );
                       }).toList(),
                     ),
+              ),
             ),
           ],
         ),

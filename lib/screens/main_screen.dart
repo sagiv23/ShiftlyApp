@@ -8,6 +8,7 @@ import 'package:shiftly/screens/settings_screen.dart';
 import 'package:shiftly/screens/shift_descriptions_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_page_route.dart';
+import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 
 class MainScreen extends StatefulWidget {
@@ -54,6 +55,11 @@ class _MainScreenState extends State<MainScreen> {
     final isDesktopOrWide = screenWidth >= 768;
     final activeIndex = _currentIndex > 4 ? 2 : _currentIndex;
 
+    final currentTabWidget = PageEntranceAnimation(
+      key: ValueKey(_currentIndex),
+      child: IndexedStack(index: _currentIndex, children: _screens),
+    );
+
     if (isDesktopOrWide) {
       return Scaffold(
         body: Row(
@@ -80,7 +86,7 @@ class _MainScreenState extends State<MainScreen> {
                 currentIndex: activeIndex,
                 onTabSelected: _onItemTapped,
                 onAddShift: () => _openAddShiftScreen(context),
-                child: IndexedStack(index: _currentIndex, children: _screens),
+                child: currentTabWidget,
               ),
             ),
           ],
@@ -92,7 +98,7 @@ class _MainScreenState extends State<MainScreen> {
       currentIndex: activeIndex,
       onTabSelected: _onItemTapped,
       onAddShift: () => _openAddShiftScreen(context),
-      child: IndexedStack(index: _currentIndex, children: _screens),
+      child: currentTabWidget,
     );
   }
 }

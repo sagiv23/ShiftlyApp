@@ -13,6 +13,7 @@ import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
+import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/empty_state_widget.dart';
@@ -130,10 +131,17 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            if (timerProvider.startTime != null)
-              _ActiveTimerBanner(timer: timerProvider),
-            if (shiftProvider.activeFilter?.isActive == true)
-              const _ActiveFiltersBar(),
+            PageEntranceAnimation(
+              delayFraction: 0.0,
+              child: Column(
+                children: [
+                  if (timerProvider.startTime != null)
+                    _ActiveTimerBanner(timer: timerProvider),
+                  if (shiftProvider.activeFilter?.isActive == true)
+                    const _ActiveFiltersBar(),
+                ],
+              ),
+            ),
             Expanded(
               child: groupedShifts.isEmpty && timerProvider.startTime == null
                   ? (shiftProvider.activeFilter?.isActive == true
@@ -142,38 +150,41 @@ class HomeScreen extends StatelessWidget {
                             title: l.home_empty_state_title,
                             subtitle: l.home_empty_state_subtitle,
                           ))
-                  : ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(
-                        AppTheme.spaceSm,
-                        AppTheme.spaceXs,
-                        AppTheme.spaceSm,
-                        120, // Increased for ad space and system navigation
+                  : PageEntranceAnimation(
+                      delayFraction: 0.15,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppTheme.spaceSm,
+                          AppTheme.spaceXs,
+                          AppTheme.spaceSm,
+                          120, // Increased for ad space and system navigation
+                        ),
+                        itemCount: groupedShifts.isEmpty
+                            ? 1
+                            : groupedShifts.length + 1,
+                        itemBuilder: (context, index) {
+                            if (index == 0) {
+                              return GrandTotalCard(
+                                totalHours: grandTotalNetHours,
+                                totalBase: grandTotalBaseSalary,
+                                totalTips: grandTotalTips,
+                                totalExpenses: grandTotalExpenses,
+                                totalIncomes: grandTotalIncomes,
+                                totalShifts: grandTotalShifts,
+                              );
+                            }
+                            final monthKey = groupedShifts.keys.elementAt(
+                              index - 1,
+                            );
+                            final shifts = groupedShifts[monthKey]!;
+                            return _MonthExpansionSection(
+                              monthKey: monthKey,
+                              shifts: shifts,
+                              initiallyExpanded: index == 1,
+                            );
+                          },
+                        ),
                       ),
-                      itemCount: groupedShifts.isEmpty
-                          ? 1
-                          : groupedShifts.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index == 0) {
-                          return GrandTotalCard(
-                            totalHours: grandTotalNetHours,
-                            totalBase: grandTotalBaseSalary,
-                            totalTips: grandTotalTips,
-                            totalExpenses: grandTotalExpenses,
-                            totalIncomes: grandTotalIncomes,
-                            totalShifts: grandTotalShifts,
-                          );
-                        }
-                        final monthKey = groupedShifts.keys.elementAt(
-                          index - 1,
-                        );
-                        final shifts = groupedShifts[monthKey]!;
-                        return _MonthExpansionSection(
-                          monthKey: monthKey,
-                          shifts: shifts,
-                          initiallyExpanded: index == 1,
-                        );
-                      },
-                    ),
             ),
           ],
         ),

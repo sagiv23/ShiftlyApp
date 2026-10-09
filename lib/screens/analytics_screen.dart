@@ -9,6 +9,7 @@ import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
+import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/analytics_charts.dart';
@@ -29,7 +30,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   String? _selectedJobId; // null = all jobs
   int? _selectedBarIndex;
   bool _byEarningsForJobs = true;
-
   void _changePeriod(AnalyticsPeriodMode newMode) {
     if (_periodMode != newMode) {
       setState(() {
@@ -262,19 +262,23 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 1. Controls Header (Period Mode, Pager, Job Filter)
-              _buildFilterHeader(context, l, jobTypes),
+              PageEntranceAnimation(
+                delayFraction: 0.0,
+                child: _buildFilterHeader(context, l, jobTypes),
+              ),
               const SizedBox(height: AppTheme.spaceSm),
 
               // Animated Transition for Analytics Content
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 320),
-                switchInCurve: Curves.easeOutCubic,
-                switchOutCurve: Curves.easeInCubic,
-                child: KeyedSubtree(
-                  key: ValueKey(
-                    '$_periodMode-$_selectedJobId-${_selectedDate.year}-${_selectedDate.month}',
-                  ),
+              PageEntranceAnimation(
+                delayFraction: 0.2,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 320),
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeInCubic,
                   child: Column(
+                    key: ValueKey(
+                      '$_periodMode-$_selectedJobId-${_selectedDate.year}-${_selectedDate.month}',
+                    ),
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // 2. Summary KPI Cards
@@ -299,62 +303,64 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         const SizedBox(height: AppTheme.spaceMd),
                       ],
 
-                      // Responsive Chart Layout (Multi-column for wide screen, Stacked for mobile)
-                      if (isWideScreen) ...[
-                        // Row 1: Earnings Bar Chart & Cumulative Growth Line Chart
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(child: earningsBarCard),
-                            const SizedBox(width: AppTheme.spaceSm),
-                            Expanded(child: cumulativeLineCard),
-                          ],
-                        ),
-                        const SizedBox(height: AppTheme.spaceSm),
-
-                        // Row 2: Time of Day Breakdown & Shift Duration Distribution
-                        if (todCard != null || durationCard != null) ...[
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (todCard != null)
-                                Expanded(child: todCard)
-                              else
-                                const Spacer(),
-                              const SizedBox(width: AppTheme.spaceSm),
-                              if (durationCard != null)
-                                Expanded(child: durationCard)
-                              else
-                                const Spacer(),
-                            ],
-                          ),
-                          const SizedBox(height: AppTheme.spaceSm),
-                        ],
-
-                        // Row 3: Job Donut Card
-                        if (jobDonutCard != null) ...[
-                          jobDonutCard,
-                          const SizedBox(height: AppTheme.spaceSm),
-                        ],
-                      ] else ...[
-                        // Mobile Stacked Cards
-                        earningsBarCard,
-                        const SizedBox(height: AppTheme.spaceSm),
-                        cumulativeLineCard,
-                        const SizedBox(height: AppTheme.spaceSm),
-                        if (todCard != null) ...[
-                          todCard,
-                          const SizedBox(height: AppTheme.spaceSm),
-                        ],
-                        if (durationCard != null) ...[
-                          durationCard,
-                          const SizedBox(height: AppTheme.spaceSm),
-                        ],
-                        if (jobDonutCard != null) ...[
-                          jobDonutCard,
-                          const SizedBox(height: AppTheme.spaceSm),
-                        ],
-                      ],
+                      // Responsive Chart Layout
+                      isWideScreen
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(child: earningsBarCard),
+                                    const SizedBox(width: AppTheme.spaceSm),
+                                    Expanded(child: cumulativeLineCard),
+                                  ],
+                                ),
+                                const SizedBox(height: AppTheme.spaceSm),
+                                if (todCard != null || durationCard != null) ...[
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      if (todCard != null)
+                                        Expanded(child: todCard)
+                                      else
+                                        const Spacer(),
+                                      const SizedBox(width: AppTheme.spaceSm),
+                                      if (durationCard != null)
+                                        Expanded(child: durationCard)
+                                      else
+                                        const Spacer(),
+                                    ],
+                                  ),
+                                  const SizedBox(height: AppTheme.spaceSm),
+                                ],
+                                if (jobDonutCard != null) ...[
+                                  jobDonutCard,
+                                  const SizedBox(height: AppTheme.spaceSm),
+                                ],
+                              ],
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                earningsBarCard,
+                                const SizedBox(height: AppTheme.spaceSm),
+                                cumulativeLineCard,
+                                const SizedBox(height: AppTheme.spaceSm),
+                                if (todCard != null) ...[
+                                  todCard,
+                                  const SizedBox(height: AppTheme.spaceSm),
+                                ],
+                                if (durationCard != null) ...[
+                                  durationCard,
+                                  const SizedBox(height: AppTheme.spaceSm),
+                                ],
+                                if (jobDonutCard != null) ...[
+                                  jobDonutCard,
+                                  const SizedBox(height: AppTheme.spaceSm),
+                                ],
+                              ],
+                            ),
                     ],
                   ),
                 ),

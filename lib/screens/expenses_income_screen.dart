@@ -25,8 +25,14 @@ class ExpensesScreen extends StatefulWidget {
 }
 
 class _ExpensesScreenState extends State<ExpensesScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late TabController _tabController;
+  late AnimationController _entranceController;
+  late Animation<double> _fadeSummary;
+  late Animation<Offset> _slideSummary;
+  late Animation<double> _fadeContent;
+  late Animation<Offset> _slideContent;
+
   final List<TextEditingController> _autoExpenseAmountControllers = [];
   final List<TextEditingController> _autoExpenseDescControllers = [];
   final List<TextEditingController> _autoIncomeAmountControllers = [];
@@ -42,6 +48,43 @@ class _ExpensesScreenState extends State<ExpensesScreen>
         setState(() {});
       }
     });
+
+    _entranceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
+
+    _fadeSummary = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
+
+    _slideSummary =
+        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _entranceController,
+            curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
+          ),
+        );
+
+    _fadeContent = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.2, 0.8, curve: Curves.easeOut),
+      ),
+    );
+
+    _slideContent =
+        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _entranceController,
+            curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
+          ),
+        );
+
+    _entranceController.forward();
 
     final settings = context.read<SettingsProvider>();
     for (var e in settings.defaultAutomaticExpenses) {
@@ -78,6 +121,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
   @override
   void dispose() {
     _tabController.dispose();
+    _entranceController.dispose();
     for (var c in _autoExpenseAmountControllers) {
       c.dispose();
     }
@@ -570,41 +614,51 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                   ],
                 ),
               ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(
-                AppTheme.spaceSm,
-                AppTheme.spaceXs,
-                AppTheme.spaceSm,
-                AppTheme.spaceXs,
-              ),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardTheme.color,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(
-                  color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
-                ),
-              ),
-              child: TabBar(
-                controller: _tabController,
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                tabs: [
-                  Tab(
-                    icon: const Icon(Icons.money_off_rounded, size: 20),
-                    text: l.expenses_tab_expenses,
+            SlideTransition(
+              position: _slideSummary,
+              child: FadeTransition(
+                opacity: _fadeSummary,
+                child: Container(
+                  margin: const EdgeInsets.fromLTRB(
+                    AppTheme.spaceSm,
+                    AppTheme.spaceXs,
+                    AppTheme.spaceSm,
+                    AppTheme.spaceXs,
                   ),
-                  Tab(
-                    icon: const Icon(
-                      Icons.account_balance_wallet_rounded,
-                      size: 20,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardTheme.color,
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    border: Border.all(
+                      color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
                     ),
-                    text: l.expenses_tab_incomes,
                   ),
-                ],
+                  child: TabBar(
+                    controller: _tabController,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    dividerColor: Colors.transparent,
+                    tabs: [
+                      Tab(
+                        icon: const Icon(Icons.money_off_rounded, size: 20),
+                        text: l.expenses_tab_expenses,
+                      ),
+                      Tab(
+                        icon: const Icon(
+                          Icons.account_balance_wallet_rounded,
+                          size: 20,
+                        ),
+                        text: l.expenses_tab_incomes,
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
             Expanded(
-              child: TabBarView(
+              child: SlideTransition(
+                position: _slideContent,
+                child: FadeTransition(
+                  opacity: _fadeContent,
+                  child: TabBarView(
                 controller: _tabController,
                 children: [
                   // Tab 1: Expenses
@@ -871,6 +925,8 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                 ],
               ),
             ),
+          ),
+        ),
           ],
         ),
       ),

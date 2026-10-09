@@ -7,14 +7,13 @@ import 'package:shiftly/models/wage_entry.dart';
 import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
-import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/screens/profile_screen.dart';
-import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/services/notification_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
+import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:uuid/uuid.dart';
@@ -29,9 +28,6 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   late TextEditingController _paidController;
   late TextEditingController _unpaidController;
-
-  bool _isRestoring = false;
-  bool _isBackingUp = false;
 
   @override
   void initState() {
@@ -289,450 +285,63 @@ class _SettingsScreenState extends State<SettingsScreen> {
             120, // Increased for ad space and system navigation
           ),
           children: [
-            if (auth.isLoggedIn) ...[
-              _buildSectionHeader(context, l.settings_section_account),
-              const SizedBox(height: AppTheme.spaceXs),
-              Card(
-                child: Column(
-                  children: [
-                    ListTile(
+            PageEntranceAnimation(
+              delayFraction: 0.0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader(context, l.side_menu_profile),
+                  const SizedBox(height: AppTheme.spaceXs),
+                  Card(
+                    child: ListTile(
                       leading: CircleAvatar(
                         backgroundColor: AppTheme.primary,
-                        child: Text(
-                          (auth.userName?.isNotEmpty == true
-                                  ? auth.userName![0]
-                                  : (auth.userEmail?.isNotEmpty == true
-                                        ? auth.userEmail![0]
-                                        : 'U'))
-                              .toUpperCase(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      title: Text(
-                        auth.userName ?? l.settings_user_name,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(auth.userEmail ?? ''),
-                      trailing: TextButton.icon(
-                        onPressed: () => Navigator.push(
-                          context,
-                          AppPageRoute.slideHorizontal(const ProfileScreen()),
-                        ),
-                        icon: const Icon(Icons.edit_outlined, size: 16),
-                        label: Text(l.settings_user_edit_title),
-                      ),
-                    ),
-                    const Divider(height: 1, indent: 16, endIndent: 16),
-                    ListTile(
-                      title: Text(
-                        l.settings_logout_title,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(l.settings_logout_subtitle),
-                      leading: const Icon(
-                        Icons.logout_rounded,
-                        color: AppTheme.primaryDark,
-                      ),
-                      onTap: () async {
-                        final confirmed = await UIUtils.showConfirmDialog(
-                          context: context,
-                          title: l.settings_logout_dialog_title,
-                          content: l.settings_logout_confirm_content,
-                          confirmLabel: l.settings_logout_confirm_button,
-                          isDestructive: true,
-                        );
-
-                        if (confirmed == true && context.mounted) {
-                          await context.read<AuthProvider>().logout();
-                          if (context.mounted) {
-                            UIUtils.showSnackBar(
-                              context,
-                              l.settings_logout_success,
-                            );
-                          }
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppTheme.spaceLg),
-            ] else ...[
-              _buildSectionHeader(context, l.settings_section_account),
-              const SizedBox(height: AppTheme.spaceXs),
-              Card(
-                child: ListTile(
-                  leading: const Icon(
-                    Icons.person_add_rounded,
-                    color: AppTheme.primary,
-                  ),
-                  title: Text(l.settings_byos_login_shiftly),
-                  subtitle: Text(l.settings_byos_login_shiftly_sub),
-                  trailing: const Icon(Icons.chevron_right_rounded),
-                  onTap: () => Navigator.push(
-                    context,
-                    AppPageRoute.slideUp(const AuthScreen()),
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppTheme.spaceLg),
-            ],
-            _buildSectionHeader(context, l.settings_byos_title),
-            const SizedBox(height: AppTheme.spaceXs),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppTheme.spaceSm),
-                child: Column(
-                  children: [
-                    if (auth.isByosConnected) ...[
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: const Icon(
-                          Icons.cloud_done_rounded,
-                          color: Colors.green,
-                        ),
-                        title: Text(l.settings_byos_connected),
-                        subtitle: Text(auth.byosEmail ?? ''),
-                        trailing: TextButton(
-                          onPressed: () =>
-                              context.read<AuthProvider>().disconnectBYOS(),
-                          child: Text(l.settings_byos_disconnect),
-                        ),
-                      ),
-                      SwitchListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(
-                          l.settings_byos_auto_sync,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        subtitle: Text(
-                          l.settings_byos_auto_sync_sub,
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                        value: settings.autoSyncEnabled,
-                        onChanged: (val) => settings.setAutoSyncEnabled(val),
-                      ),
-                      if (context.watch<ShiftProvider>().lastBackupTime != null)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: const BoxDecoration(
-                                  color: Colors.green,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                l.settings_byos_last_backup.replaceFirst(
-                                  '[[time]]',
-                                  DateFormat('dd/MM/yyyy HH:mm:ss').format(
-                                    context
-                                        .read<ShiftProvider>()
-                                        .lastBackupTime!,
-                                  ),
-                                ),
+                        child: auth.isLoggedIn
+                            ? Text(
+                                (auth.userName?.isNotEmpty == true
+                                        ? auth.userName![0]
+                                        : (auth.userEmail?.isNotEmpty == true
+                                              ? auth.userEmail![0]
+                                              : 'U'))
+                                    .toUpperCase(),
                                 style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
                                 ),
+                              )
+                            : const Icon(
+                                Icons.person_outline_rounded,
+                                color: Colors.white,
                               ),
-                            ],
-                          ),
-                        ),
-                      Row(
-                        children: [
-                          TextButton.icon(
-                            onPressed: _isBackingUp
-                                ? null
-                                : () async {
-                                    setState(() => _isBackingUp = true);
-                                    try {
-                                      final provider = context
-                                          .read<ShiftProvider>();
-                                      final success = await provider
-                                          .manualBackup();
-                                      if (context.mounted) {
-                                        if (success) {
-                                          UIUtils.showSnackBar(
-                                            context,
-                                            l.common_success,
-                                          );
-                                        } else {
-                                          UIUtils.showSnackBar(
-                                            context,
-                                            l.common_error,
-                                            isError: true,
-                                          );
-                                        }
-                                      }
-                                    } finally {
-                                      if (context.mounted) {
-                                        setState(() => _isBackingUp = false);
-                                      }
-                                    }
-                                  },
-                            icon: _isBackingUp
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Icon(
-                                    Icons.cloud_upload_outlined,
-                                    size: 16,
-                                  ),
-                            label: Text(
-                              l.settings_byos_backup_now,
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          TextButton.icon(
-                            onPressed: _isRestoring
-                                ? null
-                                : () async {
-                                    final confirmed = await UIUtils.showConfirmDialog(
-                                      context: context,
-                                      title:
-                                          l.settings_byos_restore_dialog_title,
-                                      content: l
-                                          .settings_byos_restore_dialog_content,
-                                      confirmLabel:
-                                          l.settings_byos_restore_confirm,
-                                      cancelLabel:
-                                          l.settings_byos_restore_cancel,
-                                    );
-                                    if (confirmed == true && context.mounted) {
-                                      setState(() => _isRestoring = true);
-                                      try {
-                                        final results = await context
-                                            .read<ShiftProvider>()
-                                            .restoreFromBYOS();
-                                        if (context.mounted) {
-                                          if (results['shifts']! > 0 ||
-                                              results['jobs']! > 0 ||
-                                              results['expenses']! > 0) {
-                                            UIUtils.showSnackBar(
-                                              context,
-                                              l.settings_restore_success
-                                                  .replaceFirst(
-                                                    '[[shifts]]',
-                                                    results['shifts']
-                                                        .toString(),
-                                                  )
-                                                  .replaceFirst(
-                                                    '[[jobs]]',
-                                                    results['jobs'].toString(),
-                                                  ),
-                                            );
-                                          } else {
-                                            UIUtils.showSnackBar(
-                                              context,
-                                              l.settings_restore_no_data,
-                                              isError: true,
-                                            );
-                                          }
-                                        }
-                                      } finally {
-                                        if (context.mounted) {
-                                          setState(() => _isRestoring = false);
-                                        }
-                                      }
-                                    }
-                                  },
-                            icon: _isRestoring
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Icon(
-                                    Icons.cloud_download_outlined,
-                                    size: 16,
-                                  ),
-                            label: Text(
-                              l.settings_byos_restore_confirm,
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ] else ...[
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: const Icon(
-                          Icons.storage_rounded,
-                          color: Colors.orange,
-                        ),
-                        title: Text(l.settings_byos_method_title),
-                        subtitle: Text(l.settings_byos_method_sub),
-                        trailing: ElevatedButton(
-                          onPressed: () async {
-                            await auth.connectBYOS();
-                            if (context.mounted && auth.isByosConnected) {
-                              final confirmed = await UIUtils.showConfirmDialog(
-                                context: context,
-                                title: l.settings_byos_restore_dialog_title,
-                                content: l.settings_byos_restore_dialog_content,
-                                confirmLabel: l.settings_byos_restore_confirm,
-                                cancelLabel: l.settings_byos_restore_cancel,
-                              );
-                              if (confirmed == true && context.mounted) {
-                                final results = await context
-                                    .read<ShiftProvider>()
-                                    .restoreFromBYOS();
-                                if (context.mounted) {
-                                  if (results['shifts']! > 0 ||
-                                      results['jobs']! > 0 ||
-                                      results['expenses']! > 0) {
-                                    UIUtils.showSnackBar(
-                                      context,
-                                      l.settings_restore_success
-                                          .replaceFirst(
-                                            '[[shifts]]',
-                                            results['shifts'].toString(),
-                                          )
-                                          .replaceFirst(
-                                            '[[jobs]]',
-                                            results['jobs'].toString(),
-                                          ),
-                                    );
-                                  } else {
-                                    UIUtils.showSnackBar(
-                                      context,
-                                      l.settings_restore_no_data,
-                                      isError: true,
-                                    );
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          child: Text(
-                            l.settings_byos_disconnect.replaceFirst(
-                              'נתק',
-                              'חבר',
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                    // Saved stats summary in BYOS / settings
-                    Builder(
-                      builder: (context) {
-                        final sp = context.watch<ShiftProvider>();
-                        final shiftsCount = sp.shifts.length;
-                        final jobsCount = sp.jobTypes.length;
-                        final expensesCount = sp.expenses.length;
-                        final incomesCount = sp.incomes.length;
-                        final descriptionsCount = sp.shifts
-                            .where(
-                              (s) =>
-                                  s.description != null &&
-                                  s.description!.trim().isNotEmpty,
-                            )
-                            .length;
-
-                        final items = <Widget>[];
-                        if (shiftsCount > 0) {
-                          items.add(
-                            _buildStatItem(
-                              context,
-                              l.profile_shifts_count,
-                              '$shiftsCount',
-                            ),
-                          );
-                        }
-                        if (jobsCount > 0) {
-                          items.add(
-                            _buildStatItem(
-                              context,
-                              l.profile_jobs_count,
-                              '$jobsCount',
-                            ),
-                          );
-                        }
-                        if (expensesCount > 0) {
-                          items.add(
-                            _buildStatItem(
-                              context,
-                              l.profile_expenses_count,
-                              '$expensesCount',
-                            ),
-                          );
-                        }
-                        if (incomesCount > 0) {
-                          items.add(
-                            _buildStatItem(
-                              context,
-                              l.profile_incomes_count,
-                              '$incomesCount',
-                            ),
-                          );
-                        }
-                        if (descriptionsCount > 0) {
-                          items.add(
-                            _buildStatItem(
-                              context,
-                              l.shift_descriptions_title,
-                              '$descriptionsCount',
-                            ),
-                          );
-                        }
-
-                        if (items.isEmpty) return const SizedBox.shrink();
-
-                        return Column(
-                          children: [
-                            const Divider(height: 24),
-                            Wrap(
-                              alignment: WrapAlignment.spaceAround,
-                              spacing: 16,
-                              runSpacing: 12,
-                              children: items,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                    const Divider(height: 24),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: const Icon(
-                        Icons.delete_outline_rounded,
-                        color: AppTheme.expense,
                       ),
                       title: Text(
-                        l.settings_byos_delete_title,
-                        style: const TextStyle(
-                          color: AppTheme.expense,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
+                        auth.isLoggedIn
+                            ? (auth.userName ?? l.settings_user_name)
+                            : l.side_menu_profile,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(
-                        l.settings_byos_delete_sub,
-                        style: const TextStyle(fontSize: 12),
+                        auth.isLoggedIn
+                            ? (auth.userEmail ?? '')
+                            : l.settings_byos_login_hint,
                       ),
-                      onTap: () => _handleDeleteBYOS(context),
+                      trailing: const Icon(Icons.chevron_right_rounded),
+                      onTap: () => Navigator.push(
+                        context,
+                        AppPageRoute.slideHorizontal(const ProfileScreen()),
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: AppTheme.spaceLg),
-            _buildSectionHeader(context, l.settings_section_app),
+            PageEntranceAnimation(
+              delayFraction: 0.15,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader(context, l.settings_section_app),
             const SizedBox(height: AppTheme.spaceXs),
             Card(
               child: Column(
@@ -1051,106 +660,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () => _handleFactoryReset(context),
               ),
             ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
     );
-  }
-
-  Widget _buildStatItem(BuildContext context, String label, String value) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppTheme.primary,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Theme.of(
-              context,
-            ).colorScheme.onSurface.withValues(alpha: 0.6),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _handleDeleteBYOS(BuildContext context) async {
-    final l = AppLocalizations.of(context)!;
-    // Step 1: First Confirmation
-    final confirmed = await UIUtils.showConfirmDialog(
-      context: context,
-      title: l.settings_byos_delete_dialog_title,
-      content: l.settings_byos_delete_dialog_content,
-      confirmLabel: l.common_continue,
-      isDestructive: true,
-    );
-
-    if (confirmed != true) return;
-    if (!context.mounted) return;
-
-    // Step 2: Second Confirmation (Final Warning)
-    final finalConfirm = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Row(
-          children: [
-            const Icon(Icons.warning_amber_rounded, color: AppTheme.expense),
-            const SizedBox(width: 8),
-            Expanded(child: Text(l.settings_byos_delete_final_title)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(l.settings_byos_delete_final_content_1),
-            const SizedBox(height: 16),
-            Text(
-              l.settings_byos_delete_final_content_2,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(
-              l.common_cancel,
-              style: const TextStyle(color: Colors.grey),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.expense,
-              foregroundColor: Colors.white,
-            ),
-            child: Text(l.common_delete),
-          ),
-        ],
-      ),
-    );
-
-    if (finalConfirm != true) return;
-    if (!context.mounted) return;
-
-    final driveService = GoogleDriveService();
-    await driveService.deleteBackup();
-    if (context.mounted && context.read<AuthProvider>().isByosConnected) {
-      await context.read<AuthProvider>().disconnectBYOS();
-    }
-
-    if (!context.mounted) return;
-
-    UIUtils.showSnackBar(context, l.settings_byos_delete_success);
   }
 
   Future<void> _handleFactoryReset(BuildContext context) async {

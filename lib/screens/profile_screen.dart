@@ -3,10 +3,15 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/providers/auth_provider.dart';
+import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
+import 'package:shiftly/screens/auth_screen.dart';
+import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
+import 'package:shiftly/utils/app_page_route.dart';
+import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -16,65 +21,15 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animController;
-  late Animation<double> _userCardFade;
-  late Animation<Offset> _userCardSlide;
-  late Animation<double> _statsFade;
-  late Animation<Offset> _statsSlide;
-
-  @override
-  void initState() {
-    super.initState();
-    _animController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 700),
-    );
-
-    _userCardFade = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-      ),
-    );
-
-    _userCardSlide =
-        Tween<Offset>(begin: const Offset(0, 0.12), end: Offset.zero).animate(
-          CurvedAnimation(
-            parent: _animController,
-            curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
-          ),
-        );
-
-    _statsFade = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animController,
-        curve: const Interval(0.3, 0.9, curve: Curves.easeOut),
-      ),
-    );
-
-    _statsSlide = Tween<Offset>(begin: const Offset(0, 0.12), end: Offset.zero)
-        .animate(
-          CurvedAnimation(
-            parent: _animController,
-            curve: const Interval(0.3, 0.9, curve: Curves.easeOutCubic),
-          ),
-        );
-
-    _animController.forward();
-  }
-
-  @override
-  void dispose() {
-    _animController.dispose();
-    super.dispose();
-  }
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool _isRestoring = false;
+  bool _isBackingUp = false;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     final auth = context.watch<AuthProvider>();
+    final settings = context.watch<SettingsProvider>();
     final shiftProvider = context.watch<ShiftProvider>();
 
     final shiftsCount = shiftProvider.shifts.length;
@@ -143,144 +98,448 @@ class _ProfileScreenState extends State<ProfileScreen>
         child: ListView(
           padding: const EdgeInsets.all(AppTheme.spaceMd),
           children: [
-            // User Info Card
-            SlideTransition(
-              position: _userCardSlide,
-              child: FadeTransition(
-                opacity: _userCardFade,
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppTheme.spaceMd),
-                    child: Column(
-                      children: [
-                        const CircleAvatar(
-                          radius: 36,
-                          backgroundColor: AppTheme.primary,
-                          child: Icon(
-                            Icons.person_rounded,
-                            size: 40,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          auth.userName ?? l.settings_user_name,
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          auth.userEmail ?? '',
-                          style: TextStyle(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.7),
-                          ),
-                        ),
-                        if (auth.userCreatedAt != null) ...[
-                          const SizedBox(height: 6),
-                          Text(
-                            l.profile_created_at.replaceAll(
-                              '[[date]]',
-                              DateFormat('dd/MM/yyyy').format(
-                                DateTime.tryParse(auth.userCreatedAt!) ??
-                                    DateTime.now(),
-                              ),
-                            ),
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.6),
-                            ),
-                          ),
-                        ],
-                        if (auth.userBirthDate != null) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            l.profile_birth_date_display
-                                .replaceAll(
-                                  '[[date]]',
-                                  DateFormat('dd/MM/yyyy').format(
-                                    DateTime.tryParse(auth.userBirthDate!) ??
-                                        DateTime.now(),
-                                  ),
-                                )
-                                .replaceAll(
-                                  '[[age]]',
-                                  auth.userAge?.toString() ?? '',
-                                ),
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.6),
-                            ),
-                          ),
-                        ],
-                        const SizedBox(height: 16),
-                        ScalePress(
-                          onTap: () => _showEditProfileDialog(context),
-                          child: OutlinedButton.icon(
-                            onPressed: () => _showEditProfileDialog(context),
-                            icon: const Icon(Icons.edit_outlined, size: 18),
-                            label: Text(l.settings_user_edit_title),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            if (statRows.isNotEmpty) ...[
-              const SizedBox(height: AppTheme.spaceLg),
-              // Statistics Summary Card
-              SlideTransition(
-                position: _statsSlide,
-                child: FadeTransition(
-                  opacity: _statsFade,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l.profile_stats_title,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: AppTheme.spaceXs),
-                      Card(
+            // User Shiftly Account Card
+            PageEntranceAnimation(
+              delayFraction: 0.0,
+              child: auth.isLoggedIn
+                    ? Card(
                         child: Padding(
                           padding: const EdgeInsets.all(AppTheme.spaceMd),
                           child: Column(
                             children: [
-                              for (int i = 0; i < statRows.length; i++) ...[
-                                if (i > 0) const Divider(height: 24),
-                                statRows[i],
+                              CircleAvatar(
+                                radius: 36,
+                                backgroundColor: AppTheme.primary,
+                                child: Text(
+                                  (auth.userName?.isNotEmpty == true
+                                          ? auth.userName![0]
+                                          : (auth.userEmail?.isNotEmpty == true
+                                                ? auth.userEmail![0]
+                                                : 'U'))
+                                      .toUpperCase(),
+                                  style: const TextStyle(
+                                    fontSize: 28,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                auth.userName ?? l.settings_user_name,
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                auth.userEmail ?? '',
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.7),
+                                ),
+                              ),
+                              if (auth.userCreatedAt != null) ...[
+                                const SizedBox(height: 6),
+                                Text(
+                                  l.profile_created_at.replaceAll(
+                                    '[[date]]',
+                                    DateFormat('dd/MM/yyyy').format(
+                                      DateTime.tryParse(auth.userCreatedAt!) ??
+                                          DateTime.now(),
+                                    ),
+                                  ),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.6),
+                                  ),
+                                ),
                               ],
+                              if (auth.userBirthDate != null) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  l.profile_birth_date_display
+                                      .replaceAll(
+                                        '[[date]]',
+                                        DateFormat('dd/MM/yyyy').format(
+                                          DateTime.tryParse(auth.userBirthDate!) ??
+                                              DateTime.now(),
+                                        ),
+                                      )
+                                      .replaceAll(
+                                        '[[age]]',
+                                        auth.userAge?.toString() ?? '',
+                                      ),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.6),
+                                  ),
+                                ),
+                              ],
+                              const SizedBox(height: 16),
+                              Wrap(
+                                alignment: WrapAlignment.center,
+                                spacing: 12,
+                                runSpacing: 8,
+                                children: [
+                                  OutlinedButton.icon(
+                                    onPressed: () => _showEditProfileDialog(context),
+                                    icon: const Icon(Icons.edit_outlined, size: 18),
+                                    label: Text(l.settings_user_edit_title),
+                                  ),
+                                  OutlinedButton.icon(
+                                    onPressed: () => _handleLogout(context),
+                                    icon: const Icon(Icons.logout_rounded, size: 18),
+                                    label: Text(l.settings_logout_title),
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: AppTheme.primaryDark,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ),
+                      )
+                    : Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.person_add_rounded,
+                            color: AppTheme.primary,
+                            size: 28,
+                          ),
+                          title: Text(
+                            l.settings_byos_login_shiftly,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(l.settings_byos_login_shiftly_sub),
+                          trailing: const Icon(Icons.chevron_right_rounded),
+                          onTap: () => Navigator.push(
+                            context,
+                            AppPageRoute.slideUp(const AuthScreen()),
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+            ),
             const SizedBox(height: AppTheme.spaceLg),
-            SlideTransition(
-              position: _statsSlide,
-              child: FadeTransition(
-                opacity: _statsFade,
+            // BYOS Section
+            PageEntranceAnimation(
+              delayFraction: 0.15,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSectionHeader(context, l.settings_byos_title),
+                    const SizedBox(height: AppTheme.spaceXs),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppTheme.spaceSm),
+                        child: Column(
+                          children: [
+                            if (auth.isByosConnected) ...[
+                              ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(
+                                  Icons.cloud_done_rounded,
+                                  color: Colors.green,
+                                ),
+                                title: Text(l.settings_byos_connected),
+                                subtitle: Text(auth.byosEmail ?? ''),
+                                trailing: TextButton(
+                                  onPressed: () =>
+                                      context.read<AuthProvider>().disconnectBYOS(),
+                                  child: Text(l.settings_byos_disconnect),
+                                ),
+                              ),
+                              SwitchListTile(
+                                contentPadding: EdgeInsets.zero,
+                                title: Text(
+                                  l.settings_byos_auto_sync,
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                                subtitle: Text(
+                                  l.settings_byos_auto_sync_sub,
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                                value: settings.autoSyncEnabled,
+                                onChanged: (val) => settings.setAutoSyncEnabled(val),
+                              ),
+                              if (shiftProvider.lastBackupTime != null)
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 8,
+                                        height: 8,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.green,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        l.settings_byos_last_backup.replaceFirst(
+                                          '[[time]]',
+                                          DateFormat('dd/MM/yyyy HH:mm:ss').format(
+                                            shiftProvider.lastBackupTime!,
+                                          ),
+                                        ),
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              Row(
+                                children: [
+                                  TextButton.icon(
+                                    onPressed: _isBackingUp
+                                        ? null
+                                        : () async {
+                                            setState(() => _isBackingUp = true);
+                                            try {
+                                              final success = await shiftProvider
+                                                  .manualBackup();
+                                              if (context.mounted) {
+                                                if (success) {
+                                                  UIUtils.showSnackBar(
+                                                    context,
+                                                    l.common_success,
+                                                  );
+                                                } else {
+                                                  UIUtils.showSnackBar(
+                                                    context,
+                                                    l.common_error,
+                                                    isError: true,
+                                                  );
+                                                }
+                                              }
+                                            } finally {
+                                              if (context.mounted) {
+                                                setState(() => _isBackingUp = false);
+                                              }
+                                            }
+                                          },
+                                    icon: _isBackingUp
+                                        ? const SizedBox(
+                                            width: 16,
+                                            height: 16,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                        : const Icon(
+                                            Icons.cloud_upload_outlined,
+                                            size: 16,
+                                          ),
+                                    label: Text(
+                                      l.settings_byos_backup_now,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  TextButton.icon(
+                                    onPressed: _isRestoring
+                                        ? null
+                                        : () async {
+                                            final confirmed =
+                                                await UIUtils.showConfirmDialog(
+                                              context: context,
+                                              title: l.settings_byos_restore_dialog_title,
+                                              content:
+                                                  l.settings_byos_restore_dialog_content,
+                                              confirmLabel:
+                                                  l.settings_byos_restore_confirm,
+                                              cancelLabel:
+                                                  l.settings_byos_restore_cancel,
+                                            );
+                                            if (confirmed == true && context.mounted) {
+                                              setState(() => _isRestoring = true);
+                                              try {
+                                                final results =
+                                                    await shiftProvider.restoreFromBYOS();
+                                                if (context.mounted) {
+                                                  if (results['shifts']! > 0 ||
+                                                      results['jobs']! > 0 ||
+                                                      results['expenses']! > 0) {
+                                                    UIUtils.showSnackBar(
+                                                      context,
+                                                      l.settings_restore_success
+                                                          .replaceFirst(
+                                                            '[[shifts]]',
+                                                            results['shifts'].toString(),
+                                                          )
+                                                          .replaceFirst(
+                                                            '[[jobs]]',
+                                                            results['jobs'].toString(),
+                                                          ),
+                                                    );
+                                                  } else {
+                                                    UIUtils.showSnackBar(
+                                                      context,
+                                                      l.settings_restore_no_data,
+                                                      isError: true,
+                                                    );
+                                                  }
+                                                }
+                                              } finally {
+                                                if (context.mounted) {
+                                                  setState(() => _isRestoring = false);
+                                                }
+                                              }
+                                            }
+                                          },
+                                    icon: _isRestoring
+                                        ? const SizedBox(
+                                            width: 16,
+                                            height: 16,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                        : const Icon(
+                                            Icons.cloud_download_outlined,
+                                            size: 16,
+                                          ),
+                                    label: Text(
+                                      l.settings_byos_restore_confirm,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ] else ...[
+                              ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(
+                                  Icons.storage_rounded,
+                                  color: Colors.orange,
+                                ),
+                                title: Text(l.settings_byos_method_title),
+                                subtitle: Text(l.settings_byos_method_sub),
+                                trailing: ElevatedButton(
+                                  onPressed: () async {
+                                    await auth.connectBYOS();
+                                    if (context.mounted && auth.isByosConnected) {
+                                      final confirmed = await UIUtils.showConfirmDialog(
+                                        context: context,
+                                        title: l.settings_byos_restore_dialog_title,
+                                        content: l.settings_byos_restore_dialog_content,
+                                        confirmLabel: l.settings_byos_restore_confirm,
+                                        cancelLabel: l.settings_byos_restore_cancel,
+                                      );
+                                      if (confirmed == true && context.mounted) {
+                                        final results =
+                                            await shiftProvider.restoreFromBYOS();
+                                        if (context.mounted) {
+                                          if (results['shifts']! > 0 ||
+                                              results['jobs']! > 0 ||
+                                              results['expenses']! > 0) {
+                                            UIUtils.showSnackBar(
+                                              context,
+                                              l.settings_restore_success
+                                                  .replaceFirst(
+                                                    '[[shifts]]',
+                                                    results['shifts'].toString(),
+                                                  )
+                                                  .replaceFirst(
+                                                    '[[jobs]]',
+                                                    results['jobs'].toString(),
+                                                  ),
+                                            );
+                                          } else {
+                                            UIUtils.showSnackBar(
+                                              context,
+                                              l.settings_restore_no_data,
+                                              isError: true,
+                                            );
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  child: Text(
+                                    l.settings_byos_disconnect.replaceFirst('נתק', 'חבר'),
+                                  ),
+                                ),
+                              ),
+                            ],
+                            const Divider(height: 24),
+                            ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              leading: const Icon(
+                                Icons.delete_outline_rounded,
+                                color: AppTheme.expense,
+                              ),
+                              title: Text(
+                                l.settings_byos_delete_title,
+                                style: const TextStyle(
+                                  color: AppTheme.expense,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              subtitle: Text(
+                                l.settings_byos_delete_sub,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                              onTap: () => _handleDeleteBYOS(context),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+            ),
+            if (statRows.isNotEmpty) ...[
+              const SizedBox(height: AppTheme.spaceLg),
+              // Statistics Summary Card
+              PageEntranceAnimation(
+                delayFraction: 0.25,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      l.settings_section_danger,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                      l.profile_stats_title,
+                      style: Theme.of(context).textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: AppTheme.spaceXs),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppTheme.spaceMd),
+                        child: Column(
+                          children: [
+                            for (int i = 0; i < statRows.length; i++) ...[
+                              if (i > 0) const Divider(height: 24),
+                              statRows[i],
+                            ],
+                          ],
+                        ),
                       ),
                     ),
+                  ],
+                ),
+              ),
+            ],
+            if (auth.isLoggedIn) ...[
+              const SizedBox(height: AppTheme.spaceLg),
+              PageEntranceAnimation(
+                delayFraction: 0.35,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSectionHeader(context, l.settings_section_danger),
                     const SizedBox(height: AppTheme.spaceXs),
                     Card(
                       child: ScalePress(
@@ -305,11 +564,113 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ],
                 ),
               ),
-            ),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildSectionHeader(BuildContext context, String title) {
+    return Text(
+      title,
+      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.2,
+          ),
+    );
+  }
+
+  Future<void> _handleLogout(BuildContext context) async {
+    final l = AppLocalizations.of(context)!;
+    final confirmed = await UIUtils.showConfirmDialog(
+      context: context,
+      title: l.settings_logout_dialog_title,
+      content: l.settings_logout_confirm_content,
+      confirmLabel: l.settings_logout_confirm_button,
+      isDestructive: true,
+    );
+
+    if (confirmed == true && context.mounted) {
+      await context.read<AuthProvider>().logout();
+      if (context.mounted) {
+        UIUtils.showSnackBar(
+          context,
+          l.settings_logout_success,
+        );
+      }
+    }
+  }
+
+  Future<void> _handleDeleteBYOS(BuildContext context) async {
+    final l = AppLocalizations.of(context)!;
+    // Step 1: First Confirmation
+    final confirmed = await UIUtils.showConfirmDialog(
+      context: context,
+      title: l.settings_byos_delete_dialog_title,
+      content: l.settings_byos_delete_dialog_content,
+      confirmLabel: l.common_continue,
+      isDestructive: true,
+    );
+
+    if (confirmed != true) return;
+    if (!context.mounted) return;
+
+    // Step 2: Second Confirmation (Final Warning)
+    final finalConfirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: AppTheme.expense),
+            const SizedBox(width: 8),
+            Expanded(child: Text(l.settings_byos_delete_final_title)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l.settings_byos_delete_final_content_1),
+            const SizedBox(height: 16),
+            Text(
+              l.settings_byos_delete_final_content_2,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(
+              l.common_cancel,
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.expense,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(l.common_delete),
+          ),
+        ],
+      ),
+    );
+
+    if (finalConfirm != true) return;
+    if (!context.mounted) return;
+
+    final driveService = GoogleDriveService();
+    await driveService.deleteBackup();
+    if (context.mounted && context.read<AuthProvider>().isByosConnected) {
+      await context.read<AuthProvider>().disconnectBYOS();
+    }
+
+    if (!context.mounted) return;
+
+    UIUtils.showSnackBar(context, l.settings_byos_delete_success);
   }
 
   Future<void> _handleDeleteAccount(BuildContext context) async {

@@ -12,6 +12,7 @@ import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
+import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/app_icon.dart';
 import 'package:uuid/uuid.dart';
@@ -243,10 +244,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _buildPage({required Widget child}) {
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
-        child: child,
+    return PageEntranceAnimation(
+      key: ValueKey(_currentPage),
+      child: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
+          child: child,
+        ),
       ),
     );
   }

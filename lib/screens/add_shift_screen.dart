@@ -14,6 +14,7 @@ import 'package:shiftly/services/shift_parser.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
+import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:uuid/uuid.dart';
 
@@ -707,16 +708,18 @@ class _AddShiftScreenState extends State<AddShiftScreen>
               ),
       ),
       body: SafeArea(
-        child: isEditing
-            ? _buildManualForm(jobs)
-            : TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildTimerForm(jobs),
-                  _buildManualForm(jobs),
-                  _buildRawForm(jobs),
-                ],
-              ),
+        child: PageEntranceAnimation(
+          child: isEditing
+              ? _buildManualForm(jobs)
+              : TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildTimerForm(jobs),
+                    _buildManualForm(jobs),
+                    _buildRawForm(jobs),
+                  ],
+                ),
+        ),
       ),
     );
   }
