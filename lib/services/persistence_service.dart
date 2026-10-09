@@ -74,6 +74,48 @@ class PersistenceService {
     await _migrateWageHistory();
   }
 
+  Future<void> clearUserData() async {
+    final settings = settingsBox;
+    final localeCode = settings.get('locale', defaultValue: 'he');
+
+    await shiftsBox.clear();
+    await jobTypesBox.clear();
+    await expensesBox.clear();
+
+    // Re-seed default job types
+    final jobBox = jobTypesBox;
+    final l = lookupAppLocalizations(Locale(localeCode));
+
+    double buffetRate = AppConstants.defaultHourlyRate;
+    double stewardRate = 37.20;
+    double unloadingRate = AppConstants.defaultHourlyRate;
+
+    final epoch = DateTime(2020, 1, 1);
+    final defaultJobs = [
+      JobType(
+        id: '1',
+        name: l.default_job_buffet,
+        hourlyRate: buffetRate,
+        wageHistory: [WageEntry(startDate: epoch, hourlyRate: buffetRate)],
+      ),
+      JobType(
+        id: '2',
+        name: l.default_job_steward,
+        hourlyRate: stewardRate,
+        wageHistory: [WageEntry(startDate: epoch, hourlyRate: stewardRate)],
+      ),
+      JobType(
+        id: '3',
+        name: l.default_job_unloading,
+        hourlyRate: unloadingRate,
+        wageHistory: [WageEntry(startDate: epoch, hourlyRate: unloadingRate)],
+      ),
+    ];
+    for (var job in defaultJobs) {
+      await jobBox.put(job.id, job);
+    }
+  }
+
   Future<void> deleteAllData() async {
     final settings = settingsBox;
     final localeCode = settings.get('locale', defaultValue: 'he');

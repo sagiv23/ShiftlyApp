@@ -754,6 +754,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     DateTime? editBirthDate = auth.userBirthDate != null
         ? DateTime.tryParse(auth.userBirthDate!)
         : null;
+    bool obscureOld = true;
+    bool obscureNew = true;
 
     showDialog(
       context: context,
@@ -826,8 +828,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: l.profile_old_password,
                     hintText: '••••••••',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        obscureOld
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
+                      onPressed: () {
+                        setDialogState(() {
+                          obscureOld = !obscureOld;
+                        });
+                      },
+                    ),
                   ),
-                  obscureText: true,
+                  obscureText: obscureOld,
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -835,8 +849,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: l.profile_new_password,
                     hintText: '••••••••',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        obscureNew
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
+                      onPressed: () {
+                        setDialogState(() {
+                          obscureNew = !obscureNew;
+                        });
+                      },
+                    ),
                   ),
-                  obscureText: true,
+                  obscureText: obscureNew,
                 ),
               ],
             ),

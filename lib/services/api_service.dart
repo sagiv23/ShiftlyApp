@@ -7,6 +7,12 @@ class ApiService {
   // כתובת השרת בענן (Render)
   static const String _baseUrl = 'https://shiftly-server.onrender.com/api';
 
+  void _checkAuth(http.Response response) {
+    if (response.statusCode == 401 || response.statusCode == 403) {
+      throw Exception('unauthorized');
+    }
+  }
+
   Future<Map<String, dynamic>> login(String email, String password) async {
     final response = await http.post(
       Uri.parse('$_baseUrl/auth/login'),
@@ -14,10 +20,15 @@ class ApiService {
       body: jsonEncode({'email': email, 'password': password}),
     );
 
+    _checkAuth(response);
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception(jsonDecode(response.body)['error'] ?? 'Login failed');
+      throw Exception(
+        jsonDecode(response.body)['error'] ??
+            jsonDecode(response.body)['message'] ??
+            'Login failed',
+      );
     }
   }
 
@@ -33,7 +44,9 @@ class ApiService {
       'password': password,
     };
     if (birthDate != null) {
-      body['birthDate'] = birthDate.toIso8601String();
+      final dateStr = birthDate.toIso8601String();
+      body['birthDate'] = dateStr;
+      body['birth_date'] = dateStr;
     }
     final response = await http.post(
       Uri.parse('$_baseUrl/auth/register'),
@@ -41,11 +54,14 @@ class ApiService {
       body: jsonEncode(body),
     );
 
+    _checkAuth(response);
     if (response.statusCode == 201) {
       return jsonDecode(response.body);
     } else {
       throw Exception(
-        jsonDecode(response.body)['error'] ?? 'Registration failed',
+        jsonDecode(response.body)['error'] ??
+            jsonDecode(response.body)['message'] ??
+            'Registration failed',
       );
     }
   }
@@ -64,7 +80,9 @@ class ApiService {
       body['newPassword'] = newPassword;
     }
     if (birthDate != null) {
-      body['birthDate'] = birthDate.toIso8601String();
+      final dateStr = birthDate.toIso8601String();
+      body['birthDate'] = dateStr;
+      body['birth_date'] = dateStr;
     }
     final response = await http.put(
       Uri.parse('$_baseUrl/auth/profile'),
@@ -288,6 +306,7 @@ class ApiService {
       },
     );
 
+    _checkAuth(response);
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {

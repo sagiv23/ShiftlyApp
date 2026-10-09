@@ -1,16 +1,19 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:shiftly/main.dart';
 import 'package:shiftly/models/automatic_expense.dart';
 import 'package:shiftly/models/break_type.dart';
 import 'package:shiftly/models/expense.dart';
 import 'package:shiftly/models/job_type.dart';
 import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/models/shift_filter.dart';
+import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/services/notification_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
 import 'package:shiftly/utils/app_constants.dart';
+import 'package:shiftly/utils/app_page_route.dart';
 
 class ShiftProvider with ChangeNotifier {
   final PersistenceService _persistence;
@@ -34,12 +37,24 @@ class ShiftProvider with ChangeNotifier {
 
   ShiftProvider(this._persistence);
 
+  bool _hasSyncedOnStartup = false;
+
   void updateAuthStatus(String? token, bool isBYOS, bool autoSyncEnabled) {
+    final bool tokenChanged = _authToken != token;
     _authToken = token;
     _isBYOS = isBYOS;
     _autoSyncEnabled = autoSyncEnabled;
-    // Don't trigger auto-backup here to avoid overwriting remote data
-    // before the user has a chance to restore.
+
+    if (token == null) {
+      _hasSyncedOnStartup = false;
+      _invalidateCache();
+      return;
+    }
+
+    if (!_isBYOS && (!_hasSyncedOnStartup || tokenChanged)) {
+      _hasSyncedOnStartup = true;
+      Future.microtask(() => syncWithServer());
+    }
   }
 
   DateTime? _lastBackupTime;
@@ -289,6 +304,15 @@ class ShiftProvider with ChangeNotifier {
       _invalidateCache();
       notifyListeners();
     } catch (e) {
+      if (e.toString().contains('unauthorized')) {
+        navigatorKey.currentState?.pushAndRemoveUntil(
+          AppPageRoute.fadeScale(
+            const AuthScreen(),
+            duration: const Duration(milliseconds: 700),
+          ),
+          (route) => false,
+        );
+      }
       debugPrint('Sync failed: $e');
     }
   }

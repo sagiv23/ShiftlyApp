@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shiftly/main.dart';
+import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
+import 'package:shiftly/utils/app_page_route.dart';
 
 class AuthProvider with ChangeNotifier {
   final PersistenceService _persistence;
@@ -79,6 +82,15 @@ class AuthProvider with ChangeNotifier {
         await _saveToPersistence();
       } catch (e) {
         debugPrint('Failed to sync profile on load: $e');
+        final errStr = e.toString().toLowerCase();
+        if (errStr.contains('unauthorized') ||
+            errStr.contains('401') ||
+            errStr.contains('403') ||
+            errStr.contains('not found') ||
+            errStr.contains('user')) {
+          await logout();
+          return;
+        }
       }
     }
 
@@ -267,6 +279,7 @@ class AuthProvider with ChangeNotifier {
     _token = null;
     _userCreatedAt = null;
     _userBirthDate = null;
+    await _persistence.clearUserData();
     final box = _persistence.settingsBox;
     await box.put('isLoggedIn', false);
     await box.delete('userEmail');
@@ -275,6 +288,14 @@ class AuthProvider with ChangeNotifier {
     await box.delete('userBirthDate');
     await _secureStorage.delete(key: 'token');
     notifyListeners();
+
+    navigatorKey.currentState?.pushAndRemoveUntil(
+      AppPageRoute.fadeScale(
+        const AuthScreen(),
+        duration: const Duration(milliseconds: 700),
+      ),
+      (route) => false,
+    );
   }
 
   Future<void> deleteAccount() async {

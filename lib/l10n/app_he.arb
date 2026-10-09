@@ -300,6 +300,8 @@
   "auth_birth_date_label": "תאריך לידה",
   "auth_error_underage": "על המשתמש להיות מעל גיל 12",
   "auth_error_birth_date_empty": "נא לבחור תאריך לידה",
+  "auth_error_email_exists": "כתובת אימייל זו כבר תפוסה",
+  "auth_error_user_not_found": "לא נמצא משתמש קיים או שהסיסמה שגויה",
   "home_welcome_back": "שלום, [[name]]",
   "settings_user_details_title": "פרטי משתמש",
   "settings_user_name": "שם",

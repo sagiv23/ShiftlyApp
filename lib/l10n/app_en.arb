@@ -300,6 +300,8 @@
   "auth_birth_date_label": "Date of Birth",
   "auth_error_underage": "User must be at least 12 years old",
   "auth_error_birth_date_empty": "Please select your date of birth",
+  "auth_error_email_exists": "This email address is already taken",
+  "auth_error_user_not_found": "User not found or incorrect password",
   "home_welcome_back": "Hello, [[name]]",
   "settings_user_details_title": "User Details",
   "settings_user_name": "Name",

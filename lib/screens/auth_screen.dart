@@ -28,6 +28,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   AuthMode _authMode = AuthMode.login;
   bool _isLoading = false;
+  bool _obscurePassword = true;
 
   late AnimationController _entranceController;
   late AnimationController _glowController;
@@ -174,7 +175,23 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     } catch (e) {
       if (mounted) {
         final l = AppLocalizations.of(context)!;
-        UIUtils.showSnackBar(context, l.auth_error_generic, isError: true);
+        final errStr = e.toString().toLowerCase();
+        String message = l.auth_error_generic;
+        if (errStr.contains('email') &&
+            (errStr.contains('exist') ||
+                errStr.contains('taken') ||
+                errStr.contains('already') ||
+                errStr.contains('use'))) {
+          message = l.auth_error_email_exists;
+        } else if (errStr.contains('not found') ||
+            errStr.contains('user') ||
+            errStr.contains('credential') ||
+            errStr.contains('incorrect') ||
+            errStr.contains('invalid') ||
+            errStr.contains('password')) {
+          message = l.auth_error_user_not_found;
+        }
+        UIUtils.showSnackBar(context, message, isError: true);
       }
     } finally {
       if (mounted) {
@@ -375,11 +392,24 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                       TextFormField(
                         controller: _passwordController,
                         style: const TextStyle(color: Colors.white),
-                        obscureText: true,
+                        obscureText: _obscurePassword,
                         decoration: _buildInputDecoration(
                           label: l.auth_password_label,
                           hint: '••••••••',
                           icon: Icons.lock_outline,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: Colors.white70,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
                         ),
                         validator: (value) {
                           if (value == null || value.length < 6) {
@@ -455,6 +485,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     required String label,
     required IconData icon,
     String? hint,
+    Widget? suffixIcon,
   }) {
     return InputDecoration(
       labelText: label,
@@ -462,6 +493,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       hintStyle: const TextStyle(color: Colors.white38),
       labelStyle: const TextStyle(color: Colors.white70),
       prefixIcon: Icon(icon, color: Colors.white70),
+      suffixIcon: suffixIcon,
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: Colors.white24),

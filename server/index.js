@@ -128,10 +128,11 @@ const authenticateToken = (req, res, next) => {
 
 // Register Route
 app.post('/api/auth/register', async (req, res) => {
-  const { name, email, password, birthDate } = req.body;
+  const { name, email, password, birthDate, birth_date } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const parsedBirthDate = birthDate ? new Date(birthDate).toISOString().split('T')[0] : null;
+    const bDate = birthDate || birth_date;
+    const parsedBirthDate = bDate ? new Date(bDate).toISOString().split('T')[0] : null;
     const result = await pool.query(
       'INSERT INTO users (name, email, password, birth_date) VALUES ($1, $2, $3, $4) RETURNING id, name, email, birth_date, created_at',
       [name, email, hashedPassword, parsedBirthDate]
@@ -188,9 +189,10 @@ app.get('/api/auth/profile', authenticateToken, async (req, res) => {
 
 // Update User Profile
 app.put('/api/auth/profile', authenticateToken, async (req, res) => {
-  const { name, email, birthDate } = req.body;
+  const { name, email, birthDate, birth_date } = req.body;
   try {
-    const parsedBirthDate = birthDate !== undefined ? (birthDate ? new Date(birthDate).toISOString().split('T')[0] : null) : undefined;
+    const bDate = birthDate !== undefined ? birthDate : birth_date;
+    const parsedBirthDate = bDate !== undefined ? (bDate ? new Date(bDate).toISOString().split('T')[0] : null) : undefined;
     let query, params;
     if (parsedBirthDate !== undefined) {
       query = 'UPDATE users SET name = $1, email = $2, birth_date = $3 WHERE id = $4 RETURNING id, name, email, birth_date, created_at';
