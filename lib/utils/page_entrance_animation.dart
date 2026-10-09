@@ -28,10 +28,7 @@ class _PageEntranceAnimationState extends State<PageEntranceAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     final start = widget.delayFraction.clamp(0.0, 0.8);
     final curve = CurvedAnimation(
@@ -58,10 +55,7 @@ class _PageEntranceAnimationState extends State<PageEntranceAnimation>
   Widget build(BuildContext context) {
     return SlideTransition(
       position: _slideAnimation,
-      child: FadeTransition(
-        opacity: _fadeAnimation,
-        child: widget.child,
-      ),
+      child: FadeTransition(opacity: _fadeAnimation, child: widget.child),
     );
   }
 }

@@ -1,17 +1,17 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
-import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
-import 'package:shiftly/services/api_service.dart';
+import 'package:shiftly/screens/main_screen.dart';
+import 'package:shiftly/screens/onboarding_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
+import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/app_icon.dart';
 
@@ -142,51 +142,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         settingsProvider.autoSyncEnabled,
       );
 
-      final remoteShifts = await ApiService().getShifts(authProvider.token!);
-      bool? keepLocal;
-
-      if (remoteShifts.isNotEmpty && shiftProvider.shifts.isNotEmpty) {
-        final overlapDetails = _findOverlappingDetails(
-          remoteShifts,
-          shiftProvider.shifts,
-          shiftProvider,
-          l,
-        );
-
-        if (mounted) {
-          final String dialogTitle;
-          final String dialogContent;
-          if (overlapDetails.isNotEmpty) {
-            dialogTitle = l.add_shift_overlap_title;
-            dialogContent =
-                '${l.auth_sync_dialog_content}\n\nנמצאו ${overlapDetails.length} משמרות בחפיפת שעות:\n${overlapDetails.take(5).join('\n')}${overlapDetails.length > 5 ? '\n...' : ''}';
-          } else {
-            dialogTitle = l.auth_sync_dialog_title;
-            dialogContent = l.auth_sync_dialog_content;
-          }
-
-          keepLocal = await showDialog<bool>(
-            context: context,
-            barrierDismissible: false,
-            builder: (ctx) => AlertDialog(
-              title: Text(dialogTitle),
-              content: SingleChildScrollView(child: Text(dialogContent)),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, false),
-                  child: Text(l.auth_sync_dialog_cloud),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  child: Text(l.auth_sync_dialog_local),
-                ),
-              ],
-            ),
-          );
-        }
-      }
-
-      await shiftProvider.syncWithServer(keepLocal: keepLocal);
+      await shiftProvider.syncWithServer();
 
       if (!mounted) return;
       UIUtils.showSnackBar(
@@ -196,7 +152,25 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             : l.auth_register_success,
       );
 
-      Navigator.pop(context);
+      final Widget nextScreen;
+      if (_authMode == AuthMode.register) {
+        await settingsProvider.setOnboardingCompleted(false);
+        nextScreen = const OnboardingScreen();
+      } else {
+        nextScreen = settingsProvider.hasCompletedOnboarding
+            ? const MainScreen()
+            : const OnboardingScreen();
+      }
+
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        AppPageRoute.fadeScale(
+          nextScreen,
+          duration: const Duration(milliseconds: 700),
+        ),
+        (route) => false,
+      );
     } catch (e) {
       if (mounted) {
         final l = AppLocalizations.of(context)!;
@@ -209,35 +183,6 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     }
   }
 
-  List<String> _findOverlappingDetails(
-    List<dynamic> remoteShifts,
-    List<Shift> localShifts,
-    ShiftProvider shiftProvider,
-    AppLocalizations l,
-  ) {
-    final details = <String>[];
-    for (var local in localShifts) {
-      for (var remote in remoteShifts) {
-        try {
-          final remoteStart = DateTime.parse(remote['start_time']);
-          final remoteEnd = DateTime.parse(remote['end_time']);
-          if (local.startTime.isBefore(remoteEnd) &&
-              local.endTime.isAfter(remoteStart)) {
-            final jobName =
-                shiftProvider.getJobTypeById(local.jobTypeId)?.name ??
-                l.add_shift_overlap_unknown_job;
-            final dateStr = DateFormat('dd/MM/yyyy').format(local.date);
-            final timeStr =
-                '${DateFormat('HH:mm').format(local.startTime)} - ${DateFormat('HH:mm').format(local.endTime)}';
-            details.add('• $jobName ($dateStr, $timeStr)');
-            break;
-          }
-        } catch (_) {}
-      }
-    }
-    return details;
-  }
-
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
@@ -248,10 +193,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
       ),
       body: Container(
         width: double.infinity,

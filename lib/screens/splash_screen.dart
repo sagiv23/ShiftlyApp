@@ -3,7 +3,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
+import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/providers/settings_provider.dart';
+import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/screens/main_screen.dart';
 import 'package:shiftly/screens/onboarding_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
@@ -120,9 +122,16 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
 
     final settings = context.read<SettingsProvider>();
-    final Widget nextScreen = settings.hasCompletedOnboarding
-        ? const MainScreen()
-        : const OnboardingScreen();
+    final auth = context.read<AuthProvider>();
+
+    final Widget nextScreen;
+    if (!auth.isLoggedIn) {
+      nextScreen = const AuthScreen();
+    } else if (settings.hasCompletedOnboarding) {
+      nextScreen = const MainScreen();
+    } else {
+      nextScreen = const OnboardingScreen();
+    }
 
     if (!mounted) return;
     Navigator.pushReplacement(

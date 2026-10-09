@@ -20,6 +20,18 @@ class ShiftProvider with ChangeNotifier {
   bool _isBYOS = false;
   bool _autoSyncEnabled = true;
 
+  List<Shift>? _cachedShifts;
+  List<Expense>? _cachedExpenses;
+  List<Expense>? _cachedIncomes;
+  List<JobType>? _cachedJobTypes;
+
+  void _invalidateCache() {
+    _cachedShifts = null;
+    _cachedExpenses = null;
+    _cachedIncomes = null;
+    _cachedJobTypes = null;
+  }
+
   ShiftProvider(this._persistence);
 
   void updateAuthStatus(String? token, bool isBYOS, bool autoSyncEnabled) {
@@ -133,6 +145,7 @@ class ShiftProvider with ChangeNotifier {
 
       debugPrint('Restore complete. Shifts: $shiftCount, Jobs: $jobCount');
       _lastBackupTime = DateTime.now();
+      _invalidateCache();
       notifyListeners();
       return {'shifts': shiftCount, 'jobs': jobCount, 'expenses': expCount};
     } catch (e) {
@@ -273,6 +286,7 @@ class ShiftProvider with ChangeNotifier {
         await _apiService.batchUpsertShifts(_authToken!, shiftItems);
       }
 
+      _invalidateCache();
       notifyListeners();
     } catch (e) {
       debugPrint('Sync failed: $e');
@@ -350,9 +364,12 @@ class ShiftProvider with ChangeNotifier {
   }
 
   // Shifts
-  List<Shift> get shifts =>
-      _persistence.shiftsBox.values.toList()
-        ..sort((a, b) => b.date.compareTo(a.date));
+  List<Shift> get shifts {
+    if (_cachedShifts != null) return _cachedShifts!;
+    _cachedShifts = _persistence.shiftsBox.values.toList()
+      ..sort((a, b) => b.date.compareTo(a.date));
+    return _cachedShifts!;
+  }
 
   /// Returns saved shifts whose actual time range intersects [start]–[end].
   /// Adjacent shifts (for example 08:00–12:00 and 12:00–16:00) are not
@@ -426,15 +443,27 @@ class ShiftProvider with ChangeNotifier {
   }
 
   // Expenses
-  List<Expense> get expenses =>
-      _persistence.expensesBox.values.where((e) => !e.isIncome).toList()
-        ..sort((a, b) => b.date.compareTo(a.date));
+  List<Expense> get expenses {
+    if (_cachedExpenses != null) return _cachedExpenses!;
+    _cachedExpenses =
+        _persistence.expensesBox.values.where((e) => !e.isIncome).toList()
+          ..sort((a, b) => b.date.compareTo(a.date));
+    return _cachedExpenses!;
+  }
 
-  List<Expense> get incomes =>
-      _persistence.expensesBox.values.where((e) => e.isIncome).toList()
-        ..sort((a, b) => b.date.compareTo(a.date));
+  List<Expense> get incomes {
+    if (_cachedIncomes != null) return _cachedIncomes!;
+    _cachedIncomes =
+        _persistence.expensesBox.values.where((e) => e.isIncome).toList()
+          ..sort((a, b) => b.date.compareTo(a.date));
+    return _cachedIncomes!;
+  }
 
-  List<JobType> get jobTypes => _persistence.jobTypesBox.values.toList();
+  List<JobType> get jobTypes {
+    if (_cachedJobTypes != null) return _cachedJobTypes!;
+    _cachedJobTypes = _persistence.jobTypesBox.values.toList();
+    return _cachedJobTypes!;
+  }
 
   bool get _remindersEnabled =>
       _persistence.settingsBox.get('shiftRemindersEnabled', defaultValue: true);
@@ -449,6 +478,7 @@ class ShiftProvider with ChangeNotifier {
     _scheduleReminder(shift, l10n: l10n);
     _syncShiftToServer(shift);
     _triggerBackup();
+    _invalidateCache();
     notifyListeners();
   }
 
@@ -457,6 +487,7 @@ class ShiftProvider with ChangeNotifier {
     _scheduleReminder(shift, l10n: l10n);
     _syncShiftToServer(shift);
     _triggerBackup();
+    _invalidateCache();
     notifyListeners();
   }
 
@@ -467,6 +498,7 @@ class ShiftProvider with ChangeNotifier {
       await _apiService.deleteShift(_authToken!, id);
     }
     _triggerBackup();
+    _invalidateCache();
     notifyListeners();
   }
 
@@ -508,6 +540,7 @@ class ShiftProvider with ChangeNotifier {
     await _persistence.expensesBox.put(expense.id, expense);
     _syncExpenseToServer(expense);
     _triggerBackup();
+    _invalidateCache();
     notifyListeners();
   }
 
@@ -515,6 +548,7 @@ class ShiftProvider with ChangeNotifier {
     await expense.save();
     _syncExpenseToServer(expense);
     _triggerBackup();
+    _invalidateCache();
     notifyListeners();
   }
 
@@ -524,6 +558,7 @@ class ShiftProvider with ChangeNotifier {
       await _apiService.deleteExpense(_authToken!, id);
     }
     _triggerBackup();
+    _invalidateCache();
     notifyListeners();
   }
 
@@ -531,6 +566,7 @@ class ShiftProvider with ChangeNotifier {
     await _persistence.jobTypesBox.put(jobType.id, jobType);
     _syncJobTypeToServer(jobType);
     _triggerBackup();
+    _invalidateCache();
     notifyListeners();
   }
 
@@ -544,6 +580,7 @@ class ShiftProvider with ChangeNotifier {
     _triggerBackup();
     // Keep shift snapshots in sync with the updated wage history
     await _resyncShiftRatesForJob(jobType);
+    _invalidateCache();
     notifyListeners();
   }
 
@@ -553,6 +590,7 @@ class ShiftProvider with ChangeNotifier {
       await _apiService.deleteJobType(_authToken!, id);
     }
     _triggerBackup();
+    _invalidateCache();
     notifyListeners();
   }
 
@@ -641,7 +679,8 @@ class ShiftProvider with ChangeNotifier {
     }
     // 2. Clear persistence
     await _persistence.deleteAllData();
-    // 3. Notify listeners
+    // 3. Invalidate cache and notify listeners
+    _invalidateCache();
     notifyListeners();
   }
 }

@@ -30,6 +30,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   String? _selectedJobId; // null = all jobs
   int? _selectedBarIndex;
   bool _byEarningsForJobs = true;
+
   void _changePeriod(AnalyticsPeriodMode newMode) {
     if (_periodMode != newMode) {
       setState(() {
@@ -317,9 +318,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: AppTheme.spaceSm),
-                                if (todCard != null || durationCard != null) ...[
+                                if (todCard != null ||
+                                    durationCard != null) ...[
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       if (todCard != null)
                                         Expanded(child: todCard)

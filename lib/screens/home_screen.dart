@@ -163,28 +163,28 @@ class HomeScreen extends StatelessWidget {
                             ? 1
                             : groupedShifts.length + 1,
                         itemBuilder: (context, index) {
-                            if (index == 0) {
-                              return GrandTotalCard(
-                                totalHours: grandTotalNetHours,
-                                totalBase: grandTotalBaseSalary,
-                                totalTips: grandTotalTips,
-                                totalExpenses: grandTotalExpenses,
-                                totalIncomes: grandTotalIncomes,
-                                totalShifts: grandTotalShifts,
-                              );
-                            }
-                            final monthKey = groupedShifts.keys.elementAt(
-                              index - 1,
+                          if (index == 0) {
+                            return GrandTotalCard(
+                              totalHours: grandTotalNetHours,
+                              totalBase: grandTotalBaseSalary,
+                              totalTips: grandTotalTips,
+                              totalExpenses: grandTotalExpenses,
+                              totalIncomes: grandTotalIncomes,
+                              totalShifts: grandTotalShifts,
                             );
-                            final shifts = groupedShifts[monthKey]!;
-                            return _MonthExpansionSection(
-                              monthKey: monthKey,
-                              shifts: shifts,
-                              initiallyExpanded: index == 1,
-                            );
-                          },
-                        ),
+                          }
+                          final monthKey = groupedShifts.keys.elementAt(
+                            index - 1,
+                          );
+                          final shifts = groupedShifts[monthKey]!;
+                          return _MonthExpansionSection(
+                            monthKey: monthKey,
+                            shifts: shifts,
+                            initiallyExpanded: index == 1,
+                          );
+                        },
                       ),
+                    ),
             ),
           ],
         ),

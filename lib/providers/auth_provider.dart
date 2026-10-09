@@ -63,6 +63,25 @@ class AuthProvider with ChangeNotifier {
     _userBirthDate = box.get('userBirthDate');
     _token = await _secureStorage.read(key: 'token');
 
+    if (_isLoggedIn && _token != null) {
+      try {
+        final profile = await _apiService.getProfile(_token!);
+        _userName = profile['name'] ?? _userName;
+        _userEmail = profile['email'] ?? _userEmail;
+        final createdAt = profile['created_at'] ?? profile['createdAt'];
+        if (createdAt != null) {
+          _userCreatedAt = createdAt.toString();
+        }
+        final birthVal = profile['birth_date'] ?? profile['birthDate'];
+        if (birthVal != null) {
+          _userBirthDate = birthVal.toString();
+        }
+        await _saveToPersistence();
+      } catch (e) {
+        debugPrint('Failed to sync profile on load: $e');
+      }
+    }
+
     if (_isLoggedIn && (_userCreatedAt == null || _userCreatedAt!.isEmpty)) {
       _userCreatedAt = DateTime.now().toIso8601String();
       await box.put('userCreatedAt', _userCreatedAt!);
@@ -120,8 +139,12 @@ class AuthProvider with ChangeNotifier {
     _userCreatedAt =
         data['user']['created_at'] ??
         data['user']['createdAt'] ??
-        _persistence.settingsBox.get('userCreatedAt') ??
-        DateTime.now().toIso8601String();
+        data['created_at'] ??
+        data['createdAt'] ??
+        _persistence.settingsBox.get('userCreatedAt');
+    if (_userCreatedAt == null || _userCreatedAt!.isEmpty) {
+      _userCreatedAt = DateTime.now().toIso8601String();
+    }
     _userBirthDate =
         data['user']['birth_date'] ??
         data['user']['birthDate'] ??

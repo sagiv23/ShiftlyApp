@@ -112,147 +112,153 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
               child: PageEntranceAnimation(
                 delayFraction: 0.1,
                 child: groupedShifts.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(32),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.note_alt_outlined,
-                              size: 64,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.3),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              l.shift_descriptions_empty,
-                              style: Theme.of(context).textTheme.bodyLarge
-                                  ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.6),
-                                  ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  : ListView(
-                      padding: const EdgeInsets.fromLTRB(
-                        AppTheme.spaceSm,
-                        AppTheme.spaceXs,
-                        AppTheme.spaceSm,
-                        120,
-                      ),
-                      children: groupedShifts.keys.map((dateKey) {
-                        final dateShifts = groupedShifts[dateKey]!;
-                        final parsedDate = DateTime.parse(dateKey);
-                        final formattedDate = DateFormat(
-                          'EEEE, dd/MM/yyyy',
-                          l.localeName,
-                        ).format(parsedDate);
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 4,
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(32),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.note_alt_outlined,
+                                size: 64,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.3),
                               ),
-                              child: Text(
-                                formattedDate,
-                                style: Theme.of(context).textTheme.titleMedium
+                              const SizedBox(height: 16),
+                              Text(
+                                l.shift_descriptions_empty,
+                                style: Theme.of(context).textTheme.bodyLarge
                                     ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppTheme.primaryDark,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withValues(alpha: 0.6),
                                     ),
+                                textAlign: TextAlign.center,
                               ),
-                            ),
-                            ...dateShifts.map((shift) {
-                              final job = shiftProvider.getJobTypeById(
-                                shift.jobTypeId,
-                              );
-                              final jobName = job?.name ?? l.common_unknown_job;
-                              final timeStr =
-                                  '${DateFormat('HH:mm').format(shift.startTime)} - ${DateFormat('HH:mm').format(shift.endTime)}';
+                            ],
+                          ),
+                        ),
+                      )
+                    : ListView(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppTheme.spaceSm,
+                          AppTheme.spaceXs,
+                          AppTheme.spaceSm,
+                          120,
+                        ),
+                        children: groupedShifts.keys.map((dateKey) {
+                          final dateShifts = groupedShifts[dateKey]!;
+                          final parsedDate = DateTime.parse(dateKey);
+                          final formattedDate = DateFormat(
+                            'EEEE, dd/MM/yyyy',
+                            l.localeName,
+                          ).format(parsedDate);
 
-                              return Card(
-                                margin: const EdgeInsets.only(bottom: 8),
-                                child: ListTile(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      AppPageRoute.slideHorizontal(
-                                        AddShiftScreen(shiftToEdit: shift),
+                          return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 4,
+                          ),
+                          child: Text(
+                            formattedDate,
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.primaryDark,
+                            ),
+                          ),
+                        ),
+                        ...dateShifts.map((shift) {
+                          final job = shiftProvider.getJobTypeById(
+                            shift.jobTypeId,
+                          );
+                          final jobName =
+                              job?.name ?? l.common_unknown_job;
+                          final timeStr =
+                              '${DateFormat('HH:mm').format(
+                              shift.startTime)} - ${DateFormat('HH:mm').format(
+                              shift.endTime)}';
+
+                                return Card(
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  child: ListTile(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        AppPageRoute.slideHorizontal(
+                                          AddShiftScreen(shiftToEdit: shift),
+                                        ),
+                                      );
+                                    },
+                                    leading: Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.primary.withValues(
+                                          alpha: 0.12,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
-                                    );
-                                  },
-                                  leading: Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.primary.withValues(
-                                        alpha: 0.12,
+                                      child: Icon(
+                                        AppTheme.iconForJobName(jobName),
+                                        color: AppTheme.primaryDark,
+                                        size: 20,
                                       ),
-                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: Icon(
-                                      AppTheme.iconForJobName(jobName),
-                                      color: AppTheme.primaryDark,
+                                    title: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            jobName,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          timeStr,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withValues(alpha: 0.6),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    subtitle: Padding(
+                                      padding: const EdgeInsets.only(top: 6),
+                                      child: Text(
+                                        shift.description ?? '',
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                    trailing: const Icon(
+                                      Icons.chevron_right_rounded,
                                       size: 20,
                                     ),
                                   ),
-                                  title: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          jobName,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      Text(
-                                        timeStr,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface
-                                              .withValues(alpha: 0.6),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  subtitle: Padding(
-                                    padding: const EdgeInsets.only(top: 6),
-                                    child: Text(
-                                      shift.description ?? '',
-                                      style: TextStyle(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurface,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                  trailing: const Icon(
-                                    Icons.chevron_right_rounded,
-                                    size: 20,
-                                  ),
-                                ),
-                              );
-                            }),
-                            const SizedBox(height: 8),
-                          ],
-                        );
-                      }).toList(),
-                    ),
+                                );
+                              }),
+                              const SizedBox(height: 8),
+                            ],
+                          );
+                        }).toList(),
+                      ),
               ),
             ),
           ],

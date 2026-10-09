@@ -196,6 +196,12 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setOnboardingCompleted(bool completed) async {
+    _hasCompletedOnboarding = completed;
+    await _persistence.settingsBox.put('hasCompletedOnboarding', completed);
+    notifyListeners();
+  }
+
   Future<void> resetAllSettings() async {
     _themeMode = ThemeMode.system;
     _paidBreakDurationMinutes = 20.0;

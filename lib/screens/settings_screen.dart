@@ -342,327 +342,363 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSectionHeader(context, l.settings_section_app),
-            const SizedBox(height: AppTheme.spaceXs),
-            Card(
-              child: Column(
-                children: [
-                  SwitchListTile(
-                    title: Text(l.settings_field_notifications),
-                    subtitle: Text(l.settings_field_notifications_sub),
-                    secondary: Icon(
-                      Icons.notifications_active_outlined,
-                      color: AppTheme.primaryDark,
-                    ),
-                    value: settings.shiftRemindersEnabled,
-                    onChanged: (val) async {
-                      await settings.setShiftRemindersEnabled(val);
-                      if (val) {
-                        await NotificationService.requestPermissions();
-                      }
-                      if (!context.mounted) return;
-                      context.read<ShiftProvider>().refreshAllReminders({
-                        'title': l.notification_reminder_title,
-                        'body': l.notification_reminder_body,
-                        'hours': l.common_hours_suffix,
-                        'minutes': l.common_min_suffix,
-                        'channelName': l.notification_channel_reminders_name,
-                        'channelDesc': l.notification_channel_reminders_desc,
-                      });
-                    },
-                    activeThumbColor: AppTheme.primaryDark,
-                    activeTrackColor: AppTheme.primary.withValues(alpha: 0.35),
-                  ),
-                  const Divider(height: 1, indent: 56),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                  const SizedBox(height: AppTheme.spaceXs),
+                  Card(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.palette_outlined,
-                              color: AppTheme.primaryDark,
-                            ),
-                            const SizedBox(width: 16),
-                            Text(
-                              l.settings_field_theme,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                          ],
+                        SwitchListTile(
+                          title: Text(l.settings_field_notifications),
+                          subtitle: Text(l.settings_field_notifications_sub),
+                          secondary: Icon(
+                            Icons.notifications_active_outlined,
+                            color: AppTheme.primaryDark,
+                          ),
+                          value: settings.shiftRemindersEnabled,
+                          onChanged: (val) async {
+                            await settings.setShiftRemindersEnabled(val);
+                            if (val) {
+                              await NotificationService.requestPermissions();
+                            }
+                            if (!context.mounted) return;
+                            context.read<ShiftProvider>().refreshAllReminders({
+                              'title': l.notification_reminder_title,
+                              'body': l.notification_reminder_body,
+                              'hours': l.common_hours_suffix,
+                              'minutes': l.common_min_suffix,
+                              'channelName':
+                                  l.notification_channel_reminders_name,
+                              'channelDesc':
+                                  l.notification_channel_reminders_desc,
+                            });
+                          },
+                          activeThumbColor: AppTheme.primaryDark,
+                          activeTrackColor: AppTheme.primary.withValues(
+                            alpha: 0.35,
+                          ),
                         ),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          width: double.infinity,
-                          child: SegmentedButton<ThemeMode>(
-                            segments: [
-                              ButtonSegment(
-                                value: ThemeMode.system,
-                                label: Text(l.settings_theme_system),
-                                icon: const Icon(Icons.brightness_auto_rounded),
+                        const Divider(height: 1, indent: 56),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.palette_outlined,
+                                    color: AppTheme.primaryDark,
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Text(
+                                    l.settings_field_theme,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleMedium,
+                                  ),
+                                ],
                               ),
-                              ButtonSegment(
-                                value: ThemeMode.light,
-                                label: Text(l.settings_theme_light),
-                                icon: const Icon(Icons.light_mode_rounded),
-                              ),
-                              ButtonSegment(
-                                value: ThemeMode.dark,
-                                label: Text(l.settings_theme_dark),
-                                icon: const Icon(Icons.dark_mode_rounded),
+                              const SizedBox(height: 12),
+                              SizedBox(
+                                width: double.infinity,
+                                child: SegmentedButton<ThemeMode>(
+                                  segments: [
+                                    ButtonSegment(
+                                      value: ThemeMode.system,
+                                      label: Text(l.settings_theme_system),
+                                      icon: const Icon(
+                                        Icons.brightness_auto_rounded,
+                                      ),
+                                    ),
+                                    ButtonSegment(
+                                      value: ThemeMode.light,
+                                      label: Text(l.settings_theme_light),
+                                      icon: const Icon(
+                                        Icons.light_mode_rounded,
+                                      ),
+                                    ),
+                                    ButtonSegment(
+                                      value: ThemeMode.dark,
+                                      label: Text(l.settings_theme_dark),
+                                      icon: const Icon(Icons.dark_mode_rounded),
+                                    ),
+                                  ],
+                                  selected: {settings.themeMode},
+                                  onSelectionChanged: (val) =>
+                                      settings.setThemeMode(val.first),
+                                ),
                               ),
                             ],
-                            selected: {settings.themeMode},
-                            onSelectionChanged: (val) =>
-                                settings.setThemeMode(val.first),
+                          ),
+                        ),
+                        const Divider(height: 1, indent: 56),
+                        ListTile(
+                          title: Text(l.settings_field_language),
+                          leading: const Icon(
+                            Icons.language_rounded,
+                            color: AppTheme.primaryDark,
+                          ),
+                          trailing: DropdownButton<String>(
+                            value: settings.locale.languageCode,
+                            underline: const SizedBox(),
+                            items: [
+                              DropdownMenuItem(
+                                value: 'he',
+                                child: Text(l.settings_language_he),
+                              ),
+                              DropdownMenuItem(
+                                value: 'en',
+                                child: Text(l.settings_language_en),
+                              ),
+                            ],
+                            onChanged: (val) {
+                              if (val != null) {
+                                settings.setLocale(Locale(val));
+                              }
+                            },
+                          ),
+                        ),
+                        const Divider(height: 1, indent: 56),
+                        ListTile(
+                          title: Text(l.settings_field_currency),
+                          subtitle: Text(l.settings_field_currency_sub),
+                          leading: const Icon(
+                            Icons.payments_outlined,
+                            color: AppTheme.primaryDark,
+                          ),
+                          trailing: DropdownButton<String>(
+                            value: settings.currencySymbol,
+                            underline: const SizedBox(),
+                            items: const [
+                              DropdownMenuItem(
+                                value: '₪',
+                                child: Text('₪ ILS'),
+                              ),
+                              DropdownMenuItem(
+                                value: '\$',
+                                child: Text('\$ USD'),
+                              ),
+                              DropdownMenuItem(
+                                value: '€',
+                                child: Text('€ EUR'),
+                              ),
+                              DropdownMenuItem(
+                                value: '£',
+                                child: Text('£ GBP'),
+                              ),
+                            ],
+                            onChanged: (val) {
+                              if (val != null) settings.setCurrencySymbol(val);
+                            },
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const Divider(height: 1, indent: 56),
-                  ListTile(
-                    title: Text(l.settings_field_language),
-                    leading: const Icon(
-                      Icons.language_rounded,
-                      color: AppTheme.primaryDark,
+                  if (settings.shiftRemindersEnabled) ...[
+                    const SizedBox(height: AppTheme.spaceLg),
+                    _buildSectionHeader(context, l.settings_section_reminders),
+                    const SizedBox(height: AppTheme.spaceXs),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppTheme.spaceSm),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  l.settings_field_reminder_time,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Text(
+                                  '${(settings.shiftReminderDurationHours * 10).round() / 10} ${l.common_hours_suffix}'
+                                      .replaceAll('.0 ', ' '),
+                                  style: const TextStyle(
+                                    color: AppTheme.primaryDark,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Slider(
+                              value: settings.shiftReminderDurationHours,
+                              min: 0.5,
+                              max: 24,
+                              divisions: 47,
+                              onChanged: (val) async {
+                                await settings.setShiftReminderDurationHours(
+                                  val,
+                                );
+                                if (!context.mounted) return;
+                                context
+                                    .read<ShiftProvider>()
+                                    .refreshAllReminders({
+                                      'title': l.notification_reminder_title,
+                                      'body': l.notification_reminder_body,
+                                      'hours': l.common_hours_suffix,
+                                      'minutes': l.common_min_suffix,
+                                      'channelName':
+                                          l.notification_channel_reminders_name,
+                                      'channelDesc':
+                                          l.notification_channel_reminders_desc,
+                                    });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    trailing: DropdownButton<String>(
-                      value: settings.locale.languageCode,
-                      underline: const SizedBox(),
-                      items: [
-                        DropdownMenuItem(
-                          value: 'he',
-                          child: Text(l.settings_language_he),
-                        ),
-                        DropdownMenuItem(
-                          value: 'en',
-                          child: Text(l.settings_language_en),
-                        ),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) {
-                          settings.setLocale(Locale(val));
-                        }
-                      },
+                  ],
+                  const SizedBox(height: AppTheme.spaceLg),
+                  _buildSectionHeader(context, l.settings_section_breaks),
+                  const SizedBox(height: AppTheme.spaceXs),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppTheme.spaceSm),
+                      child: Column(
+                        children: [
+                          SwitchListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              l.settings_field_breaks_enabled,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            subtitle: Text(l.settings_field_breaks_enabled_sub),
+                            secondary: const Icon(
+                              Icons.timer_off_outlined,
+                              color: AppTheme.primaryDark,
+                            ),
+                            value: settings.breaksEnabled,
+                            onChanged: (val) => settings.setBreaksEnabled(val),
+                            activeThumbColor: AppTheme.primaryDark,
+                            activeTrackColor: AppTheme.primary.withValues(
+                              alpha: 0.35,
+                            ),
+                          ),
+                          if (settings.breaksEnabled) ...[
+                            const Divider(height: 16),
+                            TextField(
+                              controller: _paidController,
+                              decoration: InputDecoration(
+                                labelText: l.settings_field_paid_break,
+                                hintText: '0',
+                                prefixIcon: const Icon(Icons.timer_outlined),
+                              ),
+                              keyboardType: TextInputType.number,
+                            ),
+                            const SizedBox(height: AppTheme.spaceSm),
+                            TextField(
+                              controller: _unpaidController,
+                              decoration: InputDecoration(
+                                labelText: l.settings_field_unpaid_break,
+                                hintText: '0',
+                                prefixIcon: const Icon(Icons.coffee_outlined),
+                              ),
+                              keyboardType: TextInputType.number,
+                            ),
+                            const SizedBox(height: AppTheme.spaceSm),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  final paid =
+                                      double.tryParse(_paidController.text) ??
+                                      0.0;
+                                  final unpaid =
+                                      double.tryParse(_unpaidController.text) ??
+                                      0.0;
+
+                                  final confirmed = await UIUtils.showConfirmDialog(
+                                    context: context,
+                                    title:
+                                        l.settings_dialog_update_breaks_title,
+                                    content:
+                                        '${l.settings_dialog_update_breaks_title}?',
+                                  );
+
+                                  if (confirmed != true) return;
+                                  if (!context.mounted) return;
+
+                                  settings.setBreakDurations(paid, unpaid);
+                                  UIUtils.showSnackBar(
+                                    context,
+                                    l.common_success,
+                                  );
+                                },
+                                child: Text(l.settings_action_update_breaks),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
                   ),
-                  const Divider(height: 1, indent: 56),
-                  ListTile(
-                    title: Text(l.settings_field_currency),
-                    subtitle: Text(l.settings_field_currency_sub),
-                    leading: const Icon(
-                      Icons.payments_outlined,
-                      color: AppTheme.primaryDark,
+                  const SizedBox(height: AppTheme.spaceLg),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildSectionHeader(
+                          context,
+                          l.onboarding_job_types_title,
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: () => _showEditJobDialog(context),
+                        icon: const Icon(Icons.add_rounded),
+                        label: Text(l.common_confirm),
+                        style: TextButton.styleFrom(
+                          foregroundColor: AppTheme.primaryDark,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppTheme.spaceXs),
+                  if (rawJobs.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(AppTheme.spaceMd),
+                      child: Center(
+                        child: Text(
+                          l.common_error,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                    )
+                  else
+                    ...jobs.map(
+                      (job) => _JobCard(
+                        job: job,
+                        onEdit: () => _showEditJobDialog(context, job),
+                        onDelete: () => _deleteJob(context, job),
+                        symbol: symbol,
+                      ),
                     ),
-                    trailing: DropdownButton<String>(
-                      value: settings.currencySymbol,
-                      underline: const SizedBox(),
-                      items: const [
-                        DropdownMenuItem(value: '₪', child: Text('₪ ILS')),
-                        DropdownMenuItem(value: '\$', child: Text('\$ USD')),
-                        DropdownMenuItem(value: '€', child: Text('€ EUR')),
-                        DropdownMenuItem(value: '£', child: Text('£ GBP')),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) settings.setCurrencySymbol(val);
-                      },
+                  const SizedBox(height: AppTheme.spaceLg),
+                  _buildSectionHeader(context, l.settings_section_danger),
+                  const SizedBox(height: AppTheme.spaceXs),
+                  Card(
+                    child: ListTile(
+                      title: Text(
+                        l.settings_action_factory_reset,
+                        style: const TextStyle(
+                          color: AppTheme.expense,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Text(l.settings_action_factory_reset_sub),
+                      trailing: const Icon(
+                        Icons.delete_forever_rounded,
+                        color: AppTheme.expense,
+                      ),
+                      onTap: () => _handleFactoryReset(context),
                     ),
                   ),
                 ],
               ),
             ),
-            if (settings.shiftRemindersEnabled) ...[
-              const SizedBox(height: AppTheme.spaceLg),
-              _buildSectionHeader(context, l.settings_section_reminders),
-              const SizedBox(height: AppTheme.spaceXs),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppTheme.spaceSm),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            l.settings_field_reminder_time,
-                            style: const TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                          Text(
-                            '${(settings.shiftReminderDurationHours * 10).round() / 10} ${l.common_hours_suffix}'
-                                .replaceAll('.0 ', ' '),
-                            style: const TextStyle(
-                              color: AppTheme.primaryDark,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Slider(
-                        value: settings.shiftReminderDurationHours,
-                        min: 0.5,
-                        max: 24,
-                        divisions: 47,
-                        onChanged: (val) async {
-                          await settings.setShiftReminderDurationHours(val);
-                          if (!context.mounted) return;
-                          context.read<ShiftProvider>().refreshAllReminders({
-                            'title': l.notification_reminder_title,
-                            'body': l.notification_reminder_body,
-                            'hours': l.common_hours_suffix,
-                            'minutes': l.common_min_suffix,
-                            'channelName':
-                                l.notification_channel_reminders_name,
-                            'channelDesc':
-                                l.notification_channel_reminders_desc,
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-            const SizedBox(height: AppTheme.spaceLg),
-            _buildSectionHeader(context, l.settings_section_breaks),
-            const SizedBox(height: AppTheme.spaceXs),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppTheme.spaceSm),
-                child: Column(
-                  children: [
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(
-                        l.settings_field_breaks_enabled,
-                        style: const TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                      subtitle: Text(l.settings_field_breaks_enabled_sub),
-                      secondary: const Icon(
-                        Icons.timer_off_outlined,
-                        color: AppTheme.primaryDark,
-                      ),
-                      value: settings.breaksEnabled,
-                      onChanged: (val) => settings.setBreaksEnabled(val),
-                      activeThumbColor: AppTheme.primaryDark,
-                      activeTrackColor: AppTheme.primary.withValues(
-                        alpha: 0.35,
-                      ),
-                    ),
-                    if (settings.breaksEnabled) ...[
-                      const Divider(height: 16),
-                      TextField(
-                        controller: _paidController,
-                        decoration: InputDecoration(
-                          labelText: l.settings_field_paid_break,
-                          hintText: '0',
-                          prefixIcon: const Icon(Icons.timer_outlined),
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
-                      const SizedBox(height: AppTheme.spaceSm),
-                      TextField(
-                        controller: _unpaidController,
-                        decoration: InputDecoration(
-                          labelText: l.settings_field_unpaid_break,
-                          hintText: '0',
-                          prefixIcon: const Icon(Icons.coffee_outlined),
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
-                      const SizedBox(height: AppTheme.spaceSm),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            final paid =
-                                double.tryParse(_paidController.text) ?? 0.0;
-                            final unpaid =
-                                double.tryParse(_unpaidController.text) ?? 0.0;
-
-                            final confirmed = await UIUtils.showConfirmDialog(
-                              context: context,
-                              title: l.settings_dialog_update_breaks_title,
-                              content:
-                                  '${l.settings_dialog_update_breaks_title}?',
-                            );
-
-                            if (confirmed != true) return;
-                            if (!context.mounted) return;
-
-                            settings.setBreakDurations(paid, unpaid);
-                            UIUtils.showSnackBar(context, l.common_success);
-                          },
-                          child: Text(l.settings_action_update_breaks),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: AppTheme.spaceLg),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildSectionHeader(
-                    context,
-                    l.onboarding_job_types_title,
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: () => _showEditJobDialog(context),
-                  icon: const Icon(Icons.add_rounded),
-                  label: Text(l.common_confirm),
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppTheme.primaryDark,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spaceXs),
-            if (rawJobs.isEmpty)
-              Padding(
-                padding: const EdgeInsets.all(AppTheme.spaceMd),
-                child: Center(
-                  child: Text(
-                    l.common_error,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ),
-              )
-            else
-              ...jobs.map(
-                (job) => _JobCard(
-                  job: job,
-                  onEdit: () => _showEditJobDialog(context, job),
-                  onDelete: () => _deleteJob(context, job),
-                  symbol: symbol,
-                ),
-              ),
-            const SizedBox(height: AppTheme.spaceLg),
-            _buildSectionHeader(context, l.settings_section_danger),
-            const SizedBox(height: AppTheme.spaceXs),
-            Card(
-              child: ListTile(
-                title: Text(
-                  l.settings_action_factory_reset,
-                  style: const TextStyle(
-                    color: AppTheme.expense,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                subtitle: Text(l.settings_action_factory_reset_sub),
-                trailing: const Icon(
-                  Icons.delete_forever_rounded,
-                  color: AppTheme.expense,
-                ),
-                onTap: () => _handleFactoryReset(context),
-              ),
-            ),
-                  ],
-                ),
-              ),
           ],
         ),
       ),

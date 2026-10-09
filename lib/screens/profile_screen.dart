@@ -228,6 +228,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
             ),
+            if (statRows.isNotEmpty) ...[
+              const SizedBox(height: AppTheme.spaceLg),
+              // Statistics Summary Card
+              PageEntranceAnimation(
+                delayFraction: 0.15,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l.profile_stats_title,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: AppTheme.spaceXs),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppTheme.spaceMd),
+                        child: Column(
+                          children: [
+                            for (int i = 0; i < statRows.length; i++) ...[
+                              if (i > 0) const Divider(height: 24),
+                              statRows[i],
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const SizedBox(height: AppTheme.spaceLg),
             // BYOS Section
             PageEntranceAnimation(
@@ -501,37 +535,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
             ),
-            if (statRows.isNotEmpty) ...[
-              const SizedBox(height: AppTheme.spaceLg),
-              // Statistics Summary Card
-              PageEntranceAnimation(
-                delayFraction: 0.25,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l.profile_stats_title,
-                      style: Theme.of(context).textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: AppTheme.spaceXs),
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppTheme.spaceMd),
-                        child: Column(
-                          children: [
-                            for (int i = 0; i < statRows.length; i++) ...[
-                              if (i > 0) const Divider(height: 24),
-                              statRows[i],
-                            ],
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
             if (auth.isLoggedIn) ...[
               const SizedBox(height: AppTheme.spaceLg),
               PageEntranceAnimation(
