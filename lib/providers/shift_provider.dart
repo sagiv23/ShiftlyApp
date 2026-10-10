@@ -187,47 +187,95 @@ class ShiftProvider with ChangeNotifier {
 
       // 3. Save remote to local
       for (var jobData in remoteJobTypes) {
+        List<WageEntry>? wageHistory;
+        final rawWageHistory = jobData['wage_history'] ?? jobData['wageHistory'];
+        if (rawWageHistory != null && rawWageHistory is List) {
+          wageHistory = rawWageHistory
+              .map((e) => WageEntry.fromJson(Map<String, dynamic>.from(e as Map)))
+              .toList();
+        }
+        final rateVal = jobData['hourly_rate'] ?? jobData['hourlyRate'];
+        final hourlyRate = rateVal != null
+            ? double.parse(rateVal.toString())
+            : AppConstants.defaultHourlyRate;
+
         final job = JobType(
-          id: jobData['id'],
-          name: jobData['name'],
-          hourlyRate: double.parse(jobData['hourly_rate'].toString()),
+          id: jobData['id'].toString(),
+          name: jobData['name'].toString(),
+          hourlyRate: hourlyRate,
+          wageHistory: wageHistory,
         );
         await _persistence.jobTypesBox.put(job.id, job);
       }
 
       for (var expData in remoteExpenses) {
         final exp = Expense(
-          id: expData['id'],
-          date: DateTime.parse(expData['date']),
-          description: expData['description'],
-          amount: double.parse(expData['amount'].toString()),
-          isIncome: expData['is_income'] == true,
+          id: expData['id'].toString(),
+          date: DateTime.parse(expData['date'].toString()),
+          description: expData['description']?.toString() ?? '',
+          amount: double.parse((expData['amount'] ?? 0).toString()),
+          isIncome: expData['is_income'] == true || expData['isIncome'] == true,
         );
         await _persistence.expensesBox.put(exp.id, exp);
       }
 
       for (var shiftData in remoteShifts) {
+        final id = shiftData['id'].toString();
+        final date = DateTime.parse(shiftData['date'].toString());
+        final startTime = DateTime.parse(
+          (shiftData['start_time'] ?? shiftData['startTime']).toString(),
+        );
+        final endTime = DateTime.parse(
+          (shiftData['end_time'] ?? shiftData['endTime']).toString(),
+        );
+        final jobTypeId =
+            (shiftData['job_type_id'] ?? shiftData['jobTypeId']).toString();
+        final tips = double.parse((shiftData['tips'] ?? 0).toString());
+        final hourlyRateVal = shiftData['hourly_rate'] ?? shiftData['hourlyRate'];
+        final hourlyRate = hourlyRateVal != null
+            ? double.parse(hourlyRateVal.toString())
+            : null;
+
+        final breakTypeStr = shiftData['break_type'] ?? shiftData['breakType'];
+        BreakType breakType = BreakType.none;
+        if (breakTypeStr != null) {
+          breakType = BreakType.values.firstWhere(
+            (e) =>
+                e.toString().split('.').last.toLowerCase() ==
+                breakTypeStr.toString().toLowerCase(),
+            orElse: () => BreakType.none,
+          );
+        }
+        final unpaidBreak = double.parse(
+          (shiftData['unpaid_break_minutes'] ??
+                  shiftData['unpaidBreakMinutes'] ??
+                  0)
+              .toString(),
+        );
+
+        List<AutomaticExpense>? autoExpenses;
+        final rawAutoExpenses =
+            shiftData['automatic_expenses'] ?? shiftData['automaticExpenses'];
+        if (rawAutoExpenses != null && rawAutoExpenses is List) {
+          autoExpenses = rawAutoExpenses
+              .map(
+                (e) =>
+                    AutomaticExpense.fromJson(Map<String, dynamic>.from(e as Map)),
+              )
+              .toList();
+        }
+
         final shift = Shift(
-          id: shiftData['id'],
-          date: DateTime.parse(shiftData['date']),
-          startTime: DateTime.parse(shiftData['start_time']),
-          endTime: DateTime.parse(shiftData['end_time']),
-          jobTypeId: shiftData['job_type_id'],
-          tips: double.parse(shiftData['tips'].toString()),
-          hourlyRate: double.parse(shiftData['hourly_rate'].toString()),
-          breakType: shiftData['break_type'] != null
-              ? BreakType.values.firstWhere(
-                  (e) =>
-                      e.toString().split('.').last == shiftData['break_type'],
-                  orElse: () => BreakType.none,
-                )
-              : BreakType.none,
-          unpaidBreakMinutes: double.parse(
-            shiftData['unpaid_break_minutes']?.toString() ?? '0',
-          ),
-          automaticExpenses: (shiftData['automatic_expenses'] as List?)
-              ?.map((e) => AutomaticExpense.fromJson(e as Map<String, dynamic>))
-              .toList(),
+          id: id,
+          date: date,
+          startTime: startTime,
+          endTime: endTime,
+          jobTypeId: jobTypeId,
+          tips: tips,
+          hourlyRate: hourlyRate,
+          breakType: breakType,
+          unpaidBreakMinutes: unpaidBreak,
+          automaticExpenses: autoExpenses,
           description: shiftData['description'] as String?,
         );
         await _persistence.shiftsBox.put(shift.id, shift);

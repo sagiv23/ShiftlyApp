@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shiftly/main.dart';
 import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
 import 'package:shiftly/utils/app_page_route.dart';
+import 'package:shiftly/utils/secure_storage_helper.dart';
 
 class AuthProvider with ChangeNotifier {
   final PersistenceService _persistence;
   final ApiService _apiService = ApiService();
   final GoogleDriveService _driveService = GoogleDriveService();
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   bool _isLoggedIn = false;
   bool _isByosConnected = false;
@@ -64,7 +63,12 @@ class AuthProvider with ChangeNotifier {
     _byosEmail = box.get('byosEmail');
     _userCreatedAt = box.get('userCreatedAt');
     _userBirthDate = box.get('userBirthDate');
-    _token = await _secureStorage.read(key: 'token');
+    _token = await SecureStorageHelper.getToken();
+
+    if (_token != null && _token!.isNotEmpty) {
+      _isLoggedIn = true;
+      await box.put('isLoggedIn', true);
+    }
 
     if (_isLoggedIn && _token != null) {
       try {
@@ -204,8 +208,8 @@ class AuthProvider with ChangeNotifier {
     if (_userBirthDate != null) {
       await box.put('userBirthDate', _userBirthDate!);
     }
-    if (_token != null) {
-      await _secureStorage.write(key: 'token', value: _token!);
+    if (_token != null && _token!.isNotEmpty) {
+      await SecureStorageHelper.saveToken(_token!);
     }
   }
 
@@ -286,7 +290,7 @@ class AuthProvider with ChangeNotifier {
     await box.delete('userName');
     await box.delete('userCreatedAt');
     await box.delete('userBirthDate');
-    await _secureStorage.delete(key: 'token');
+    await SecureStorageHelper.deleteToken();
     notifyListeners();
 
     navigatorKey.currentState?.pushAndRemoveUntil(

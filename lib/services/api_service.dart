@@ -113,6 +113,7 @@ class ApiService {
       },
     );
 
+    _checkAuth(response);
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -133,6 +134,7 @@ class ApiService {
       body: jsonEncode(jobTypeData),
     );
 
+    _checkAuth(response);
     if (response.statusCode != 200) {
       throw Exception('Failed to sync job type to server');
     }
@@ -152,6 +154,7 @@ class ApiService {
       body: jsonEncode({'items': items}),
     );
 
+    _checkAuth(response);
     if (response.statusCode != 200) {
       throw Exception('Failed to batch sync job types to server');
     }
@@ -163,6 +166,7 @@ class ApiService {
       headers: {'Authorization': 'Bearer $token'},
     );
 
+    _checkAuth(response);
     if (response.statusCode != 204) {
       throw Exception('Failed to delete job type from server');
     }
@@ -179,6 +183,7 @@ class ApiService {
       },
     );
 
+    _checkAuth(response);
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -196,6 +201,7 @@ class ApiService {
       body: jsonEncode(shiftData),
     );
 
+    _checkAuth(response);
     if (response.statusCode != 200) {
       throw Exception('Failed to sync shift to server');
     }
@@ -215,6 +221,7 @@ class ApiService {
       body: jsonEncode({'items': items}),
     );
 
+    _checkAuth(response);
     if (response.statusCode != 200) {
       throw Exception('Failed to batch sync shifts to server');
     }
@@ -226,6 +233,7 @@ class ApiService {
       headers: {'Authorization': 'Bearer $token'},
     );
 
+    _checkAuth(response);
     if (response.statusCode != 204) {
       throw Exception('Failed to delete shift from server');
     }
@@ -242,6 +250,7 @@ class ApiService {
       },
     );
 
+    _checkAuth(response);
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -262,6 +271,7 @@ class ApiService {
       body: jsonEncode(expenseData),
     );
 
+    _checkAuth(response);
     if (response.statusCode != 200) {
       throw Exception('Failed to sync expense to server');
     }
@@ -281,6 +291,7 @@ class ApiService {
       body: jsonEncode({'items': items}),
     );
 
+    _checkAuth(response);
     if (response.statusCode != 200) {
       throw Exception('Failed to batch sync expenses to server');
     }
@@ -292,6 +303,7 @@ class ApiService {
       headers: {'Authorization': 'Bearer $token'},
     );
 
+    _checkAuth(response);
     if (response.statusCode != 204) {
       throw Exception('Failed to delete expense from server');
     }
