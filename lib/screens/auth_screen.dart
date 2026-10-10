@@ -14,6 +14,7 @@ import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/app_icon.dart';
+import 'package:shiftly/widgets/legal_document_viewer.dart';
 
 enum AuthMode { login, register }
 
@@ -84,6 +85,22 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
           ? AuthMode.register
           : AuthMode.login;
     });
+  }
+
+  void _showLegalDialog(BuildContext context, String title, String content) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(title),
+        content: SingleChildScrollView(child: Text(content)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _submit() async {
@@ -469,6 +486,61 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                             style: const TextStyle(color: AppTheme.primary),
                           ),
                         ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Legal Disclaimer & Links
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          l.legal_disclaimer_notice,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white60,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () => LegalDocumentViewer.show(
+                              context,
+                              LegalDocumentType.termsOfService,
+                            ),
+                            child: Text(
+                              l.legal_terms_of_service,
+                              style: const TextStyle(
+                                color: AppTheme.primary,
+                                fontSize: 12,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                          const Text(
+                            '  •  ',
+                            style: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 12,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => LegalDocumentViewer.show(
+                              context,
+                              LegalDocumentType.privacyPolicy,
+                            ),
+                            child: Text(
+                              l.legal_privacy_policy,
+                              style: const TextStyle(
+                                color: AppTheme.primary,
+                                fontSize: 12,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

@@ -460,5 +460,15 @@
   "add_shift_wage_segment_end": "סיום",
   "add_shift_wage_segment_percentage": "שכר %",
   "error_segment_invalid_time": "שעת הסיום בטווח השכר חייבת להיות אחרי שעת ההתחלה",
-  "error_segment_overlap": "קיימת חפיפה בטווחי השעות"
+  "error_segment_overlap": "קיימת חפיפה בטווחי השעות",
+  "legal_privacy_policy": "מדיניות פרטיות",
+  "legal_terms_of_service": "תנאי שימוש",
+  "legal_disclaimer_notice": "בהרשמה או התחברות, הנך מסכים לתנאי השימוש ומדיניות הפרטיות שלנו.",
+  "legal_payroll_disclaimer": "החישובים הינם הערכות מתמטיות למעקב אישי בלבד ואינם מהווים ייעוץ מס, שכר או ייעוץ משפטי רשמי.",
+  "legal_cookie_title": "הגדרות עוגיות ופרטיות",
+  "legal_cookie_description": "אנו משתמשים בטכנולוגיות אחסון מקומיות (עוגיות) לאבטחה, התחברות ודיווחי שגיאות. באפשרותך לאשר את הכל או להשתמש בעוגיות נחוצות בלבד.",
+  "legal_cookie_accept_all": "אישור הכל",
+  "legal_cookie_necessary_only": "נחוצים בלבד",
+  "legal_cookie_necessary_desc": "חיוני להתחברות, אחסון מאובטח והגדרות אפליקציה.",
+  "legal_cookie_analytics_desc": "יומני שגיאות ודיווחי קריסות אנונימיים דרך Firebase."
 }

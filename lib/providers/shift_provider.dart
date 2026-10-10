@@ -7,6 +7,7 @@ import 'package:shiftly/models/expense.dart';
 import 'package:shiftly/models/job_type.dart';
 import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/models/shift_filter.dart';
+import 'package:shiftly/models/wage_entry.dart';
 import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/google_drive_service.dart';

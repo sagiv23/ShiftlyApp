@@ -16,6 +16,7 @@ import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
+import 'package:shiftly/widgets/legal_document_viewer.dart';
 import 'package:uuid/uuid.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -676,6 +677,74 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         symbol: symbol,
                       ),
                     ),
+                  const SizedBox(height: AppTheme.spaceLg),
+                  _buildSectionHeader(context, l.legal_cookie_title),
+                  const SizedBox(height: AppTheme.spaceXs),
+                  Card(
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: const Icon(
+                            Icons.cookie_outlined,
+                            color: AppTheme.primaryDark,
+                          ),
+                          title: Text(l.legal_cookie_title),
+                          subtitle: Text(
+                            settings.cookieConsent == 'all'
+                                ? '${l.legal_cookie_accept_all} (עוגיות נחוצות + דיווחי שגיאות)'
+                                : '${l.legal_cookie_necessary_only} (עוגיות נחוצות בלבד)',
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          trailing: DropdownButton<String>(
+                            value: settings.cookieConsent ?? 'necessary',
+                            underline: const SizedBox(),
+                            items: [
+                              DropdownMenuItem(
+                                value: 'all',
+                                child: Text(l.legal_cookie_accept_all),
+                              ),
+                              DropdownMenuItem(
+                                value: 'necessary',
+                                child: Text(l.legal_cookie_necessary_only),
+                              ),
+                            ],
+                            onChanged: (val) {
+                              if (val != null) {
+                                settings.setCookieConsent(val);
+                                UIUtils.showSnackBar(context, l.common_success);
+                              }
+                            },
+                          ),
+                        ),
+                        const Divider(height: 1, indent: 56),
+                        ListTile(
+                          leading: const Icon(
+                            Icons.privacy_tip_outlined,
+                            color: AppTheme.primaryDark,
+                          ),
+                          title: Text(l.legal_privacy_policy),
+                          trailing: const Icon(Icons.chevron_right_rounded),
+                          onTap: () => LegalDocumentViewer.show(
+                            context,
+                            LegalDocumentType.privacyPolicy,
+                          ),
+                        ),
+                        const Divider(height: 1, indent: 56),
+                        ListTile(
+                          leading: const Icon(
+                            Icons.gavel_outlined,
+                            color: AppTheme.primaryDark,
+                          ),
+                          title: Text(l.legal_terms_of_service),
+                          trailing: const Icon(Icons.chevron_right_rounded),
+                          onTap: () => LegalDocumentViewer.show(
+                            context,
+                            LegalDocumentType.termsOfService,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: AppTheme.spaceLg),
                   _buildSectionHeader(context, l.settings_section_danger),
                   const SizedBox(height: AppTheme.spaceXs),

@@ -23,6 +23,7 @@ class SettingsProvider with ChangeNotifier {
   Locale _locale = const Locale('he', 'IL');
   bool _breaksEnabled = true;
   bool _autoSyncEnabled = true;
+  String? _cookieConsent;
 
   ThemeMode get themeMode => _themeMode;
 
@@ -53,6 +54,10 @@ class SettingsProvider with ChangeNotifier {
   bool get breaksEnabled => _breaksEnabled;
 
   bool get autoSyncEnabled => _autoSyncEnabled;
+
+  String? get cookieConsent => _cookieConsent;
+
+  bool get isCookieConsentSet => _cookieConsent != null;
 
   void _loadSettings() {
     final box = _persistence.settingsBox;
@@ -89,6 +94,7 @@ class SettingsProvider with ChangeNotifier {
     _currencySymbol = box.get('currencySymbol', defaultValue: '₪');
     _breaksEnabled = box.get('breaksEnabled', defaultValue: true);
     _autoSyncEnabled = box.get('autoSyncEnabled', defaultValue: true);
+    _cookieConsent = box.get('cookieConsent');
     final String? localeCode = box.get('locale');
     if (localeCode != null) {
       _locale = Locale(localeCode);
@@ -109,6 +115,12 @@ class SettingsProvider with ChangeNotifier {
     } else {
       _defaultAutomaticIncomes = [];
     }
+    notifyListeners();
+  }
+
+  Future<void> setCookieConsent(String choice) async {
+    _cookieConsent = choice;
+    await _persistence.settingsBox.put('cookieConsent', choice);
     notifyListeners();
   }
 

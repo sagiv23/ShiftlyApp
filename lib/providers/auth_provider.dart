@@ -68,6 +68,9 @@ class AuthProvider with ChangeNotifier {
     if (_token != null && _token!.isNotEmpty) {
       _isLoggedIn = true;
       await box.put('isLoggedIn', true);
+    } else {
+      _isLoggedIn = false;
+      await box.put('isLoggedIn', false);
     }
 
     if (_isLoggedIn && _token != null) {

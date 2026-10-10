@@ -1,12 +1,9 @@
 import 'dart:html' as html;
 
 void setWebCookie(String name, String value, {int maxAgeDays = 365}) {
-  final expires = DateTime.now()
-      .add(Duration(days: maxAgeDays))
-      .toUtc()
-      .toIso8601String();
+  final maxAgeSeconds = maxAgeDays * 86400;
   html.document.cookie =
-      '$name=${Uri.encodeComponent(value)}; expires=$expires; path=/; SameSite=Lax';
+      '$name=${Uri.encodeComponent(value)}; max-age=$maxAgeSeconds; path=/; SameSite=Lax';
 }
 
 String? getWebCookie(String name) {

@@ -3,6 +3,7 @@ import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/screens/profile_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_page_route.dart';
+import 'package:shiftly/widgets/cookie_consent_banner.dart';
 
 class MainScreenScope extends InheritedWidget {
   final int currentIndex;
@@ -82,8 +83,9 @@ class AdaptiveScaffold extends StatelessWidget {
       ),
     ];
 
+    Widget mainScaffold;
     if (!isDesktopOrWide) {
-      return Scaffold(
+      mainScaffold = Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title:
@@ -124,20 +126,27 @@ class AdaptiveScaffold extends StatelessWidget {
         floatingActionButton: floatingActionButton,
         floatingActionButtonLocation: floatingActionButtonLocation,
       );
+    } else {
+      mainScaffold = Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title:
+              titleWidget ??
+              (title != null ? Text(title!) : Text(l.common_app_name)),
+          bottom: bottom,
+          actions: actions,
+        ),
+        body: body,
+        floatingActionButton: floatingActionButton,
+        floatingActionButtonLocation: floatingActionButtonLocation,
+      );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title:
-            titleWidget ??
-            (title != null ? Text(title!) : Text(l.common_app_name)),
-        bottom: bottom,
-        actions: actions,
-      ),
-      body: body,
-      floatingActionButton: floatingActionButton,
-      floatingActionButtonLocation: floatingActionButtonLocation,
+    return Stack(
+      children: [
+        mainScaffold,
+        const CookieConsentBanner(),
+      ],
     );
   }
 }

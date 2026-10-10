@@ -220,5 +220,26 @@ void main() {
         expect(shift.calculateBaseSalary(40.0), 370.0);
       },
     );
+
+    test('calculate total pay with tips, auto expenses, auto incomes and unpaid break', () {
+      final start = DateTime(2026, 10, 10, 8, 0);
+      final end = DateTime(2026, 10, 10, 18, 0); // 10 hours gross
+      final shift = Shift(
+        id: 's_total',
+        date: start,
+        startTime: start,
+        endTime: end,
+        jobTypeId: 'j1',
+        hourlyRate: 50.0,
+        breakType: BreakType.unpaid,
+        unpaidBreakMinutes: 60.0, // 1 hour unpaid break -> 9 net hours
+        tips: 40.0,
+      );
+
+      // Base pay = 9 net hours * 50.0 = 450.0
+      // Total pay = 450.0 + 40.0 (tips) = 490.0
+      expect(shift.calculateBaseSalary(50.0), 450.0);
+      expect(shift.calculateTotalPay(50.0), 490.0);
+    });
   });
 }

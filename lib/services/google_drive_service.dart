@@ -9,15 +9,17 @@ import 'package:http/http.dart' as http;
 class GoogleDriveService {
   static const String _backupFileName = 'shiftly_backup.json';
 
-  // Google Client IDs (Standard public client IDs for Google Sign-In)
+  // Google Client IDs for Google Sign-In
   static const String _windowsClientId = String.fromEnvironment(
     'WINDOWS_CLIENT_ID',
     defaultValue:
         '471238980617-6844beciupc5kt0tafejlr7umsfmn95s.apps.googleusercontent.com',
   );
+  // OAuth Client Secret must NOT be hardcoded in client code.
+  // Supply at compile time via --dart-define=WINDOWS_CLIENT_SECRET=xxx if needed.
   static const String _windowsClientSecret = String.fromEnvironment(
     'WINDOWS_CLIENT_SECRET',
-    defaultValue: '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',
+    defaultValue: '',
   );
   static const String _mobileWebClientId = String.fromEnvironment(
     'MOBILE_WEB_CLIENT_ID',

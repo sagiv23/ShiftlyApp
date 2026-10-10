@@ -460,5 +460,15 @@
   "add_shift_wage_segment_end": "End",
   "add_shift_wage_segment_percentage": "Wage %",
   "error_segment_invalid_time": "Segment end time must be after start time",
-  "error_segment_overlap": "There is an overlap in time ranges"
+  "error_segment_overlap": "There is an overlap in time ranges",
+  "legal_privacy_policy": "Privacy Policy",
+  "legal_terms_of_service": "Terms of Service",
+  "legal_disclaimer_notice": "By registering or logging in, you agree to our Terms of Service and Privacy Policy.",
+  "legal_payroll_disclaimer": "Calculations are mathematical estimations for personal tracking only and do not constitute official accounting, tax, or legal advice.",
+  "legal_cookie_title": "Cookie & Privacy Preferences",
+  "legal_cookie_description": "We use local storage technologies and cookies for essential authentication, security, and app crash telemetry. You can choose to accept all or use necessary cookies only.",
+  "legal_cookie_accept_all": "Accept All",
+  "legal_cookie_necessary_only": "Necessary Only",
+  "legal_cookie_necessary_desc": "Essential for authentication, secure token storage, and session preferences.",
+  "legal_cookie_analytics_desc": "Anonymous error logs and crash performance telemetry via Firebase."
 }

@@ -12,7 +12,7 @@ class SecureStorageHelper {
     webOptions: WebOptions(dbName: 'ShiftlySecureStorage', publicKey: 'ShiftlyKey'),
   );
 
-  /// Saves the auth token across SecureStorage, SharedPreferences, and Web Cookie.
+  /// Saves the auth token securely using FlutterSecureStorage and fallbacks.
   static Future<void> saveToken(String token) async {
     try {
       await _secureStorage.write(key: _tokenKey, value: token);
@@ -20,14 +20,14 @@ class SecureStorageHelper {
       debugPrint('SecureStorage write failed: $e');
     }
 
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_tokenKey, token);
-    } catch (e) {
-      debugPrint('SharedPreferences write failed: $e');
-    }
-
     if (kIsWeb) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_tokenKey, token);
+      } catch (e) {
+        debugPrint('SharedPreferences write failed: $e');
+      }
+
       try {
         WebCookie.set(_tokenKey, token);
       } catch (e) {
