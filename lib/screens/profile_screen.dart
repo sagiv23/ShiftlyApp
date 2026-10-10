@@ -102,131 +102,135 @@ class _ProfileScreenState extends State<ProfileScreen> {
             PageEntranceAnimation(
               delayFraction: 0.0,
               child: auth.isLoggedIn
-                    ? Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(AppTheme.spaceMd),
-                          child: Column(
-                            children: [
-                              CircleAvatar(
-                                radius: 36,
-                                backgroundColor: AppTheme.primary,
-                                child: Text(
-                                  (auth.userName?.isNotEmpty == true
-                                          ? auth.userName![0]
-                                          : (auth.userEmail?.isNotEmpty == true
-                                                ? auth.userEmail![0]
-                                                : 'U'))
-                                      .toUpperCase(),
-                                  style: const TextStyle(
-                                    fontSize: 28,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                  ? Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppTheme.spaceMd),
+                        child: Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 36,
+                              backgroundColor: AppTheme.primary,
+                              child: Text(
+                                (auth.userName?.isNotEmpty == true
+                                        ? auth.userName![0]
+                                        : (auth.userEmail?.isNotEmpty == true
+                                              ? auth.userEmail![0]
+                                              : 'U'))
+                                    .toUpperCase(),
+                                style: const TextStyle(
+                                  fontSize: 28,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 12),
-                              Text(
-                                auth.userName ?? l.settings_user_name,
-                                style: Theme.of(context).textTheme.titleLarge
-                                    ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              auth.userName ?? l.settings_user_name,
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              auth.userEmail ?? '',
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.7),
                               ),
-                              const SizedBox(height: 4),
+                            ),
+                            if (auth.userCreatedAt != null) ...[
+                              const SizedBox(height: 6),
                               Text(
-                                auth.userEmail ?? '',
+                                l.profile_created_at.replaceAll(
+                                  '[[date]]',
+                                  DateFormat('dd/MM/yyyy').format(
+                                    DateTime.tryParse(auth.userCreatedAt!) ??
+                                        DateTime.now(),
+                                  ),
+                                ),
                                 style: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withValues(alpha: 0.7),
+                                  fontSize: 13,
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
                                 ),
-                              ),
-                              if (auth.userCreatedAt != null) ...[
-                                const SizedBox(height: 6),
-                                Text(
-                                  l.profile_created_at.replaceAll(
-                                    '[[date]]',
-                                    DateFormat('dd/MM/yyyy').format(
-                                      DateTime.tryParse(auth.userCreatedAt!) ??
-                                          DateTime.now(),
-                                    ),
-                                  ),
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.6),
-                                  ),
-                                ),
-                              ],
-                              if (auth.userBirthDate != null) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  l.profile_birth_date_display
-                                      .replaceAll(
-                                        '[[date]]',
-                                        DateFormat('dd/MM/yyyy').format(
-                                          DateTime.tryParse(auth.userBirthDate!) ??
-                                              DateTime.now(),
-                                        ),
-                                      )
-                                      .replaceAll(
-                                        '[[age]]',
-                                        auth.userAge?.toString() ?? '',
-                                      ),
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.6),
-                                  ),
-                                ),
-                              ],
-                              const SizedBox(height: 16),
-                              Wrap(
-                                alignment: WrapAlignment.center,
-                                spacing: 12,
-                                runSpacing: 8,
-                                children: [
-                                  OutlinedButton.icon(
-                                    onPressed: () => _showEditProfileDialog(context),
-                                    icon: const Icon(Icons.edit_outlined, size: 18),
-                                    label: Text(l.settings_user_edit_title),
-                                  ),
-                                  OutlinedButton.icon(
-                                    onPressed: () => _handleLogout(context),
-                                    icon: const Icon(Icons.logout_rounded, size: 18),
-                                    label: Text(l.settings_logout_title),
-                                    style: OutlinedButton.styleFrom(
-                                      foregroundColor: AppTheme.primaryDark,
-                                    ),
-                                  ),
-                                ],
                               ),
                             ],
-                          ),
-                        ),
-                      )
-                    : Card(
-                        child: ListTile(
-                          leading: const Icon(
-                            Icons.person_add_rounded,
-                            color: AppTheme.primary,
-                            size: 28,
-                          ),
-                          title: Text(
-                            l.settings_byos_login_shiftly,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(l.settings_byos_login_shiftly_sub),
-                          trailing: const Icon(Icons.chevron_right_rounded),
-                          onTap: () => Navigator.push(
-                            context,
-                            AppPageRoute.slideUp(const AuthScreen()),
-                          ),
+                            if (auth.userBirthDate != null) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                l.profile_birth_date_display
+                                    .replaceAll(
+                                      '[[date]]',
+                                      DateFormat('dd/MM/yyyy').format(
+                                        DateTime.tryParse(
+                                              auth.userBirthDate!,
+                                            ) ??
+                                            DateTime.now(),
+                                      ),
+                                    )
+                                    .replaceAll(
+                                      '[[age]]',
+                                      auth.userAge?.toString() ?? '',
+                                    ),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
+                                ),
+                              ),
+                            ],
+                            const SizedBox(height: 16),
+                            Wrap(
+                              alignment: WrapAlignment.center,
+                              spacing: 12,
+                              runSpacing: 8,
+                              children: [
+                                OutlinedButton.icon(
+                                  onPressed: () =>
+                                      _showEditProfileDialog(context),
+                                  icon: const Icon(
+                                    Icons.edit_outlined,
+                                    size: 18,
+                                  ),
+                                  label: Text(l.settings_user_edit_title),
+                                ),
+                                OutlinedButton.icon(
+                                  onPressed: () => _handleLogout(context),
+                                  icon: const Icon(
+                                    Icons.logout_rounded,
+                                    size: 18,
+                                  ),
+                                  label: Text(l.settings_logout_title),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: AppTheme.primaryDark,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
+                    )
+                  : Card(
+                      child: ListTile(
+                        leading: const Icon(
+                          Icons.person_add_rounded,
+                          color: AppTheme.primary,
+                          size: 28,
+                        ),
+                        title: Text(
+                          l.settings_byos_login_shiftly,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(l.settings_byos_login_shiftly_sub),
+                        trailing: const Icon(Icons.chevron_right_rounded),
+                        onTap: () => Navigator.push(
+                          context,
+                          AppPageRoute.slideUp(const AuthScreen()),
+                        ),
+                      ),
+                    ),
             ),
             if (statRows.isNotEmpty) ...[
               const SizedBox(height: AppTheme.spaceLg),
@@ -238,11 +242,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Text(
                       l.profile_stats_title,
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: AppTheme.spaceXs),
                     Card(
@@ -268,272 +270,289 @@ class _ProfileScreenState extends State<ProfileScreen> {
               delayFraction: 0.15,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSectionHeader(context, l.settings_byos_title),
-                    const SizedBox(height: AppTheme.spaceXs),
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppTheme.spaceSm),
-                        child: Column(
-                          children: [
-                            if (auth.isByosConnected) ...[
-                              ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                leading: const Icon(
-                                  Icons.cloud_done_rounded,
-                                  color: Colors.green,
-                                ),
-                                title: Text(l.settings_byos_connected),
-                                subtitle: Text(auth.byosEmail ?? ''),
-                                trailing: TextButton(
-                                  onPressed: () =>
-                                      context.read<AuthProvider>().disconnectBYOS(),
-                                  child: Text(l.settings_byos_disconnect),
-                                ),
+                children: [
+                  _buildSectionHeader(context, l.settings_byos_title),
+                  const SizedBox(height: AppTheme.spaceXs),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppTheme.spaceSm),
+                      child: Column(
+                        children: [
+                          if (auth.isByosConnected) ...[
+                            ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              leading: const Icon(
+                                Icons.cloud_done_rounded,
+                                color: Colors.green,
                               ),
-                              SwitchListTile(
-                                contentPadding: EdgeInsets.zero,
-                                title: Text(
-                                  l.settings_byos_auto_sync,
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                                subtitle: Text(
-                                  l.settings_byos_auto_sync_sub,
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                value: settings.autoSyncEnabled,
-                                onChanged: (val) => settings.setAutoSyncEnabled(val),
+                              title: Text(l.settings_byos_connected),
+                              subtitle: Text(auth.byosEmail ?? ''),
+                              trailing: TextButton(
+                                onPressed: () => context
+                                    .read<AuthProvider>()
+                                    .disconnectBYOS(),
+                                child: Text(l.settings_byos_disconnect),
                               ),
-                              if (shiftProvider.lastBackupTime != null)
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 8,
-                                        height: 8,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.green,
-                                          shape: BoxShape.circle,
-                                        ),
+                            ),
+                            SwitchListTile(
+                              contentPadding: EdgeInsets.zero,
+                              title: Text(
+                                l.settings_byos_auto_sync,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              subtitle: Text(
+                                l.settings_byos_auto_sync_sub,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                              value: settings.autoSyncEnabled,
+                              onChanged: (val) =>
+                                  settings.setAutoSyncEnabled(val),
+                            ),
+                            if (shiftProvider.lastBackupTime != null)
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 8,
+                                      height: 8,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.green,
+                                        shape: BoxShape.circle,
                                       ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        l.settings_byos_last_backup.replaceFirst(
-                                          '[[time]]',
-                                          DateFormat('dd/MM/yyyy HH:mm:ss').format(
-                                            shiftProvider.lastBackupTime!,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      l.settings_byos_last_backup.replaceFirst(
+                                        '[[time]]',
+                                        DateFormat(
+                                          'dd/MM/yyyy HH:mm:ss',
+                                        ).format(shiftProvider.lastBackupTime!),
+                                      ),
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            Row(
+                              children: [
+                                TextButton.icon(
+                                  onPressed: _isBackingUp
+                                      ? null
+                                      : () async {
+                                          setState(() => _isBackingUp = true);
+                                          try {
+                                            final success = await shiftProvider
+                                                .manualBackup();
+                                            if (context.mounted) {
+                                              if (success) {
+                                                UIUtils.showSnackBar(
+                                                  context,
+                                                  l.common_success,
+                                                );
+                                              } else {
+                                                UIUtils.showSnackBar(
+                                                  context,
+                                                  l.common_error,
+                                                  isError: true,
+                                                );
+                                              }
+                                            }
+                                          } finally {
+                                            if (context.mounted) {
+                                              setState(
+                                                () => _isBackingUp = false,
+                                              );
+                                            }
+                                          }
+                                        },
+                                  icon: _isBackingUp
+                                      ? const SizedBox(
+                                          width: 16,
+                                          height: 16,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
                                           ),
+                                        )
+                                      : const Icon(
+                                          Icons.cloud_upload_outlined,
+                                          size: 16,
                                         ),
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ],
+                                  label: Text(
+                                    l.settings_byos_backup_now,
+                                    style: const TextStyle(fontSize: 12),
                                   ),
                                 ),
-                              Row(
-                                children: [
-                                  TextButton.icon(
-                                    onPressed: _isBackingUp
-                                        ? null
-                                        : () async {
-                                            setState(() => _isBackingUp = true);
+                                const SizedBox(width: 8),
+                                TextButton.icon(
+                                  onPressed: _isRestoring
+                                      ? null
+                                      : () async {
+                                          final confirmed = await UIUtils.showConfirmDialog(
+                                            context: context,
+                                            title: l
+                                                .settings_byos_restore_dialog_title,
+                                            content: l
+                                                .settings_byos_restore_dialog_content,
+                                            confirmLabel:
+                                                l.settings_byos_restore_confirm,
+                                            cancelLabel:
+                                                l.settings_byos_restore_cancel,
+                                          );
+                                          if (confirmed == true &&
+                                              context.mounted) {
+                                            setState(() => _isRestoring = true);
                                             try {
-                                              final success = await shiftProvider
-                                                  .manualBackup();
+                                              final results =
+                                                  await shiftProvider
+                                                      .restoreFromBYOS();
                                               if (context.mounted) {
-                                                if (success) {
+                                                if (results['shifts']! > 0 ||
+                                                    results['jobs']! > 0 ||
+                                                    results['expenses']! > 0) {
                                                   UIUtils.showSnackBar(
                                                     context,
-                                                    l.common_success,
+                                                    l.settings_restore_success
+                                                        .replaceFirst(
+                                                          '[[shifts]]',
+                                                          results['shifts']
+                                                              .toString(),
+                                                        )
+                                                        .replaceFirst(
+                                                          '[[jobs]]',
+                                                          results['jobs']
+                                                              .toString(),
+                                                        ),
                                                   );
                                                 } else {
                                                   UIUtils.showSnackBar(
                                                     context,
-                                                    l.common_error,
+                                                    l.settings_restore_no_data,
                                                     isError: true,
                                                   );
                                                 }
                                               }
                                             } finally {
                                               if (context.mounted) {
-                                                setState(() => _isBackingUp = false);
+                                                setState(
+                                                  () => _isRestoring = false,
+                                                );
                                               }
                                             }
-                                          },
-                                    icon: _isBackingUp
-                                        ? const SizedBox(
-                                            width: 16,
-                                            height: 16,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                            ),
-                                          )
-                                        : const Icon(
-                                            Icons.cloud_upload_outlined,
-                                            size: 16,
-                                          ),
-                                    label: Text(
-                                      l.settings_byos_backup_now,
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  TextButton.icon(
-                                    onPressed: _isRestoring
-                                        ? null
-                                        : () async {
-                                            final confirmed =
-                                                await UIUtils.showConfirmDialog(
-                                              context: context,
-                                              title: l.settings_byos_restore_dialog_title,
-                                              content:
-                                                  l.settings_byos_restore_dialog_content,
-                                              confirmLabel:
-                                                  l.settings_byos_restore_confirm,
-                                              cancelLabel:
-                                                  l.settings_byos_restore_cancel,
-                                            );
-                                            if (confirmed == true && context.mounted) {
-                                              setState(() => _isRestoring = true);
-                                              try {
-                                                final results =
-                                                    await shiftProvider.restoreFromBYOS();
-                                                if (context.mounted) {
-                                                  if (results['shifts']! > 0 ||
-                                                      results['jobs']! > 0 ||
-                                                      results['expenses']! > 0) {
-                                                    UIUtils.showSnackBar(
-                                                      context,
-                                                      l.settings_restore_success
-                                                          .replaceFirst(
-                                                            '[[shifts]]',
-                                                            results['shifts'].toString(),
-                                                          )
-                                                          .replaceFirst(
-                                                            '[[jobs]]',
-                                                            results['jobs'].toString(),
-                                                          ),
-                                                    );
-                                                  } else {
-                                                    UIUtils.showSnackBar(
-                                                      context,
-                                                      l.settings_restore_no_data,
-                                                      isError: true,
-                                                    );
-                                                  }
-                                                }
-                                              } finally {
-                                                if (context.mounted) {
-                                                  setState(() => _isRestoring = false);
-                                                }
-                                              }
-                                            }
-                                          },
-                                    icon: _isRestoring
-                                        ? const SizedBox(
-                                            width: 16,
-                                            height: 16,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                            ),
-                                          )
-                                        : const Icon(
-                                            Icons.cloud_download_outlined,
-                                            size: 16,
-                                          ),
-                                    label: Text(
-                                      l.settings_byos_restore_confirm,
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ] else ...[
-                              ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                leading: const Icon(
-                                  Icons.storage_rounded,
-                                  color: Colors.orange,
-                                ),
-                                title: Text(l.settings_byos_method_title),
-                                subtitle: Text(l.settings_byos_method_sub),
-                                trailing: ElevatedButton(
-                                  onPressed: () async {
-                                    await auth.connectBYOS();
-                                    if (context.mounted && auth.isByosConnected) {
-                                      final confirmed = await UIUtils.showConfirmDialog(
-                                        context: context,
-                                        title: l.settings_byos_restore_dialog_title,
-                                        content: l.settings_byos_restore_dialog_content,
-                                        confirmLabel: l.settings_byos_restore_confirm,
-                                        cancelLabel: l.settings_byos_restore_cancel,
-                                      );
-                                      if (confirmed == true && context.mounted) {
-                                        final results =
-                                            await shiftProvider.restoreFromBYOS();
-                                        if (context.mounted) {
-                                          if (results['shifts']! > 0 ||
-                                              results['jobs']! > 0 ||
-                                              results['expenses']! > 0) {
-                                            UIUtils.showSnackBar(
-                                              context,
-                                              l.settings_restore_success
-                                                  .replaceFirst(
-                                                    '[[shifts]]',
-                                                    results['shifts'].toString(),
-                                                  )
-                                                  .replaceFirst(
-                                                    '[[jobs]]',
-                                                    results['jobs'].toString(),
-                                                  ),
-                                            );
-                                          } else {
-                                            UIUtils.showSnackBar(
-                                              context,
-                                              l.settings_restore_no_data,
-                                              isError: true,
-                                            );
                                           }
-                                        }
-                                      }
-                                    }
-                                  },
-                                  child: Text(
-                                    l.settings_byos_disconnect.replaceFirst('נתק', 'חבר'),
+                                        },
+                                  icon: _isRestoring
+                                      ? const SizedBox(
+                                          width: 16,
+                                          height: 16,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : const Icon(
+                                          Icons.cloud_download_outlined,
+                                          size: 16,
+                                        ),
+                                  label: Text(
+                                    l.settings_byos_restore_confirm,
+                                    style: const TextStyle(fontSize: 12),
                                   ),
                                 ),
-                              ),
-                            ],
-                            const Divider(height: 24),
+                              ],
+                            ),
+                          ] else ...[
                             ListTile(
                               contentPadding: EdgeInsets.zero,
                               leading: const Icon(
-                                Icons.delete_outline_rounded,
-                                color: AppTheme.expense,
+                                Icons.storage_rounded,
+                                color: Colors.orange,
                               ),
-                              title: Text(
-                                l.settings_byos_delete_title,
-                                style: const TextStyle(
-                                  color: AppTheme.expense,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                              title: Text(l.settings_byos_method_title),
+                              subtitle: Text(l.settings_byos_method_sub),
+                              trailing: ElevatedButton(
+                                onPressed: () async {
+                                  await auth.connectBYOS();
+                                  if (context.mounted && auth.isByosConnected) {
+                                    final confirmed = await UIUtils.showConfirmDialog(
+                                      context: context,
+                                      title:
+                                          l.settings_byos_restore_dialog_title,
+                                      content: l
+                                          .settings_byos_restore_dialog_content,
+                                      confirmLabel:
+                                          l.settings_byos_restore_confirm,
+                                      cancelLabel:
+                                          l.settings_byos_restore_cancel,
+                                    );
+                                    if (confirmed == true && context.mounted) {
+                                      final results = await shiftProvider
+                                          .restoreFromBYOS();
+                                      if (context.mounted) {
+                                        if (results['shifts']! > 0 ||
+                                            results['jobs']! > 0 ||
+                                            results['expenses']! > 0) {
+                                          UIUtils.showSnackBar(
+                                            context,
+                                            l.settings_restore_success
+                                                .replaceFirst(
+                                                  '[[shifts]]',
+                                                  results['shifts'].toString(),
+                                                )
+                                                .replaceFirst(
+                                                  '[[jobs]]',
+                                                  results['jobs'].toString(),
+                                                ),
+                                          );
+                                        } else {
+                                          UIUtils.showSnackBar(
+                                            context,
+                                            l.settings_restore_no_data,
+                                            isError: true,
+                                          );
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                child: Text(
+                                  l.settings_byos_disconnect.replaceFirst(
+                                    'נתק',
+                                    'חבר',
+                                  ),
                                 ),
                               ),
-                              subtitle: Text(
-                                l.settings_byos_delete_sub,
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                              onTap: () => _handleDeleteBYOS(context),
                             ),
                           ],
-                        ),
+                          const Divider(height: 24),
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: const Icon(
+                              Icons.delete_outline_rounded,
+                              color: AppTheme.expense,
+                            ),
+                            title: Text(
+                              l.settings_byos_delete_title,
+                              style: const TextStyle(
+                                color: AppTheme.expense,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                            subtitle: Text(
+                              l.settings_byos_delete_sub,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            onTap: () => _handleDeleteBYOS(context),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
             ),
             if (auth.isLoggedIn) ...[
               const SizedBox(height: AppTheme.spaceLg),
@@ -578,9 +597,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Text(
       title,
       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.2,
-          ),
+        fontWeight: FontWeight.bold,
+        letterSpacing: 0.2,
+      ),
     );
   }
 
@@ -597,10 +616,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (confirmed == true && context.mounted) {
       await context.read<AuthProvider>().logout();
       if (context.mounted) {
-        UIUtils.showSnackBar(
-          context,
-          l.settings_logout_success,
-        );
+        UIUtils.showSnackBar(context, l.settings_logout_success);
       }
     }
   }

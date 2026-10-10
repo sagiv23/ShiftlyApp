@@ -43,7 +43,7 @@ class HomeScreen extends StatelessWidget {
       final job = shiftProvider.getJobTypeById(shift.jobTypeId);
       final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
       grandTotalNetHours += shift.netHours;
-      grandTotalBaseSalary += shift.netHours * rate;
+      grandTotalBaseSalary += shift.calculateBaseSalary(rate);
       grandTotalTips += shift.tips;
       grandTotalExpenses += shift.totalAutomaticExpenses;
       grandTotalIncomes += shift.totalAutomaticIncomes;
@@ -337,7 +337,7 @@ class _MonthExpansionSection extends StatelessWidget {
       final job = shiftProvider.getJobTypeById(shift.jobTypeId);
       final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
       totalNetHours += shift.netHours;
-      totalBaseSalary += shift.netHours * rate;
+      totalBaseSalary += shift.calculateBaseSalary(rate);
       totalTips += shift.tips;
       totalMonthExpenses += shift.totalAutomaticExpenses;
       totalMonthIncomes += shift.totalAutomaticIncomes;

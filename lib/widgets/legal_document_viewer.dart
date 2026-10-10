@@ -141,27 +141,47 @@ class LegalDocumentViewer extends StatelessWidget {
 
         const SizedBox(height: 16),
         _buildSectionTitle('2. נתונים שאנו אוספים'),
-        _buildBullet('פרטי חשבון: שם מלא, כתובת דוא"ל, סיסמה מוצפנת, תאריך לידה וגיל.'),
-        _buildBullet('נתוני משמרות ושכר: תפקידים, שכר שעתי, היסטוריית עדכוני שכר, שעות כניסה ויציאה, הפסקות, טיפים, הוצאות נסיעה ותיאורי משמרות.'),
-        _buildBullet('נתונים טכניים: מזהי מכשיר, גרסת מערכת הפעלה, יומני קריסות (via Firebase Crashlytics) וטוקן התחברות מאובטח.'),
-        _buildBullet('גיבוי ענן (BYOS): גיבוי מוצפן ב-Google Drive של המשתמש (תיקיית appDataFolder בלבד).'),
+        _buildBullet(
+          'פרטי חשבון: שם מלא, כתובת דוא"ל, סיסמה מוצפנת, תאריך לידה וגיל.',
+        ),
+        _buildBullet(
+          'נתוני משמרות ושכר: תפקידים, שכר שעתי, היסטוריית עדכוני שכר, שעות כניסה ויציאה, הפסקות, טיפים, הוצאות נסיעה ותיאורי משמרות.',
+        ),
+        _buildBullet(
+          'נתונים טכניים: מזהי מכשיר, גרסת מערכת הפעלה, יומני קריסות (via Firebase Crashlytics) וטוקן התחברות מאובטח.',
+        ),
+        _buildBullet(
+          'גיבוי ענן (BYOS): גיבוי מוצפן ב-Google Drive של המשתמש (תיקיית appDataFolder בלבד).',
+        ),
 
         const SizedBox(height: 16),
         _buildSectionTitle('3. מטרות העיבוד והבסיס החוקי'),
-        _buildBullet('אספקת השירות: חישוב שעות, תוספות שכר, שכר שעתי אפקטיבי ונטו.'),
-        _buildBullet('סנכרון ענן: סנכרון מאובטח דרך שרת REST API בכתובת https://shiftly-server.onrender.com/api.'),
-        _buildBullet('אבטחה ותקינות: זיהוי שגיאות ושיפור ביצועים via Firebase Crashlytics.'),
+        _buildBullet(
+          'אספקת השירות: חישוב שעות, תוספות שכר, שכר שעתי אפקטיבי ונטו.',
+        ),
+        _buildBullet(
+          'סנכרון ענן: סנכרון מאובטח דרך שרת REST API בכתובת https://shiftly-server.onrender.com/api.',
+        ),
+        _buildBullet(
+          'אבטחה ותקינות: זיהוי שגיאות ושיפור ביצועים via Firebase Crashlytics.',
+        ),
 
         const SizedBox(height: 16),
         _buildSectionTitle('4. מדיניות עוגיות ואחסון מקומי (Cookies)'),
-        _buildBullet('עוגיות נחוצות בלבד: חיוניות לשמירת טוקן התחברות מאובטח (auth_token) והגדרות שפה/עיצוב.'),
-        _buildBullet('עוגיות אנליטיקה ודיווחי שגיאות: Firebase Crashlytics לזיהוי קריסות (ניתן לאשר או לדחות בבאנר ה-Cookies).'),
+        _buildBullet(
+          'עוגיות נחוצות בלבד: חיוניות לשמירת טוקן התחברות מאובטח (auth_token) והגדרות שפה/עיצוב.',
+        ),
+        _buildBullet(
+          'עוגיות אנליטיקה ודיווחי שגיאות: Firebase Crashlytics לזיהוי קריסות (ניתן לאשר או לדחות בבאנר ה-Cookies).',
+        ),
 
         const SizedBox(height: 16),
         _buildSectionTitle('5. זכויות המשתמש ומחיקת חשבון'),
         _buildBullet('זכות עיון ותיקון: צפייה ועריכת הפרטים בפרופיל ובמשמרות.'),
         _buildBullet('ייצוא נתונים: ייצוא קבצי CSV ו-TXT ישירות מהאפליקציה.'),
-        _buildBullet('מחיקת חשבון: מחיקת החשבון והנתונים באפליקציה במסך הפרופיל, או דרך דף האינטרנט: https://shiftly-server.onrender.com/delete-account.'),
+        _buildBullet(
+          'מחיקת חשבון: מחיקת החשבון והנתונים באפליקציה במסך הפרופיל, או דרך דף האינטרנט: https://shiftly-server.onrender.com/delete-account.',
+        ),
       ],
     );
   }
@@ -188,17 +208,23 @@ class LegalDocumentViewer extends StatelessWidget {
         const SizedBox(height: 16),
         _buildSectionTitle('2. שימושים מותרים ואסורים'),
         _buildBullet('האפליקציה מיועדת לשימוש אישי בלבד.'),
-        _buildBullet('חל איסור להנדס לאחור (Reverse Engineer), להעתיק או לפגוע באבטחת השרתים.'),
+        _buildBullet(
+          'חל איסור להנדס לאחור (Reverse Engineer), להעתיק או לפגוע באבטחת השרתים.',
+        ),
 
         const SizedBox(height: 16),
         _buildSectionTitle('3. הגבלת אחריות'),
         _buildBullet('השירות ניתק כפי שהוא (AS IS) ללא אחריות מכל סוג.'),
-        _buildBullet('המפעיל לא ישא באחריות לנזקים עקיפים, הפסד השתכרות או טעויות בחישוב המסתמכות על הזנת נתונים.'),
+        _buildBullet(
+          'המפעיל לא ישא באחריות לנזקים עקיפים, הפסד השתכרות או טעויות בחישוב המסתמכות על הזנת נתונים.',
+        ),
 
         const SizedBox(height: 16),
         _buildSectionTitle('4. סמכות שיפוט ודין חל'),
         _buildBullet('על תנאים אלו יחולו אך ורק דיני מדינת ישראל.'),
-        _buildBullet('סמכות השיפוט הבלעדית נתונה לבתי המשפט המוסמכים במחוז תל אביב-יפו.'),
+        _buildBullet(
+          'סמכות השיפוט הבלעדית נתונה לבתי המשפט המוסמכים במחוז תל אביב-יפו.',
+        ),
       ],
     );
   }
@@ -211,10 +237,7 @@ class LegalDocumentViewer extends StatelessWidget {
   }
 
   Widget _buildSub(String text) {
-    return Text(
-      text,
-      style: const TextStyle(fontSize: 12, color: Colors.grey),
-    );
+    return Text(text, style: const TextStyle(fontSize: 12, color: Colors.grey));
   }
 
   Widget _buildSectionTitle(String text) {
@@ -228,10 +251,7 @@ class LegalDocumentViewer extends StatelessWidget {
   }
 
   Widget _buildParagraph(String text) {
-    return Text(
-      text,
-      style: const TextStyle(fontSize: 14, height: 1.4),
-    );
+    return Text(text, style: const TextStyle(fontSize: 14, height: 1.4));
   }
 
   Widget _buildBullet(String text) {
@@ -263,7 +283,11 @@ class LegalDocumentViewer extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: const TextStyle(fontSize: 12, height: 1.4, fontWeight: FontWeight.w500),
+        style: const TextStyle(
+          fontSize: 12,
+          height: 1.4,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }

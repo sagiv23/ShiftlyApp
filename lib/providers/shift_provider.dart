@@ -189,10 +189,13 @@ class ShiftProvider with ChangeNotifier {
       // 3. Save remote to local
       for (var jobData in remoteJobTypes) {
         List<WageEntry>? wageHistory;
-        final rawWageHistory = jobData['wage_history'] ?? jobData['wageHistory'];
+        final rawWageHistory =
+            jobData['wage_history'] ?? jobData['wageHistory'];
         if (rawWageHistory != null && rawWageHistory is List) {
           wageHistory = rawWageHistory
-              .map((e) => WageEntry.fromJson(Map<String, dynamic>.from(e as Map)))
+              .map(
+                (e) => WageEntry.fromJson(Map<String, dynamic>.from(e as Map)),
+              )
               .toList();
         }
         final rateVal = jobData['hourly_rate'] ?? jobData['hourlyRate'];
@@ -229,10 +232,11 @@ class ShiftProvider with ChangeNotifier {
         final endTime = DateTime.parse(
           (shiftData['end_time'] ?? shiftData['endTime']).toString(),
         );
-        final jobTypeId =
-            (shiftData['job_type_id'] ?? shiftData['jobTypeId']).toString();
+        final jobTypeId = (shiftData['job_type_id'] ?? shiftData['jobTypeId'])
+            .toString();
         final tips = double.parse((shiftData['tips'] ?? 0).toString());
-        final hourlyRateVal = shiftData['hourly_rate'] ?? shiftData['hourlyRate'];
+        final hourlyRateVal =
+            shiftData['hourly_rate'] ?? shiftData['hourlyRate'];
         final hourlyRate = hourlyRateVal != null
             ? double.parse(hourlyRateVal.toString())
             : null;
@@ -260,8 +264,9 @@ class ShiftProvider with ChangeNotifier {
         if (rawAutoExpenses != null && rawAutoExpenses is List) {
           autoExpenses = rawAutoExpenses
               .map(
-                (e) =>
-                    AutomaticExpense.fromJson(Map<String, dynamic>.from(e as Map)),
+                (e) => AutomaticExpense.fromJson(
+                  Map<String, dynamic>.from(e as Map),
+                ),
               )
               .toList();
         }

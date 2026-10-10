@@ -1,5 +1,6 @@
 import 'web_cookie_stub.dart'
-    if (dart.library.js_interop) 'web_cookie_html.dart' as web_impl;
+    if (dart.library.js_interop) 'web_cookie_html.dart'
+    as web_impl;
 
 class WebCookie {
   static void set(String name, String value, {int maxAgeDays = 365}) {

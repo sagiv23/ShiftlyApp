@@ -109,7 +109,7 @@ class ExportUtils {
           AppConstants.defaultHourlyRate;
       final pay = shift.calculateTotalPay(rate);
       totalHours += shift.netHours;
-      totalBase += shift.netHours * rate;
+      totalBase += shift.calculateBaseSalary(rate);
       totalTips += shift.tips;
       totalIncomes += shift.totalAutomaticIncomes;
       totalExpenses += shift.totalAutomaticExpenses;

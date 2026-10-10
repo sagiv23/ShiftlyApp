@@ -221,25 +221,75 @@ void main() {
       },
     );
 
-    test('calculate total pay with tips, auto expenses, auto incomes and unpaid break', () {
-      final start = DateTime(2026, 10, 10, 8, 0);
-      final end = DateTime(2026, 10, 10, 18, 0); // 10 hours gross
-      final shift = Shift(
-        id: 's_total',
-        date: start,
-        startTime: start,
-        endTime: end,
+    test(
+      'calculate total pay with tips, auto expenses, auto incomes and unpaid break',
+      () {
+        final start = DateTime(2026, 10, 10, 8, 0);
+        final end = DateTime(2026, 10, 10, 18, 0); // 10 hours gross
+        final shift = Shift(
+          id: 's_total',
+          date: start,
+          startTime: start,
+          endTime: end,
+          jobTypeId: 'j1',
+          hourlyRate: 50.0,
+          breakType: BreakType.unpaid,
+          unpaidBreakMinutes: 60.0,
+          // 1 hour unpaid break -> 9 net hours
+          tips: 40.0,
+        );
+
+        // Base pay = 9 net hours * 50.0 = 450.0
+        // Total pay = 450.0 + 40.0 (tips) = 490.0
+        expect(shift.calculateBaseSalary(50.0), 450.0);
+        expect(shift.calculateTotalPay(50.0), 490.0);
+      },
+    );
+
+    test('accumulated base salary across shifts respects wage segments', () {
+      final start1 = DateTime(2026, 10, 1, 8, 0);
+      final end1 = DateTime(
+        2026,
+        10,
+        1,
+        16,
+        0,
+      ); // 8 hours normal = 320 at 40/hr
+      final shift1 = Shift(
+        id: 's1',
+        date: start1,
+        startTime: start1,
+        endTime: end1,
         jobTypeId: 'j1',
-        hourlyRate: 50.0,
-        breakType: BreakType.unpaid,
-        unpaidBreakMinutes: 60.0, // 1 hour unpaid break -> 9 net hours
-        tips: 40.0,
+        hourlyRate: 40.0,
       );
 
-      // Base pay = 9 net hours * 50.0 = 450.0
-      // Total pay = 450.0 + 40.0 (tips) = 490.0
-      expect(shift.calculateBaseSalary(50.0), 450.0);
-      expect(shift.calculateTotalPay(50.0), 490.0);
+      final start2 = DateTime(2026, 10, 2, 18, 0);
+      final end2 = DateTime(2026, 10, 2, 22, 0); // 4 hours total
+      final shift2 = Shift(
+        id: 's2',
+        date: start2,
+        startTime: start2,
+        endTime: end2,
+        jobTypeId: 'j1',
+        hourlyRate: 40.0,
+        wageSegments: [
+          ShiftWageSegment(
+            startTime: DateTime(2026, 10, 2, 18, 0),
+            endTime: DateTime(2026, 10, 2, 22, 0),
+            percentage: 150.0, // 4 hours * 40 * 1.5 = 240
+          ),
+        ],
+      );
+
+      final shifts = [shift1, shift2];
+      double totalBaseSalary = 0;
+      for (var s in shifts) {
+        totalBaseSalary += s.calculateBaseSalary(40.0);
+      }
+
+      // Expected: 320 + 240 = 560 (instead of (8 + 4) * 40 = 480)
+      expect(totalBaseSalary, 560.0);
     });
   });
 }

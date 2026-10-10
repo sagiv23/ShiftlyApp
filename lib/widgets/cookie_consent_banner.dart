@@ -24,7 +24,10 @@ class CookieConsentBanner extends StatelessWidget {
               const Divider(height: 24),
               Text(
                 l.legal_payroll_disclaimer,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -67,9 +70,7 @@ class CookieConsentBanner extends StatelessWidget {
                 offset: const Offset(0, -4),
               ),
             ],
-            border: Border.all(
-              color: isDark ? Colors.white12 : Colors.black12,
-            ),
+            border: Border.all(color: isDark ? Colors.white12 : Colors.black12),
           ),
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -109,7 +110,9 @@ class CookieConsentBanner extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13,
                     height: 1.4,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.8),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -222,7 +225,9 @@ class CookieConsentBanner extends StatelessWidget {
                 subtitle,
                 style: TextStyle(
                   fontSize: 11,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ],

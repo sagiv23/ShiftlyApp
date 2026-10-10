@@ -142,12 +142,7 @@ class AdaptiveScaffold extends StatelessWidget {
       );
     }
 
-    return Stack(
-      children: [
-        mainScaffold,
-        const CookieConsentBanner(),
-      ],
-    );
+    return Stack(children: [mainScaffold, const CookieConsentBanner()]);
   }
 }
 

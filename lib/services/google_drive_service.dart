@@ -15,6 +15,7 @@ class GoogleDriveService {
     defaultValue:
         '471238980617-6844beciupc5kt0tafejlr7umsfmn95s.apps.googleusercontent.com',
   );
+
   // OAuth Client Secret must NOT be hardcoded in client code.
   // Supply at compile time via --dart-define=WINDOWS_CLIENT_SECRET=xxx if needed.
   static const String _windowsClientSecret = String.fromEnvironment(

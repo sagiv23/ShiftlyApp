@@ -117,7 +117,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           job?.getRateForDate(shift.date) ??
           AppConstants.defaultHourlyRate;
       totalNetHours += shift.netHours;
-      totalBaseSalary += shift.netHours * rate;
+      totalBaseSalary += shift.calculateBaseSalary(rate);
       totalTips += shift.tips;
       totalExpenses += shift.totalAutomaticExpenses;
       totalIncomes += shift.totalAutomaticIncomes;
@@ -1114,7 +1114,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               job?.getRateForDate(s.date) ??
               AppConstants.defaultHourlyRate;
           hours += s.netHours;
-          base += s.netHours * rate;
+          base += s.calculateBaseSalary(rate);
           tips += s.tips;
           expenses += s.totalAutomaticExpenses;
           incomes += s.totalAutomaticIncomes;
@@ -1154,7 +1154,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               job?.getRateForDate(s.date) ??
               AppConstants.defaultHourlyRate;
           hours += s.netHours;
-          base += s.netHours * rate;
+          base += s.calculateBaseSalary(rate);
           tips += s.tips;
           expenses += s.totalAutomaticExpenses;
           incomes += s.totalAutomaticIncomes;
@@ -1197,7 +1197,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               job?.getRateForDate(s.date) ??
               AppConstants.defaultHourlyRate;
           hours += s.netHours;
-          base += s.netHours * rate;
+          base += s.calculateBaseSalary(rate);
           tips += s.tips;
           expenses += s.totalAutomaticExpenses;
           incomes += s.totalAutomaticIncomes;

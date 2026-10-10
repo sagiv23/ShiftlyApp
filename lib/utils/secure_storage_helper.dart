@@ -9,7 +9,10 @@ class SecureStorageHelper {
 
   static const FlutterSecureStorage _secureStorage = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
-    webOptions: WebOptions(dbName: 'ShiftlySecureStorage', publicKey: 'ShiftlyKey'),
+    webOptions: WebOptions(
+      dbName: 'ShiftlySecureStorage',
+      publicKey: 'ShiftlyKey',
+    ),
   );
 
   /// Saves the auth token securely using FlutterSecureStorage and fallbacks.

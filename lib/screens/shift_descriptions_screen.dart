@@ -157,35 +157,30 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                           ).format(parsedDate);
 
                           return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 4,
-                          ),
-                          child: Text(
-                            formattedDate,
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.primaryDark,
-                            ),
-                          ),
-                        ),
-                        ...dateShifts.map((shift) {
-                          final job = shiftProvider.getJobTypeById(
-                            shift.jobTypeId,
-                          );
-                          final jobName =
-                              job?.name ?? l.common_unknown_job;
-                          final timeStr =
-                              '${DateFormat('HH:mm').format(
-                              shift.startTime)} - ${DateFormat('HH:mm').format(
-                              shift.endTime)}';
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                  horizontal: 4,
+                                ),
+                                child: Text(
+                                  formattedDate,
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppTheme.primaryDark,
+                                      ),
+                                ),
+                              ),
+                              ...dateShifts.map((shift) {
+                                final job = shiftProvider.getJobTypeById(
+                                  shift.jobTypeId,
+                                );
+                                final jobName =
+                                    job?.name ?? l.common_unknown_job;
+                                final timeStr =
+                                    '${DateFormat('HH:mm').format(shift.startTime)} - ${DateFormat('HH:mm').format(shift.endTime)}';
 
                                 return Card(
                                   margin: const EdgeInsets.only(bottom: 8),
