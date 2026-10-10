@@ -258,11 +258,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final settings = context.watch<SettingsProvider>();
     final auth = context.watch<AuthProvider>();
     final symbol = settings.currencySymbol;
     final rawJobs = context.watch<ShiftProvider>().jobTypes;
-    final l = AppLocalizations.of(context)!;
 
     final jobs = List<JobType>.from(rawJobs)
       ..sort((a, b) {

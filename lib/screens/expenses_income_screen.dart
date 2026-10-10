@@ -452,9 +452,9 @@ class _ExpensesScreenState extends State<ExpensesScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final shiftProvider = context.watch<ShiftProvider>();
     final settings = context.watch<SettingsProvider>();
-    final l = AppLocalizations.of(context)!;
     final isIncomeTab = _tabController.index == 1;
 
     // Collect all expenses (standalone + shift automatic expenses)
