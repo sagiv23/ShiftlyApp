@@ -470,5 +470,6 @@
   "legal_cookie_accept_all": "אישור הכל",
   "legal_cookie_necessary_only": "נחוצים בלבד",
   "legal_cookie_necessary_desc": "חיוני להתחברות, אחסון מאובטח והגדרות אפליקציה.",
-  "legal_cookie_analytics_desc": "יומני שגיאות ודיווחי קריסות אנונימיים דרך Firebase."
+  "legal_cookie_analytics_desc": "יומני שגיאות ודיווחי קריסות אנונימיים דרך Firebase.",
+  "common_close": "סגור"
 }

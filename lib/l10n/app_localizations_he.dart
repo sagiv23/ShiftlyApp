@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1478,4 +1477,7 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String get legal_cookie_analytics_desc =>
       'יומני שגיאות ודיווחי קריסות אנונימיים דרך Firebase.';
+
+  @override
+  String get common_close => 'סגור';
 }

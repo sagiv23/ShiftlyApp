@@ -470,5 +470,6 @@
   "legal_cookie_accept_all": "Accept All",
   "legal_cookie_necessary_only": "Necessary Only",
   "legal_cookie_necessary_desc": "Essential for authentication, secure token storage, and session preferences.",
-  "legal_cookie_analytics_desc": "Anonymous error logs and crash performance telemetry via Firebase."
+  "legal_cookie_analytics_desc": "Anonymous error logs and crash performance telemetry via Firebase.",
+  "common_close": "Close"
 }

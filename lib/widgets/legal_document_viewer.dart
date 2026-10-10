@@ -92,9 +92,9 @@ class LegalDocumentViewer extends StatelessWidget {
             ),
           ),
 
-          // Close Footer Button
+          // Close Footer Button (Raised slightly and using localized ARB string)
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 20),
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
             child: SizedBox(
               width: double.infinity,
               height: 48,
@@ -107,9 +107,9 @@ class LegalDocumentViewer extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  'סגור / Close',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                child: Text(
+                  l.common_close,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

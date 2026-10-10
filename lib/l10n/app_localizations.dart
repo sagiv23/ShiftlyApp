@@ -2863,6 +2863,12 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'יומני שגיאות ודיווחי קריסות אנונימיים דרך Firebase.'**
   String get legal_cookie_analytics_desc;
+
+  /// No description provided for @common_close.
+  ///
+  /// In he, this message translates to:
+  /// **'סגור'**
+  String get common_close;
 }
 
 class _AppLocalizationsDelegate

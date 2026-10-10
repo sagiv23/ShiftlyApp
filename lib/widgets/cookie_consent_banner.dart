@@ -3,44 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/widgets/legal_document_viewer.dart';
 
 class CookieConsentBanner extends StatelessWidget {
   const CookieConsentBanner({super.key});
-
-  void _showLegalModal(BuildContext context) {
-    final l = AppLocalizations.of(context)!;
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.legal_privacy_policy),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '${l.legal_privacy_policy}\n\n[OPERATOR LEGAL NAME]\nContact: [PRIVACY CONTACT EMAIL]\n\nShiftly collects account information (name, email, birthdate) and shift records solely for service delivery and cloud backup synchronization.',
-              ),
-              const Divider(height: 24),
-              Text(
-                l.legal_payroll_disclaimer,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,12 +142,19 @@ class CookieConsentBanner extends StatelessWidget {
                 const SizedBox(height: 8),
                 Center(
                   child: TextButton(
-                    onPressed: () => _showLegalModal(context),
+                    onPressed: () => LegalDocumentViewer.show(
+                      context,
+                      LegalDocumentType.privacyPolicy,
+                    ),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppTheme.primaryDark,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    ),
                     child: Text(
                       l.legal_privacy_policy,
                       style: const TextStyle(
-                        fontSize: 12,
-                        decoration: TextDecoration.underline,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
