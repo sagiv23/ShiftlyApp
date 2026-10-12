@@ -82,23 +82,69 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     _selectedBreakType = widget.shiftToEdit?.breakType ?? BreakType.none;
     _selectedJobTypeId = widget.shiftToEdit?.jobTypeId;
 
-    _tipControllers.add(TextEditingController());
-    _timerTipControllers.add(TextEditingController());
-
-    // Defer heavy data parsing, provider reads, and controller setup to post-frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _loadShiftDataAsync();
-    });
+    _initShiftFormData();
   }
 
-  void _loadShiftDataAsync() {
-    setState(() {
-      final settings = context.read<SettingsProvider>();
-      if (widget.shiftToEdit != null) {
-        final s = widget.shiftToEdit!;
-        final expenses = s.automaticExpenses ?? [];
-        for (var e in expenses) {
+  void _initShiftFormData() {
+    final settings = context.read<SettingsProvider>();
+    if (widget.shiftToEdit != null) {
+      final s = widget.shiftToEdit!;
+      final expenses = s.automaticExpenses ?? [];
+      for (var e in expenses) {
+        _autoExpenseAmountControllers.add(
+          TextEditingController(
+            text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
+          ),
+        );
+        _autoExpenseDescControllers.add(
+          TextEditingController(text: e.description),
+        );
+      }
+
+      final incomes = s.automaticIncomes ?? [];
+      for (var e in incomes) {
+        _autoIncomeAmountControllers.add(
+          TextEditingController(
+            text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
+          ),
+        );
+        _autoIncomeDescControllers.add(
+          TextEditingController(text: e.description),
+        );
+      }
+
+      if (s.individualTips != null && s.individualTips!.isNotEmpty) {
+        for (var tip in s.individualTips!) {
+          _tipControllers.add(
+            TextEditingController(text: tip > 0 ? tip.toStringAsFixed(0) : ''),
+          );
+        }
+      } else if (s.tips > 0) {
+        _tipControllers.add(
+          TextEditingController(text: s.tips.toStringAsFixed(0)),
+        );
+      } else {
+        _tipControllers.add(TextEditingController());
+      }
+
+      if (s.wageSegments != null) {
+        for (var seg in s.wageSegments!) {
+          _segmentStartTimes.add(TimeOfDay.fromDateTime(seg.startTime));
+          _segmentEndTimes.add(TimeOfDay.fromDateTime(seg.endTime));
+          _segmentPercentageControllers.add(
+            TextEditingController(
+              text: seg.percentage > 0 ? seg.percentage.toStringAsFixed(0) : '',
+            ),
+          );
+        }
+      }
+      _descriptionController.text = s.description ?? '';
+    } else {
+      _tipControllers.add(TextEditingController());
+      _timerTipControllers.add(TextEditingController());
+
+      if (settings.automaticExpenseEnabled) {
+        for (var e in settings.defaultAutomaticExpenses) {
           _autoExpenseAmountControllers.add(
             TextEditingController(
               text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
@@ -108,9 +154,10 @@ class _AddShiftScreenState extends State<AddShiftScreen>
             TextEditingController(text: e.description),
           );
         }
+      }
 
-        final incomes = s.automaticIncomes ?? [];
-        for (var e in incomes) {
+      if (settings.automaticIncomeEnabled) {
+        for (var e in settings.defaultAutomaticIncomes) {
           _autoIncomeAmountControllers.add(
             TextEditingController(
               text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
@@ -120,109 +167,55 @@ class _AddShiftScreenState extends State<AddShiftScreen>
             TextEditingController(text: e.description),
           );
         }
+      }
+
+      final timer = context.read<TimerProvider>();
+      final isFromTimerReview = timer.startTime != null && !timer.isRunning;
+
+      if (isFromTimerReview) {
+        _selectedDate = timer.startTime!;
+        _startTime = TimeOfDay.fromDateTime(timer.startTime!);
+        _endTime = TimeOfDay.fromDateTime(
+          timer.reviewEndTime ?? DateTime.now(),
+        );
+        _selectedJobTypeId = timer.jobTypeId;
+        _selectedBreakType = timer.accumulatedUnpaidMinutes > 0
+            ? BreakType.unpaid
+            : BreakType.none;
 
         _tipControllers.clear();
-        if (s.individualTips != null && s.individualTips!.isNotEmpty) {
-          for (var tip in s.individualTips!) {
-            _tipControllers.add(
-              TextEditingController(text: tip > 0 ? tip.toStringAsFixed(0) : ''),
-            );
-          }
-        } else if (s.tips > 0) {
-          _tipControllers.add(
-            TextEditingController(text: s.tips.toStringAsFixed(0)),
-          );
-        } else {
-          _tipControllers.add(TextEditingController());
-        }
-
-        if (s.wageSegments != null) {
-          for (var seg in s.wageSegments!) {
-            _segmentStartTimes.add(TimeOfDay.fromDateTime(seg.startTime));
-            _segmentEndTimes.add(TimeOfDay.fromDateTime(seg.endTime));
-            _segmentPercentageControllers.add(
-              TextEditingController(
-                text: seg.percentage > 0 ? seg.percentage.toStringAsFixed(0) : '',
-              ),
-            );
-          }
-        }
-        _descriptionController.text = s.description ?? '';
+        _tipControllers.add(
+          TextEditingController(
+            text: timer.tips > 0 ? timer.tips.toStringAsFixed(0) : '',
+          ),
+        );
+        _timerTipControllers.clear();
+        _timerTipControllers.add(
+          TextEditingController(
+            text: timer.tips > 0 ? timer.tips.toStringAsFixed(0) : '',
+          ),
+        );
       } else {
-        if (settings.automaticExpenseEnabled) {
-          for (var e in settings.defaultAutomaticExpenses) {
-            _autoExpenseAmountControllers.add(
-              TextEditingController(
-                text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
-              ),
-            );
-            _autoExpenseDescControllers.add(
-              TextEditingController(text: e.description),
-            );
-          }
+        final jobs = context.read<ShiftProvider>().jobTypes;
+        if (jobs.isNotEmpty && _selectedJobTypeId == null) {
+          final buffet = jobs.firstWhere(
+            (j) => j.id == '1',
+            orElse: () => jobs.first,
+          );
+          _selectedJobTypeId = buffet.id;
         }
 
-        if (settings.automaticIncomeEnabled) {
-          for (var e in settings.defaultAutomaticIncomes) {
-            _autoIncomeAmountControllers.add(
-              TextEditingController(
-                text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
-              ),
-            );
-            _autoIncomeDescControllers.add(
-              TextEditingController(text: e.description),
-            );
-          }
-        }
-
-        final timer = context.read<TimerProvider>();
-        final isFromTimerReview = timer.startTime != null && !timer.isRunning;
-
-        if (isFromTimerReview) {
-          _selectedDate = timer.startTime!;
-          _startTime = TimeOfDay.fromDateTime(timer.startTime!);
-          _endTime = TimeOfDay.fromDateTime(
-            timer.reviewEndTime ?? DateTime.now(),
-          );
-          _selectedJobTypeId = timer.jobTypeId;
-          _selectedBreakType = timer.accumulatedUnpaidMinutes > 0
-              ? BreakType.unpaid
-              : BreakType.none;
-
-          _tipControllers.clear();
-          _tipControllers.add(
-            TextEditingController(
-              text: timer.tips > 0 ? timer.tips.toStringAsFixed(0) : '',
-            ),
-          );
+        if (timer.isRunning) {
+          _selectedJobTypeId = timer.jobTypeId ?? _selectedJobTypeId;
           _timerTipControllers.clear();
           _timerTipControllers.add(
             TextEditingController(
               text: timer.tips > 0 ? timer.tips.toStringAsFixed(0) : '',
             ),
           );
-        } else {
-          final jobs = context.read<ShiftProvider>().jobTypes;
-          if (jobs.isNotEmpty && _selectedJobTypeId == null) {
-            final buffet = jobs.firstWhere(
-              (j) => j.id == '1',
-              orElse: () => jobs.first,
-            );
-            _selectedJobTypeId = buffet.id;
-          }
-
-          if (timer.isRunning) {
-            _selectedJobTypeId = timer.jobTypeId ?? _selectedJobTypeId;
-            _timerTipControllers.clear();
-            _timerTipControllers.add(
-              TextEditingController(
-                text: timer.tips > 0 ? timer.tips.toStringAsFixed(0) : '',
-              ),
-            );
-          }
         }
       }
-    });
+    }
   }
 
   @override

@@ -228,6 +228,12 @@ class TimerProvider with ChangeNotifier {
   Map<String, String>? _lastL10n;
 
   void updateL10n(Map<String, String> l10n) {
+    if (_lastL10n != null &&
+        _lastL10n!['titleActive'] == l10n['titleActive'] &&
+        _lastL10n!['titlePaid'] == l10n['titlePaid'] &&
+        _lastL10n!['titleUnpaid'] == l10n['titleUnpaid']) {
+      return;
+    }
     _lastL10n = l10n;
   }
 

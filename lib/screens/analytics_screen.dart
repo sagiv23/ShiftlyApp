@@ -14,6 +14,7 @@ import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/analytics_charts.dart';
 import 'package:shiftly/widgets/kpi_card.dart';
+import 'package:shiftly/widgets/skeleton_loaders.dart';
 
 enum AnalyticsPeriodMode { monthly, yearly, allTime }
 
@@ -252,7 +253,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       title: l.analytics_title,
       body: SafeArea(
         bottom: true,
-        child: SingleChildScrollView(
+        child: shiftProvider.isLoading && shiftProvider.shifts.isEmpty
+            ? const AnalyticsScreenSkeleton()
+            : SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(
             AppTheme.spaceSm,
             AppTheme.spaceXs,

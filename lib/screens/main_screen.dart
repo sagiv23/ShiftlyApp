@@ -8,8 +8,8 @@ import 'package:shiftly/screens/settings_screen.dart';
 import 'package:shiftly/screens/shift_descriptions_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_page_route.dart';
-import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
+import 'package:shiftly/widgets/cookie_consent_banner.dart';
 
 class MainScreen extends StatefulWidget {
   final int initialIndex;
@@ -55,13 +55,14 @@ class _MainScreenState extends State<MainScreen> {
     final isDesktopOrWide = screenWidth >= 768;
     final activeIndex = _currentIndex > 4 ? 2 : _currentIndex;
 
-    final currentTabWidget = PageEntranceAnimation(
-      key: ValueKey(_currentIndex),
-      child: IndexedStack(index: _currentIndex, children: _screens),
+    final currentTabWidget = IndexedStack(
+      index: _currentIndex,
+      children: _screens,
     );
 
+    Widget content;
     if (isDesktopOrWide) {
-      return Scaffold(
+      content = Scaffold(
         body: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -92,13 +93,20 @@ class _MainScreenState extends State<MainScreen> {
           ],
         ),
       );
+    } else {
+      content = MainScreenScope(
+        currentIndex: activeIndex,
+        onTabSelected: _onItemTapped,
+        onAddShift: () => _openAddShiftScreen(context),
+        child: currentTabWidget,
+      );
     }
 
-    return MainScreenScope(
-      currentIndex: activeIndex,
-      onTabSelected: _onItemTapped,
-      onAddShift: () => _openAddShiftScreen(context),
-      child: currentTabWidget,
+    return Stack(
+      children: [
+        content,
+        const CookieConsentBanner(),
+      ],
     );
   }
 }

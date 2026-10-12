@@ -1,3 +1,5 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shiftly/models/automatic_expense.dart';
 import 'package:shiftly/services/persistence_service.dart';
@@ -95,6 +97,7 @@ class SettingsProvider with ChangeNotifier {
     _breaksEnabled = box.get('breaksEnabled', defaultValue: true);
     _autoSyncEnabled = box.get('autoSyncEnabled', defaultValue: true);
     _cookieConsent = box.get('cookieConsent');
+    _applyCrashlyticsConsent(_cookieConsent);
     final String? localeCode = box.get('locale');
     if (localeCode != null) {
       _locale = Locale(localeCode);
@@ -121,7 +124,21 @@ class SettingsProvider with ChangeNotifier {
   Future<void> setCookieConsent(String choice) async {
     _cookieConsent = choice;
     await _persistence.settingsBox.put('cookieConsent', choice);
+    _applyCrashlyticsConsent(choice);
     notifyListeners();
+  }
+
+  void _applyCrashlyticsConsent(String? choice) {
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS)) {
+      try {
+        FirebaseCrashlytics.instance
+            .setCrashlyticsCollectionEnabled(choice == 'all');
+      } catch (e) {
+        debugPrint('Crashlytics consent update skipped: $e');
+      }
+    }
   }
 
   Future<void> setAutoSyncEnabled(bool enabled) async {

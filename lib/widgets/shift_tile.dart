@@ -70,7 +70,7 @@ class ShiftTile extends StatelessWidget {
   void _editShift(BuildContext context) {
     Navigator.push(
       context,
-      AppPageRoute.slideHorizontal(AddShiftScreen(shiftToEdit: shift)),
+      AppPageRoute.sharedAxis(AddShiftScreen(shiftToEdit: shift)),
     );
   }
 

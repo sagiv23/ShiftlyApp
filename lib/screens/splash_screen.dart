@@ -7,7 +7,6 @@ import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/screens/main_screen.dart';
-import 'package:shiftly/screens/onboarding_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/widgets/app_icon.dart';
@@ -118,19 +117,37 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigateToHome() async {
-    await Future.delayed(const Duration(milliseconds: 3100));
+    final startTime = DateTime.now();
+    final auth = context.read<AuthProvider>();
+
+    if (auth.isInitializing) {
+      try {
+        await auth.initializationFuture.timeout(
+          const Duration(seconds: 5),
+          onTimeout: () {},
+        );
+      } catch (e) {
+        debugPrint('Auth initialization wait error: $e');
+      }
+    }
+
+    final elapsed = DateTime.now().difference(startTime).inMilliseconds;
+    if (elapsed < 2000) {
+      await Future.delayed(Duration(milliseconds: 2000 - elapsed));
+    }
+
     if (!mounted) return;
 
     final settings = context.read<SettingsProvider>();
-    final auth = context.read<AuthProvider>();
 
     final Widget nextScreen;
     if (!auth.isLoggedIn) {
       nextScreen = const AuthScreen();
-    } else if (settings.hasCompletedOnboarding) {
-      nextScreen = const MainScreen();
     } else {
-      nextScreen = const OnboardingScreen();
+      if (!settings.hasCompletedOnboarding) {
+        await settings.completeOnboarding();
+      }
+      nextScreen = const MainScreen();
     }
 
     if (!mounted) return;
@@ -138,7 +155,7 @@ class _SplashScreenState extends State<SplashScreen>
       context,
       AppPageRoute.fadeScale(
         nextScreen,
-        duration: const Duration(milliseconds: 700),
+        duration: const Duration(milliseconds: 200),
       ),
     );
   }

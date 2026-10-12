@@ -471,5 +471,10 @@
   "legal_cookie_necessary_only": "נחוצים בלבד",
   "legal_cookie_necessary_desc": "חיוני להתחברות, אחסון מאובטח והגדרות אפליקציה.",
   "legal_cookie_analytics_desc": "יומני שגיאות ודיווחי קריסות אנונימיים דרך Firebase.",
+  "legal_cookie_customize": "התאמה אישית",
+  "legal_cookie_save_preferences": "שמירת הגדרות",
+  "legal_cookie_essential": "עוגיות נחוצות ואבטחה",
+  "legal_cookie_always_active": "פעיל תמיד",
+  "legal_cookie_optional": "אופציונלי",
   "common_close": "סגור"
 }

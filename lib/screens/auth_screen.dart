@@ -12,9 +12,9 @@ import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
+import 'package:shiftly/utils/legal_utils.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/app_icon.dart';
-import 'package:shiftly/widgets/legal_document_viewer.dart';
 
 enum AuthMode { login, register }
 
@@ -159,9 +159,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         await settingsProvider.setOnboardingCompleted(false);
         nextScreen = const OnboardingScreen();
       } else {
-        nextScreen = settingsProvider.hasCompletedOnboarding
-            ? const MainScreen()
-            : const OnboardingScreen();
+        await settingsProvider.completeOnboarding();
+        nextScreen = const MainScreen();
       }
 
       if (!mounted) return;
@@ -169,7 +168,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         context,
         AppPageRoute.fadeScale(
           nextScreen,
-          duration: const Duration(milliseconds: 700),
+          duration: const Duration(milliseconds: 200),
         ),
         (route) => false,
       );
@@ -490,10 +489,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           GestureDetector(
-                            onTap: () => LegalDocumentViewer.show(
-                              context,
-                              LegalDocumentType.termsOfService,
-                            ),
+                            onTap: () => LegalUtils.showTermsOfService(context),
                             child: Text(
                               l.legal_terms_of_service,
                               style: const TextStyle(
@@ -511,10 +507,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () => LegalDocumentViewer.show(
-                              context,
-                              LegalDocumentType.privacyPolicy,
-                            ),
+                            onTap: () => LegalUtils.showPrivacyPolicy(context),
                             child: Text(
                               l.legal_privacy_policy,
                               style: const TextStyle(

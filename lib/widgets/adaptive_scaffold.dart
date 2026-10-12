@@ -142,6 +142,10 @@ class AdaptiveScaffold extends StatelessWidget {
       );
     }
 
+    if (scope != null) {
+      return mainScaffold;
+    }
+
     return Stack(children: [mainScaffold, const CookieConsentBanner()]);
   }
 }
@@ -248,12 +252,12 @@ class SideMenuContent extends StatelessWidget {
               label: l.side_menu_profile,
               isSelected: false,
               onTap: () {
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
+                final nav = Navigator.of(context);
+                if (nav.canPop()) {
+                  nav.pop();
                 }
-                Navigator.push(
-                  context,
-                  AppPageRoute.slideHorizontal(const ProfileScreen()),
+                nav.push(
+                  AppPageRoute.sharedAxis(const ProfileScreen()),
                 );
               },
             ),

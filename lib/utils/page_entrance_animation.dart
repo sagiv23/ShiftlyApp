@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// A reusable widget that provides smooth staggered fade + slide entrance animations.
+/// A lightweight widget that provides subtle fade entrance when needed, respecting accessibility and route transitions.
 class PageEntranceAnimation extends StatefulWidget {
   final Widget child;
   final Duration duration;
@@ -10,8 +10,8 @@ class PageEntranceAnimation extends StatefulWidget {
   const PageEntranceAnimation({
     super.key,
     required this.child,
-    this.duration = const Duration(milliseconds: 650),
-    this.beginOffset = const Offset(0, 0.08),
+    this.duration = const Duration(milliseconds: 180),
+    this.beginOffset = const Offset(0, 0.03),
     this.delayFraction = 0.0,
   });
 
@@ -30,7 +30,7 @@ class _PageEntranceAnimationState extends State<PageEntranceAnimation>
     super.initState();
     _controller = AnimationController(vsync: this, duration: widget.duration);
 
-    final start = widget.delayFraction.clamp(0.0, 0.8);
+    final start = widget.delayFraction.clamp(0.0, 0.5);
     final curve = CurvedAnimation(
       parent: _controller,
       curve: Interval(start, 1.0, curve: Curves.easeOutCubic),
@@ -53,6 +53,10 @@ class _PageEntranceAnimationState extends State<PageEntranceAnimation>
 
   @override
   Widget build(BuildContext context) {
+    if (MediaQuery.of(context).disableAnimations) {
+      return widget.child;
+    }
+
     return SlideTransition(
       position: _slideAnimation,
       child: FadeTransition(opacity: _fadeAnimation, child: widget.child),

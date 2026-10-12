@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:shiftly/main.dart';
@@ -24,16 +26,31 @@ class ShiftProvider with ChangeNotifier {
   bool _isBYOS = false;
   bool _autoSyncEnabled = true;
 
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  bool get isLoading => _isLoading;
+
+  String? get errorMessage => _errorMessage;
+
   List<Shift>? _cachedShifts;
+  List<Shift>? _cachedFilteredShifts;
   List<Expense>? _cachedExpenses;
   List<Expense>? _cachedIncomes;
   List<JobType>? _cachedJobTypes;
+  Map<String, List<Shift>>? _cachedShiftsGroupedByMonth;
+  Map<String, List<Expense>>? _cachedExpensesGroupedByMonth;
+  Map<String, List<Expense>>? _cachedIncomesGroupedByMonth;
 
   void _invalidateCache() {
     _cachedShifts = null;
+    _cachedFilteredShifts = null;
     _cachedExpenses = null;
     _cachedIncomes = null;
     _cachedJobTypes = null;
+    _cachedShiftsGroupedByMonth = null;
+    _cachedExpensesGroupedByMonth = null;
+    _cachedIncomesGroupedByMonth = null;
   }
 
   ShiftProvider(this._persistence);
@@ -63,7 +80,6 @@ class ShiftProvider with ChangeNotifier {
   DateTime? get lastBackupTime => _lastBackupTime;
 
   Future<bool> manualBackup() async {
-    // Manual backup ignores the auto-sync setting
     return await _performBackup();
   }
 
@@ -100,12 +116,19 @@ class ShiftProvider with ChangeNotifier {
       debugPrint('Restore: Not in BYOS mode.');
       return {'shifts': 0, 'jobs': 0, 'expenses': 0};
     }
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
     int shiftCount = 0;
     int jobCount = 0;
     int expCount = 0;
 
     try {
-      final data = await _driveService.downloadBackup();
+      final data = await _driveService.downloadBackup().timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => throw TimeoutException('BYOS download timed out'),
+      );
       if (data == null) {
         debugPrint('Restore: No backup data found on Drive.');
         return {'shifts': 0, 'jobs': 0, 'expenses': 0};
@@ -144,7 +167,6 @@ class ShiftProvider with ChangeNotifier {
         debugPrint('Restore: Found ${shiftsList.length} shifts in backup.');
         for (var shiftData in shiftsList) {
           try {
-            // Ensure shiftData is Map<String, dynamic>
             final map = Map<String, dynamic>.from(shiftData as Map);
             final shift = Shift.fromJson(map);
             await _persistence.shiftsBox.put(shift.id, shift);
@@ -153,34 +175,42 @@ class ShiftProvider with ChangeNotifier {
             debugPrint('Restore: Failed to parse shift: $e. Data: $shiftData');
           }
         }
-      } else {
-        debugPrint(
-          'Restore: No shifts list found in backup data or it is not a list.',
-        );
       }
 
       debugPrint('Restore complete. Shifts: $shiftCount, Jobs: $jobCount');
       _lastBackupTime = DateTime.now();
       _invalidateCache();
-      notifyListeners();
       return {'shifts': shiftCount, 'jobs': jobCount, 'expenses': expCount};
     } catch (e) {
       debugPrint('Restore from BYOS failed with major error: $e');
+      _errorMessage = e.toString();
       return {'shifts': 0, 'jobs': 0, 'expenses': 0};
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
   Future<void> syncWithServer({bool? keepLocal}) async {
     if (_authToken == null) return;
-    try {
-      // 1. Get remote data (expenses includes both expenses and special incomes with is_income flag)
-      final remoteJobTypes = await _apiService.getJobTypes(_authToken!);
-      final remoteExpenses = await _apiService.getExpenses(_authToken!);
-      final remoteShifts = await _apiService.getShifts(_authToken!);
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
 
-      // 2. Handle conflicts if it's the first sync
+    try {
+      // 1. Get remote data with timeout safety
+      final remoteJobTypes = await _apiService.getJobTypes(_authToken!).timeout(
+        const Duration(seconds: 12),
+      );
+      final remoteExpenses = await _apiService.getExpenses(_authToken!).timeout(
+        const Duration(seconds: 12),
+      );
+      final remoteShifts = await _apiService.getShifts(_authToken!).timeout(
+        const Duration(seconds: 12),
+      );
+
+      // 2. Handle conflicts if requested
       if (keepLocal == false) {
-        // User chose server data - clear local
         await _persistence.shiftsBox.clear();
         await _persistence.jobTypesBox.clear();
         await _persistence.expensesBox.clear();
@@ -287,7 +317,7 @@ class ShiftProvider with ChangeNotifier {
         await _persistence.shiftsBox.put(shift.id, shift);
       }
 
-      // 4. Upload local to server via Batch Endpoints (Optimizes DB WAL & tuple bloat)
+      // 4. Upload local to server via Batch Endpoints
       if (keepLocal != false) {
         final jobTypeItems = jobTypes
             .map(
@@ -308,7 +338,6 @@ class ShiftProvider with ChangeNotifier {
             .toList();
         await _apiService.batchUpsertJobTypes(_authToken!, jobTypeItems);
 
-        // Include both expenses (is_income = false) and incomes (is_income = true)
         final allFinancialItems = [
           ...expenses.map(
             (exp) => {
@@ -356,24 +385,26 @@ class ShiftProvider with ChangeNotifier {
       }
 
       _invalidateCache();
-      notifyListeners();
     } catch (e) {
       if (e.toString().contains('unauthorized')) {
         navigatorKey.currentState?.pushAndRemoveUntil(
           AppPageRoute.fadeScale(
             const AuthScreen(),
-            duration: const Duration(milliseconds: 700),
+            duration: const Duration(milliseconds: 200),
           ),
           (route) => false,
         );
       }
       debugPrint('Sync failed: $e');
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
   void updateAuthToken(String? token) {
     _authToken = token;
-    // Don't auto-sync here anymore, let the AuthScreen handle it once to ask for preference
   }
 
   Future<void> _syncJobTypeToServer(JobType job) async {
@@ -433,11 +464,15 @@ class ShiftProvider with ChangeNotifier {
 
   void setFilter(ShiftFilter? filter) {
     _activeFilter = filter;
+    _cachedFilteredShifts = null;
+    _cachedShiftsGroupedByMonth = null;
     notifyListeners();
   }
 
   void clearFilter() {
     _activeFilter = null;
+    _cachedFilteredShifts = null;
+    _cachedShiftsGroupedByMonth = null;
     notifyListeners();
   }
 
@@ -449,9 +484,6 @@ class ShiftProvider with ChangeNotifier {
     return _cachedShifts!;
   }
 
-  /// Returns saved shifts whose actual time range intersects [start]–[end].
-  /// Adjacent shifts (for example 08:00–12:00 and 12:00–16:00) are not
-  /// considered overlapping.
   List<Shift> findOverlappingShifts({
     required DateTime start,
     required DateTime end,
@@ -469,11 +501,16 @@ class ShiftProvider with ChangeNotifier {
   }
 
   List<Shift> get filteredShifts {
+    if (_cachedFilteredShifts != null) return _cachedFilteredShifts!;
+
     final allShifts = shifts;
     final ShiftFilter? filter = _activeFilter;
-    if (filter == null || !filter.isActive) return allShifts;
+    if (filter == null || !filter.isActive) {
+      _cachedFilteredShifts = allShifts;
+      return _cachedFilteredShifts!;
+    }
 
-    return allShifts.where((shift) {
+    _cachedFilteredShifts = allShifts.where((shift) {
       final job = getJobTypeById(shift.jobTypeId);
       final rate =
           shift.hourlyRate ??
@@ -518,6 +555,8 @@ class ShiftProvider with ChangeNotifier {
 
       return true;
     }).toList();
+
+    return _cachedFilteredShifts!;
   }
 
   // Expenses
@@ -600,12 +639,10 @@ class ShiftProvider with ChangeNotifier {
   }
 
   void refreshAllReminders(Map<String, String> l10n) {
-    // Cancel all first
     for (var shift in shifts) {
       NotificationService.cancelNotification(shift.id.hashCode);
     }
 
-    // Schedule only if enabled
     if (_remindersEnabled) {
       for (var shift in shifts) {
         _scheduleReminder(shift, l10n: l10n);
@@ -656,7 +693,6 @@ class ShiftProvider with ChangeNotifier {
     }
     _syncJobTypeToServer(jobType);
     _triggerBackup();
-    // Keep shift snapshots in sync with the updated wage history
     await _resyncShiftRatesForJob(jobType);
     _invalidateCache();
     notifyListeners();
@@ -672,9 +708,6 @@ class ShiftProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  /// Re-applies [JobType.getRateForDate] onto every shift for this job so
-  /// wage history edits (raises, reverts, effective-date changes) show up
-  /// immediately without requiring each shift to be re-saved.
   Future<void> _resyncShiftRatesForJob(JobType job) async {
     for (final shift in _persistence.shiftsBox.values) {
       if (shift.jobTypeId != job.id) continue;
@@ -687,35 +720,44 @@ class ShiftProvider with ChangeNotifier {
   }
 
   JobType? getJobTypeById(String id) {
-    // Try key lookup first
     var job = _persistence.jobTypesBox.get(id);
     if (job != null) return job;
-
-    // Fallback: search by id field in case keys are indexed differently
     return jobTypes.firstWhereOrNull((j) => j.id == id);
   }
 
   Map<String, List<Shift>> get shiftsGroupedByMonth {
-    return groupBy(
+    if (_cachedShiftsGroupedByMonth != null) {
+      return _cachedShiftsGroupedByMonth!;
+    }
+    _cachedShiftsGroupedByMonth = groupBy(
       filteredShifts,
       (Shift s) => "${s.date.year}-${s.date.month.toString().padLeft(2, '0')}",
     );
+    return _cachedShiftsGroupedByMonth!;
   }
 
   Map<String, List<Expense>> get expensesGroupedByMonth {
-    return groupBy(
+    if (_cachedExpensesGroupedByMonth != null) {
+      return _cachedExpensesGroupedByMonth!;
+    }
+    _cachedExpensesGroupedByMonth = groupBy(
       expenses,
       (Expense e) =>
           "${e.date.year}-${e.date.month.toString().padLeft(2, '0')}",
     );
+    return _cachedExpensesGroupedByMonth!;
   }
 
   Map<String, List<Expense>> get incomesGroupedByMonth {
-    return groupBy(
+    if (_cachedIncomesGroupedByMonth != null) {
+      return _cachedIncomesGroupedByMonth!;
+    }
+    _cachedIncomesGroupedByMonth = groupBy(
       incomes,
       (Expense e) =>
           "${e.date.year}-${e.date.month.toString().padLeft(2, '0')}",
     );
+    return _cachedIncomesGroupedByMonth!;
   }
 
   // ── Filter Helpers ────────────────────────────────────────────────
@@ -751,13 +793,10 @@ class ShiftProvider with ChangeNotifier {
   }
 
   Future<void> factoryReset() async {
-    // 1. Cancel all notifications
     for (var shift in shifts) {
       NotificationService.cancelNotification(shift.id.hashCode);
     }
-    // 2. Clear persistence
     await _persistence.deleteAllData();
-    // 3. Invalidate cache and notify listeners
     _invalidateCache();
     notifyListeners();
   }

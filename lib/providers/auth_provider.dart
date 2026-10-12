@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:shiftly/main.dart';
 import 'package:shiftly/screens/auth_screen.dart';
@@ -14,6 +16,9 @@ class AuthProvider with ChangeNotifier {
 
   bool _isLoggedIn = false;
   bool _isByosConnected = false;
+  bool _isInitializing = true;
+  final Completer<void> _initCompleter = Completer<void>();
+
   String? _userName;
   String? _userEmail;
   String? _byosEmail;
@@ -24,6 +29,10 @@ class AuthProvider with ChangeNotifier {
   bool get isLoggedIn => _isLoggedIn;
 
   bool get isByosConnected => _isByosConnected;
+
+  bool get isInitializing => _isInitializing;
+
+  Future<void> get initializationFuture => _initCompleter.future;
 
   String? get userName => _userName;
 
@@ -55,65 +64,73 @@ class AuthProvider with ChangeNotifier {
   }
 
   void _loadAuthState() async {
-    final box = _persistence.settingsBox;
-    _isLoggedIn = box.get('isLoggedIn', defaultValue: false);
-    _isByosConnected = box.get('isByosConnected', defaultValue: false);
-    _userName = box.get('userName');
-    _userEmail = box.get('userEmail');
-    _byosEmail = box.get('byosEmail');
-    _userCreatedAt = box.get('userCreatedAt');
-    _userBirthDate = box.get('userBirthDate');
-    _token = await SecureStorageHelper.getToken();
+    _isInitializing = true;
+    try {
+      final box = _persistence.settingsBox;
+      _isLoggedIn = box.get('isLoggedIn', defaultValue: false);
+      _isByosConnected = box.get('isByosConnected', defaultValue: false);
+      _userName = box.get('userName');
+      _userEmail = box.get('userEmail');
+      _byosEmail = box.get('byosEmail');
+      _userCreatedAt = box.get('userCreatedAt');
+      _userBirthDate = box.get('userBirthDate');
+      _token = await SecureStorageHelper.getToken();
 
-    if (_token != null && _token!.isNotEmpty) {
-      _isLoggedIn = true;
-      await box.put('isLoggedIn', true);
-    } else {
-      _isLoggedIn = false;
-      await box.put('isLoggedIn', false);
-    }
+      if (_token != null && _token!.isNotEmpty) {
+        _isLoggedIn = true;
+        await box.put('isLoggedIn', true);
+      } else {
+        _isLoggedIn = false;
+        await box.put('isLoggedIn', false);
+      }
 
-    if (_isLoggedIn && _token != null) {
-      try {
-        final profile = await _apiService.getProfile(_token!);
-        _userName = profile['name'] ?? _userName;
-        _userEmail = profile['email'] ?? _userEmail;
-        final createdAt = profile['created_at'] ?? profile['createdAt'];
-        if (createdAt != null) {
-          _userCreatedAt = createdAt.toString();
-        }
-        final birthVal = profile['birth_date'] ?? profile['birthDate'];
-        if (birthVal != null) {
-          _userBirthDate = birthVal.toString();
-        }
-        await _saveToPersistence();
-      } catch (e) {
-        debugPrint('Failed to sync profile on load: $e');
-        final errStr = e.toString().toLowerCase();
-        if (errStr.contains('unauthorized') ||
-            errStr.contains('401') ||
-            errStr.contains('403') ||
-            errStr.contains('not found') ||
-            errStr.contains('user')) {
-          await logout();
-          return;
+      if (_isLoggedIn && _token != null) {
+        try {
+          final profile = await _apiService.getProfile(_token!);
+          _userName = profile['name'] ?? _userName;
+          _userEmail = profile['email'] ?? _userEmail;
+          final createdAt = profile['created_at'] ?? profile['createdAt'];
+          if (createdAt != null) {
+            _userCreatedAt = createdAt.toString();
+          }
+          final birthVal = profile['birth_date'] ?? profile['birthDate'];
+          if (birthVal != null) {
+            _userBirthDate = birthVal.toString();
+          }
+          await _saveToPersistence();
+        } catch (e) {
+          debugPrint('Failed to sync profile on load: $e');
+          final errStr = e.toString().toLowerCase();
+          if (errStr.contains('unauthorized') ||
+              errStr.contains('401') ||
+              errStr.contains('403') ||
+              errStr.contains('not found') ||
+              errStr.contains('user')) {
+            await logout();
+            return;
+          }
         }
       }
-    }
 
-    if (_isLoggedIn && (_userCreatedAt == null || _userCreatedAt!.isEmpty)) {
-      _userCreatedAt = DateTime.now().toIso8601String();
-      await box.put('userCreatedAt', _userCreatedAt!);
-    }
-
-    if (_isByosConnected) {
-      try {
-        await _driveService.init();
-      } catch (e) {
-        debugPrint('Drive init failed: $e');
+      if (_isLoggedIn && (_userCreatedAt == null || _userCreatedAt!.isEmpty)) {
+        _userCreatedAt = DateTime.now().toIso8601String();
+        await box.put('userCreatedAt', _userCreatedAt!);
       }
+
+      if (_isByosConnected) {
+        try {
+          await _driveService.init();
+        } catch (e) {
+          debugPrint('Drive init failed: $e');
+        }
+      }
+    } finally {
+      _isInitializing = false;
+      if (!_initCompleter.isCompleted) {
+        _initCompleter.complete();
+      }
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   Future<void> connectBYOS() async {
@@ -299,7 +316,7 @@ class AuthProvider with ChangeNotifier {
     navigatorKey.currentState?.pushAndRemoveUntil(
       AppPageRoute.fadeScale(
         const AuthScreen(),
-        duration: const Duration(milliseconds: 700),
+        duration: const Duration(milliseconds: 200),
       ),
       (route) => false,
     );

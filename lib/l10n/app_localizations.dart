@@ -2864,6 +2864,36 @@ abstract class AppLocalizations {
   /// **'יומני שגיאות ודיווחי קריסות אנונימיים דרך Firebase.'**
   String get legal_cookie_analytics_desc;
 
+  /// No description provided for @legal_cookie_customize.
+  ///
+  /// In he, this message translates to:
+  /// **'התאמה אישית'**
+  String get legal_cookie_customize;
+
+  /// No description provided for @legal_cookie_save_preferences.
+  ///
+  /// In he, this message translates to:
+  /// **'שמירת הגדרות'**
+  String get legal_cookie_save_preferences;
+
+  /// No description provided for @legal_cookie_essential.
+  ///
+  /// In he, this message translates to:
+  /// **'עוגיות נחוצות ואבטחה'**
+  String get legal_cookie_essential;
+
+  /// No description provided for @legal_cookie_always_active.
+  ///
+  /// In he, this message translates to:
+  /// **'פעיל תמיד'**
+  String get legal_cookie_always_active;
+
+  /// No description provided for @legal_cookie_optional.
+  ///
+  /// In he, this message translates to:
+  /// **'אופציונלי'**
+  String get legal_cookie_optional;
+
   /// No description provided for @common_close.
   ///
   /// In he, this message translates to:

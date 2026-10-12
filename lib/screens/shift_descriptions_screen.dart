@@ -12,6 +12,7 @@ import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
+import 'package:shiftly/widgets/skeleton_loaders.dart';
 
 class ShiftDescriptionsScreen extends StatefulWidget {
   const ShiftDescriptionsScreen({super.key});
@@ -109,7 +110,9 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                 ),
               ),
             Expanded(
-              child: PageEntranceAnimation(
+              child: shiftProvider.isLoading && shiftProvider.shifts.isEmpty
+                  ? const ExpensesScreenSkeleton()
+                  : PageEntranceAnimation(
                 delayFraction: 0.1,
                 child: groupedShifts.isEmpty
                     ? Center(
@@ -188,7 +191,7 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                                     onTap: () {
                                       Navigator.push(
                                         context,
-                                        AppPageRoute.slideHorizontal(
+                                        AppPageRoute.sharedAxis(
                                           AddShiftScreen(shiftToEdit: shift),
                                         ),
                                       );

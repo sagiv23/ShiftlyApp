@@ -208,7 +208,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       context,
       AppPageRoute.fadeScale(
         const MainScreen(),
-        duration: const Duration(milliseconds: 450),
+        duration: const Duration(milliseconds: 200),
       ),
     );
   }

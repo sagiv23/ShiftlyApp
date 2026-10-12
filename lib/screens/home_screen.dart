@@ -13,13 +13,13 @@ import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
-import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/empty_state_widget.dart';
 import 'package:shiftly/widgets/export_bottom_sheet.dart';
 import 'package:shiftly/widgets/grand_total_card.dart';
 import 'package:shiftly/widgets/shift_tile.dart';
+import 'package:shiftly/widgets/skeleton_loaders.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -27,7 +27,8 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shiftProvider = context.watch<ShiftProvider>();
-    final timerProvider = context.watch<TimerProvider>();
+    final hasActiveTimer = context.select<TimerProvider, bool>((t) =>
+    t.startTime != null);
     final auth = context.watch<AuthProvider>();
     final l = AppLocalizations.of(context)!;
     final groupedShifts = shiftProvider.shiftsGroupedByMonth;
@@ -57,7 +58,8 @@ class HomeScreen extends StatelessWidget {
       grandTotalIncomes += income.amount;
     }
 
-    if (timerProvider.startTime != null) {
+    if (hasActiveTimer) {
+      final timerProvider = context.read<TimerProvider>();
       grandTotalShifts += 1;
       final settings = context.read<SettingsProvider>();
       final job = shiftProvider.getJobTypeById(timerProvider.jobTypeId ?? "");
@@ -131,60 +133,68 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            PageEntranceAnimation(
-              delayFraction: 0.0,
-              child: Column(
-                children: [
-                  if (timerProvider.startTime != null)
-                    _ActiveTimerBanner(timer: timerProvider),
-                  if (shiftProvider.activeFilter?.isActive == true)
-                    const _ActiveFiltersBar(),
-                ],
-              ),
+            Column(
+              children: [
+                if (hasActiveTimer)
+                  const _ActiveTimerBanner(),
+                if (shiftProvider.activeFilter?.isActive == true)
+                  const _ActiveFiltersBar(),
+              ],
             ),
             Expanded(
-              child: groupedShifts.isEmpty && timerProvider.startTime == null
+              child: shiftProvider.isLoading && shiftProvider.shifts.isEmpty
+                  ? const HomeScreenSkeleton()
+                  : shiftProvider.errorMessage != null &&
+                  shiftProvider.shifts.isEmpty
+                  ? EmptyStateWidget(
+                icon: Icons.cloud_off_rounded,
+                title: l.common_error,
+                subtitle: shiftProvider.errorMessage,
+                action: ElevatedButton.icon(
+                  onPressed: () => shiftProvider.syncWithServer(),
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: Text(l.common_reset),
+                ),
+              )
+                  : groupedShifts.isEmpty && !hasActiveTimer
                   ? (shiftProvider.activeFilter?.isActive == true
-                        ? _FilterEmptyState()
-                        : EmptyStateWidget(
-                            title: l.home_empty_state_title,
-                            subtitle: l.home_empty_state_subtitle,
-                          ))
-                  : PageEntranceAnimation(
-                      delayFraction: 0.15,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(
-                          AppTheme.spaceSm,
-                          AppTheme.spaceXs,
-                          AppTheme.spaceSm,
-                          120, // Increased for ad space and system navigation
-                        ),
-                        itemCount: groupedShifts.isEmpty
-                            ? 1
-                            : groupedShifts.length + 1,
-                        itemBuilder: (context, index) {
-                          if (index == 0) {
-                            return GrandTotalCard(
-                              totalHours: grandTotalNetHours,
-                              totalBase: grandTotalBaseSalary,
-                              totalTips: grandTotalTips,
-                              totalExpenses: grandTotalExpenses,
-                              totalIncomes: grandTotalIncomes,
-                              totalShifts: grandTotalShifts,
-                            );
-                          }
-                          final monthKey = groupedShifts.keys.elementAt(
-                            index - 1,
-                          );
-                          final shifts = groupedShifts[monthKey]!;
-                          return _MonthExpansionSection(
-                            monthKey: monthKey,
-                            shifts: shifts,
-                            initiallyExpanded: index == 1,
-                          );
-                        },
-                      ),
-                    ),
+                  ? _FilterEmptyState()
+                  : EmptyStateWidget(
+                title: l.home_empty_state_title,
+                subtitle: l.home_empty_state_subtitle,
+              ))
+                  : ListView.builder(
+                padding: const EdgeInsets.fromLTRB(
+                  AppTheme.spaceSm,
+                  AppTheme.spaceXs,
+                  AppTheme.spaceSm,
+                  120, // Increased for ad space and system navigation
+                ),
+                itemCount: groupedShifts.isEmpty
+                    ? 1
+                    : groupedShifts.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return GrandTotalCard(
+                      totalHours: grandTotalNetHours,
+                      totalBase: grandTotalBaseSalary,
+                      totalTips: grandTotalTips,
+                      totalExpenses: grandTotalExpenses,
+                      totalIncomes: grandTotalIncomes,
+                      totalShifts: grandTotalShifts,
+                    );
+                  }
+                  final monthKey = groupedShifts.keys.elementAt(
+                    index - 1,
+                  );
+                  final shifts = groupedShifts[monthKey]!;
+                  return _MonthExpansionSection(
+                    monthKey: monthKey,
+                    shifts: shifts,
+                    initiallyExpanded: index == 1,
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -204,12 +214,11 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _ActiveTimerBanner extends StatelessWidget {
-  final TimerProvider timer;
-
-  const _ActiveTimerBanner({required this.timer});
+  const _ActiveTimerBanner();
 
   @override
   Widget build(BuildContext context) {
+    final timer = context.watch<TimerProvider>();
     final shiftProvider = context.read<ShiftProvider>();
     final l = AppLocalizations.of(context)!;
     final symbol = context.watch<SettingsProvider>().currencySymbol;

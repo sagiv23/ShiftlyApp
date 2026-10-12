@@ -9,6 +9,7 @@ import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/empty_state_widget.dart';
 import 'package:shiftly/widgets/shift_tile.dart';
+import 'package:shiftly/widgets/skeleton_loaders.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -50,7 +51,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
       title: l.home_action_calendar,
       body: SafeArea(
         bottom: true,
-        child: CustomScrollView(
+        child: shiftProvider.isLoading && shiftProvider.shifts.isEmpty
+            ? const CalendarScreenSkeleton()
+            : CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
               child: PageEntranceAnimation(

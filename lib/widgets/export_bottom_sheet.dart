@@ -7,6 +7,7 @@ import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_animations.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/export_utils.dart';
@@ -274,6 +275,6 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
           ),
         ),
       ),
-    );
+    ).animateEntrance(context: context);
   }
 }

@@ -13,10 +13,10 @@ import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
+import 'package:shiftly/utils/legal_utils.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
-import 'package:shiftly/widgets/legal_document_viewer.dart';
 import 'package:uuid/uuid.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -691,30 +691,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           title: Text(l.legal_cookie_title),
                           subtitle: Text(
                             settings.cookieConsent == 'all'
-                                ? '${l.legal_cookie_accept_all} (עוגיות נחוצות + דיווחי שגיאות)'
-                                : '${l.legal_cookie_necessary_only} (עוגיות נחוצות בלבד)',
+                                ? '${l.legal_cookie_accept_all} (${l.legal_cookie_essential} + ${l.legal_cookie_optional})'
+                                : '${l.legal_cookie_necessary_only} (${l.legal_cookie_essential})',
                             style: const TextStyle(fontSize: 12),
                           ),
-                          trailing: DropdownButton<String>(
-                            value: settings.cookieConsent ?? 'necessary',
-                            underline: const SizedBox(),
-                            items: [
-                              DropdownMenuItem(
-                                value: 'all',
-                                child: Text(l.legal_cookie_accept_all),
-                              ),
-                              DropdownMenuItem(
-                                value: 'necessary',
-                                child: Text(l.legal_cookie_necessary_only),
-                              ),
-                            ],
-                            onChanged: (val) {
-                              if (val != null) {
-                                settings.setCookieConsent(val);
-                                UIUtils.showSnackBar(context, l.common_success);
-                              }
-                            },
-                          ),
+                          trailing: const Icon(Icons.chevron_right_rounded),
+                          onTap: () =>
+                              LegalUtils.showCookiePreferences(context),
                         ),
                         const Divider(height: 1, indent: 56),
                         ListTile(
@@ -724,10 +707,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           title: Text(l.legal_privacy_policy),
                           trailing: const Icon(Icons.chevron_right_rounded),
-                          onTap: () => LegalDocumentViewer.show(
-                            context,
-                            LegalDocumentType.privacyPolicy,
-                          ),
+                          onTap: () => LegalUtils.showPrivacyPolicy(context),
                         ),
                         const Divider(height: 1, indent: 56),
                         ListTile(
@@ -737,10 +717,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           title: Text(l.legal_terms_of_service),
                           trailing: const Icon(Icons.chevron_right_rounded),
-                          onTap: () => LegalDocumentViewer.show(
-                            context,
-                            LegalDocumentType.termsOfService,
-                          ),
+                          onTap: () => LegalUtils.showTermsOfService(context),
                         ),
                       ],
                     ),

@@ -15,6 +15,7 @@ import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/expense_income_tile.dart';
+import 'package:shiftly/widgets/skeleton_loaders.dart';
 import 'package:uuid/uuid.dart';
 
 class ExpensesScreen extends StatefulWidget {
@@ -51,7 +52,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
 
     _entranceController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 700),
+      duration: const Duration(milliseconds: 200),
     );
 
     _fadeSummary = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -580,7 +581,10 @@ class _ExpensesScreenState extends State<ExpensesScreen>
       ],
       body: SafeArea(
         bottom: true,
-        child: Column(
+        child: shiftProvider.isLoading && shiftProvider.shifts.isEmpty &&
+            shiftProvider.expenses.isEmpty
+            ? const ExpensesScreenSkeleton()
+            : Column(
           children: [
             if (_selectedDateFilter != null)
               Container(
@@ -771,7 +775,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                                         if (record.shift != null) {
                                           Navigator.push(
                                             context,
-                                            AppPageRoute.slideHorizontal(
+                                            AppPageRoute.sharedAxis(
                                               AddShiftScreen(
                                                 shiftToEdit: record.shift,
                                               ),
@@ -909,7 +913,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                                         if (record.shift != null) {
                                           Navigator.push(
                                             context,
-                                            AppPageRoute.slideHorizontal(
+                                            AppPageRoute.sharedAxis(
                                               AddShiftScreen(
                                                 shiftToEdit: record.shift,
                                               ),
@@ -1056,13 +1060,17 @@ class _MonthItemSection extends StatelessWidget {
             ],
           ),
         ),
-        ...items.map(
-          (record) => ExpenseTile(
-            record: record,
-            isIncome: isIncome,
-            onTap: () => onEdit(record),
-            symbol: symbol,
-          ),
+        ...items
+            .asMap()
+            .entries
+            .map(
+              (entry) =>
+              ExpenseTile(
+                record: entry.value,
+                isIncome: isIncome,
+                onTap: () => onEdit(entry.value),
+                symbol: symbol,
+              ),
         ),
         const Divider(),
       ],
