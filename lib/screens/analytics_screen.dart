@@ -273,33 +273,32 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     const SizedBox(height: AppTheme.spaceSm),
 
                     // Animated Transition for Analytics Content
-              PageEntranceAnimation(
-                delayFraction: 0.2,
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 320),
-                  switchInCurve: Curves.easeOutCubic,
-                  switchOutCurve: Curves.easeInCubic,
-                  child: Column(
-                    key: ValueKey(
+                    PageEntranceAnimation(
+                      delayFraction: 0.2,
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 320),
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
+                        child: Column(
+                          key: ValueKey(
                             '$_periodMode-$_selectedJobId-${_selectedDate.year}-${_selectedDate.month}',
                           ),
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 2. Summary KPI Cards
-                      _buildKpiGrid(
-                        context,
-                        l: l,
-                        symbol: symbol,
-                        totalNet: grandTotalNet,
-                        totalHours: totalNetHours,
-                        avgRate: avgEffectiveRate,
-                        totalExpenses: totalExpenses,
-                        shiftCount: shiftCount,
-                        projectedEom: projectedEom,
-                        retentionPct: retentionPct,
-                        rateBoost: rateBoost,
-                      ),
-                      const SizedBox(height: AppTheme.spaceMd),
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 2. Summary KPI Cards
+                            _buildKpiGrid(
+                              context,
+                              l: l,
+                              symbol: symbol,
+                              totalNet: grandTotalNet,
+                              totalHours: totalNetHours,
+                              avgRate: avgEffectiveRate,
+                              shiftCount: shiftCount,
+                              projectedEom: projectedEom,
+                              retentionPct: retentionPct,
+                              rateBoost: rateBoost,
+                            ),
+                            const SizedBox(height: AppTheme.spaceMd),
 
                             // 3. Smart Insights Card
                             if (shiftCount > 0) ...[
@@ -308,8 +307,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                             ],
 
                             // Responsive Chart Layout
-                      isWideScreen
-                          ? Column(
+                            isWideScreen
+                                ? Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -385,12 +384,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                     ],
                                   ),
                           ],
-                  ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -551,7 +550,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     required double totalNet,
     required double totalHours,
     required double avgRate,
-    required double totalExpenses,
     required int shiftCount,
     required double projectedEom,
     required double retentionPct,
@@ -603,15 +601,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               isDark: isDark,
             ),
             KpiCard(
-              title: l.analytics_stat_tips,
-              value: UIUtils.formatCurrency(totalExpenses, symbol: symbol),
-              subtitle: totalNet > 0
-                  ? l.analytics_net_extras_pct_subtitle(
-                      ((totalExpenses / totalNet) * 100).toStringAsFixed(0),
-                    )
-                  : '0%',
-              icon: Icons.receipt_long_rounded,
-              gradientColors: const [Color(0xFFEF4444), Color(0xFFDC2626)],
+              title: l.analytics_stat_total_hours,
+              value: l.analytics_hours_suffix_format(
+                totalHours.toStringAsFixed(1),
+              ),
+              subtitle: '$shiftCount ${l.common_shifts_count}',
+              icon: Icons.schedule_rounded,
+              gradientColors: const [Color(0xFFF59E0B), Color(0xFFD97706)],
               isDark: isDark,
             ),
           ],

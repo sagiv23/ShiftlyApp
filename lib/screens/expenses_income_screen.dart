@@ -821,48 +821,48 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                             ),
 
                             // Tab 2: Special Incomes
-                      SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(
-                          AppTheme.spaceSm,
-                          AppTheme.spaceXs,
-                          AppTheme.spaceSm,
-                          120,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildSectionHeader(
-                              context,
-                              l.expenses_auto_incomes_section_title,
-                            ),
-                            const SizedBox(height: AppTheme.spaceXs),
-                            Card(
-                              child: Padding(
+                            SingleChildScrollView(
+                              padding: const EdgeInsets.fromLTRB(
+                                AppTheme.spaceSm,
+                                AppTheme.spaceXs,
+                                AppTheme.spaceSm,
+                                120,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildSectionHeader(
+                                    context,
+                                    l.expenses_auto_incomes_section_title,
+                                  ),
+                                  const SizedBox(height: AppTheme.spaceXs),
+                                  Card(
+                                    child: Padding(
                                       padding: const EdgeInsets.all(
                                         AppTheme.spaceSm,
                                       ),
                                       child: Column(
-                                  children: [
-                                    SwitchListTile(
-                                      contentPadding: EdgeInsets.zero,
-                                      title: Text(
-                                        l.expenses_auto_incomes_section_enable,
-                                      ),
-                                      subtitle: Text(
+                                        children: [
+                                          SwitchListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            title: Text(
+                                              l.expenses_auto_incomes_section_enable,
+                                            ),
+                                            subtitle: Text(
                                               l.expenses_auto_incomes_section_subtitle,
                                             ),
-                                      secondary: const Icon(
-                                        Icons.savings_rounded,
-                                        color: AppTheme.profitSoft,
-                                      ),
+                                            secondary: const Icon(
+                                              Icons.savings_rounded,
+                                              color: AppTheme.profitSoft,
+                                            ),
                                             value:
                                                 settings.automaticIncomeEnabled,
                                             onChanged: (val) => settings
                                                 .setAutomaticIncomeEnabled(val),
                                             activeThumbColor: AppTheme.profit,
-                                      activeTrackColor: AppTheme.profit
-                                          .withValues(alpha: 0.35),
-                                    ),
+                                            activeTrackColor: AppTheme.profit
+                                                .withValues(alpha: 0.35),
+                                          ),
                                           if (settings
                                               .automaticIncomeEnabled) ...[
                                             const Divider(
@@ -877,7 +877,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                                                 true,
                                               ),
                                             ),
-                                      TextButton.icon(
+                                            TextButton.icon(
                                               onPressed: () => setState(() {
                                                 _autoIncomeAmountControllers
                                                     .add(
@@ -891,53 +891,53 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                                                 Icons
                                                     .add_circle_outline_rounded,
                                               ),
-                                        label: Text(
-                                          l.onboarding_auto_incomes_add_button,
-                                        ),
-                                        style: TextButton.styleFrom(
+                                              label: Text(
+                                                l.onboarding_auto_incomes_add_button,
+                                              ),
+                                              style: TextButton.styleFrom(
                                                 foregroundColor:
                                                     AppTheme.profitSoft,
                                               ),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: ElevatedButton(
-                                          onPressed: _saveDefaultIncomes,
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
+                                            ),
+                                            const SizedBox(height: 16),
+                                            SizedBox(
+                                              width: double.infinity,
+                                              child: ElevatedButton(
+                                                onPressed: _saveDefaultIncomes,
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
                                                       AppTheme.profitSoft,
                                                 ),
-                                          child: Text(
-                                            l.expenses_action_update_settings,
-                                          ),
-                                        ),
+                                                child: Text(
+                                                  l.expenses_action_update_settings,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ],
                                       ),
-                                    ],
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: AppTheme.spaceLg),
-                            _buildSectionHeader(
-                              context,
-                              l.incomes_history_section_title,
-                            ),
-                            const SizedBox(height: AppTheme.spaceXs),
-                            if (groupedIncomes.isEmpty)
-                              Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 40,
+                                    ),
                                   ),
-                                  child: Text(l.incomes_no_history),
-                                ),
-                              )
-                            else
-                              ...groupedIncomes.keys
-                                  .toList()
-                                  .sorted((a, b) => b.compareTo(a))
-                                  .map((monthKey) {
+                                  const SizedBox(height: AppTheme.spaceLg),
+                                  _buildSectionHeader(
+                                    context,
+                                    l.incomes_history_section_title,
+                                  ),
+                                  const SizedBox(height: AppTheme.spaceXs),
+                                  if (groupedIncomes.isEmpty)
+                                    Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 40,
+                                        ),
+                                        child: Text(l.incomes_no_history),
+                                      ),
+                                    )
+                                  else
+                                    ...groupedIncomes.keys
+                                        .toList()
+                                        .sorted((a, b) => b.compareTo(a))
+                                        .map((monthKey) {
                                           final items =
                                               groupedIncomes[monthKey]!;
                                           return _MonthItemSection(
@@ -968,15 +968,15 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                                           );
                                         }),
                                 ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         heroTag: 'expenses_fab',

@@ -58,26 +58,22 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    _textSlideAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(0.0, 0.08),
-    ).animate(
-      CurvedAnimation(
-        parent: _exitController,
-        curve: const Interval(0.0, 0.35, curve: Curves.easeInCubic),
-      ),
-    );
+    _textSlideAnimation =
+        Tween<Offset>(begin: Offset.zero, end: const Offset(0.0, 0.08)).animate(
+          CurvedAnimation(
+            parent: _exitController,
+            curve: const Interval(0.0, 0.35, curve: Curves.easeInCubic),
+          ),
+        );
 
     // 2. Icon glides down to center Offset(0, 0) and enlarges (1.0 -> 1.45) (0.08 to 0.72)
-    _iconOffsetAnimation = Tween<Offset>(
-      begin: const Offset(0, -75),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _exitController,
-        curve: const Interval(0.08, 0.72, curve: Curves.easeInOutCubic),
-      ),
-    );
+    _iconOffsetAnimation =
+        Tween<Offset>(begin: const Offset(0, -75), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _exitController,
+            curve: const Interval(0.08, 0.72, curve: Curves.easeInOutCubic),
+          ),
+        );
 
     _iconScaleAnimation = Tween<double>(begin: 1.0, end: 1.45).animate(
       CurvedAnimation(
@@ -118,9 +114,7 @@ class _SplashScreenState extends State<SplashScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_hasStarted && mounted) {
         _hasStarted = true;
-        final disabledAnimations = MediaQuery
-            .of(context)
-            .disableAnimations;
+        final disabledAnimations = MediaQuery.of(context).disableAnimations;
         if (!disabledAnimations) {
           _floatController.repeat(reverse: true);
         }
@@ -199,9 +193,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Stop ambient float and execute the transition animation
     _floatController.stop();
-    final disabledAnimations = MediaQuery
-        .of(context)
-        .disableAnimations;
+    final disabledAnimations = MediaQuery.of(context).disableAnimations;
     if (disabledAnimations) {
       _exitController.value = 1.0;
     } else {
@@ -225,24 +217,20 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     final currencySymbol = context.watch<SettingsProvider>().currencySymbol;
-    final isDark = Theme
-        .of(context)
-        .brightness == Brightness.dark;
-    final disabledAnimations = MediaQuery
-        .of(context)
-        .disableAnimations;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final disabledAnimations = MediaQuery.of(context).disableAnimations;
 
     final bgColors = isDark
         ? [
-      const Color(0xFF131B2E),
-      const Color(0xFF0A0F1D),
-      const Color(0xFF04060C),
-    ]
+            const Color(0xFF131B2E),
+            const Color(0xFF0A0F1D),
+            const Color(0xFF04060C),
+          ]
         : [
-      const Color(0xFFF8FAFC),
-      const Color(0xFFEEF2F6),
-      const Color(0xFFE2E8F0),
-    ];
+            const Color(0xFFF8FAFC),
+            const Color(0xFFEEF2F6),
+            const Color(0xFFE2E8F0),
+          ];
 
     final titleColor = isDark ? Colors.white : const Color(0xFF0F172A);
     final cardBg = isDark
@@ -262,12 +250,11 @@ class _SplashScreenState extends State<SplashScreen>
                 child: AnimatedBuilder(
                   animation: _exitController,
                   builder: (context, child) {
-                    final opacity =
-                    _nextScreenOpacityAnimation.value.clamp(0.0, 1.0);
-                    return Opacity(
-                      opacity: opacity,
-                      child: child,
+                    final opacity = _nextScreenOpacityAnimation.value.clamp(
+                      0.0,
+                      1.0,
                     );
+                    return Opacity(opacity: opacity, child: child);
                   },
                   child: KeyedSubtree(
                     key: const ValueKey('preloaded_target_screen'),
@@ -280,8 +267,10 @@ class _SplashScreenState extends State<SplashScreen>
             AnimatedBuilder(
               animation: _exitController,
               builder: (context, child) {
-                final splashOpacity =
-                _splashOpacityAnimation.value.clamp(0.0, 1.0);
+                final splashOpacity = _splashOpacityAnimation.value.clamp(
+                  0.0,
+                  1.0,
+                );
                 if (splashOpacity <= 0.0) {
                   return const SizedBox.shrink();
                 }
@@ -289,10 +278,7 @@ class _SplashScreenState extends State<SplashScreen>
 
                 return Opacity(
                   opacity: splashOpacity,
-                  child: Transform.scale(
-                    scale: splashScale,
-                    child: child,
-                  ),
+                  child: Transform.scale(scale: splashScale, child: child),
                 );
               },
               child: Stack(
@@ -327,22 +313,24 @@ class _SplashScreenState extends State<SplashScreen>
                         children: [
                           // Floating / Moving Icon with Glow
                           AnimatedBuilder(
-                            animation: Listenable.merge(
-                              [_floatController, _exitController],
-                            ),
+                            animation: Listenable.merge([
+                              _floatController,
+                              _exitController,
+                            ]),
                             builder: (context, child) {
-                              final floatY = (disabledAnimations ||
-                                  _exitController.isAnimating ||
-                                  _exitController.isCompleted)
+                              final floatY =
+                                  (disabledAnimations ||
+                                      _exitController.isAnimating ||
+                                      _exitController.isCompleted)
                                   ? 0.0
                                   : math.sin(
-                                _floatController.value * 2 * math.pi,
-                              ) *
-                                  6.0;
+                                          _floatController.value * 2 * math.pi,
+                                        ) *
+                                        6.0;
 
                               final currentOffset =
                                   _iconOffsetAnimation.value +
-                                      Offset(0, floatY);
+                                  Offset(0, floatY);
                               final currentScale = _iconScaleAnimation.value;
                               final currentGlowScale =
                                   _glowScaleAnimation.value;
@@ -362,14 +350,13 @@ class _SplashScreenState extends State<SplashScreen>
                                           shape: BoxShape.circle,
                                           boxShadow: [
                                             BoxShadow(
-                                              color:
-                                              AppTheme.primary.withValues(
-                                                alpha: isDark ? 0.35 : 0.22,
-                                              ),
-                                              blurRadius:
-                                              60 * currentGlowScale,
+                                              color: AppTheme.primary
+                                                  .withValues(
+                                                    alpha: isDark ? 0.35 : 0.22,
+                                                  ),
+                                              blurRadius: 60 * currentGlowScale,
                                               spreadRadius:
-                                              15 * currentGlowScale,
+                                                  15 * currentGlowScale,
                                             ),
                                           ],
                                         ),
@@ -395,7 +382,8 @@ class _SplashScreenState extends State<SplashScreen>
                                 return const SizedBox.shrink();
                               }
                               return Transform.translate(
-                                offset: const Offset(0, 110) +
+                                offset:
+                                    const Offset(0, 110) +
                                     _textSlideAnimation.value * 100,
                                 child: Opacity(
                                   opacity: textOpacity,
@@ -408,43 +396,43 @@ class _SplashScreenState extends State<SplashScreen>
                               children: [
                                 // App Name (Larger prominent typography)
                                 Text(
-                                  l.common_app_name,
-                                  style: TextStyle(
-                                    color: titleColor,
-                                    fontSize: 52,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: 2.0,
-                                  ),
-                                )
+                                      l.common_app_name,
+                                      style: TextStyle(
+                                        color: titleColor,
+                                        fontSize: 52,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 2.0,
+                                      ),
+                                    )
                                     .animate()
                                     .fadeIn(duration: 400.ms)
                                     .slideY(
-                                  begin: 0.2,
-                                  end: 0,
-                                  duration: 400.ms,
-                                  curve: Curves.easeOutCubic,
-                                ),
+                                      begin: 0.2,
+                                      end: 0,
+                                      duration: 400.ms,
+                                      curve: Curves.easeOutCubic,
+                                    ),
                                 const SizedBox(height: 10),
 
                                 // Tagline (Larger font)
                                 Text(
-                                  l.common_tagline,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    color: AppTheme.primary,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 0.9,
-                                  ),
-                                )
+                                      l.common_tagline,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: AppTheme.primary,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 0.9,
+                                      ),
+                                    )
                                     .animate()
                                     .fadeIn(delay: 100.ms, duration: 400.ms)
                                     .slideY(
-                                  begin: 0.2,
-                                  end: 0,
-                                  duration: 400.ms,
-                                  curve: Curves.easeOutCubic,
-                                ),
+                                      begin: 0.2,
+                                      end: 0,
+                                      duration: 400.ms,
+                                      curve: Curves.easeOutCubic,
+                                    ),
                                 const SizedBox(height: 48),
 
                                 // Clean Minimalist Loading Circle
@@ -480,16 +468,17 @@ class _SplashScreenState extends State<SplashScreen>
                                         child: CircularProgressIndicator(
                                           strokeWidth: 3.0,
                                           valueColor:
-                                          AlwaysStoppedAnimation<Color>(
-                                            AppTheme.primary,
-                                          ),
+                                              AlwaysStoppedAnimation<Color>(
+                                                AppTheme.primary,
+                                              ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                )
-                                    .animate()
-                                    .fadeIn(delay: 200.ms, duration: 400.ms),
+                                ).animate().fadeIn(
+                                  delay: 200.ms,
+                                  duration: 400.ms,
+                                ),
                               ],
                             ),
                           ),
