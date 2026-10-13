@@ -27,9 +27,7 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
     final l = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final disableAnimations = MediaQuery
-        .of(context)
-        .disableAnimations;
+    final disableAnimations = MediaQuery.of(context).disableAnimations;
 
     final bannerCard = Align(
       alignment: Alignment.bottomCenter,
@@ -93,7 +91,8 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
                       IconButton(
                         icon: const Icon(Icons.close_rounded, size: 20),
                         color: theme.colorScheme.onSurface.withValues(
-                            alpha: 0.6),
+                          alpha: 0.6,
+                        ),
                         tooltip: l.common_close,
                         onPressed: () {
                           setState(() {
@@ -161,7 +160,8 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
                               child: Text(
                                 l.legal_cookie_accept_all,
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -179,8 +179,10 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
                                     ),
                                     child: Text(
                                       l.legal_cookie_necessary_only,
-                                      style: const TextStyle(fontSize: 13,
-                                          fontWeight: FontWeight.w600),
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -189,11 +191,15 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
                                   onPressed: () =>
                                       LegalUtils.showCookiePreferences(context),
                                   icon: const Icon(
-                                      Icons.tune_rounded, size: 18),
+                                    Icons.tune_rounded,
+                                    size: 18,
+                                  ),
                                   label: Text(
                                     l.legal_cookie_customize,
-                                    style: const TextStyle(fontSize: 13,
-                                        fontWeight: FontWeight.w600),
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                   style: OutlinedButton.styleFrom(
                                     minimumSize: const Size(100, 44),
@@ -215,7 +221,9 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
                                 settings.setCookieConsent('necessary'),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 12),
+                                horizontal: 14,
+                                vertical: 12,
+                              ),
                               minimumSize: const Size(100, 46),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -224,7 +232,9 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
                             child: Text(
                               l.legal_cookie_necessary_only,
                               style: const TextStyle(
-                                  fontSize: 13, fontWeight: FontWeight.w600),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -235,11 +245,15 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
                             label: Text(
                               l.legal_cookie_customize,
                               style: const TextStyle(
-                                  fontSize: 13, fontWeight: FontWeight.w600),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 12),
+                                horizontal: 12,
+                                vertical: 12,
+                              ),
                               minimumSize: const Size(100, 46),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -254,7 +268,8 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
                                 backgroundColor: AppTheme.primary,
                                 foregroundColor: const Color(0xFF0F172A),
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 12),
+                                  vertical: 12,
+                                ),
                                 minimumSize: const Size(120, 46),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -263,7 +278,8 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
                               child: Text(
                                 l.legal_cookie_accept_all,
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
@@ -281,7 +297,9 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
                       style: TextButton.styleFrom(
                         foregroundColor: AppTheme.primaryDark,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4),
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
                         visualDensity: VisualDensity.compact,
                       ),
                       child: Text(
@@ -319,9 +337,9 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
   Widget _buildSummaryPill(
     BuildContext context, {
     required IconData icon,
-        required String label,
-        required String badge,
-        required bool isEssential,
+    required String label,
+    required String badge,
+    required bool isEssential,
   }) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -333,9 +351,7 @@ class _CookieConsentBannerState extends State<CookieConsentBanner> {
             ? Colors.white.withValues(alpha: 0.06)
             : Colors.black.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: isDark ? Colors.white12 : Colors.black12,
-        ),
+        border: Border.all(color: isDark ? Colors.white12 : Colors.black12),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -416,10 +432,7 @@ class _CookiePreferencesModalState extends State<CookiePreferencesModal> {
       color: Colors.transparent,
       child: Container(
         padding: EdgeInsets.only(
-          bottom: MediaQuery
-              .of(context)
-              .viewInsets
-              .bottom + 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
         ),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E293B) : Colors.white,
@@ -478,7 +491,8 @@ class _CookiePreferencesModalState extends State<CookiePreferencesModal> {
                             style: TextStyle(
                               fontSize: 12,
                               color: theme.colorScheme.onSurface.withValues(
-                                  alpha: 0.6),
+                                alpha: 0.6,
+                              ),
                               decoration: TextDecoration.none,
                             ),
                           ),
@@ -557,7 +571,8 @@ class _CookiePreferencesModalState extends State<CookiePreferencesModal> {
                               style: TextStyle(
                                 fontSize: 12,
                                 color: theme.colorScheme.onSurface.withValues(
-                                    alpha: 0.7),
+                                  alpha: 0.7,
+                                ),
                                 height: 1.35,
                                 decoration: TextDecoration.none,
                               ),
@@ -621,7 +636,8 @@ class _CookiePreferencesModalState extends State<CookiePreferencesModal> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: AppTheme.primary.withValues(
-                                        alpha: 0.15),
+                                      alpha: 0.15,
+                                    ),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
@@ -642,7 +658,8 @@ class _CookiePreferencesModalState extends State<CookiePreferencesModal> {
                               style: TextStyle(
                                 fontSize: 12,
                                 color: theme.colorScheme.onSurface.withValues(
-                                    alpha: 0.7),
+                                  alpha: 0.7,
+                                ),
                                 height: 1.35,
                                 decoration: TextDecoration.none,
                               ),

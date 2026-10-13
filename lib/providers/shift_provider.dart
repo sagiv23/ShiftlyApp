@@ -4,12 +4,12 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:shiftly/main.dart';
 import 'package:shiftly/models/automatic_expense.dart';
-import 'package:shiftly/models/break_type.dart';
 import 'package:shiftly/models/expense.dart';
 import 'package:shiftly/models/job_type.dart';
 import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/models/shift_filter.dart';
 import 'package:shiftly/models/wage_entry.dart';
+import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/google_drive_service.dart';
@@ -56,12 +56,23 @@ class ShiftProvider with ChangeNotifier {
   ShiftProvider(this._persistence);
 
   bool _hasSyncedOnStartup = false;
+  SettingsProvider? _settingsProvider;
 
-  void updateAuthStatus(String? token, bool isBYOS, bool autoSyncEnabled) {
+  void updateAuthStatus(
+    String? token,
+    bool isBYOS,
+    bool autoSyncEnabled, {
+    SettingsProvider? settingsProvider,
+  }) {
     final bool tokenChanged = _authToken != token;
     _authToken = token;
     _isBYOS = isBYOS;
     _autoSyncEnabled = autoSyncEnabled;
+    _settingsProvider = settingsProvider;
+    _settingsProvider?.updateAuthToken(token);
+    _settingsProvider?.setOnAutomaticSettingsChanged(() {
+      applyAutomaticExpensesAndIncomesToAllShifts();
+    });
 
     if (token == null) {
       _hasSyncedOnStartup = false;
@@ -72,6 +83,56 @@ class ShiftProvider with ChangeNotifier {
     if (!_isBYOS && (!_hasSyncedOnStartup || tokenChanged)) {
       _hasSyncedOnStartup = true;
       Future.microtask(() => syncWithServer());
+    }
+  }
+
+  Future<void> applyAutomaticExpensesAndIncomesToAllShifts() async {
+    final settings = _settingsProvider;
+    if (settings == null) return;
+
+    final shiftsList = _persistence.shiftsBox.values.toList();
+    if (shiftsList.isEmpty) return;
+
+    bool changed = false;
+
+    for (var shift in shiftsList) {
+      final targetExpenses =
+          settings.automaticExpenseEnabled &&
+              settings.defaultAutomaticExpenses.isNotEmpty
+          ? settings.defaultAutomaticExpenses
+                .map(
+                  (e) => AutomaticExpense(
+                    description: e.description,
+                    amount: e.amount,
+                  ),
+                )
+                .toList()
+          : null;
+
+      final targetIncomes =
+          settings.automaticIncomeEnabled &&
+              settings.defaultAutomaticIncomes.isNotEmpty
+          ? settings.defaultAutomaticIncomes
+                .map(
+                  (e) => AutomaticExpense(
+                    description: e.description,
+                    amount: e.amount,
+                  ),
+                )
+                .toList()
+          : null;
+
+      shift.automaticExpenses = targetExpenses;
+      shift.automaticIncomes = targetIncomes;
+      await shift.save();
+      _syncShiftToServer(shift);
+      changed = true;
+    }
+
+    if (changed) {
+      _triggerBackup();
+      _invalidateCache();
+      notifyListeners();
     }
   }
 
@@ -98,6 +159,22 @@ class ShiftProvider with ChangeNotifier {
               .map((e) => e.toJson())
               .toList(),
           'jobTypes': jobTypes.map((j) => j.toJson()).toList(),
+          'settings': {
+            'defaultAutomaticExpenses':
+                _settingsProvider?.defaultAutomaticExpenses
+                    .map((e) => e.toJson())
+                    .toList() ??
+                [],
+            'defaultAutomaticIncomes':
+                _settingsProvider?.defaultAutomaticIncomes
+                    .map((e) => e.toJson())
+                    .toList() ??
+                [],
+            'automaticExpenseEnabled':
+                _settingsProvider?.automaticExpenseEnabled ?? false,
+            'automaticIncomeEnabled':
+                _settingsProvider?.automaticIncomeEnabled ?? false,
+          },
         };
         await _driveService.uploadBackup(data);
         _lastBackupTime = DateTime.now();
@@ -135,6 +212,12 @@ class ShiftProvider with ChangeNotifier {
       }
 
       debugPrint('Restore: Data found. Parsing...');
+
+      if (data['settings'] != null && data['settings'] is Map) {
+        await _settingsProvider?.updateSettingsFromProfile(
+          Map<String, dynamic>.from(data['settings'] as Map),
+        );
+      }
 
       if (data['jobTypes'] != null && data['jobTypes'] is List) {
         for (var jobData in data['jobTypes']) {
@@ -199,15 +282,23 @@ class ShiftProvider with ChangeNotifier {
 
     try {
       // 1. Get remote data with timeout safety
-      final remoteJobTypes = await _apiService.getJobTypes(_authToken!).timeout(
-        const Duration(seconds: 12),
-      );
-      final remoteExpenses = await _apiService.getExpenses(_authToken!).timeout(
-        const Duration(seconds: 12),
-      );
-      final remoteShifts = await _apiService.getShifts(_authToken!).timeout(
-        const Duration(seconds: 12),
-      );
+      final remoteJobTypes = await _apiService
+          .getJobTypes(_authToken!)
+          .timeout(const Duration(seconds: 12));
+      final remoteExpenses = await _apiService
+          .getExpenses(_authToken!)
+          .timeout(const Duration(seconds: 12));
+      final remoteShifts = await _apiService
+          .getShifts(_authToken!)
+          .timeout(const Duration(seconds: 12));
+      try {
+        final remoteProfile = await _apiService
+            .getProfile(_authToken!)
+            .timeout(const Duration(seconds: 8));
+        await _settingsProvider?.updateSettingsFromProfile(remoteProfile);
+      } catch (e) {
+        debugPrint('Failed to sync profile settings during server sync: $e');
+      }
 
       // 2. Handle conflicts if requested
       if (keepLocal == false) {
@@ -254,71 +345,15 @@ class ShiftProvider with ChangeNotifier {
       }
 
       for (var shiftData in remoteShifts) {
-        final id = shiftData['id'].toString();
-        final date = DateTime.parse(shiftData['date'].toString());
-        final startTime = DateTime.parse(
-          (shiftData['start_time'] ?? shiftData['startTime']).toString(),
-        );
-        final endTime = DateTime.parse(
-          (shiftData['end_time'] ?? shiftData['endTime']).toString(),
-        );
-        final jobTypeId = (shiftData['job_type_id'] ?? shiftData['jobTypeId'])
-            .toString();
-        final tips = double.parse((shiftData['tips'] ?? 0).toString());
-        final hourlyRateVal =
-            shiftData['hourly_rate'] ?? shiftData['hourlyRate'];
-        final hourlyRate = hourlyRateVal != null
-            ? double.parse(hourlyRateVal.toString())
-            : null;
-
-        final breakTypeStr = shiftData['break_type'] ?? shiftData['breakType'];
-        BreakType breakType = BreakType.none;
-        if (breakTypeStr != null) {
-          breakType = BreakType.values.firstWhere(
-            (e) =>
-                e.toString().split('.').last.toLowerCase() ==
-                breakTypeStr.toString().toLowerCase(),
-            orElse: () => BreakType.none,
-          );
-        }
-        final unpaidBreak = double.parse(
-          (shiftData['unpaid_break_minutes'] ??
-                  shiftData['unpaidBreakMinutes'] ??
-                  0)
-              .toString(),
-        );
-
-        List<AutomaticExpense>? autoExpenses;
-        final rawAutoExpenses =
-            shiftData['automatic_expenses'] ?? shiftData['automaticExpenses'];
-        if (rawAutoExpenses != null && rawAutoExpenses is List) {
-          autoExpenses = rawAutoExpenses
-              .map(
-                (e) => AutomaticExpense.fromJson(
-                  Map<String, dynamic>.from(e as Map),
-                ),
-              )
-              .toList();
-        }
-
-        final shift = Shift(
-          id: id,
-          date: date,
-          startTime: startTime,
-          endTime: endTime,
-          jobTypeId: jobTypeId,
-          tips: tips,
-          hourlyRate: hourlyRate,
-          breakType: breakType,
-          unpaidBreakMinutes: unpaidBreak,
-          automaticExpenses: autoExpenses,
-          description: shiftData['description'] as String?,
+        final shift = Shift.fromJson(
+          Map<String, dynamic>.from(shiftData as Map),
         );
         await _persistence.shiftsBox.put(shift.id, shift);
       }
 
       // 4. Upload local to server via Batch Endpoints
       if (keepLocal != false) {
+        await _settingsProvider?.syncSettingsToServer(_authToken!);
         final jobTypeItems = jobTypes
             .map(
               (job) => {
@@ -375,6 +410,9 @@ class ShiftProvider with ChangeNotifier {
             'unpaid_break_minutes': shift.unpaidBreakMinutes,
             'hourly_rate': rate,
             'automatic_expenses': shift.automaticExpenses
+                ?.map((e) => {'description': e.description, 'amount': e.amount})
+                .toList(),
+            'automatic_incomes': shift.automaticIncomes
                 ?.map((e) => {'description': e.description, 'amount': e.amount})
                 .toList(),
             'description': shift.description,
@@ -451,6 +489,9 @@ class ShiftProvider with ChangeNotifier {
       'unpaid_break_minutes': shift.unpaidBreakMinutes,
       'hourly_rate': rate,
       'automatic_expenses': shift.automaticExpenses
+          ?.map((e) => {'description': e.description, 'amount': e.amount})
+          .toList(),
+      'automatic_incomes': shift.automaticIncomes
           ?.map((e) => {'description': e.description, 'amount': e.amount})
           .toList(),
       'description': shift.description,

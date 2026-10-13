@@ -1,5 +1,6 @@
 const express = require('express');
-const { Pool } = require('pg');
+const { Pool, types } = require('pg');
+types.setTypeParser(1700, (val) => (val == null ? null : parseFloat(val)));
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
@@ -27,73 +28,79 @@ const ensureSchema = async () => {
           name VARCHAR(100) NOT NULL,
           email VARCHAR(100) UNIQUE NOT NULL,
           password VARCHAR(255) NOT NULL,
+          birth_date DATE,
+          automatic_expense_enabled BOOLEAN DEFAULT FALSE,
+          automatic_income_enabled BOOLEAN DEFAULT FALSE,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
-    // 2. Create Job Types table (primary key is id + user_id)
+    // 2. Create Job Types table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS job_types (
           id VARCHAR(50) NOT NULL,
           user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
           name VARCHAR(100) NOT NULL,
-          hourly_rate DECIMAL(10, 2),
+          hourly_rate DECIMAL(10, 2) DEFAULT 0,
           wage_history JSONB,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           PRIMARY KEY (id, user_id)
       )
     `);
 
-    // 3. Create Shifts table
+    // 3. Create Default Automatic Items table (dedicated table for user fixed expenses & incomes)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS default_automatic_items (
+          id VARCHAR(100) NOT NULL,
+          user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          description TEXT NOT NULL,
+          amount DECIMAL(10, 2) NOT NULL,
+          is_income BOOLEAN DEFAULT FALSE,
+          is_enabled BOOLEAN DEFAULT TRUE,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY (id, user_id)
+      )
+    `);
+
+    // 4. Create Shifts table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS shifts (
           id UUID PRIMARY KEY,
-          user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
           job_type_id VARCHAR(50),
           date DATE NOT NULL,
           start_time TIMESTAMP NOT NULL,
           end_time TIMESTAMP NOT NULL,
           tips DECIMAL(10, 2) DEFAULT 0,
-          break_type VARCHAR(20),
-          unpaid_break_minutes DECIMAL(10, 2),
+          break_type VARCHAR(20) DEFAULT 'none',
+          unpaid_break_minutes DECIMAL(10, 2) DEFAULT 0,
           hourly_rate DECIMAL(10, 2),
           automatic_expenses JSONB,
+          automatic_incomes JSONB,
           description TEXT,
           total_pay DECIMAL(10, 2),
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
-    // 4. Create Financial Transactions table (unified for Expenses and Special Incomes)
+    // 5. Create Financial Transactions table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS financial_transactions (
           id UUID PRIMARY KEY,
-          user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
           date DATE NOT NULL,
-          description TEXT,
+          description TEXT NOT NULL,
           amount DECIMAL(10, 2) NOT NULL,
           is_income BOOLEAN DEFAULT FALSE,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
-    // Ensure job_types primary key includes user_id (id, user_id)
-    try {
-      await pool.query('ALTER TABLE job_types DROP CONSTRAINT IF EXISTS job_types_pkey CASCADE');
-      await pool.query('ALTER TABLE job_types ADD PRIMARY KEY (id, user_id)');
-    } catch (e) {
-      // Primary key already updated or table just created
-    }
-
-    // Ensure description & is_income columns exist if tables already existed
-    await pool.query('ALTER TABLE shifts ADD COLUMN IF NOT EXISTS description TEXT');
-    await pool.query('ALTER TABLE financial_transactions ADD COLUMN IF NOT EXISTS is_income BOOLEAN DEFAULT FALSE');
-
-    // Performance & Storage Optimization Indexes (Eliminate Full Table Scans)
-    await pool.query('CREATE INDEX IF NOT EXISTS idx_shifts_user_id ON shifts(user_id)');
+    // Performance Indexes
     await pool.query('CREATE INDEX IF NOT EXISTS idx_shifts_user_date ON shifts(user_id, date DESC)');
-    await pool.query('CREATE INDEX IF NOT EXISTS idx_job_types_user_id ON job_types(user_id)');
-    await pool.query('CREATE INDEX IF NOT EXISTS idx_financial_transactions_user_id ON financial_transactions(user_id)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_job_types_user ON job_types(user_id)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_financial_trans_user_date ON financial_transactions(user_id, date DESC)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_default_auto_items_user ON default_automatic_items(user_id)');
 
     console.log('Database schema & indexes ensured successfully.');
   } catch (err) {
@@ -128,14 +135,16 @@ const authenticateToken = (req, res, next) => {
 
 // Register Route
 app.post('/api/auth/register', async (req, res) => {
-  const { name, email, password, birthDate, birth_date } = req.body;
+  const { name, email, password, birthDate, birth_date, automaticExpenseEnabled, automaticIncomeEnabled } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const bDate = birthDate || birth_date;
     const parsedBirthDate = bDate ? new Date(bDate).toISOString().split('T')[0] : null;
     const result = await pool.query(
-      'INSERT INTO users (name, email, password, birth_date) VALUES ($1, $2, $3, $4) RETURNING id, name, email, birth_date, created_at',
-      [name, email, hashedPassword, parsedBirthDate]
+      `INSERT INTO users (name, email, password, birth_date, automatic_expense_enabled, automatic_income_enabled)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING id, name, email, birth_date, created_at, automatic_expense_enabled, automatic_income_enabled`,
+      [name, email, hashedPassword, parsedBirthDate, automaticExpenseEnabled || false, automaticIncomeEnabled || false]
     );
 
     const user = result.rows[0];
@@ -144,6 +153,9 @@ app.post('/api/auth/register', async (req, res) => {
     res.status(201).json({ user, token });
   } catch (err) {
     console.error(err);
+    if (err.code === '23505' || (err.message && (err.message.includes('unique') || err.message.includes('already exists')))) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
     res.status(500).json({ error: 'User registration failed' });
   }
 });
@@ -161,7 +173,15 @@ app.post('/api/auth/login', async (req, res) => {
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET);
     res.json({
-      user: { id: user.id, name: user.name, email: user.email, birth_date: user.birth_date, created_at: user.created_at },
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        birth_date: user.birth_date,
+        created_at: user.created_at,
+        automatic_expense_enabled: user.automatic_expense_enabled,
+        automatic_income_enabled: user.automatic_income_enabled
+      },
       token
     });
   } catch (err) {
@@ -174,7 +194,7 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/auth/profile', authenticateToken, async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id, name, email, birth_date, created_at FROM users WHERE id = $1',
+      'SELECT id, name, email, birth_date, created_at, automatic_expense_enabled, automatic_income_enabled FROM users WHERE id = $1',
       [req.user.userId]
     );
     if (result.rows.length === 0) {
@@ -189,23 +209,53 @@ app.get('/api/auth/profile', authenticateToken, async (req, res) => {
 
 // Update User Profile
 app.put('/api/auth/profile', authenticateToken, async (req, res) => {
-  const { name, email, birthDate, birth_date } = req.body;
+  const { name, email, birthDate, birth_date, automaticExpenseEnabled, automaticIncomeEnabled } = req.body;
   try {
     const bDate = birthDate !== undefined ? birthDate : birth_date;
     const parsedBirthDate = bDate !== undefined ? (bDate ? new Date(bDate).toISOString().split('T')[0] : null) : undefined;
+
     let query, params;
     if (parsedBirthDate !== undefined) {
-      query = 'UPDATE users SET name = $1, email = $2, birth_date = $3 WHERE id = $4 RETURNING id, name, email, birth_date, created_at';
-      params = [name, email, parsedBirthDate, req.user.userId];
+      query = `UPDATE users SET
+               name = $1, email = $2, birth_date = $3,
+               automatic_expense_enabled = COALESCE($4, automatic_expense_enabled),
+               automatic_income_enabled = COALESCE($5, automatic_income_enabled)
+               WHERE id = $6
+               RETURNING id, name, email, birth_date, created_at, automatic_expense_enabled, automatic_income_enabled`;
+      params = [name, email, parsedBirthDate, automaticExpenseEnabled, automaticIncomeEnabled, req.user.userId];
     } else {
-      query = 'UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING id, name, email, birth_date, created_at';
-      params = [name, email, req.user.userId];
+      query = `UPDATE users SET
+               name = $1, email = $2,
+               automatic_expense_enabled = COALESCE($3, automatic_expense_enabled),
+               automatic_income_enabled = COALESCE($4, automatic_income_enabled)
+               WHERE id = $5
+               RETURNING id, name, email, birth_date, created_at, automatic_expense_enabled, automatic_income_enabled`;
+      params = [name, email, automaticExpenseEnabled, automaticIncomeEnabled, req.user.userId];
     }
     const result = await pool.query(query, params);
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
+// Dedicated Update User Settings Route
+app.put('/api/auth/settings', authenticateToken, async (req, res) => {
+  const { automaticExpenseEnabled, automaticIncomeEnabled } = req.body;
+  try {
+    const result = await pool.query(
+      `UPDATE users SET
+       automatic_expense_enabled = CASE WHEN $1::boolean IS NOT NULL THEN $1 ELSE automatic_expense_enabled END,
+       automatic_income_enabled = CASE WHEN $2::boolean IS NOT NULL THEN $2 ELSE automatic_income_enabled END
+       WHERE id = $3
+       RETURNING id, name, email, birth_date, created_at, automatic_expense_enabled, automatic_income_enabled`,
+      [automaticExpenseEnabled !== undefined ? automaticExpenseEnabled : null, automaticIncomeEnabled !== undefined ? automaticIncomeEnabled : null, req.user.userId]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update settings' });
   }
 });
 
@@ -242,7 +292,7 @@ app.post('/api/job-types', authenticateToken, async (req, res) => {
   }
 });
 
-// Batch upsert job types (1 SQL transaction instead of N calls)
+// Batch upsert job types
 app.post('/api/job-types/batch', authenticateToken, async (req, res) => {
   const { items } = req.body;
   if (!Array.isArray(items) || items.length === 0) {
@@ -301,13 +351,14 @@ app.post('/api/shifts', authenticateToken, async (req, res) => {
   const {
     id, job_type_id, date, start_time, end_time, tips,
     break_type, unpaid_break_minutes, hourly_rate,
-    automatic_expenses, description, total_pay
+    automatic_expenses, automatic_incomes, description, total_pay
   } = req.body;
   try {
     const autoExpJson = automatic_expenses && automatic_expenses.length > 0 ? JSON.stringify(automatic_expenses) : null;
+    const autoIncJson = automatic_incomes && automatic_incomes.length > 0 ? JSON.stringify(automatic_incomes) : null;
     const result = await pool.query(
-      `INSERT INTO shifts (id, user_id, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, automatic_expenses, description, total_pay)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+      `INSERT INTO shifts (id, user_id, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, automatic_expenses, automatic_incomes, description, total_pay)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::jsonb, $12::jsonb, $13, $14)
        ON CONFLICT (id) DO UPDATE SET
        job_type_id = EXCLUDED.job_type_id,
        date = EXCLUDED.date,
@@ -318,10 +369,11 @@ app.post('/api/shifts', authenticateToken, async (req, res) => {
        unpaid_break_minutes = EXCLUDED.unpaid_break_minutes,
        hourly_rate = EXCLUDED.hourly_rate,
        automatic_expenses = EXCLUDED.automatic_expenses,
+       automatic_incomes = EXCLUDED.automatic_incomes,
        description = EXCLUDED.description,
        total_pay = EXCLUDED.total_pay
        RETURNING *`,
-      [id, req.user.userId, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, autoExpJson, description, total_pay]
+      [id, req.user.userId, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, autoExpJson, autoIncJson, description, total_pay]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -330,7 +382,7 @@ app.post('/api/shifts', authenticateToken, async (req, res) => {
   }
 });
 
-// Batch upsert shifts (Reduces WAL logs, dead tuple bloat, and sync time by 95%)
+// Batch upsert shifts
 app.post('/api/shifts/batch', authenticateToken, async (req, res) => {
   const { items } = req.body;
   if (!Array.isArray(items) || items.length === 0) {
@@ -341,9 +393,10 @@ app.post('/api/shifts/batch', authenticateToken, async (req, res) => {
     await client.query('BEGIN');
     for (const item of items) {
       const autoExpJson = item.automatic_expenses && item.automatic_expenses.length > 0 ? JSON.stringify(item.automatic_expenses) : null;
+      const autoIncJson = item.automatic_incomes && item.automatic_incomes.length > 0 ? JSON.stringify(item.automatic_incomes) : null;
       await client.query(
-        `INSERT INTO shifts (id, user_id, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, automatic_expenses, description, total_pay)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        `INSERT INTO shifts (id, user_id, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, automatic_expenses, automatic_incomes, description, total_pay)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::jsonb, $12::jsonb, $13, $14)
          ON CONFLICT (id) DO UPDATE SET
          job_type_id = EXCLUDED.job_type_id,
          date = EXCLUDED.date,
@@ -354,13 +407,14 @@ app.post('/api/shifts/batch', authenticateToken, async (req, res) => {
          unpaid_break_minutes = EXCLUDED.unpaid_break_minutes,
          hourly_rate = EXCLUDED.hourly_rate,
          automatic_expenses = EXCLUDED.automatic_expenses,
+         automatic_incomes = EXCLUDED.automatic_incomes,
          description = EXCLUDED.description,
          total_pay = EXCLUDED.total_pay`,
         [
           item.id, req.user.userId, item.job_type_id, item.date,
           item.start_time, item.end_time, item.tips || 0,
           item.break_type, item.unpaid_break_minutes || 0,
-          item.hourly_rate || 0, autoExpJson, item.description, item.total_pay || 0
+          item.hourly_rate || 0, autoExpJson, autoIncJson, item.description, item.total_pay || 0
         ]
       );
     }
@@ -453,6 +507,52 @@ app.delete('/api/expenses/:id', authenticateToken, async (req, res) => {
     res.sendStatus(204);
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete financial transaction' });
+  }
+});
+
+// --- Default Automatic Items Routes (Dedicated Table for User Fixed Expenses & Incomes) ---
+
+app.get('/api/automatic-items', authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM default_automatic_items WHERE user_id = $1 ORDER BY created_at ASC', [req.user.userId]);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch default automatic items' });
+  }
+});
+
+app.post('/api/automatic-items/batch', authenticateToken, async (req, res) => {
+  const { items } = req.body;
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query('DELETE FROM default_automatic_items WHERE user_id = $1', [req.user.userId]);
+    if (Array.isArray(items) && items.length > 0) {
+      for (const item of items) {
+        await client.query(
+          `INSERT INTO default_automatic_items (id, user_id, description, amount, is_income, is_enabled)
+           VALUES ($1, $2, $3, $4, $5, $6)`,
+          [item.id || item.description, req.user.userId, item.description, item.amount, item.is_income || false, item.is_enabled !== undefined ? item.is_enabled : true]
+        );
+      }
+    }
+    await client.query('COMMIT');
+    res.json({ status: 'ok', count: items ? items.length : 0 });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Batch automatic items error:', err);
+    res.status(500).json({ error: 'Failed to save default automatic items' });
+  } finally {
+    client.release();
+  }
+});
+
+app.delete('/api/automatic-items/:id', authenticateToken, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM default_automatic_items WHERE id = $1 AND user_id = $2', [req.params.id, req.user.userId]);
+    res.sendStatus(204);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete default automatic item' });
   }
 });
 

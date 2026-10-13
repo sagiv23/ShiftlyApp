@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:shiftly/main.dart';
+import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/google_drive_service.dart';
@@ -25,6 +26,14 @@ class AuthProvider with ChangeNotifier {
   String? _token;
   String? _userCreatedAt;
   String? _userBirthDate;
+  SettingsProvider? _settingsProvider;
+
+  void updateSettingsProvider(SettingsProvider settings) {
+    _settingsProvider = settings;
+    if (_token != null) {
+      _settingsProvider?.updateAuthToken(_token);
+    }
+  }
 
   bool get isLoggedIn => _isLoggedIn;
 
@@ -59,11 +68,13 @@ class AuthProvider with ChangeNotifier {
     return age >= 0 ? age : null;
   }
 
+  bool _hasStartedInitializing = false;
+
   AuthProvider(this._persistence) {
-    _loadAuthState();
+    // Delay initialization until SplashScreen is rendered at 0%
   }
 
-  void _loadAuthState() async {
+  Future<void> restoreLocalSession() async {
     _isInitializing = true;
     try {
       final box = _persistence.settingsBox;
@@ -79,14 +90,38 @@ class AuthProvider with ChangeNotifier {
       if (_token != null && _token!.isNotEmpty) {
         _isLoggedIn = true;
         await box.put('isLoggedIn', true);
+        _settingsProvider?.updateAuthToken(_token);
       } else {
         _isLoggedIn = false;
         await box.put('isLoggedIn', false);
       }
+    } catch (e) {
+      debugPrint('Failed to restore local session: $e');
+    } finally {
+      notifyListeners();
+    }
+  }
 
-      if (_isLoggedIn && _token != null) {
+  Future<bool> syncProfileAndDrive() async {
+    try {
+      if (_isLoggedIn) {
+        if (_token == null || _token!.isEmpty) {
+          debugPrint('No auth token available, logging out.');
+          await logout(navigate: false);
+          return false;
+        }
+
         try {
           final profile = await _apiService.getProfile(_token!);
+          if (profile.isEmpty ||
+              (profile['email'] == null &&
+                  profile['id'] == null &&
+                  profile['name'] == null)) {
+            debugPrint('User does not exist in database.');
+            await logout(navigate: false);
+            return false;
+          }
+
           _userName = profile['name'] ?? _userName;
           _userEmail = profile['email'] ?? _userEmail;
           final createdAt = profile['created_at'] ?? profile['createdAt'];
@@ -97,24 +132,18 @@ class AuthProvider with ChangeNotifier {
           if (birthVal != null) {
             _userBirthDate = birthVal.toString();
           }
+          await _settingsProvider?.updateSettingsFromProfile(profile);
           await _saveToPersistence();
         } catch (e) {
-          debugPrint('Failed to sync profile on load: $e');
-          final errStr = e.toString().toLowerCase();
-          if (errStr.contains('unauthorized') ||
-              errStr.contains('401') ||
-              errStr.contains('403') ||
-              errStr.contains('not found') ||
-              errStr.contains('user')) {
-            await logout();
-            return;
-          }
+          debugPrint('Failed to sync profile on load (user check failed): $e');
+          await logout(navigate: false);
+          return false;
         }
       }
 
       if (_isLoggedIn && (_userCreatedAt == null || _userCreatedAt!.isEmpty)) {
         _userCreatedAt = DateTime.now().toIso8601String();
-        await box.put('userCreatedAt', _userCreatedAt!);
+        await _persistence.settingsBox.put('userCreatedAt', _userCreatedAt!);
       }
 
       if (_isByosConnected) {
@@ -124,6 +153,12 @@ class AuthProvider with ChangeNotifier {
           debugPrint('Drive init failed: $e');
         }
       }
+
+      return _isLoggedIn;
+    } catch (e) {
+      debugPrint('Unexpected error in syncProfileAndDrive: $e');
+      await logout(navigate: false);
+      return false;
     } finally {
       _isInitializing = false;
       if (!_initCompleter.isCompleted) {
@@ -131,6 +166,15 @@ class AuthProvider with ChangeNotifier {
       }
       notifyListeners();
     }
+  }
+
+  Future<void> initialize() async {
+    if (_hasStartedInitializing) {
+      return initializationFuture;
+    }
+    _hasStartedInitializing = true;
+    await restoreLocalSession();
+    await syncProfileAndDrive();
   }
 
   Future<void> connectBYOS() async {
@@ -172,6 +216,12 @@ class AuthProvider with ChangeNotifier {
     _userEmail = data['user']['email'];
     _userName = data['user']['name'];
     _token = data['token'];
+    _settingsProvider?.updateAuthToken(_token);
+    if (data['user'] != null && data['user'] is Map) {
+      await _settingsProvider?.updateSettingsFromProfile(
+        Map<String, dynamic>.from(data['user'] as Map),
+      );
+    }
     _userCreatedAt =
         data['user']['created_at'] ??
         data['user']['createdAt'] ??
@@ -205,6 +255,14 @@ class AuthProvider with ChangeNotifier {
     _userName = data['user']['name'];
     _userEmail = data['user']['email'];
     _token = data['token'];
+    _settingsProvider?.updateAuthToken(_token);
+    if (data['user'] != null && data['user'] is Map) {
+      await _settingsProvider?.updateSettingsFromProfile(
+        Map<String, dynamic>.from(data['user'] as Map),
+      );
+    }
+    await _settingsProvider?.syncSettingsToServer(_token);
+
     _userCreatedAt =
         data['user']['created_at'] ??
         data['user']['createdAt'] ??
@@ -283,6 +341,8 @@ class AuthProvider with ChangeNotifier {
       _userBirthDate = birthVal;
     }
 
+    await _settingsProvider?.updateSettingsFromProfile(data);
+
     final box = _persistence.settingsBox;
     await box.put('userName', _userName ?? '');
     await box.put('userEmail', _userEmail ?? '');
@@ -296,7 +356,7 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> logout() async {
+  Future<void> logout({bool navigate = true}) async {
     _isLoggedIn = false;
     _userName = null;
     _userEmail = null;
@@ -304,6 +364,7 @@ class AuthProvider with ChangeNotifier {
     _userCreatedAt = null;
     _userBirthDate = null;
     await _persistence.clearUserData();
+    await _settingsProvider?.resetUserSettings();
     final box = _persistence.settingsBox;
     await box.put('isLoggedIn', false);
     await box.delete('userEmail');
@@ -313,13 +374,15 @@ class AuthProvider with ChangeNotifier {
     await SecureStorageHelper.deleteToken();
     notifyListeners();
 
-    navigatorKey.currentState?.pushAndRemoveUntil(
-      AppPageRoute.fadeScale(
-        const AuthScreen(),
-        duration: const Duration(milliseconds: 200),
-      ),
-      (route) => false,
-    );
+    if (navigate) {
+      navigatorKey.currentState?.pushAndRemoveUntil(
+        AppPageRoute.fadeScale(
+          const AuthScreen(),
+          duration: const Duration(milliseconds: 200),
+        ),
+        (route) => false,
+      );
+    }
   }
 
   Future<void> deleteAccount() async {

@@ -13,6 +13,7 @@ import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
+import 'package:shiftly/widgets/skeleton_loaders.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -22,12 +23,31 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  bool _isLoading = true;
   bool _isRestoring = false;
   bool _isBackingUp = false;
 
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 220), () {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l.profile_title)),
+        body: const ProfileScreenSkeleton(),
+      );
+    }
     final auth = context.watch<AuthProvider>();
     final settings = context.watch<SettingsProvider>();
     final shiftProvider = context.watch<ShiftProvider>();

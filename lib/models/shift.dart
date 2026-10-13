@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:hive/hive.dart';
 import 'package:shiftly/models/automatic_expense.dart';
 import 'package:shiftly/models/shift_wage_segment.dart';
 import 'package:shiftly/utils/app_constants.dart';
+import 'package:shiftly/utils/number_utils.dart';
 
 import 'break_type.dart';
 
@@ -89,34 +92,60 @@ class Shift extends HiveObject {
     'wageSegments': wageSegments?.map((e) => e.toJson()).toList(),
   };
 
+  static List<AutomaticExpense>? _parseAutoList(dynamic raw) {
+    if (raw == null) return null;
+    try {
+      List list;
+      if (raw is String) {
+        list = jsonDecode(raw) as List;
+      } else if (raw is List) {
+        list = raw;
+      } else {
+        return null;
+      }
+      return list
+          .map(
+            (e) =>
+                AutomaticExpense.fromJson(Map<String, dynamic>.from(e as Map)),
+          )
+          .toList();
+    } catch (_) {
+      return null;
+    }
+  }
+
   factory Shift.fromJson(Map<String, dynamic> json) => Shift(
     id: json['id'],
     date: DateTime.parse(json['date']),
-    startTime: DateTime.parse(json['startTime']),
-    endTime: DateTime.parse(json['endTime']),
-    jobTypeId: json['jobTypeId'],
-    tips: json['tips']?.toDouble() ?? 0.0,
+    startTime: DateTime.parse(json['startTime'] ?? json['start_time']),
+    endTime: DateTime.parse(json['endTime'] ?? json['end_time']),
+    jobTypeId: json['jobTypeId'] ?? json['job_type_id'],
+    tips: NumberUtils.parseDouble(json['tips']),
     individualTips: (json['individualTips'] as List?)
-        ?.map((e) => (e as num).toDouble())
+        ?.map((e) => NumberUtils.parseDouble(e))
         .toList(),
-    breakType: json['breakType'] != null
+    breakType: json['breakType'] != null || json['break_type'] != null
         ? BreakType.values.firstWhere(
-            (e) => e.toString() == json['breakType'],
+            (e) =>
+                e.toString() == json['breakType'] ||
+                e.toString().split('.').last.toLowerCase() ==
+                    (json['break_type'] ?? '').toString().toLowerCase(),
             orElse: () => BreakType.none,
           )
         : BreakType.none,
-    unpaidBreakMinutes: json['unpaidBreakMinutes']?.toDouble(),
-    hourlyRate: json['hourlyRate']?.toDouble(),
-    automaticExpenses: (json['automaticExpenses'] as List?)
-        ?.map(
-          (e) => AutomaticExpense.fromJson(Map<String, dynamic>.from(e as Map)),
-        )
-        .toList(),
-    automaticIncomes: (json['automaticIncomes'] as List?)
-        ?.map(
-          (e) => AutomaticExpense.fromJson(Map<String, dynamic>.from(e as Map)),
-        )
-        .toList(),
+    unpaidBreakMinutes: NumberUtils.parseDouble(
+      json['unpaidBreakMinutes'] ?? json['unpaid_break_minutes'],
+      45.0,
+    ),
+    hourlyRate: NumberUtils.parseNullableDouble(
+      json['hourlyRate'] ?? json['hourly_rate'],
+    ),
+    automaticExpenses: _parseAutoList(
+      json['automaticExpenses'] ?? json['automatic_expenses'],
+    ),
+    automaticIncomes: _parseAutoList(
+      json['automaticIncomes'] ?? json['automatic_incomes'],
+    ),
     description: json['description'],
     wageSegments: (json['wageSegments'] as List?)
         ?.map(

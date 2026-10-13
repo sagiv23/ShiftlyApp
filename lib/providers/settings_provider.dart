@@ -1,14 +1,29 @@
+import 'dart:convert';
+
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shiftly/models/automatic_expense.dart';
+import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
+import 'package:shiftly/utils/number_utils.dart';
 
 class SettingsProvider with ChangeNotifier {
   final PersistenceService _persistence;
+  final ApiService _apiService = ApiService();
+  String? _authToken;
+  VoidCallback? _onAutomaticSettingsChanged;
 
   SettingsProvider(this._persistence) {
     _loadSettings();
+  }
+
+  void updateAuthToken(String? token) {
+    _authToken = token;
+  }
+
+  void setOnAutomaticSettingsChanged(VoidCallback? callback) {
+    _onAutomaticSettingsChanged = callback;
   }
 
   ThemeMode _themeMode = ThemeMode.system;
@@ -121,6 +136,162 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateSettingsFromProfile(Map<String, dynamic> data) async {
+    final box = _persistence.settingsBox;
+
+    final rawExpenses = data['automatic_expenses'] ?? data['automaticExpenses'];
+    if (rawExpenses != null) {
+      List<dynamic> list = rawExpenses is String
+          ? jsonDecode(rawExpenses)
+          : rawExpenses;
+      _defaultAutomaticExpenses = list
+          .map(
+            (e) =>
+                AutomaticExpense.fromJson(Map<String, dynamic>.from(e as Map)),
+          )
+          .toList();
+      await box.put('defaultAutomaticExpenses', _defaultAutomaticExpenses);
+    }
+
+    final rawIncomes = data['automatic_incomes'] ?? data['automaticIncomes'];
+    if (rawIncomes != null) {
+      List<dynamic> list = rawIncomes is String
+          ? jsonDecode(rawIncomes)
+          : rawIncomes;
+      _defaultAutomaticIncomes = list
+          .map(
+            (e) =>
+                AutomaticExpense.fromJson(Map<String, dynamic>.from(e as Map)),
+          )
+          .toList();
+      await box.put('defaultAutomaticIncomes', _defaultAutomaticIncomes);
+    }
+
+    final expEnabled =
+        data['automatic_expense_enabled'] ?? data['automaticExpenseEnabled'];
+    if (expEnabled != null) {
+      _automaticExpenseEnabled =
+          expEnabled == true || expEnabled.toString() == 'true';
+      await box.put('automaticExpenseEnabled', _automaticExpenseEnabled);
+    }
+
+    final incEnabled =
+        data['automatic_income_enabled'] ?? data['automaticIncomeEnabled'];
+    if (incEnabled != null) {
+      _automaticIncomeEnabled =
+          incEnabled == true || incEnabled.toString() == 'true';
+      await box.put('automaticIncomeEnabled', _automaticIncomeEnabled);
+    }
+
+    await syncAutomaticItemsFromServer();
+
+    notifyListeners();
+  }
+
+  Future<void> syncAutomaticItemsFromServer([String? customToken]) async {
+    final token = customToken ?? _authToken;
+    if (token == null || token.isEmpty) return;
+    try {
+      final items = await _apiService.getAutomaticItems(token);
+      if (items.isNotEmpty) {
+        List<AutomaticExpense> exps = [];
+        List<AutomaticExpense> incs = [];
+        bool expEnabled = _automaticExpenseEnabled;
+        bool incEnabled = _automaticIncomeEnabled;
+
+        for (var item in items) {
+          final desc = item['description']?.toString() ?? '';
+          final amount = NumberUtils.parseDouble(item['amount']);
+          final isIncome = NumberUtils.parseBool(
+            item['is_income'] ?? item['isIncome'],
+          );
+          final enabled = NumberUtils.parseBool(
+            item['is_enabled'] ?? item['isEnabled'],
+          );
+
+          final ae = AutomaticExpense(description: desc, amount: amount);
+          if (isIncome) {
+            incs.add(ae);
+            if (enabled) incEnabled = true;
+          } else {
+            exps.add(ae);
+            if (enabled) expEnabled = true;
+          }
+        }
+
+        _defaultAutomaticExpenses = exps;
+        _defaultAutomaticIncomes = incs;
+        _automaticExpenseEnabled = expEnabled;
+        _automaticIncomeEnabled = incEnabled;
+
+        final box = _persistence.settingsBox;
+        await box.put('defaultAutomaticExpenses', exps);
+        await box.put('defaultAutomaticIncomes', incs);
+        await box.put('automaticExpenseEnabled', expEnabled);
+        await box.put('automaticIncomeEnabled', incEnabled);
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Failed to sync automatic items from server: $e');
+    }
+  }
+
+  Future<void> syncSettingsToServer([String? customToken]) async {
+    final token = customToken ?? _authToken;
+    if (token == null || token.isEmpty) return;
+    try {
+      await _apiService.updateUserSettings(
+        token,
+        automaticExpenses: _defaultAutomaticExpenses
+            .map((e) => e.toJson())
+            .toList(),
+        automaticIncomes: _defaultAutomaticIncomes
+            .map((e) => e.toJson())
+            .toList(),
+        automaticExpenseEnabled: _automaticExpenseEnabled,
+        automaticIncomeEnabled: _automaticIncomeEnabled,
+      );
+
+      final List<Map<String, dynamic>> autoItems = [
+        ..._defaultAutomaticExpenses.map(
+          (e) => {
+            'id': 'exp_${e.description}',
+            'description': e.description,
+            'amount': e.amount,
+            'is_income': false,
+            'is_enabled': _automaticExpenseEnabled,
+          },
+        ),
+        ..._defaultAutomaticIncomes.map(
+          (e) => {
+            'id': 'inc_${e.description}',
+            'description': e.description,
+            'amount': e.amount,
+            'is_income': true,
+            'is_enabled': _automaticIncomeEnabled,
+          },
+        ),
+      ];
+
+      await _apiService.batchUpsertAutomaticItems(token, autoItems);
+    } catch (e) {
+      debugPrint('Failed to sync settings to server: $e');
+    }
+  }
+
+  Future<void> resetUserSettings() async {
+    _defaultAutomaticExpenses = [];
+    _defaultAutomaticIncomes = [];
+    _automaticExpenseEnabled = false;
+    _automaticIncomeEnabled = false;
+    final box = _persistence.settingsBox;
+    await box.delete('defaultAutomaticExpenses');
+    await box.delete('defaultAutomaticIncomes');
+    await box.delete('automaticExpenseEnabled');
+    await box.delete('automaticIncomeEnabled');
+    notifyListeners();
+  }
+
   Future<void> setCookieConsent(String choice) async {
     _cookieConsent = choice;
     await _persistence.settingsBox.put('cookieConsent', choice);
@@ -133,8 +304,9 @@ class SettingsProvider with ChangeNotifier {
         (defaultTargetPlatform == TargetPlatform.android ||
             defaultTargetPlatform == TargetPlatform.iOS)) {
       try {
-        FirebaseCrashlytics.instance
-            .setCrashlyticsCollectionEnabled(choice == 'all');
+        FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+          choice == 'all',
+        );
       } catch (e) {
         debugPrint('Crashlytics consent update skipped: $e');
       }
@@ -177,12 +349,16 @@ class SettingsProvider with ChangeNotifier {
     _automaticExpenseEnabled = enabled;
     await _persistence.settingsBox.put('automaticExpenseEnabled', enabled);
     notifyListeners();
+    syncSettingsToServer();
+    _onAutomaticSettingsChanged?.call();
   }
 
   Future<void> setAutomaticIncomeEnabled(bool enabled) async {
     _automaticIncomeEnabled = enabled;
     await _persistence.settingsBox.put('automaticIncomeEnabled', enabled);
     notifyListeners();
+    syncSettingsToServer();
+    _onAutomaticSettingsChanged?.call();
   }
 
   Future<void> setCurrencySymbol(String symbol) async {
@@ -207,16 +383,28 @@ class SettingsProvider with ChangeNotifier {
     List<AutomaticExpense> expenses,
   ) async {
     _defaultAutomaticExpenses = expenses;
+    if (expenses.isNotEmpty && !_automaticExpenseEnabled) {
+      _automaticExpenseEnabled = true;
+      await _persistence.settingsBox.put('automaticExpenseEnabled', true);
+    }
     await _persistence.settingsBox.put('defaultAutomaticExpenses', expenses);
     notifyListeners();
+    syncSettingsToServer();
+    _onAutomaticSettingsChanged?.call();
   }
 
   Future<void> updateDefaultAutomaticIncomes(
     List<AutomaticExpense> incomes,
   ) async {
     _defaultAutomaticIncomes = incomes;
+    if (incomes.isNotEmpty && !_automaticIncomeEnabled) {
+      _automaticIncomeEnabled = true;
+      await _persistence.settingsBox.put('automaticIncomeEnabled', true);
+    }
     await _persistence.settingsBox.put('defaultAutomaticIncomes', incomes);
     notifyListeners();
+    syncSettingsToServer();
+    _onAutomaticSettingsChanged?.call();
   }
 
   Future<void> completeOnboarding() async {

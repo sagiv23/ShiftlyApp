@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -40,13 +39,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get common_success => 'Success';
 
   @override
-  String get common_add => 'Add';
-
-  @override
   String get common_edit => 'Edit';
-
-  @override
-  String get common_calendar_title => 'Shift Calendar';
 
   @override
   String get common_tagline => 'Smart Work Tracker';
@@ -64,16 +57,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get common_shifts_count => 'Shifts';
 
   @override
-  String get common_delete_shit_short => 'Delete Shift';
-
-  @override
-  String get common_delete_shit_expanded =>
-      'Are you sure you want to delete the shift from ';
-
-  @override
-  String get common_delete_shift_after => 'Shift deleted successfully';
-
-  @override
   String get common_save_and_finish => 'Save & Finish';
 
   @override
@@ -81,9 +64,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get common_reset_and_cancel => 'Cancel & Reset';
-
-  @override
-  String get common_undo => 'Undo';
 
   @override
   String get onboarding_welcome_title => 'Welcome to Shiftly';
@@ -156,9 +136,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboarding_auto_expenses_desc_label => 'Description';
-
-  @override
-  String get onboarding_auto_expenses_amount_label => '\$';
 
   @override
   String get onboarding_auto_expenses_invalid_amount =>
@@ -334,51 +311,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings_job_rate_label => 'Hourly Rate (New)';
 
   @override
-  String get settings_job_start_date_label => 'Start Date';
-
-  @override
-  String get settings_job_error_name_empty => 'Please enter a job name';
-
-  @override
-  String get settings_job_error_exists => 'Job with this name already exists';
-
-  @override
-  String get settings_job_error_negative_rate => 'Wage cannot be negative';
-
-  @override
-  String get settings_job_add_confirm_title => 'Add Job';
-
-  @override
-  String get settings_job_edit_confirm_title => 'Update Job';
-
-  @override
-  String get settings_job_save_confirm_content =>
-      'Save job \"[[name]]\" with rate [[rate]] starting [[date]]?';
-
-  @override
-  String get settings_job_delete_confirm_title => 'Delete Job';
-
-  @override
-  String get settings_job_delete_confirm_content =>
-      'Are you sure you want to delete job \"[[name]]\"?';
-
-  @override
-  String get settings_job_deleted_msg => 'Job \"[[name]]\" deleted';
-
-  @override
-  String get settings_dialog_update_breaks_content =>
-      'Update default break times to [[paid]] min paid and [[unpaid]] min unpaid?';
-
-  @override
-  String get settings_breaks_updated_msg => 'Break durations updated';
-
-  @override
-  String get settings_jobs_empty => 'No job types found.';
-
-  @override
-  String get settings_reset_success_msg => 'App reset successfully';
-
-  @override
   String get home_empty_state_title => 'No shifts registered yet';
 
   @override
@@ -470,10 +402,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expenses_no_history => 'No expenses recorded';
 
   @override
-  String get expenses_save_expense_confirm_content =>
-      'Save expense \"[[desc]]\" for [[amount]]?';
-
-  @override
   String get expenses_delete_expense_confirm_content =>
       'Delete \"[[desc]]\" for [[amount]]?';
 
@@ -542,22 +470,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get incomes_no_history => 'No special incomes recorded';
 
   @override
-  String get incomes_save_income_confirm_content =>
-      'Save income \"[[desc]]\" for [[amount]]?';
-
-  @override
   String get incomes_delete_income_confirm_content =>
       'Delete \"[[desc]]\" for [[amount]]?';
 
   @override
   String get incomes_deleted_msg => 'Income deleted';
-
-  @override
-  String get incomes_info_card_title => 'What are special incomes?';
-
-  @override
-  String get incomes_info_card_desc =>
-      'One-time payments or special reimbursements from employer (e.g. travel reimbursement, bonus, grant) added to total net calculation.';
 
   @override
   String get add_shift_title => 'New Shift';
@@ -611,9 +528,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get add_shift_timer_reset_desc =>
       'Are you sure you want to reset the timer? All current data will be lost.';
-
-  @override
-  String get add_shift_timer_resume_shift => 'Resume Shift';
 
   @override
   String get add_shift_manual_time_section => 'Time';
@@ -816,16 +730,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please select at least one job type';
 
   @override
-  String get filter_min => 'Min';
-
-  @override
-  String get filter_max => 'Max';
-
-  @override
   String get filter_active_filters => 'Active Filters:';
-
-  @override
-  String get filter_no_results => 'No shifts match these filters';
 
   @override
   String get filter_chip_wage => 'Wage: [[min]] - [[max]]';
@@ -893,13 +798,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get auth_error_generic => 'An error occurred. Please try again.';
 
   @override
-  String get settings_section_account => 'Account';
-
-  @override
   String get settings_logout_title => 'Logout from system';
-
-  @override
-  String get settings_logout_subtitle => 'Logout from current account';
 
   @override
   String get settings_logout_dialog_title => 'Logout';
@@ -937,9 +836,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_welcome_back => 'Hello, [[name]]';
 
   @override
-  String get settings_user_details_title => 'User Details';
-
-  @override
   String get settings_user_name => 'Name';
 
   @override
@@ -950,9 +846,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings_user_edit_title => 'Edit Profile';
-
-  @override
-  String get settings_user_update_button => 'Update Details';
 
   @override
   String get settings_user_update_success => 'Profile updated successfully';
@@ -980,16 +873,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings_byos_disconnect => 'Disconnect';
-
-  @override
-  String get settings_byos_upgrade_title => 'Create Shiftly Account';
-
-  @override
-  String get settings_byos_upgrade_subtitle =>
-      'Transfer BYOS data to our cloud for faster sync';
-
-  @override
-  String get settings_byos_sync_backup_section => 'Sync & Backup';
 
   @override
   String get settings_byos_login_shiftly => 'Login to Shiftly Account';
@@ -1029,19 +912,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'No backup found on Google Drive or an error occurred.';
 
   @override
-  String get auth_sync_dialog_title => 'Data Sync';
-
-  @override
-  String get auth_sync_dialog_content =>
-      'Data was found both locally and in the cloud. Which one would you like to use?\n\n• Keeping local data will upload it to the cloud.\n• Using cloud data will overwrite local data.';
-
-  @override
-  String get auth_sync_dialog_cloud => 'Cloud Data';
-
-  @override
-  String get auth_sync_dialog_local => 'Local Data';
-
-  @override
   String get export_title => 'Export Shifts';
 
   @override
@@ -1079,12 +949,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get export_success_msg => 'File exported successfully and saved at:';
-
-  @override
-  String get export_copy_button => 'Copy to Clipboard';
-
-  @override
-  String get export_copied_msg => 'Data copied to clipboard successfully';
 
   @override
   String get export_empty_error =>
@@ -1165,19 +1029,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analytics_kpi_retention => 'Net Retention Rate';
 
   @override
-  String get analytics_kpi_tip_yield => 'Daily Average Hours';
-
-  @override
-  String get analytics_kpi_boost => 'Hourly Rate Boost';
-
-  @override
-  String get analytics_chart_pace_title => 'Income Pace & Projection';
-
-  @override
-  String get analytics_chart_pace_subtitle =>
-      'Comparing actual earnings pace against projected target';
-
-  @override
   String get analytics_chart_tod_title => 'Time of Day Breakdown';
 
   @override
@@ -1241,11 +1092,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String analytics_shifts_format(Object count) {
     return '$count shifts';
-  }
-
-  @override
-  String analytics_hours_format(Object hours) {
-    return '${hours}h';
   }
 
   @override
@@ -1465,10 +1311,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get legal_disclaimer_notice =>
       'By registering or logging in, you agree to our Terms of Service and Privacy Policy.';
-
-  @override
-  String get legal_payroll_disclaimer =>
-      'Calculations are mathematical estimations for personal tracking only and do not constitute official accounting, tax, or legal advice.';
 
   @override
   String get legal_cookie_title => 'Cookie & Privacy Preferences';

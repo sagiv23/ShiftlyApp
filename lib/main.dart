@@ -55,8 +55,10 @@ void main() async {
           ChangeNotifierProvider(
             create: (_) => SettingsProvider(persistenceService),
           ),
-          ChangeNotifierProvider(
+          ChangeNotifierProxyProvider<SettingsProvider, AuthProvider>(
             create: (_) => AuthProvider(persistenceService),
+            update: (_, settings, auth) =>
+                auth!..updateSettingsProvider(settings),
           ),
           ChangeNotifierProxyProvider2<
             AuthProvider,
@@ -69,6 +71,7 @@ void main() async {
                 auth.token,
                 auth.isByosConnected,
                 settings.autoSyncEnabled,
+                settingsProvider: settings,
               ),
           ),
           ChangeNotifierProvider(

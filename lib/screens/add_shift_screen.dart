@@ -143,7 +143,8 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       _tipControllers.add(TextEditingController());
       _timerTipControllers.add(TextEditingController());
 
-      if (settings.automaticExpenseEnabled) {
+      if (settings.automaticExpenseEnabled ||
+          settings.defaultAutomaticExpenses.isNotEmpty) {
         for (var e in settings.defaultAutomaticExpenses) {
           _autoExpenseAmountControllers.add(
             TextEditingController(
@@ -156,7 +157,8 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         }
       }
 
-      if (settings.automaticIncomeEnabled) {
+      if (settings.automaticIncomeEnabled ||
+          settings.defaultAutomaticIncomes.isNotEmpty) {
         for (var e in settings.defaultAutomaticIncomes) {
           _autoIncomeAmountControllers.add(
             TextEditingController(
@@ -621,24 +623,126 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     if (!mounted) return;
 
     final shiftProvider = context.read<ShiftProvider>();
-    final job = shiftProvider.getJobTypeById(_selectedJobTypeId!);
+    final jobTypes = shiftProvider.jobTypes;
 
     int addedCount = 0;
+    Map<String, String> rememberedJobTypeMappings = {};
+
     for (var line in validLines) {
-      final shift = ShiftParser.parse(
+      final parseResult = ShiftParser.parseResult(
         line,
         _selectedJobTypeId!,
         paidMinutes: settings.paidBreakDurationMinutes,
         unpaidMinutes: settings.unpaidBreakDurationMinutes,
+        availableJobTypes: jobTypes,
       );
+
+      final shift = parseResult.shift;
+      String? trailingText = parseResult.trailingText;
+
       if (shift != null) {
+        if (trailingText != null && trailingText.isNotEmpty) {
+          if (rememberedJobTypeMappings.containsKey(trailingText)) {
+            shift.jobTypeId = rememberedJobTypeMappings[trailingText]!;
+          } else {
+            if (!mounted) break;
+            final dialogResult = await showDialog<Map<String, dynamic>>(
+              context: context,
+              builder: (ctx) {
+                String? chosenJobId = jobTypes.isNotEmpty
+                    ? jobTypes.first.id
+                    : _selectedJobTypeId;
+                bool remember = false;
+                return StatefulBuilder(
+                  builder: (context, setStateSB) => AlertDialog(
+                    title: Text('סוג משמרת לא מזוהה: "$trailingText"'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'נמצאה סוג משמרת שאינו קיים ברשימת סוגי העבודה שלך. בחר סוג עבודה חלופי או שמור כתיאור:',
+                        ),
+                        const SizedBox(height: 12),
+                        DropdownButtonFormField<String>(
+                          initialValue: chosenJobId,
+                          decoration: const InputDecoration(
+                            labelText: 'בחר סוג עבודה',
+                          ),
+                          items: jobTypes
+                              .map(
+                                (j) => DropdownMenuItem<String>(
+                                  value: j.id,
+                                  child: Text(j.name),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (val) =>
+                              setStateSB(() => chosenJobId = val),
+                        ),
+                        const SizedBox(height: 12),
+                        CheckboxListTile(
+                          title: const Text(
+                            'החל אוטומטית על כל המופעים של סוג זה',
+                          ),
+                          value: remember,
+                          onChanged: (val) =>
+                              setStateSB(() => remember = val ?? false),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, {'action': 'skip'}),
+                        child: const Text('דלג'),
+                      ),
+                      TextButton(
+                        onPressed: () =>
+                            Navigator.pop(ctx, {'action': 'description'}),
+                        child: const Text('שמור כתיאור בלבד'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(ctx, {
+                          'action': 'assign',
+                          'jobId': chosenJobId,
+                          'remember': remember,
+                        }),
+                        child: const Text('שייך'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+
+            if (dialogResult == null || dialogResult['action'] == 'skip') {
+              continue;
+            } else if (dialogResult['action'] == 'assign') {
+              final assignedJobId = dialogResult['jobId'] as String?;
+              if (assignedJobId != null) {
+                shift.jobTypeId = assignedJobId;
+                if (dialogResult['remember'] == true) {
+                  rememberedJobTypeMappings[trailingText] = assignedJobId;
+                }
+              }
+            } else if (dialogResult['action'] == 'description') {
+              shift.description = trailingText;
+            }
+          }
+        }
+
+        final job = shiftProvider.getJobTypeById(shift.jobTypeId);
         shift.hourlyRate = job?.getRateForDate(shift.date);
-        if (settings.automaticExpenseEnabled) {
+        if (settings.automaticExpenseEnabled ||
+            settings.defaultAutomaticExpenses.isNotEmpty) {
           shift.automaticExpenses = settings.defaultAutomaticExpenses
               .map((e) => e.copyWith())
               .toList();
         }
-        if (settings.automaticIncomeEnabled) {
+        if (settings.automaticIncomeEnabled ||
+            settings.defaultAutomaticIncomes.isNotEmpty) {
           shift.automaticIncomes = settings.defaultAutomaticIncomes
               .map((e) => e.copyWith())
               .toList();

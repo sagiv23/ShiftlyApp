@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:shiftly/utils/number_utils.dart';
 
 part 'wage_entry.g.dart';
 
@@ -18,7 +19,9 @@ class WageEntry extends HiveObject {
   };
 
   factory WageEntry.fromJson(Map<String, dynamic> json) => WageEntry(
-    startDate: DateTime.parse(json['startDate']),
-    hourlyRate: json['hourlyRate'].toDouble(),
+    startDate: DateTime.parse(json['startDate'] ?? json['start_date']),
+    hourlyRate: NumberUtils.parseDouble(
+      json['hourlyRate'] ?? json['hourly_rate'],
+    ),
   );
 }

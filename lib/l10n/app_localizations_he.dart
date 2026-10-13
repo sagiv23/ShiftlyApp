@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -40,13 +39,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get common_success => 'הצלחה';
 
   @override
-  String get common_add => 'הוסף';
-
-  @override
   String get common_edit => 'עריכה';
-
-  @override
-  String get common_calendar_title => 'לוח משמרות';
 
   @override
   String get common_tagline => 'מעקב שעות עבודה חכם';
@@ -64,16 +57,6 @@ class AppLocalizationsHe extends AppLocalizations {
   String get common_shifts_count => 'משמרות';
 
   @override
-  String get common_delete_shit_short => 'מחיקת משמרת';
-
-  @override
-  String get common_delete_shit_expanded =>
-      'האם אתה בטוח שברצונך למחוק את המשמרת מיום ';
-
-  @override
-  String get common_delete_shift_after => 'המשמרת נמחקה בהצלחה';
-
-  @override
   String get common_save_and_finish => 'שמור וסיים';
 
   @override
@@ -81,9 +64,6 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get common_reset_and_cancel => 'ביטול ואיפוס';
-
-  @override
-  String get common_undo => 'ביטול';
 
   @override
   String get onboarding_welcome_title => 'ברוכים הבאים ל-Shiftly';
@@ -155,9 +135,6 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get onboarding_auto_expenses_desc_label => 'תיאור';
-
-  @override
-  String get onboarding_auto_expenses_amount_label => '₪';
 
   @override
   String get onboarding_auto_expenses_invalid_amount =>
@@ -332,51 +309,6 @@ class AppLocalizationsHe extends AppLocalizations {
   String get settings_job_rate_label => 'תעריף שעתי (חדש)';
 
   @override
-  String get settings_job_start_date_label => 'תאריך תחילה';
-
-  @override
-  String get settings_job_error_name_empty => 'נא להזין שם לתפקיד';
-
-  @override
-  String get settings_job_error_exists => 'תפקיד בשם זה כבר קיים';
-
-  @override
-  String get settings_job_error_negative_rate => 'השכר לא יכול להיות שלילי';
-
-  @override
-  String get settings_job_add_confirm_title => 'הוספת תפקיד';
-
-  @override
-  String get settings_job_edit_confirm_title => 'עדכון תפקיד';
-
-  @override
-  String get settings_job_save_confirm_content =>
-      'האם לשמור את התפקיד \"[[name]]\" עם שכר של [[rate]] החל מיום [[date]]?';
-
-  @override
-  String get settings_job_delete_confirm_title => 'מחיקת תפקיד';
-
-  @override
-  String get settings_job_delete_confirm_content =>
-      'האם אתה בטוח שברצונך למחוק את התפקיד \"[[name]]\"?';
-
-  @override
-  String get settings_job_deleted_msg => 'תפקיד \"[[name]]\" נמחק';
-
-  @override
-  String get settings_dialog_update_breaks_content =>
-      'האם לעדכן את זמני ברירת המחדל ל-[[paid]] דק\' בתשלום ו-[[unpaid]] דק\' ללא תשלום?';
-
-  @override
-  String get settings_breaks_updated_msg => 'זמני ההפסקות עודכנו';
-
-  @override
-  String get settings_jobs_empty => 'לא נמצאו תפקידים.';
-
-  @override
-  String get settings_reset_success_msg => 'האפליקציה אותחלה בהצלחה';
-
-  @override
   String get home_empty_state_title => 'עדיין לא נרשמו משמרות';
 
   @override
@@ -468,10 +400,6 @@ class AppLocalizationsHe extends AppLocalizations {
   String get expenses_no_history => 'אין הוצאות רשומות';
 
   @override
-  String get expenses_save_expense_confirm_content =>
-      'האם לשמור את ההוצאה \"[[desc]]\" בסך [[amount]]?';
-
-  @override
   String get expenses_delete_expense_confirm_content =>
       'האם למחוק את ההוצאה \"[[desc]]\" בסך [[amount]]?';
 
@@ -540,22 +468,11 @@ class AppLocalizationsHe extends AppLocalizations {
   String get incomes_no_history => 'אין הכנסות מיוחדות רשומות';
 
   @override
-  String get incomes_save_income_confirm_content =>
-      'האם לשמור את ההכנסה \"[[desc]]\" בסך [[amount]]?';
-
-  @override
   String get incomes_delete_income_confirm_content =>
       'האם למחוק את ההכנסה \"[[desc]]\" בסך [[amount]]?';
 
   @override
   String get incomes_deleted_msg => 'הכנסה נמחקה';
-
-  @override
-  String get incomes_info_card_title => 'מהן הכנסות מיוחדות?';
-
-  @override
-  String get incomes_info_card_desc =>
-      'הכנסות חד-פעמיות או תשלומים מיוחדים מהמעסיק (כגון החזרי נסיעות, בונוסים או מענקים) שמתווספים לחישוב הנטו החודשי.';
 
   @override
   String get add_shift_title => 'רישום משמרת';
@@ -609,9 +526,6 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String get add_shift_timer_reset_desc =>
       'האם אתה בטוח שברצונך לאפס את הטיימר? כל המידע הנוכחי יימחק.';
-
-  @override
-  String get add_shift_timer_resume_shift => 'המשך משמרת';
 
   @override
   String get add_shift_manual_time_section => 'זמן';
@@ -812,16 +726,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get filter_error_no_job_selected => 'נא לבחור לפחות סוג עבודה אחד';
 
   @override
-  String get filter_min => 'מינימום';
-
-  @override
-  String get filter_max => 'מקסימום';
-
-  @override
   String get filter_active_filters => 'מסננים פעילים:';
-
-  @override
-  String get filter_no_results => 'אין משמרות התואמות למסננים אלו';
 
   @override
   String get filter_chip_wage => 'שכר: [[min]] - [[max]]';
@@ -888,13 +793,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get auth_error_generic => 'שגיאה בביצוע הפעולה. נא לנסות שוב.';
 
   @override
-  String get settings_section_account => 'חשבון';
-
-  @override
   String get settings_logout_title => 'התנתקות מהמערכת';
-
-  @override
-  String get settings_logout_subtitle => 'התנתקות מהחשבון הנוכחי';
 
   @override
   String get settings_logout_dialog_title => 'התנתקות';
@@ -930,9 +829,6 @@ class AppLocalizationsHe extends AppLocalizations {
   String get home_welcome_back => 'שלום, [[name]]';
 
   @override
-  String get settings_user_details_title => 'פרטי משתמש';
-
-  @override
   String get settings_user_name => 'שם';
 
   @override
@@ -943,9 +839,6 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get settings_user_edit_title => 'עריכת פרופיל';
-
-  @override
-  String get settings_user_update_button => 'עדכן פרטים';
 
   @override
   String get settings_user_update_success => 'הפרטים עודכנו בהצלחה';
@@ -973,16 +866,6 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get settings_byos_disconnect => 'נתק';
-
-  @override
-  String get settings_byos_upgrade_title => 'צור חשבון Shiftly';
-
-  @override
-  String get settings_byos_upgrade_subtitle =>
-      'העבר את נתוני ה-BYOS לענן שלנו לסנכרון מהיר יותר';
-
-  @override
-  String get settings_byos_sync_backup_section => 'סנכרון וגיבוי';
 
   @override
   String get settings_byos_login_shiftly => 'התחבר לחשבון Shiftly';
@@ -1022,19 +905,6 @@ class AppLocalizationsHe extends AppLocalizations {
       'לא נמצא גיבוי ב-Google Drive או שאירעה שגיאה.';
 
   @override
-  String get auth_sync_dialog_title => 'סנכרון נתונים';
-
-  @override
-  String get auth_sync_dialog_content =>
-      'נמצאו נתונים קיימים גם במכשיר וגם בענן. באילו נתונים תרצה להשתמש?\n\n• שמירת נתוני המכשיר תעלה אותם לענן.\n• שימוש בנתוני ענן ימחק את המידע הקיים במכשיר.';
-
-  @override
-  String get auth_sync_dialog_cloud => 'נתוני ענן';
-
-  @override
-  String get auth_sync_dialog_local => 'נתוני מכשיר';
-
-  @override
   String get export_title => 'ייצוא משמרות';
 
   @override
@@ -1072,12 +942,6 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get export_success_msg => 'הקובץ נוצר בהצלחה ונשמר ב:';
-
-  @override
-  String get export_copy_button => 'העתק תוכן ללוח';
-
-  @override
-  String get export_copied_msg => 'הנתונים הועתקו ללוח בהצלחה';
 
   @override
   String get export_empty_error => 'אין משמרות בטווח הנבחר לייצוא';
@@ -1157,19 +1021,6 @@ class AppLocalizationsHe extends AppLocalizations {
   String get analytics_kpi_retention => 'שיעור שמירת הכנסה';
 
   @override
-  String get analytics_kpi_tip_yield => 'ממוצע שעות ליום';
-
-  @override
-  String get analytics_kpi_boost => 'תוספת לשעת עבודה';
-
-  @override
-  String get analytics_chart_pace_title => 'קצב הכנסה ותחזית חודשית';
-
-  @override
-  String get analytics_chart_pace_subtitle =>
-      'השוואה בין קצב ההכנסה בפועל לתחזית לסוף החודש';
-
-  @override
   String get analytics_chart_tod_title => 'פילוח לפי שעות היממה';
 
   @override
@@ -1231,11 +1082,6 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String analytics_shifts_format(Object count) {
     return '$count משמרות';
-  }
-
-  @override
-  String analytics_hours_format(Object hours) {
-    return '$hours שעות';
   }
 
   @override
@@ -1453,10 +1299,6 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String get legal_disclaimer_notice =>
       'בהרשמה או התחברות, הנך מסכים לתנאי השימוש ומדיניות הפרטיות שלנו.';
-
-  @override
-  String get legal_payroll_disclaimer =>
-      'החישובים הינם הערכות מתמטיות למעקב אישי בלבד ואינם מהווים ייעוץ מס, שכר או ייעוץ משפטי רשמי.';
 
   @override
   String get legal_cookie_title => 'הגדרות עוגיות ופרטיות';

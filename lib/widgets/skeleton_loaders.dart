@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shimmer/shimmer.dart';
 
 /// A theme-aware shimmer wrapper that automatically adapts to light and dark themes.
@@ -354,17 +355,21 @@ class HomeScreenSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spaceSm,
-        vertical: AppTheme.spaceXs,
+    return AdaptiveScaffold(
+      currentIndex: 2,
+      title: 'Shiftly',
+      body: ListView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spaceSm,
+          vertical: AppTheme.spaceXs,
+        ),
+        children: const [
+          GrandTotalCardSkeleton(),
+          ShiftTileSkeleton(),
+          ShiftTileSkeleton(),
+          ShiftTileSkeleton(),
+        ],
       ),
-      children: const [
-        GrandTotalCardSkeleton(),
-        ShiftTileSkeleton(),
-        ShiftTileSkeleton(),
-        ShiftTileSkeleton(),
-      ],
     );
   }
 }
@@ -375,24 +380,28 @@ class AnalyticsScreenSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spaceSm,
-        vertical: AppTheme.spaceXs,
-      ),
-      children: const [
-        SkeletonBox(
-          width: double.infinity,
-          height: 50,
-          borderRadius: AppTheme.radiusMd,
+    return AdaptiveScaffold(
+      currentIndex: 1,
+      title: '',
+      body: ListView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spaceSm,
+          vertical: AppTheme.spaceXs,
         ),
-        SizedBox(height: AppTheme.spaceSm),
-        KpiGridSkeleton(),
-        SizedBox(height: AppTheme.spaceMd),
-        ChartSkeleton(height: 220),
-        SizedBox(height: AppTheme.spaceSm),
-        ChartSkeleton(height: 200),
-      ],
+        children: const [
+          SkeletonBox(
+            width: double.infinity,
+            height: 50,
+            borderRadius: AppTheme.radiusMd,
+          ),
+          SizedBox(height: AppTheme.spaceSm),
+          KpiGridSkeleton(),
+          SizedBox(height: AppTheme.spaceMd),
+          ChartSkeleton(height: 220),
+          SizedBox(height: AppTheme.spaceSm),
+          ChartSkeleton(height: 200),
+        ],
+      ),
     );
   }
 }
@@ -403,14 +412,18 @@ class CalendarScreenSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(AppTheme.spaceSm),
-      children: const [
-        CalendarSkeleton(),
-        SizedBox(height: AppTheme.spaceSm),
-        ShiftTileSkeleton(),
-        ShiftTileSkeleton(),
-      ],
+    return AdaptiveScaffold(
+      currentIndex: 0,
+      title: '',
+      body: ListView(
+        padding: const EdgeInsets.all(AppTheme.spaceSm),
+        children: const [
+          CalendarSkeleton(),
+          SizedBox(height: AppTheme.spaceSm),
+          ShiftTileSkeleton(),
+          ShiftTileSkeleton(),
+        ],
+      ),
     );
   }
 }
@@ -421,19 +434,119 @@ class ExpensesScreenSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(AppTheme.spaceSm),
-      children: const [
-        SkeletonBox(
-          width: double.infinity,
-          height: 48,
-          borderRadius: AppTheme.radiusMd,
-        ),
-        SizedBox(height: AppTheme.spaceSm),
-        ExpenseTileSkeleton(),
-        ExpenseTileSkeleton(),
-        ExpenseTileSkeleton(),
-      ],
+    return AdaptiveScaffold(
+      currentIndex: 3,
+      title: '',
+      body: ListView(
+        padding: const EdgeInsets.all(AppTheme.spaceSm),
+        children: const [
+          SkeletonBox(
+            width: double.infinity,
+            height: 48,
+            borderRadius: AppTheme.radiusMd,
+          ),
+          SizedBox(height: AppTheme.spaceSm),
+          ExpenseTileSkeleton(),
+          ExpenseTileSkeleton(),
+          ExpenseTileSkeleton(),
+        ],
+      ),
+    );
+  }
+}
+
+/// Full screen skeleton for ProfileScreen
+class ProfileScreenSkeleton extends StatelessWidget {
+  const ProfileScreenSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('')),
+      body: ListView(
+        padding: const EdgeInsets.all(AppTheme.spaceSm),
+        children: const [
+          SkeletonBox(
+            width: double.infinity,
+            height: 120,
+            borderRadius: AppTheme.radiusLg,
+          ),
+          SizedBox(height: AppTheme.spaceMd),
+          SkeletonBox(
+            width: double.infinity,
+            height: 80,
+            borderRadius: AppTheme.radiusMd,
+          ),
+          SizedBox(height: AppTheme.spaceSm),
+          SkeletonBox(
+            width: double.infinity,
+            height: 80,
+            borderRadius: AppTheme.radiusMd,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Full screen skeleton for SettingsScreen
+class SettingsScreenSkeleton extends StatelessWidget {
+  const SettingsScreenSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AdaptiveScaffold(
+      currentIndex: 5,
+      title: '',
+      body: ListView(
+        padding: const EdgeInsets.all(AppTheme.spaceSm),
+        children: const [
+          SkeletonBox(
+            width: double.infinity,
+            height: 70,
+            borderRadius: AppTheme.radiusMd,
+          ),
+          SizedBox(height: AppTheme.spaceMd),
+          SkeletonBox(
+            width: double.infinity,
+            height: 140,
+            borderRadius: AppTheme.radiusMd,
+          ),
+          SizedBox(height: AppTheme.spaceMd),
+          SkeletonBox(
+            width: double.infinity,
+            height: 100,
+            borderRadius: AppTheme.radiusMd,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Full screen skeleton for ShiftDescriptionsScreen
+class ShiftDescriptionsScreenSkeleton extends StatelessWidget {
+  const ShiftDescriptionsScreenSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AdaptiveScaffold(
+      currentIndex: 4,
+      title: '',
+      body: ListView(
+        padding: const EdgeInsets.all(AppTheme.spaceSm),
+        children: const [
+          SkeletonBox(
+            width: double.infinity,
+            height: 50,
+            borderRadius: AppTheme.radiusMd,
+          ),
+          SizedBox(height: AppTheme.spaceSm),
+          ShiftTileSkeleton(),
+          ShiftTileSkeleton(),
+          ShiftTileSkeleton(),
+        ],
+      ),
     );
   }
 }

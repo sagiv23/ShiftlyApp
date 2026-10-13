@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:shiftly/utils/number_utils.dart';
 
 part 'expense.g.dart';
 
@@ -36,10 +37,10 @@ class Expense extends HiveObject {
   };
 
   factory Expense.fromJson(Map<String, dynamic> json) => Expense(
-    id: json['id'],
+    id: json['id'].toString(),
     date: DateTime.parse(json['date']),
-    description: json['description'],
-    amount: (json['amount'] as num).toDouble(),
-    isIncome: json['isIncome'] ?? false,
+    description: json['description']?.toString() ?? '',
+    amount: NumberUtils.parseDouble(json['amount']),
+    isIncome: NumberUtils.parseBool(json['isIncome'] ?? json['is_income']),
   );
 }

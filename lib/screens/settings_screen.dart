@@ -17,6 +17,7 @@ import 'package:shiftly/utils/legal_utils.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
+import 'package:shiftly/widgets/skeleton_loaders.dart';
 import 'package:uuid/uuid.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -27,12 +28,20 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  bool _isLoading = true;
   late TextEditingController _paidController;
   late TextEditingController _unpaidController;
 
   @override
   void initState() {
     super.initState();
+    Future.delayed(const Duration(milliseconds: 220), () {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    });
     final settings = context.read<SettingsProvider>();
     _paidController = TextEditingController(
       text: settings.paidBreakDurationMinutes > 0
@@ -259,6 +268,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    if (_isLoading) {
+      return AdaptiveScaffold(
+        currentIndex: 5,
+        title: l.settings_title,
+        body: const SettingsScreenSkeleton(),
+      );
+    }
     final settings = context.watch<SettingsProvider>();
     final auth = context.watch<AuthProvider>();
     final symbol = settings.currencySymbol;

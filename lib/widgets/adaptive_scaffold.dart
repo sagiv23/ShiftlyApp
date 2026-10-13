@@ -256,9 +256,7 @@ class SideMenuContent extends StatelessWidget {
                 if (nav.canPop()) {
                   nav.pop();
                 }
-                nav.push(
-                  AppPageRoute.sharedAxis(const ProfileScreen()),
-                );
+                nav.push(AppPageRoute.sharedAxis(const ProfileScreen()));
               },
             ),
             const SizedBox(height: 12),

@@ -158,23 +158,11 @@ abstract class AppLocalizations {
   /// **'הצלחה'**
   String get common_success;
 
-  /// No description provided for @common_add.
-  ///
-  /// In he, this message translates to:
-  /// **'הוסף'**
-  String get common_add;
-
   /// No description provided for @common_edit.
   ///
   /// In he, this message translates to:
   /// **'עריכה'**
   String get common_edit;
-
-  /// No description provided for @common_calendar_title.
-  ///
-  /// In he, this message translates to:
-  /// **'לוח משמרות'**
-  String get common_calendar_title;
 
   /// No description provided for @common_tagline.
   ///
@@ -206,24 +194,6 @@ abstract class AppLocalizations {
   /// **'משמרות'**
   String get common_shifts_count;
 
-  /// No description provided for @common_delete_shit_short.
-  ///
-  /// In he, this message translates to:
-  /// **'מחיקת משמרת'**
-  String get common_delete_shit_short;
-
-  /// No description provided for @common_delete_shit_expanded.
-  ///
-  /// In he, this message translates to:
-  /// **'האם אתה בטוח שברצונך למחוק את המשמרת מיום '**
-  String get common_delete_shit_expanded;
-
-  /// No description provided for @common_delete_shift_after.
-  ///
-  /// In he, this message translates to:
-  /// **'המשמרת נמחקה בהצלחה'**
-  String get common_delete_shift_after;
-
   /// No description provided for @common_save_and_finish.
   ///
   /// In he, this message translates to:
@@ -241,12 +211,6 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'ביטול ואיפוס'**
   String get common_reset_and_cancel;
-
-  /// No description provided for @common_undo.
-  ///
-  /// In he, this message translates to:
-  /// **'ביטול'**
-  String get common_undo;
 
   /// No description provided for @onboarding_welcome_title.
   ///
@@ -379,12 +343,6 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'תיאור'**
   String get onboarding_auto_expenses_desc_label;
-
-  /// No description provided for @onboarding_auto_expenses_amount_label.
-  ///
-  /// In he, this message translates to:
-  /// **'₪'**
-  String get onboarding_auto_expenses_amount_label;
 
   /// No description provided for @onboarding_auto_expenses_invalid_amount.
   ///
@@ -710,90 +668,6 @@ abstract class AppLocalizations {
   /// **'תעריף שעתי (חדש)'**
   String get settings_job_rate_label;
 
-  /// No description provided for @settings_job_start_date_label.
-  ///
-  /// In he, this message translates to:
-  /// **'תאריך תחילה'**
-  String get settings_job_start_date_label;
-
-  /// No description provided for @settings_job_error_name_empty.
-  ///
-  /// In he, this message translates to:
-  /// **'נא להזין שם לתפקיד'**
-  String get settings_job_error_name_empty;
-
-  /// No description provided for @settings_job_error_exists.
-  ///
-  /// In he, this message translates to:
-  /// **'תפקיד בשם זה כבר קיים'**
-  String get settings_job_error_exists;
-
-  /// No description provided for @settings_job_error_negative_rate.
-  ///
-  /// In he, this message translates to:
-  /// **'השכר לא יכול להיות שלילי'**
-  String get settings_job_error_negative_rate;
-
-  /// No description provided for @settings_job_add_confirm_title.
-  ///
-  /// In he, this message translates to:
-  /// **'הוספת תפקיד'**
-  String get settings_job_add_confirm_title;
-
-  /// No description provided for @settings_job_edit_confirm_title.
-  ///
-  /// In he, this message translates to:
-  /// **'עדכון תפקיד'**
-  String get settings_job_edit_confirm_title;
-
-  /// No description provided for @settings_job_save_confirm_content.
-  ///
-  /// In he, this message translates to:
-  /// **'האם לשמור את התפקיד \"[[name]]\" עם שכר של [[rate]] החל מיום [[date]]?'**
-  String get settings_job_save_confirm_content;
-
-  /// No description provided for @settings_job_delete_confirm_title.
-  ///
-  /// In he, this message translates to:
-  /// **'מחיקת תפקיד'**
-  String get settings_job_delete_confirm_title;
-
-  /// No description provided for @settings_job_delete_confirm_content.
-  ///
-  /// In he, this message translates to:
-  /// **'האם אתה בטוח שברצונך למחוק את התפקיד \"[[name]]\"?'**
-  String get settings_job_delete_confirm_content;
-
-  /// No description provided for @settings_job_deleted_msg.
-  ///
-  /// In he, this message translates to:
-  /// **'תפקיד \"[[name]]\" נמחק'**
-  String get settings_job_deleted_msg;
-
-  /// No description provided for @settings_dialog_update_breaks_content.
-  ///
-  /// In he, this message translates to:
-  /// **'האם לעדכן את זמני ברירת המחדל ל-[[paid]] דק\' בתשלום ו-[[unpaid]] דק\' ללא תשלום?'**
-  String get settings_dialog_update_breaks_content;
-
-  /// No description provided for @settings_breaks_updated_msg.
-  ///
-  /// In he, this message translates to:
-  /// **'זמני ההפסקות עודכנו'**
-  String get settings_breaks_updated_msg;
-
-  /// No description provided for @settings_jobs_empty.
-  ///
-  /// In he, this message translates to:
-  /// **'לא נמצאו תפקידים.'**
-  String get settings_jobs_empty;
-
-  /// No description provided for @settings_reset_success_msg.
-  ///
-  /// In he, this message translates to:
-  /// **'האפליקציה אותחלה בהצלחה'**
-  String get settings_reset_success_msg;
-
   /// No description provided for @home_empty_state_title.
   ///
   /// In he, this message translates to:
@@ -974,12 +848,6 @@ abstract class AppLocalizations {
   /// **'אין הוצאות רשומות'**
   String get expenses_no_history;
 
-  /// No description provided for @expenses_save_expense_confirm_content.
-  ///
-  /// In he, this message translates to:
-  /// **'האם לשמור את ההוצאה \"[[desc]]\" בסך [[amount]]?'**
-  String get expenses_save_expense_confirm_content;
-
   /// No description provided for @expenses_delete_expense_confirm_content.
   ///
   /// In he, this message translates to:
@@ -1106,12 +974,6 @@ abstract class AppLocalizations {
   /// **'אין הכנסות מיוחדות רשומות'**
   String get incomes_no_history;
 
-  /// No description provided for @incomes_save_income_confirm_content.
-  ///
-  /// In he, this message translates to:
-  /// **'האם לשמור את ההכנסה \"[[desc]]\" בסך [[amount]]?'**
-  String get incomes_save_income_confirm_content;
-
   /// No description provided for @incomes_delete_income_confirm_content.
   ///
   /// In he, this message translates to:
@@ -1123,18 +985,6 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'הכנסה נמחקה'**
   String get incomes_deleted_msg;
-
-  /// No description provided for @incomes_info_card_title.
-  ///
-  /// In he, this message translates to:
-  /// **'מהן הכנסות מיוחדות?'**
-  String get incomes_info_card_title;
-
-  /// No description provided for @incomes_info_card_desc.
-  ///
-  /// In he, this message translates to:
-  /// **'הכנסות חד-פעמיות או תשלומים מיוחדים מהמעסיק (כגון החזרי נסיעות, בונוסים או מענקים) שמתווספים לחישוב הנטו החודשי.'**
-  String get incomes_info_card_desc;
 
   /// No description provided for @add_shift_title.
   ///
@@ -1237,12 +1087,6 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'האם אתה בטוח שברצונך לאפס את הטיימר? כל המידע הנוכחי יימחק.'**
   String get add_shift_timer_reset_desc;
-
-  /// No description provided for @add_shift_timer_resume_shift.
-  ///
-  /// In he, this message translates to:
-  /// **'המשך משמרת'**
-  String get add_shift_timer_resume_shift;
 
   /// No description provided for @add_shift_manual_time_section.
   ///
@@ -1622,29 +1466,11 @@ abstract class AppLocalizations {
   /// **'נא לבחור לפחות סוג עבודה אחד'**
   String get filter_error_no_job_selected;
 
-  /// No description provided for @filter_min.
-  ///
-  /// In he, this message translates to:
-  /// **'מינימום'**
-  String get filter_min;
-
-  /// No description provided for @filter_max.
-  ///
-  /// In he, this message translates to:
-  /// **'מקסימום'**
-  String get filter_max;
-
   /// No description provided for @filter_active_filters.
   ///
   /// In he, this message translates to:
   /// **'מסננים פעילים:'**
   String get filter_active_filters;
-
-  /// No description provided for @filter_no_results.
-  ///
-  /// In he, this message translates to:
-  /// **'אין משמרות התואמות למסננים אלו'**
-  String get filter_no_results;
 
   /// No description provided for @filter_chip_wage.
   ///
@@ -1772,23 +1598,11 @@ abstract class AppLocalizations {
   /// **'שגיאה בביצוע הפעולה. נא לנסות שוב.'**
   String get auth_error_generic;
 
-  /// No description provided for @settings_section_account.
-  ///
-  /// In he, this message translates to:
-  /// **'חשבון'**
-  String get settings_section_account;
-
   /// No description provided for @settings_logout_title.
   ///
   /// In he, this message translates to:
   /// **'התנתקות מהמערכת'**
   String get settings_logout_title;
-
-  /// No description provided for @settings_logout_subtitle.
-  ///
-  /// In he, this message translates to:
-  /// **'התנתקות מהחשבון הנוכחי'**
-  String get settings_logout_subtitle;
 
   /// No description provided for @settings_logout_dialog_title.
   ///
@@ -1856,12 +1670,6 @@ abstract class AppLocalizations {
   /// **'שלום, [[name]]'**
   String get home_welcome_back;
 
-  /// No description provided for @settings_user_details_title.
-  ///
-  /// In he, this message translates to:
-  /// **'פרטי משתמש'**
-  String get settings_user_details_title;
-
   /// No description provided for @settings_user_name.
   ///
   /// In he, this message translates to:
@@ -1885,12 +1693,6 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'עריכת פרופיל'**
   String get settings_user_edit_title;
-
-  /// No description provided for @settings_user_update_button.
-  ///
-  /// In he, this message translates to:
-  /// **'עדכן פרטים'**
-  String get settings_user_update_button;
 
   /// No description provided for @settings_user_update_success.
   ///
@@ -1945,24 +1747,6 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'נתק'**
   String get settings_byos_disconnect;
-
-  /// No description provided for @settings_byos_upgrade_title.
-  ///
-  /// In he, this message translates to:
-  /// **'צור חשבון Shiftly'**
-  String get settings_byos_upgrade_title;
-
-  /// No description provided for @settings_byos_upgrade_subtitle.
-  ///
-  /// In he, this message translates to:
-  /// **'העבר את נתוני ה-BYOS לענן שלנו לסנכרון מהיר יותר'**
-  String get settings_byos_upgrade_subtitle;
-
-  /// No description provided for @settings_byos_sync_backup_section.
-  ///
-  /// In he, this message translates to:
-  /// **'סנכרון וגיבוי'**
-  String get settings_byos_sync_backup_section;
 
   /// No description provided for @settings_byos_login_shiftly.
   ///
@@ -2029,30 +1813,6 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'לא נמצא גיבוי ב-Google Drive או שאירעה שגיאה.'**
   String get settings_restore_no_data;
-
-  /// No description provided for @auth_sync_dialog_title.
-  ///
-  /// In he, this message translates to:
-  /// **'סנכרון נתונים'**
-  String get auth_sync_dialog_title;
-
-  /// No description provided for @auth_sync_dialog_content.
-  ///
-  /// In he, this message translates to:
-  /// **'נמצאו נתונים קיימים גם במכשיר וגם בענן. באילו נתונים תרצה להשתמש?\n\n• שמירת נתוני המכשיר תעלה אותם לענן.\n• שימוש בנתוני ענן ימחק את המידע הקיים במכשיר.'**
-  String get auth_sync_dialog_content;
-
-  /// No description provided for @auth_sync_dialog_cloud.
-  ///
-  /// In he, this message translates to:
-  /// **'נתוני ענן'**
-  String get auth_sync_dialog_cloud;
-
-  /// No description provided for @auth_sync_dialog_local.
-  ///
-  /// In he, this message translates to:
-  /// **'נתוני מכשיר'**
-  String get auth_sync_dialog_local;
 
   /// No description provided for @export_title.
   ///
@@ -2131,18 +1891,6 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'הקובץ נוצר בהצלחה ונשמר ב:'**
   String get export_success_msg;
-
-  /// No description provided for @export_copy_button.
-  ///
-  /// In he, this message translates to:
-  /// **'העתק תוכן ללוח'**
-  String get export_copy_button;
-
-  /// No description provided for @export_copied_msg.
-  ///
-  /// In he, this message translates to:
-  /// **'הנתונים הועתקו ללוח בהצלחה'**
-  String get export_copied_msg;
 
   /// No description provided for @export_empty_error.
   ///
@@ -2294,30 +2042,6 @@ abstract class AppLocalizations {
   /// **'שיעור שמירת הכנסה'**
   String get analytics_kpi_retention;
 
-  /// No description provided for @analytics_kpi_tip_yield.
-  ///
-  /// In he, this message translates to:
-  /// **'ממוצע שעות ליום'**
-  String get analytics_kpi_tip_yield;
-
-  /// No description provided for @analytics_kpi_boost.
-  ///
-  /// In he, this message translates to:
-  /// **'תוספת לשעת עבודה'**
-  String get analytics_kpi_boost;
-
-  /// No description provided for @analytics_chart_pace_title.
-  ///
-  /// In he, this message translates to:
-  /// **'קצב הכנסה ותחזית חודשית'**
-  String get analytics_chart_pace_title;
-
-  /// No description provided for @analytics_chart_pace_subtitle.
-  ///
-  /// In he, this message translates to:
-  /// **'השוואה בין קצב ההכנסה בפועל לתחזית לסוף החודש'**
-  String get analytics_chart_pace_subtitle;
-
   /// No description provided for @analytics_chart_tod_title.
   ///
   /// In he, this message translates to:
@@ -2431,12 +2155,6 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'{count} משמרות'**
   String analytics_shifts_format(Object count);
-
-  /// No description provided for @analytics_hours_format.
-  ///
-  /// In he, this message translates to:
-  /// **'{hours} שעות'**
-  String analytics_hours_format(Object hours);
 
   /// No description provided for @analytics_no_shift_data_period.
   ///
@@ -2821,12 +2539,6 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'בהרשמה או התחברות, הנך מסכים לתנאי השימוש ומדיניות הפרטיות שלנו.'**
   String get legal_disclaimer_notice;
-
-  /// No description provided for @legal_payroll_disclaimer.
-  ///
-  /// In he, this message translates to:
-  /// **'החישובים הינם הערכות מתמטיות למעקב אישי בלבד ואינם מהווים ייעוץ מס, שכר או ייעוץ משפטי רשמי.'**
-  String get legal_payroll_disclaimer;
 
   /// No description provided for @legal_cookie_title.
   ///

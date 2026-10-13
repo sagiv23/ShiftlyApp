@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:shiftly/models/wage_entry.dart';
 import 'package:shiftly/utils/app_constants.dart';
+import 'package:shiftly/utils/number_utils.dart';
 
 part 'job_type.g.dart';
 
@@ -79,11 +80,18 @@ class JobType extends HiveObject {
   };
 
   factory JobType.fromJson(Map<String, dynamic> json) => JobType(
-    id: json['id'],
-    name: json['name'],
-    hourlyRate: json['hourlyRate'].toDouble(),
-    wageHistory: (json['wageHistory'] as List?)
-        ?.map((e) => WageEntry.fromJson(Map<String, dynamic>.from(e as Map)))
-        .toList(),
+    id: json['id'].toString(),
+    name: json['name'].toString(),
+    hourlyRate: NumberUtils.parseDouble(
+      json['hourlyRate'] ?? json['hourly_rate'],
+      AppConstants.defaultHourlyRate,
+    ),
+    wageHistory: (json['wageHistory'] ?? json['wage_history']) != null
+        ? ((json['wageHistory'] ?? json['wage_history']) as List)
+              .map(
+                (e) => WageEntry.fromJson(Map<String, dynamic>.from(e as Map)),
+              )
+              .toList()
+        : null,
   );
 }

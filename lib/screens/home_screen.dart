@@ -27,8 +27,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shiftProvider = context.watch<ShiftProvider>();
-    final hasActiveTimer = context.select<TimerProvider, bool>((t) =>
-    t.startTime != null);
+    final hasActiveTimer = context.select<TimerProvider, bool>(
+      (t) => t.startTime != null,
+    );
     final auth = context.watch<AuthProvider>();
     final l = AppLocalizations.of(context)!;
     final groupedShifts = shiftProvider.shiftsGroupedByMonth;
@@ -135,8 +136,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             Column(
               children: [
-                if (hasActiveTimer)
-                  const _ActiveTimerBanner(),
+                if (hasActiveTimer) const _ActiveTimerBanner(),
                 if (shiftProvider.activeFilter?.isActive == true)
                   const _ActiveFiltersBar(),
               ],
@@ -145,56 +145,56 @@ class HomeScreen extends StatelessWidget {
               child: shiftProvider.isLoading && shiftProvider.shifts.isEmpty
                   ? const HomeScreenSkeleton()
                   : shiftProvider.errorMessage != null &&
-                  shiftProvider.shifts.isEmpty
+                        shiftProvider.shifts.isEmpty
                   ? EmptyStateWidget(
-                icon: Icons.cloud_off_rounded,
-                title: l.common_error,
-                subtitle: shiftProvider.errorMessage,
-                action: ElevatedButton.icon(
-                  onPressed: () => shiftProvider.syncWithServer(),
-                  icon: const Icon(Icons.refresh_rounded),
-                  label: Text(l.common_reset),
-                ),
-              )
+                      icon: Icons.cloud_off_rounded,
+                      title: l.common_error,
+                      subtitle: shiftProvider.errorMessage,
+                      action: ElevatedButton.icon(
+                        onPressed: () => shiftProvider.syncWithServer(),
+                        icon: const Icon(Icons.refresh_rounded),
+                        label: Text(l.common_reset),
+                      ),
+                    )
                   : groupedShifts.isEmpty && !hasActiveTimer
                   ? (shiftProvider.activeFilter?.isActive == true
-                  ? _FilterEmptyState()
-                  : EmptyStateWidget(
-                title: l.home_empty_state_title,
-                subtitle: l.home_empty_state_subtitle,
-              ))
+                        ? _FilterEmptyState()
+                        : EmptyStateWidget(
+                            title: l.home_empty_state_title,
+                            subtitle: l.home_empty_state_subtitle,
+                          ))
                   : ListView.builder(
-                padding: const EdgeInsets.fromLTRB(
-                  AppTheme.spaceSm,
-                  AppTheme.spaceXs,
-                  AppTheme.spaceSm,
-                  120, // Increased for ad space and system navigation
-                ),
-                itemCount: groupedShifts.isEmpty
-                    ? 1
-                    : groupedShifts.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return GrandTotalCard(
-                      totalHours: grandTotalNetHours,
-                      totalBase: grandTotalBaseSalary,
-                      totalTips: grandTotalTips,
-                      totalExpenses: grandTotalExpenses,
-                      totalIncomes: grandTotalIncomes,
-                      totalShifts: grandTotalShifts,
-                    );
-                  }
-                  final monthKey = groupedShifts.keys.elementAt(
-                    index - 1,
-                  );
-                  final shifts = groupedShifts[monthKey]!;
-                  return _MonthExpansionSection(
-                    monthKey: monthKey,
-                    shifts: shifts,
-                    initiallyExpanded: index == 1,
-                  );
-                },
-              ),
+                      padding: const EdgeInsets.fromLTRB(
+                        AppTheme.spaceSm,
+                        AppTheme.spaceXs,
+                        AppTheme.spaceSm,
+                        120, // Increased for ad space and system navigation
+                      ),
+                      itemCount: groupedShifts.isEmpty
+                          ? 1
+                          : groupedShifts.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return GrandTotalCard(
+                            totalHours: grandTotalNetHours,
+                            totalBase: grandTotalBaseSalary,
+                            totalTips: grandTotalTips,
+                            totalExpenses: grandTotalExpenses,
+                            totalIncomes: grandTotalIncomes,
+                            totalShifts: grandTotalShifts,
+                          );
+                        }
+                        final monthKey = groupedShifts.keys.elementAt(
+                          index - 1,
+                        );
+                        final shifts = groupedShifts[monthKey]!;
+                        return _MonthExpansionSection(
+                          monthKey: monthKey,
+                          shifts: shifts,
+                          initiallyExpanded: index == 1,
+                        );
+                      },
+                    ),
             ),
           ],
         ),

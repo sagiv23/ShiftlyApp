@@ -109,7 +109,10 @@ class LegalDocumentViewer extends StatelessWidget {
                 ),
                 child: Text(
                   l.common_close,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),

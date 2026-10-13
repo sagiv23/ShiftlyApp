@@ -23,12 +23,32 @@ class ShiftDescriptionsScreen extends StatefulWidget {
 }
 
 class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
+  bool _isLoading = true;
   DateTime? _selectedDateFilter;
 
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 220), () {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final shiftProvider = context.watch<ShiftProvider>();
     final l = AppLocalizations.of(context)!;
+    final shiftProvider = context.watch<ShiftProvider>();
+    if (_isLoading) {
+      return AdaptiveScaffold(
+        currentIndex: 4,
+        title: l.shift_descriptions_title,
+        body: const ShiftDescriptionsScreenSkeleton(),
+      );
+    }
 
     // Filter shifts that have descriptions
     List<Shift> shiftsWithDesc = shiftProvider.shifts.where((s) {
@@ -113,151 +133,165 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
               child: shiftProvider.isLoading && shiftProvider.shifts.isEmpty
                   ? const ExpensesScreenSkeleton()
                   : PageEntranceAnimation(
-                delayFraction: 0.1,
-                child: groupedShifts.isEmpty
-                    ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(32),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.note_alt_outlined,
-                                size: 64,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withValues(alpha: 0.3),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                l.shift_descriptions_empty,
-                                style: Theme.of(context).textTheme.bodyLarge
-                                    ?.copyWith(
+                      delayFraction: 0.1,
+                      child: groupedShifts.isEmpty
+                          ? Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(32),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.note_alt_outlined,
+                                      size: 64,
                                       color: Theme.of(context)
                                           .colorScheme
                                           .onSurface
-                                          .withValues(alpha: 0.6),
+                                          .withValues(alpha: 0.3),
                                     ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : ListView(
-                        padding: const EdgeInsets.fromLTRB(
-                          AppTheme.spaceSm,
-                          AppTheme.spaceXs,
-                          AppTheme.spaceSm,
-                          120,
-                        ),
-                        children: groupedShifts.keys.map((dateKey) {
-                          final dateShifts = groupedShifts[dateKey]!;
-                          final parsedDate = DateTime.parse(dateKey);
-                          final formattedDate = DateFormat(
-                            'EEEE, dd/MM/yyyy',
-                            l.localeName,
-                          ).format(parsedDate);
-
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                  horizontal: 4,
-                                ),
-                                child: Text(
-                                  formattedDate,
-                                  style: Theme.of(context).textTheme.titleMedium
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: AppTheme.primaryDark,
-                                      ),
-                                ),
-                              ),
-                              ...dateShifts.map((shift) {
-                                final job = shiftProvider.getJobTypeById(
-                                  shift.jobTypeId,
-                                );
-                                final jobName =
-                                    job?.name ?? l.common_unknown_job;
-                                final timeStr =
-                                    '${DateFormat('HH:mm').format(shift.startTime)} - ${DateFormat('HH:mm').format(shift.endTime)}';
-
-                                return Card(
-                                  margin: const EdgeInsets.only(bottom: 8),
-                                  child: ListTile(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        AppPageRoute.sharedAxis(
-                                          AddShiftScreen(shiftToEdit: shift),
-                                        ),
-                                      );
-                                    },
-                                    leading: Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.primary.withValues(
-                                          alpha: 0.12,
-                                        ),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Icon(
-                                        AppTheme.iconForJobName(jobName),
-                                        color: AppTheme.primaryDark,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    title: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            jobName,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          timeStr,
-                                          style: TextStyle(
-                                            fontSize: 12,
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      l.shift_descriptions_empty,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
                                             color: Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
                                                 .withValues(alpha: 0.6),
                                           ),
-                                        ),
-                                      ],
+                                      textAlign: TextAlign.center,
                                     ),
-                                    subtitle: Padding(
-                                      padding: const EdgeInsets.only(top: 6),
-                                      child: Text(
-                                        shift.description ?? '',
-                                        style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onSurface,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                    trailing: const Icon(
-                                      Icons.chevron_right_rounded,
-                                      size: 20,
-                                    ),
-                                  ),
-                                );
-                              }),
-                              const SizedBox(height: 8),
-                            ],
+                                  ],
+                                ),
+                              ),
+                            )
+                          : ListView(
+                              padding: const EdgeInsets.fromLTRB(
+                                AppTheme.spaceSm,
+                                AppTheme.spaceXs,
+                                AppTheme.spaceSm,
+                                120,
+                              ),
+                              children: groupedShifts.keys.map((dateKey) {
+                                final dateShifts = groupedShifts[dateKey]!;
+                                final parsedDate = DateTime.parse(dateKey);
+                                final formattedDate = DateFormat(
+                                  'EEEE, dd/MM/yyyy',
+                                  l.localeName,
+                                ).format(parsedDate);
+
+                                return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 4,
+                          ),
+                          child: Text(
+                            formattedDate,
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.primaryDark,
+                            ),
+                          ),
+                        ),
+                        ...dateShifts.map((shift) {
+                          final job = shiftProvider.getJobTypeById(
+                            shift.jobTypeId,
                           );
-                        }).toList(),
-                      ),
-              ),
+                          final jobName =
+                              job?.name ?? l.common_unknown_job;
+                          final timeStr =
+                              '${DateFormat('HH:mm').format(
+                              shift.startTime)} - ${DateFormat('HH:mm').format(
+                              shift.endTime)}';
+
+                                      return Card(
+                                        margin: const EdgeInsets.only(
+                                          bottom: 8,
+                                        ),
+                                        child: ListTile(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              AppPageRoute.sharedAxis(
+                                                AddShiftScreen(
+                                                  shiftToEdit: shift,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          leading: Container(
+                                            width: 40,
+                                            height: 40,
+                                            decoration: BoxDecoration(
+                                              color: AppTheme.primary
+                                                  .withValues(alpha: 0.12),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Icon(
+                                              AppTheme.iconForJobName(jobName),
+                                              color: AppTheme.primaryDark,
+                                              size: 20,
+                                            ),
+                                          ),
+                                          title: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  jobName,
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              Text(
+                                                timeStr,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface
+                                                      .withValues(alpha: 0.6),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          subtitle: Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 6,
+                                            ),
+                                            child: Text(
+                                              shift.description ?? '',
+                                              style: TextStyle(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurface,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                          trailing: const Icon(
+                                            Icons.chevron_right_rounded,
+                                            size: 20,
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                    const SizedBox(height: 8),
+                                  ],
+                                );
+                              }).toList(),
+                            ),
+                    ),
             ),
           ],
         ),

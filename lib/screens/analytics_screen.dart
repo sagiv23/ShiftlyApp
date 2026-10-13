@@ -256,23 +256,23 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         child: shiftProvider.isLoading && shiftProvider.shifts.isEmpty
             ? const AnalyticsScreenSkeleton()
             : SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(
-            AppTheme.spaceSm,
-            AppTheme.spaceXs,
-            AppTheme.spaceSm,
-            120,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 1. Controls Header (Period Mode, Pager, Job Filter)
-              PageEntranceAnimation(
-                delayFraction: 0.0,
-                child: _buildFilterHeader(context, l, jobTypes),
-              ),
-              const SizedBox(height: AppTheme.spaceSm),
+                padding: const EdgeInsets.fromLTRB(
+                  AppTheme.spaceSm,
+                  AppTheme.spaceXs,
+                  AppTheme.spaceSm,
+                  120,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 1. Controls Header (Period Mode, Pager, Job Filter)
+                    PageEntranceAnimation(
+                      delayFraction: 0.0,
+                      child: _buildFilterHeader(context, l, jobTypes),
+                    ),
+                    const SizedBox(height: AppTheme.spaceSm),
 
-              // Animated Transition for Analytics Content
+                    // Animated Transition for Analytics Content
               PageEntranceAnimation(
                 delayFraction: 0.2,
                 child: AnimatedSwitcher(
@@ -281,8 +281,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   switchOutCurve: Curves.easeInCubic,
                   child: Column(
                     key: ValueKey(
-                      '$_periodMode-$_selectedJobId-${_selectedDate.year}-${_selectedDate.month}',
-                    ),
+                            '$_periodMode-$_selectedJobId-${_selectedDate.year}-${_selectedDate.month}',
+                          ),
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // 2. Summary KPI Cards
@@ -301,73 +301,90 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       ),
                       const SizedBox(height: AppTheme.spaceMd),
 
-                      // 3. Smart Insights Card
-                      if (shiftCount > 0) ...[
-                        smartInsightsCard,
-                        const SizedBox(height: AppTheme.spaceMd),
-                      ],
+                            // 3. Smart Insights Card
+                            if (shiftCount > 0) ...[
+                              smartInsightsCard,
+                              const SizedBox(height: AppTheme.spaceMd),
+                            ],
 
-                      // Responsive Chart Layout
+                            // Responsive Chart Layout
                       isWideScreen
                           ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(child: earningsBarCard),
-                                    const SizedBox(width: AppTheme.spaceSm),
-                                    Expanded(child: cumulativeLineCard),
-                                  ],
-                                ),
-                                const SizedBox(height: AppTheme.spaceSm),
-                                if (todCard != null ||
-                                    durationCard != null) ...[
-                                  Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      if (todCard != null)
-                                        Expanded(child: todCard)
-                                      else
-                                        const Spacer(),
-                                      const SizedBox(width: AppTheme.spaceSm),
-                                      if (durationCard != null)
-                                        Expanded(child: durationCard)
-                                      else
-                                        const Spacer(),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(child: earningsBarCard),
+                                          const SizedBox(
+                                            width: AppTheme.spaceSm,
+                                          ),
+                                          Expanded(child: cumulativeLineCard),
+                                        ],
+                                      ),
+                                      const SizedBox(height: AppTheme.spaceSm),
+                                      if (todCard != null ||
+                                          durationCard != null) ...[
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            if (todCard != null)
+                                              Expanded(child: todCard)
+                                            else
+                                              const Spacer(),
+                                            const SizedBox(
+                                              width: AppTheme.spaceSm,
+                                            ),
+                                            if (durationCard != null)
+                                              Expanded(child: durationCard)
+                                            else
+                                              const Spacer(),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: AppTheme.spaceSm,
+                                        ),
+                                      ],
+                                      if (jobDonutCard != null) ...[
+                                        jobDonutCard,
+                                        const SizedBox(
+                                          height: AppTheme.spaceSm,
+                                        ),
+                                      ],
+                                    ],
+                                  )
+                                : Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      earningsBarCard,
+                                      const SizedBox(height: AppTheme.spaceSm),
+                                      cumulativeLineCard,
+                                      const SizedBox(height: AppTheme.spaceSm),
+                                      if (todCard != null) ...[
+                                        todCard,
+                                        const SizedBox(
+                                          height: AppTheme.spaceSm,
+                                        ),
+                                      ],
+                                      if (durationCard != null) ...[
+                                        durationCard,
+                                        const SizedBox(
+                                          height: AppTheme.spaceSm,
+                                        ),
+                                      ],
+                                      if (jobDonutCard != null) ...[
+                                        jobDonutCard,
+                                        const SizedBox(
+                                          height: AppTheme.spaceSm,
+                                        ),
+                                      ],
                                     ],
                                   ),
-                                  const SizedBox(height: AppTheme.spaceSm),
-                                ],
-                                if (jobDonutCard != null) ...[
-                                  jobDonutCard,
-                                  const SizedBox(height: AppTheme.spaceSm),
-                                ],
-                              ],
-                            )
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                earningsBarCard,
-                                const SizedBox(height: AppTheme.spaceSm),
-                                cumulativeLineCard,
-                                const SizedBox(height: AppTheme.spaceSm),
-                                if (todCard != null) ...[
-                                  todCard,
-                                  const SizedBox(height: AppTheme.spaceSm),
-                                ],
-                                if (durationCard != null) ...[
-                                  durationCard,
-                                  const SizedBox(height: AppTheme.spaceSm),
-                                ],
-                                if (jobDonutCard != null) ...[
-                                  jobDonutCard,
-                                  const SizedBox(height: AppTheme.spaceSm),
-                                ],
-                              ],
-                            ),
-                    ],
+                          ],
                   ),
                 ),
               ),

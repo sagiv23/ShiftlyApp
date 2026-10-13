@@ -179,6 +179,24 @@ void main() {
       expect(shift!.tips, 50.0);
     });
 
+    test('parse with typo in minutes (דקןת) and trailing text (סדרן)', () {
+      const input1 = "19.8 - 19:00 - 01:00 20 דקןת";
+      final shift1 = ShiftParser.parse(input1, 'j1');
+      expect(shift1, isNotNull);
+      expect(shift1!.startTime.hour, 19);
+
+      const input2 = "3.9 - 15:00 - 18:10 20 דקות סדרן";
+      final result2 = ShiftParser.parseResult(input2, 'j1');
+      expect(result2.shift, isNotNull);
+      expect(result2.trailingText, "סדרן");
+
+      const input3 = "11.11 - 14:59 - 20:15 20 דקות + 1  סדרן";
+      final result3 = ShiftParser.parseResult(input3, 'j1');
+      expect(result3.shift, isNotNull);
+      expect(result3.shift!.tips, 1.0);
+      expect(result3.trailingText, "סדרן");
+    });
+
     test('handle invalid input gracefully', () {
       expect(ShiftParser.parse("invalid input", 'j1'), isNull);
     });

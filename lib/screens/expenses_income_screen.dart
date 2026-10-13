@@ -581,222 +581,246 @@ class _ExpensesScreenState extends State<ExpensesScreen>
       ],
       body: SafeArea(
         bottom: true,
-        child: shiftProvider.isLoading && shiftProvider.shifts.isEmpty &&
-            shiftProvider.expenses.isEmpty
+        child:
+            shiftProvider.isLoading &&
+                shiftProvider.shifts.isEmpty &&
+                shiftProvider.expenses.isEmpty
             ? const ExpensesScreenSkeleton()
             : Column(
-          children: [
-            if (_selectedDateFilter != null)
-              Container(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: AppTheme.spaceSm,
-                  vertical: AppTheme.spaceXs,
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppTheme.spaceMd,
-                  vertical: AppTheme.spaceXs,
-                ),
-                decoration: BoxDecoration(
-                  color: AppTheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  border: Border.all(
-                    color: AppTheme.primary.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${l.common_filter_date}: ${DateFormat('dd/MM/yyyy').format(_selectedDateFilter!)}',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    TextButton(
-                      onPressed: () =>
-                          setState(() => _selectedDateFilter = null),
-                      child: Text(l.common_clear_date_filter),
-                    ),
-                  ],
-                ),
-              ),
-            SlideTransition(
-              position: _slideSummary,
-              child: FadeTransition(
-                opacity: _fadeSummary,
-                child: Container(
-                  margin: const EdgeInsets.fromLTRB(
-                    AppTheme.spaceSm,
-                    AppTheme.spaceXs,
-                    AppTheme.spaceSm,
-                    AppTheme.spaceXs,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardTheme.color,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                    border: Border.all(
-                      color: Theme.of(
-                        context,
-                      ).dividerColor.withValues(alpha: 0.5),
-                    ),
-                  ),
-                  child: TabBar(
-                    controller: _tabController,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    dividerColor: Colors.transparent,
-                    tabs: [
-                      Tab(
-                        icon: const Icon(Icons.money_off_rounded, size: 20),
-                        text: l.expenses_tab_expenses,
+                children: [
+                  if (_selectedDateFilter != null)
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spaceSm,
+                        vertical: AppTheme.spaceXs,
                       ),
-                      Tab(
-                        icon: const Icon(
-                          Icons.account_balance_wallet_rounded,
-                          size: 20,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spaceMd,
+                        vertical: AppTheme.spaceXs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                        border: Border.all(
+                          color: AppTheme.primary.withValues(alpha: 0.3),
                         ),
-                        text: l.expenses_tab_incomes,
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: SlideTransition(
-                position: _slideContent,
-                child: FadeTransition(
-                  opacity: _fadeContent,
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      // Tab 1: Expenses
-                      SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '${l.common_filter_date}: ${DateFormat('dd/MM/yyyy').format(_selectedDateFilter!)}',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextButton(
+                            onPressed: () =>
+                                setState(() => _selectedDateFilter = null),
+                            child: Text(l.common_clear_date_filter),
+                          ),
+                        ],
+                      ),
+                    ),
+                  SlideTransition(
+                    position: _slideSummary,
+                    child: FadeTransition(
+                      opacity: _fadeSummary,
+                      child: Container(
+                        margin: const EdgeInsets.fromLTRB(
                           AppTheme.spaceSm,
                           AppTheme.spaceXs,
                           AppTheme.spaceSm,
-                          120,
+                          AppTheme.spaceXs,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildSectionHeader(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardTheme.color,
+                          borderRadius: BorderRadius.circular(
+                            AppTheme.radiusMd,
+                          ),
+                          border: Border.all(
+                            color: Theme.of(
                               context,
-                              l.expenses_auto_section_title,
-                            ),
-                            const SizedBox(height: AppTheme.spaceXs),
-                            Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(AppTheme.spaceSm),
-                                child: Column(
-                                  children: [
-                                    SwitchListTile(
-                                      contentPadding: EdgeInsets.zero,
-                                      title: Text(
-                                        l.expenses_auto_section_enable,
-                                      ),
-                                      subtitle: Text(
-                                        l.expenses_auto_section_subtitle,
-                                      ),
-                                      secondary: const Icon(
-                                        Icons.auto_fix_high_rounded,
-                                        color: AppTheme.primaryDark,
-                                      ),
-                                      value: settings.automaticExpenseEnabled,
-                                      onChanged: (val) => settings
-                                          .setAutomaticExpenseEnabled(val),
-                                      activeThumbColor: AppTheme.primaryDark,
-                                      activeTrackColor: AppTheme.primary
-                                          .withValues(alpha: 0.35),
-                                    ),
-                                    if (settings.automaticExpenseEnabled) ...[
-                                      const Divider(height: AppTheme.spaceLg),
-                                      ...List.generate(
-                                        _autoExpenseAmountControllers.length,
-                                        (index) => _buildAutoRow(
-                                          index,
-                                          settings.currencySymbol,
-                                          false,
-                                        ),
-                                      ),
-                                      TextButton.icon(
-                                        onPressed: () => setState(() {
-                                          _autoExpenseAmountControllers.add(
-                                            TextEditingController(),
-                                          );
-                                          _autoExpenseDescControllers.add(
-                                            TextEditingController(),
-                                          );
-                                        }),
-                                        icon: const Icon(
-                                          Icons.add_circle_outline_rounded,
-                                        ),
-                                        label: Text(l.expenses_action_add_auto),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: ElevatedButton(
-                                          onPressed: _saveDefaultExpenses,
-                                          child: Text(
-                                            l.expenses_action_update_settings,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ],
-                                ),
+                            ).dividerColor.withValues(alpha: 0.5),
+                          ),
+                        ),
+                        child: TabBar(
+                          controller: _tabController,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          dividerColor: Colors.transparent,
+                          tabs: [
+                            Tab(
+                              icon: const Icon(
+                                Icons.money_off_rounded,
+                                size: 20,
                               ),
+                              text: l.expenses_tab_expenses,
                             ),
-                            const SizedBox(height: AppTheme.spaceLg),
-                            _buildSectionHeader(
-                              context,
-                              l.expenses_history_section_title,
+                            Tab(
+                              icon: const Icon(
+                                Icons.account_balance_wallet_rounded,
+                                size: 20,
+                              ),
+                              text: l.expenses_tab_incomes,
                             ),
-                            const SizedBox(height: AppTheme.spaceXs),
-                            if (groupedExpenses.isEmpty)
-                              Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 40,
-                                  ),
-                                  child: Text(l.expenses_no_history),
-                                ),
-                              )
-                            else
-                              ...groupedExpenses.keys
-                                  .toList()
-                                  .sorted((a, b) => b.compareTo(a))
-                                  .map((monthKey) {
-                                    final items = groupedExpenses[monthKey]!;
-                                    return _MonthItemSection(
-                                      monthKey: monthKey,
-                                      items: items,
-                                      isIncome: false,
-                                      onEdit: (record) {
-                                        if (record.shift != null) {
-                                          Navigator.push(
-                                            context,
-                                            AppPageRoute.sharedAxis(
-                                              AddShiftScreen(
-                                                shiftToEdit: record.shift,
-                                              ),
-                                            ),
-                                          );
-                                        } else if (record.standaloneExpense !=
-                                            null) {
-                                          _showItemDialog(
-                                            context,
-                                            item: record.standaloneExpense,
-                                            isIncome: false,
-                                          );
-                                        }
-                                      },
-                                    );
-                                  }),
                           ],
                         ),
                       ),
+                    ),
+                  ),
+                  Expanded(
+                    child: SlideTransition(
+                      position: _slideContent,
+                      child: FadeTransition(
+                        opacity: _fadeContent,
+                        child: TabBarView(
+                          controller: _tabController,
+                          children: [
+                            // Tab 1: Expenses
+                            SingleChildScrollView(
+                              padding: const EdgeInsets.fromLTRB(
+                                AppTheme.spaceSm,
+                                AppTheme.spaceXs,
+                                AppTheme.spaceSm,
+                                120,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildSectionHeader(
+                                    context,
+                                    l.expenses_auto_section_title,
+                                  ),
+                                  const SizedBox(height: AppTheme.spaceXs),
+                                  Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(
+                                        AppTheme.spaceSm,
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          SwitchListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            title: Text(
+                                              l.expenses_auto_section_enable,
+                                            ),
+                                            subtitle: Text(
+                                              l.expenses_auto_section_subtitle,
+                                            ),
+                                            secondary: const Icon(
+                                              Icons.auto_fix_high_rounded,
+                                              color: AppTheme.primaryDark,
+                                            ),
+                                            value: settings
+                                                .automaticExpenseEnabled,
+                                            onChanged: (val) => settings
+                                                .setAutomaticExpenseEnabled(
+                                                  val,
+                                                ),
+                                            activeThumbColor:
+                                                AppTheme.primaryDark,
+                                            activeTrackColor: AppTheme.primary
+                                                .withValues(alpha: 0.35),
+                                          ),
+                                          if (settings
+                                              .automaticExpenseEnabled) ...[
+                                            const Divider(
+                                              height: AppTheme.spaceLg,
+                                            ),
+                                            ...List.generate(
+                                              _autoExpenseAmountControllers
+                                                  .length,
+                                              (index) => _buildAutoRow(
+                                                index,
+                                                settings.currencySymbol,
+                                                false,
+                                              ),
+                                            ),
+                                            TextButton.icon(
+                                              onPressed: () => setState(() {
+                                                _autoExpenseAmountControllers
+                                                    .add(
+                                                      TextEditingController(),
+                                                    );
+                                                _autoExpenseDescControllers.add(
+                                                  TextEditingController(),
+                                                );
+                                              }),
+                                              icon: const Icon(
+                                                Icons
+                                                    .add_circle_outline_rounded,
+                                              ),
+                                              label: Text(
+                                                l.expenses_action_add_auto,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 16),
+                                            SizedBox(
+                                              width: double.infinity,
+                                              child: ElevatedButton(
+                                                onPressed: _saveDefaultExpenses,
+                                                child: Text(
+                                                  l.expenses_action_update_settings,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: AppTheme.spaceLg),
+                                  _buildSectionHeader(
+                                    context,
+                                    l.expenses_history_section_title,
+                                  ),
+                                  const SizedBox(height: AppTheme.spaceXs),
+                                  if (groupedExpenses.isEmpty)
+                                    Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 40,
+                                        ),
+                                        child: Text(l.expenses_no_history),
+                                      ),
+                                    )
+                                  else
+                                    ...groupedExpenses.keys
+                                        .toList()
+                                        .sorted((a, b) => b.compareTo(a))
+                                        .map((monthKey) {
+                                          final items =
+                                              groupedExpenses[monthKey]!;
+                                          return _MonthItemSection(
+                                            monthKey: monthKey,
+                                            items: items,
+                                            isIncome: false,
+                                            onEdit: (record) {
+                                              if (record.shift != null) {
+                                                Navigator.push(
+                                                  context,
+                                                  AppPageRoute.sharedAxis(
+                                                    AddShiftScreen(
+                                                      shiftToEdit: record.shift,
+                                                    ),
+                                                  ),
+                                                );
+                                              } else if (record
+                                                      .standaloneExpense !=
+                                                  null) {
+                                                _showItemDialog(
+                                                  context,
+                                                  item:
+                                                      record.standaloneExpense,
+                                                  isIncome: false,
+                                                );
+                                              }
+                                            },
+                                          );
+                                        }),
+                                ],
+                              ),
+                            ),
 
-                      // Tab 2: Special Incomes
+                            // Tab 2: Special Incomes
                       SingleChildScrollView(
                         padding: const EdgeInsets.fromLTRB(
                           AppTheme.spaceSm,
@@ -814,8 +838,10 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                             const SizedBox(height: AppTheme.spaceXs),
                             Card(
                               child: Padding(
-                                padding: const EdgeInsets.all(AppTheme.spaceSm),
-                                child: Column(
+                                      padding: const EdgeInsets.all(
+                                        AppTheme.spaceSm,
+                                      ),
+                                      child: Column(
                                   children: [
                                     SwitchListTile(
                                       contentPadding: EdgeInsets.zero,
@@ -823,47 +849,55 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                                         l.expenses_auto_incomes_section_enable,
                                       ),
                                       subtitle: Text(
-                                        l.expenses_auto_incomes_section_subtitle,
-                                      ),
+                                              l.expenses_auto_incomes_section_subtitle,
+                                            ),
                                       secondary: const Icon(
                                         Icons.savings_rounded,
                                         color: AppTheme.profitSoft,
                                       ),
-                                      value: settings.automaticIncomeEnabled,
-                                      onChanged: (val) => settings
-                                          .setAutomaticIncomeEnabled(val),
-                                      activeThumbColor: AppTheme.profit,
+                                            value:
+                                                settings.automaticIncomeEnabled,
+                                            onChanged: (val) => settings
+                                                .setAutomaticIncomeEnabled(val),
+                                            activeThumbColor: AppTheme.profit,
                                       activeTrackColor: AppTheme.profit
                                           .withValues(alpha: 0.35),
                                     ),
-                                    if (settings.automaticIncomeEnabled) ...[
-                                      const Divider(height: AppTheme.spaceLg),
-                                      ...List.generate(
-                                        _autoIncomeAmountControllers.length,
-                                        (index) => _buildAutoRow(
-                                          index,
-                                          settings.currencySymbol,
-                                          true,
-                                        ),
-                                      ),
+                                          if (settings
+                                              .automaticIncomeEnabled) ...[
+                                            const Divider(
+                                              height: AppTheme.spaceLg,
+                                            ),
+                                            ...List.generate(
+                                              _autoIncomeAmountControllers
+                                                  .length,
+                                              (index) => _buildAutoRow(
+                                                index,
+                                                settings.currencySymbol,
+                                                true,
+                                              ),
+                                            ),
                                       TextButton.icon(
-                                        onPressed: () => setState(() {
-                                          _autoIncomeAmountControllers.add(
-                                            TextEditingController(),
-                                          );
-                                          _autoIncomeDescControllers.add(
-                                            TextEditingController(),
-                                          );
-                                        }),
-                                        icon: const Icon(
-                                          Icons.add_circle_outline_rounded,
-                                        ),
+                                              onPressed: () => setState(() {
+                                                _autoIncomeAmountControllers
+                                                    .add(
+                                                      TextEditingController(),
+                                                    );
+                                                _autoIncomeDescControllers.add(
+                                                  TextEditingController(),
+                                                );
+                                              }),
+                                              icon: const Icon(
+                                                Icons
+                                                    .add_circle_outline_rounded,
+                                              ),
                                         label: Text(
                                           l.onboarding_auto_incomes_add_button,
                                         ),
                                         style: TextButton.styleFrom(
-                                          foregroundColor: AppTheme.profitSoft,
-                                        ),
+                                                foregroundColor:
+                                                    AppTheme.profitSoft,
+                                              ),
                                       ),
                                       const SizedBox(height: 16),
                                       SizedBox(
@@ -872,8 +906,8 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                                           onPressed: _saveDefaultIncomes,
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                                AppTheme.profitSoft,
-                                          ),
+                                                      AppTheme.profitSoft,
+                                                ),
                                           child: Text(
                                             l.expenses_action_update_settings,
                                           ),
@@ -904,33 +938,36 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                                   .toList()
                                   .sorted((a, b) => b.compareTo(a))
                                   .map((monthKey) {
-                                    final items = groupedIncomes[monthKey]!;
-                                    return _MonthItemSection(
-                                      monthKey: monthKey,
-                                      items: items,
-                                      isIncome: true,
-                                      onEdit: (record) {
-                                        if (record.shift != null) {
-                                          Navigator.push(
-                                            context,
-                                            AppPageRoute.sharedAxis(
-                                              AddShiftScreen(
-                                                shiftToEdit: record.shift,
-                                              ),
-                                            ),
-                                          );
-                                        } else if (record.standaloneExpense !=
-                                            null) {
-                                          _showItemDialog(
-                                            context,
-                                            item: record.standaloneExpense,
+                                          final items =
+                                              groupedIncomes[monthKey]!;
+                                          return _MonthItemSection(
+                                            monthKey: monthKey,
+                                            items: items,
                                             isIncome: true,
+                                            onEdit: (record) {
+                                              if (record.shift != null) {
+                                                Navigator.push(
+                                                  context,
+                                                  AppPageRoute.sharedAxis(
+                                                    AddShiftScreen(
+                                                      shiftToEdit: record.shift,
+                                                    ),
+                                                  ),
+                                                );
+                                              } else if (record
+                                                      .standaloneExpense !=
+                                                  null) {
+                                                _showItemDialog(
+                                                  context,
+                                                  item:
+                                                      record.standaloneExpense,
+                                                  isIncome: true,
+                                                );
+                                              }
+                                            },
                                           );
-                                        }
-                                      },
-                                    );
-                                  }),
-                          ],
+                                        }),
+                                ],
                         ),
                       ),
                     ],
@@ -1060,17 +1097,13 @@ class _MonthItemSection extends StatelessWidget {
             ],
           ),
         ),
-        ...items
-            .asMap()
-            .entries
-            .map(
-              (entry) =>
-              ExpenseTile(
-                record: entry.value,
-                isIncome: isIncome,
-                onTap: () => onEdit(entry.value),
-                symbol: symbol,
-              ),
+        ...items.asMap().entries.map(
+          (entry) => ExpenseTile(
+            record: entry.value,
+            isIncome: isIncome,
+            onTap: () => onEdit(entry.value),
+            symbol: symbol,
+          ),
         ),
         const Divider(),
       ],

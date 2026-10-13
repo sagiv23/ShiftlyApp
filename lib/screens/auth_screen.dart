@@ -177,19 +177,24 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         final l = AppLocalizations.of(context)!;
         final errStr = e.toString().toLowerCase();
         String message = l.auth_error_generic;
-        if (errStr.contains('email') &&
-            (errStr.contains('exist') ||
-                errStr.contains('taken') ||
-                errStr.contains('already') ||
-                errStr.contains('use'))) {
+        if (errStr.contains('email') ||
+            errStr.contains('exist') ||
+            errStr.contains('taken') ||
+            errStr.contains('already') ||
+            errStr.contains('use')) {
           message = l.auth_error_email_exists;
         } else if (errStr.contains('not found') ||
-            errStr.contains('user') ||
             errStr.contains('credential') ||
             errStr.contains('incorrect') ||
             errStr.contains('invalid') ||
             errStr.contains('password')) {
           message = l.auth_error_user_not_found;
+        } else if (errStr.contains('user')) {
+          if (_authMode == AuthMode.register) {
+            message = l.auth_error_email_exists;
+          } else {
+            message = l.auth_error_user_not_found;
+          }
         }
         UIUtils.showSnackBar(context, message, isError: true);
       }

@@ -7,8 +7,8 @@ class AppPageRoute {
   /// Clean fade scale page transition optimized for high performance (Splash, Auth, Onboarding).
   static Route<T> fadeScale<T>(
     Widget page, {
-        Duration duration = const Duration(milliseconds: 200),
-        Duration reverseDuration = const Duration(milliseconds: 160),
+    Duration duration = const Duration(milliseconds: 200),
+    Duration reverseDuration = const Duration(milliseconds: 160),
     RouteSettings? settings,
   }) {
     return PageRouteBuilder<T>(
@@ -17,9 +17,7 @@ class AppPageRoute {
       reverseTransitionDuration: reverseDuration,
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        if (MediaQuery
-            .of(context)
-            .disableAnimations) {
+        if (MediaQuery.of(context).disableAnimations) {
           return child;
         }
 
@@ -43,8 +41,8 @@ class AppPageRoute {
   /// Smooth slide up modal page transition (ideal for creation forms, AddShiftScreen).
   static Route<T> slideUp<T>(
     Widget page, {
-        Duration duration = const Duration(milliseconds: 210),
-        Duration reverseDuration = const Duration(milliseconds: 170),
+    Duration duration = const Duration(milliseconds: 210),
+    Duration reverseDuration = const Duration(milliseconds: 170),
     RouteSettings? settings,
   }) {
     return PageRouteBuilder<T>(
@@ -53,9 +51,7 @@ class AppPageRoute {
       reverseTransitionDuration: reverseDuration,
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        if (MediaQuery
-            .of(context)
-            .disableAnimations) {
+        if (MediaQuery.of(context).disableAnimations) {
           return child;
         }
 
@@ -79,8 +75,8 @@ class AppPageRoute {
   /// Performant horizontal slide & fade transition for sub-screens (RTL/LTR aware).
   static Route<T> slideHorizontal<T>(
     Widget page, {
-        Duration duration = const Duration(milliseconds: 200),
-        Duration reverseDuration = const Duration(milliseconds: 160),
+    Duration duration = const Duration(milliseconds: 200),
+    Duration reverseDuration = const Duration(milliseconds: 160),
     RouteSettings? settings,
   }) {
     return PageRouteBuilder<T>(
@@ -89,9 +85,7 @@ class AppPageRoute {
       reverseTransitionDuration: reverseDuration,
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        if (MediaQuery
-            .of(context)
-            .disableAnimations) {
+        if (MediaQuery.of(context).disableAnimations) {
           return child;
         }
 
@@ -116,7 +110,8 @@ class AppPageRoute {
   }
 
   /// Performant Shared Axis transition for navigating between related screens (e.g. shift card to details/edit).
-  static Route<T> sharedAxis<T>(Widget page, {
+  static Route<T> sharedAxis<T>(
+    Widget page, {
     Duration duration = const Duration(milliseconds: 210),
     Duration reverseDuration = const Duration(milliseconds: 170),
     RouteSettings? settings,
@@ -128,9 +123,7 @@ class AppPageRoute {
       reverseTransitionDuration: reverseDuration,
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        if (MediaQuery
-            .of(context)
-            .disableAnimations) {
+        if (MediaQuery.of(context).disableAnimations) {
           return child;
         }
 
@@ -159,8 +152,10 @@ class AppPageRoute {
           child: FadeTransition(
             opacity: primaryCurved,
             child: FadeTransition(
-              opacity: Tween<double>(begin: 1.0, end: 0.85).animate(
-                  secondaryCurved),
+              opacity: Tween<double>(
+                begin: 1.0,
+                end: 0.85,
+              ).animate(secondaryCurved),
               child: child,
             ),
           ),
@@ -172,8 +167,8 @@ class AppPageRoute {
   /// Soft fade transition.
   static Route<T> fade<T>(
     Widget page, {
-        Duration duration = const Duration(milliseconds: 200),
-        Duration reverseDuration = const Duration(milliseconds: 160),
+    Duration duration = const Duration(milliseconds: 200),
+    Duration reverseDuration = const Duration(milliseconds: 160),
     RouteSettings? settings,
   }) {
     return PageRouteBuilder<T>(
@@ -182,9 +177,7 @@ class AppPageRoute {
       reverseTransitionDuration: reverseDuration,
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        if (MediaQuery
-            .of(context)
-            .disableAnimations) {
+        if (MediaQuery.of(context).disableAnimations) {
           return child;
         }
 
@@ -211,9 +204,7 @@ class SmoothPageTransitionsBuilder extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    if (MediaQuery
-        .of(context)
-        .disableAnimations) {
+    if (MediaQuery.of(context).disableAnimations) {
       return child;
     }
 

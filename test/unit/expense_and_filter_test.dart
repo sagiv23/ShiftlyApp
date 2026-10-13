@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shiftly/models/automatic_expense.dart';
 import 'package:shiftly/models/expense.dart';
 import 'package:shiftly/models/shift_filter.dart';
 
@@ -50,6 +51,41 @@ void main() {
       final cleared = updated.copyWith(clearMinWage: true);
       expect(cleared.minWage, null);
       expect(cleared.maxWage, 50.0);
+    });
+  });
+
+  group('AutomaticExpense and Profile Settings Tests', () {
+    test('AutomaticExpense fromJson parses correctly', () {
+      final json = {'description': 'Bus', 'amount': '15.5'};
+      final ae = AutomaticExpense.fromJson(json);
+      expect(ae.description, 'Bus');
+      expect(ae.amount, 15.5);
+    });
+
+    test('Profile settings mapping parses automatic expenses and incomes', () {
+      final profileData = {
+        'automatic_expenses': [
+          {'description': 'Parking', 'amount': 30.0},
+        ],
+        'automatic_incomes': [
+          {'description': 'Bonus', 'amount': 200.0},
+        ],
+        'automatic_expense_enabled': true,
+        'automatic_income_enabled': false,
+      };
+
+      final rawExp = profileData['automatic_expenses'] as List;
+      final expenses = rawExp
+          .map(
+            (e) =>
+                AutomaticExpense.fromJson(Map<String, dynamic>.from(e as Map)),
+          )
+          .toList();
+      expect(expenses.length, 1);
+      expect(expenses[0].description, 'Parking');
+      expect(expenses[0].amount, 30.0);
+      expect(profileData['automatic_expense_enabled'], true);
+      expect(profileData['automatic_income_enabled'], false);
     });
   });
 }

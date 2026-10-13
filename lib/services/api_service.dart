@@ -102,6 +102,42 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> updateUserSettings(
+    String token, {
+    List<Map<String, dynamic>>? automaticExpenses,
+    List<Map<String, dynamic>>? automaticIncomes,
+    bool? automaticExpenseEnabled,
+    bool? automaticIncomeEnabled,
+  }) async {
+    final body = <String, dynamic>{};
+    if (automaticExpenses != null) {
+      body['automaticExpenses'] = automaticExpenses;
+    }
+    if (automaticIncomes != null) body['automaticIncomes'] = automaticIncomes;
+    if (automaticExpenseEnabled != null) {
+      body['automaticExpenseEnabled'] = automaticExpenseEnabled;
+    }
+    if (automaticIncomeEnabled != null) {
+      body['automaticIncomeEnabled'] = automaticIncomeEnabled;
+    }
+
+    final response = await http.put(
+      Uri.parse('$_baseUrl/auth/settings'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+
+    _checkAuth(response);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to update settings on server');
+    }
+  }
+
   // --- Job Type Methods ---
 
   Future<List<dynamic>> getJobTypes(String token) async {
@@ -306,6 +342,44 @@ class ApiService {
     _checkAuth(response);
     if (response.statusCode != 204) {
       throw Exception('Failed to delete expense from server');
+    }
+  }
+
+  // --- Default Automatic Items Methods ---
+
+  Future<List<dynamic>> getAutomaticItems(String token) async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/automatic-items'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    _checkAuth(response);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to load automatic items from server');
+    }
+  }
+
+  Future<void> batchUpsertAutomaticItems(
+    String token,
+    List<Map<String, dynamic>> items,
+  ) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/automatic-items/batch'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'items': items}),
+    );
+
+    _checkAuth(response);
+    if (response.statusCode != 200) {
+      throw Exception('Failed to sync automatic items to server');
     }
   }
 

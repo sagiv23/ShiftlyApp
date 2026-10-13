@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:shiftly/utils/number_utils.dart';
 
 part 'shift_wage_segment.g.dart';
 
@@ -27,9 +28,9 @@ class ShiftWageSegment extends HiveObject {
 
   factory ShiftWageSegment.fromJson(Map<String, dynamic> json) =>
       ShiftWageSegment(
-        startTime: DateTime.parse(json['startTime']),
-        endTime: DateTime.parse(json['endTime']),
-        percentage: (json['percentage'] as num).toDouble(),
+        startTime: DateTime.parse(json['startTime'] ?? json['start_time']),
+        endTime: DateTime.parse(json['endTime'] ?? json['end_time']),
+        percentage: NumberUtils.parseDouble(json['percentage'], 100.0),
       );
 
   ShiftWageSegment copyWith({
