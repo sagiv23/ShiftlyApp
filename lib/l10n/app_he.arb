@@ -271,6 +271,7 @@
   "auth_error_birth_date_empty": "נא לבחור תאריך לידה",
   "auth_error_email_exists": "כתובת אימייל זו כבר תפוסה",
   "auth_error_user_not_found": "לא נמצא משתמש קיים או שהסיסמה שגויה",
+  "auth_error_network": "שגיאת תקשורת. נא לבדוק את החיבור לאינטרנט או לנסות שוב בעוד מספר שניות",
   "home_welcome_back": "שלום, [[name]]",
   "settings_user_name": "שם",
   "settings_user_email": "אימייל",

@@ -147,21 +147,33 @@ class _SplashScreenState extends State<SplashScreen>
       );
 
       if (auth.isLoggedIn) {
-        final profileSyncOk = await auth.syncProfileAndDrive().timeout(
-          const Duration(seconds: 5),
-          onTimeout: () {
-            debugPrint('Profile sync timed out.');
-            return false;
-          },
-        );
-        isUserValid = profileSyncOk && auth.isLoggedIn;
+        isUserValid = true;
+
+        try {
+          await auth.syncProfileAndDrive().timeout(
+            const Duration(seconds: 8),
+            onTimeout: () {
+              debugPrint(
+                  'Profile sync timed out. Proceeding with cached user session.');
+              return auth.isLoggedIn;
+            },
+          );
+        } catch (e) {
+          debugPrint('Profile sync error during splash: $e');
+        }
+
+        isUserValid = auth.isLoggedIn;
       }
     } catch (e) {
       debugPrint('Initialization error during splash screen: $e');
-      isUserValid = false;
-      try {
-        await auth.logout(navigate: false);
-      } catch (_) {}
+      if (e.toString().contains('unauthorized')) {
+        isUserValid = false;
+        try {
+          await auth.logout(navigate: false);
+        } catch (_) {}
+      } else {
+        isUserValid = auth.isLoggedIn;
+      }
     }
     if (!mounted) return;
 

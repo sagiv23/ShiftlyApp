@@ -1664,6 +1664,12 @@ abstract class AppLocalizations {
   /// **'לא נמצא משתמש קיים או שהסיסמה שגויה'**
   String get auth_error_user_not_found;
 
+  /// No description provided for @auth_error_network.
+  ///
+  /// In he, this message translates to:
+  /// **'שגיאת תקשורת. נא לבדוק את החיבור לאינטרנט או לנסות שוב בעוד מספר שניות'**
+  String get auth_error_network;
+
   /// No description provided for @home_welcome_back.
   ///
   /// In he, this message translates to:

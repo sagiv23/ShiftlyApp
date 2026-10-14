@@ -135,9 +135,16 @@ class AuthProvider with ChangeNotifier {
           await _settingsProvider?.updateSettingsFromProfile(profile);
           await _saveToPersistence();
         } catch (e) {
-          debugPrint('Failed to sync profile on load (user check failed): $e');
-          await logout(navigate: false);
-          return false;
+          debugPrint('Failed to sync profile on load: $e');
+          if (e.toString().contains('unauthorized')) {
+            debugPrint('User check failed with unauthorized. Logging out.');
+            await logout(navigate: false);
+            return false;
+          } else {
+            debugPrint(
+              'Network or server error during profile sync. Continuing with local cached user session.',
+            );
+          }
         }
       }
 
@@ -157,8 +164,11 @@ class AuthProvider with ChangeNotifier {
       return _isLoggedIn;
     } catch (e) {
       debugPrint('Unexpected error in syncProfileAndDrive: $e');
-      await logout(navigate: false);
-      return false;
+      if (e.toString().contains('unauthorized')) {
+        await logout(navigate: false);
+        return false;
+      }
+      return _isLoggedIn;
     } finally {
       _isInitializing = false;
       if (!_initCompleter.isCompleted) {

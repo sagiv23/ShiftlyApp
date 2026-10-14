@@ -20,15 +20,15 @@ class ApiService {
       body: jsonEncode({'email': email, 'password': password}),
     );
 
-    _checkAuth(response);
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception(
-        jsonDecode(response.body)['error'] ??
-            jsonDecode(response.body)['message'] ??
-            'Login failed',
-      );
+      String msg = 'Login failed';
+      try {
+        final body = jsonDecode(response.body);
+        msg = body['error'] ?? body['message'] ?? msg;
+      } catch (_) {}
+      throw Exception(msg);
     }
   }
 

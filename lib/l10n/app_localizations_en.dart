@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -831,6 +832,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get auth_error_user_not_found =>
       'User not found or incorrect password';
+
+  @override
+  String get auth_error_network =>
+      'Network connection error. Please check your internet connection and try again.';
 
   @override
   String get home_welcome_back => 'Hello, [[name]]';

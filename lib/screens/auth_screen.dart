@@ -176,26 +176,31 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       if (mounted) {
         final l = AppLocalizations.of(context)!;
         final errStr = e.toString().toLowerCase();
-        String message = l.auth_error_generic;
-        if (errStr.contains('email') ||
-            errStr.contains('exist') ||
-            errStr.contains('taken') ||
-            errStr.contains('already') ||
-            errStr.contains('use')) {
-          message = l.auth_error_email_exists;
-        } else if (errStr.contains('not found') ||
-            errStr.contains('credential') ||
-            errStr.contains('incorrect') ||
-            errStr.contains('invalid') ||
-            errStr.contains('password')) {
+        String message;
+
+        if (errStr.contains('socket') ||
+            errStr.contains('timeout') ||
+            errStr.contains('connection') ||
+            errStr.contains('clientexception') ||
+            errStr.contains('network') ||
+            errStr.contains('failed host lookup') ||
+            errStr.contains('unreachable')) {
+          message = l.auth_error_network;
+        } else if (_authMode == AuthMode.login) {
           message = l.auth_error_user_not_found;
-        } else if (errStr.contains('user')) {
-          if (_authMode == AuthMode.register) {
+        } else {
+          if (errStr.contains('email') ||
+              errStr.contains('exist') ||
+              errStr.contains('taken') ||
+              errStr.contains('already') ||
+              errStr.contains('use') ||
+              errStr.contains('400')) {
             message = l.auth_error_email_exists;
           } else {
-            message = l.auth_error_user_not_found;
+            message = l.auth_error_generic;
           }
         }
+
         UIUtils.showSnackBar(context, message, isError: true);
       }
     } finally {
