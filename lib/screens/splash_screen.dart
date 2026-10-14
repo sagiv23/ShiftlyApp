@@ -154,7 +154,8 @@ class _SplashScreenState extends State<SplashScreen>
             const Duration(seconds: 8),
             onTimeout: () {
               debugPrint(
-                  'Profile sync timed out. Proceeding with cached user session.');
+                'Profile sync timed out. Proceeding with cached user session.',
+              );
               return auth.isLoggedIn;
             },
           );

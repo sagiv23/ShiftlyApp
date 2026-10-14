@@ -24,8 +24,8 @@ jobs:
         run: flutter pub run build_runner build --delete-conflicting-outputs
       - name: Build Android APK
         run: |
-          flutter build apk --release --split-per-abi
-          flutter build apk --release
+          flutter build apk --release --split-per-abi --obfuscate --split-debug-info=build/app/outputs/symbols
+          flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols
           cp build/app/outputs/flutter-apk/*.apk .
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -151,10 +151,10 @@ jobs:
       - name: Run build_runner
         run: flutter pub run build_runner build --delete-conflicting-outputs
       - name: Build iOS (No Sign)
-        run: flutter build ios --release --no-codesign
+        run: flutter build ios --release --no-codesign --obfuscate --split-debug-info=build/app/outputs/symbols
       - name: Create iOS Payload
         run: |
-          mkdir Payload
+          mkdir -p Payload
           cp -r build/ios/iphoneos/Runner.app Payload/
           zip -r ios-release.ipa Payload
       - name: Upload Artifacts
@@ -182,10 +182,19 @@ jobs:
 
             <div dir="rtl">
 
-            **הנחיות להתקנה:**
-            *   **Android (התקנה ידנית):** מומלץ להוריד את `app-release.apk` (גרסה אוניברסלית) או את `app-arm64-v8a-release.apk` (גרסה קלה למכשירים מודרניים).
-            *   **iOS/macOS:** האפליקציה תומכת בהתראות Foreground. ב-iOS יש להתקין באמצעות כלי פיתוח (כיוון שאין חתימה).
-            *   **Desktop:** יש להוריד את קובץ ה-Zip המתאים, לחלץ ולהריץ את הקובץ המפעיל.
+            ### 📱 הנחיות להתקנה:
+
+            #### Android (קבצי APK מוקטנים):
+            * **`app-arm64-v8a-release.apk` (מומלץ למכשירים מודרניים):** הקובץ הקל והמהיר ביותר למכשירים ב-64-bit.
+            * **`app-armeabi-v7a-release.apk`:** קובץ מוקטן למכשירי אנדרואיד ישנים (32-bit).
+            * **`app-x86_64-release.apk`:** עבור אמולטורים או מכשירי Intel.
+            * **`app-release.apk`:** קובץ אוניברסלי הכולל את כל ארכיטקטורות המעבדים.
+
+            #### iOS / iPhone:
+            * **`ios-release.ipa`:** קובץ להתקנה ב-iOS. *שימו לב: הקובץ נבנה ללא חתימת מפתח (Unsigned), וניתן להתקנה באמצעות AltStore, TrollStore, Sideloadly או כלי פיתוח.*
+
+            #### Desktop & Web:
+            * יש להוריד את קובץ ה-Zip המתאים לפלטפורמה (`windows`, `macos`, `linux`, `web`), לחלץ ולהריץ.
 
             </div>
 

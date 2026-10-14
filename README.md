@@ -1,62 +1,184 @@
-# Shiftly - Multi-Platform Shift Tracker
+# Shiftly - Multi-Platform Shift & Salary Tracker
 
 <div dir="rtl">
 
-Shiftly היא פלטפורמה מקיפה לניהול ומעקב משמרות עבודה והוצאות נלוות, המיועדת לספק מענה מדויק לחישוב
-שכר נטו, ניהול הפסקות ורישום טיפים. האפליקציה תומכת בכל הפלטפורמות (Android, iOS, Windows, macOS,
-Linux, Web) ומציעה פתרונות סנכרון מתקדמים.
+**Shiftly** היא פלטפורמה מתקדמת ומקיפה לניהול, מעקב וחישוב משמרות עבודה, שכר והוצאות נלוות.
+האפליקציה מיועדת לספק מענה מדויק לחישובי שכר נטו ברוטו, ניהול הפסקות, מעקב טיפים, והוצאות אוטומטיות.
 
-## תכונות עיקריות
+האפליקציה נבנתה בארכיטקטורת **Cross-Platform** מלאה התומכת ב-Android, iOS, Windows, macOS, Linux
+ו-Web, ומציעה אפשרויות סנכרון גמישות החל מעבודה מקומית בלבד, דרך גיבוי פרטי ב-Google Drive (BYOS),
+ועד לסנכרון ענן מלא.
 
-* **מעקב זמן אמת וטיימר חכם:** שעון עצר מובנה לניהול משמרת פעילה, כולל מעבר למצבי הפסקה (בתשלום/ללא
-  תשלום) ושליטה מלאה מווילון ההתראות.
-* **סנכרון ענן כפול:**
-    * **BYOS (Bring Your Own Storage):** גיבוי ושחזור ל-Google Drive הפרטי שלך – השליטה במידע נשארת
-      אצלך.
-    * **Shiftly Account:** סנכרון מלא בזמן אמת מול שרת מרכזי למעבר חלק בין מכשירים (מובייל ודסקטופ).
-* **ניהול היסטוריית שכר:** תמיכה בשינויי שכר לפי תאריך (Effective Dates). המערכת שומרת היסטוריית שכר
-  לכל תפקיד ומבטיחה ששינויי שכר עתידיים לא ישפיעו על חישובי העבר.
-* **ניהול טיפים והוצאות:** תיעוד הוצאות (נסיעות, אוכל) וטיפים בודדים עם חישוב נטו סופי מדויק.
-* **מנוע פיענוח טקסט (Smart Parser):** הזנת משמרות מרובות באמצעות הדבקת טקסט חופשי (פורמט: תאריך -
-  שעות - הפסקה + טיפ).
-* **ממשק מודרני (Material 3):** תמיכה מלאה במצב בהיר/כהה ועיצוב מותאם לכל גודל מסך.
-* **רב-לשוניות:** תמיכה מלאה בעברית ובאנגלית.
+---
 
-## מפרט טכני
+## 🔑 ניהול משתמשים: התחברות והרשמה
+
+shiftly מציעה חוויית משתמש גמישה ומותאמת אישית לניהול הזהות והנתונים:
+
+### 1. הרשמה לחשבון (Registration)
+
+* **יצירת חשבון Shiftly Account:** הרשמה באמצעות שם, כתובת אימייל, סיסמה ותאריך לידה.
+* **אימות גיל ובדיקת קטינים (Age Verification):** חובת הזנת תאריך לידה בעת ההרשמה עם מנגנון מובנה
+  לווידוא גיל (בדיקת גיל מינימלי 12+ בהתאם לחוקי העבודה והגנת הפרטיות).
+* **תהליך הגדרה ראשונית מודרך (Onboarding):** לאחר ההרשמה המשתמש עובר תהליך הגדרה מהיר לבחירת מטבע,
+  הגדרת הפסקות ברירת מחדל (בתשלום/ללא תשלום), תזכורות משמרת, והגדרת תפקידים ושכר ראשוניים.
+
+### 2. התחברות וניהול סשן (Login & Auth)
+
+* **התחברות מאובטחת:** התחברות מול השרת באמצעות JSON Web Tokens (JWT) ואימות סיסמאות מוצפן (Bcrypt).
+* **אימות סשן אוטומטי (Session Restoration):** שמירה מאובטחת של אסימון ההתחברות ב-Device Secure
+  Storage (`flutter_secure_storage`). בעת פתיחת האפליקציה מתבצעת בדיקה ואימות אוטומטי של הסשן.
+* **עדכון פרופיל ושינוי סיסמה:** אפשרות לעדכון פרטים אישיים (שם, אימייל, תאריך לידה) ושינוי סיסמה
+  תוך אימות סיסמה ישנה.
+* **מחיקת חשבון (Delete Account):** תמיכה מלאה בפרטיות המשתמש עם אפשרות למחיקת החשבון וכל הנתונים
+  הנלווים אליו מהשרת באופן לצמיתות.
+
+### 3. עבודה במצב אורח / מקומי (Guest Mode / Offline)
+
+* אין חובה להירשם! ניתן להשתמש באפליקציה באופן מקומי לחלוטין. כל הנתונים יישמרו במסד הנתונים המקומי
+  על גבי המכשיר בלבד.
+
+---
+
+## ☁️ ארכיטקטורת סנכרון כפולה: BYOS מול Shiftly Cloud
+
+Shiftly מציעה שני מודלים מתקדמים לסנכרון וגיבוי נתונים:
+
+```
+                  ┌──────────────────────────────────────────┐
+                  │           Shiftly Mobile / Desktop       │
+                  └─────────────────────┬────────────────────┘
+                                        │
+             ┌──────────────────────────┴──────────────────────────┐
+             ▼                                                     ▼
+┌──────────────────────────┐                             ┌───────────────────┐
+│ BYOS (Bring Your Own)    │                             │ Shiftly Cloud     │
+│ Google Drive AppData     │                             │ Node.js + Postgres│
+└────────────┬─────────────┘                             └─────────┬─────────┘
+             │                                                     │
+             ▼                                                     ▼
+┌──────────────────────────┐                             ┌───────────────────┐
+│ Private Backup (.json)   │                             │ Multi-Device Sync │
+│ Fully controlled by user │                             │ Real-time backend │
+└──────────────────────────┘                             └───────────────────┘
+```
+
+### 1. BYOS - Bring Your Own Storage (גיבוי פרטי ב-Google Drive)
+
+* **פרטיות מוחלטת:** הנתונים שלכם נשמרים ישירות במיכל הנתונים הפרטי שלכם ב-Google Drive (
+  `appDataFolder`). הנתונים אינם עוברים או נשמרים בשרתי Shiftly.
+* **גיבוי אוטומטי וידני:** סנכרון אוטומטי של כל שינוי במשמרות, הוצאות ותפקידים, לצד אפשרות לגיבוי
+  יזם ושחזור בלחיצת כפתור.
+* **שליטה מלאה:** אפשרות לניתוק החשבון ומחיקת קובץ הגיבוי הפרטי מ-Google Drive בכל עת.
+
+### 2. Shiftly Cloud (סנכרון ענן מלא)
+
+* **סנכרון בזמן אמת:** עבודה מ מול שרת מרכזי המאפשרת מעבר חלק בין מספר מכשירים (סמארטפון, מחשב,
+  דפדפן).
+* **סנכרון הגדרות אוטומטיות:** סנכרון של משמרות, תפקידים, הוצאות/הכנסות קבועות והגדרות אפליקציה
+  מותאמות אישית.
+
+### 3. Offline-First (אחסון מקומי ב-Hive)
+
+* האפליקציה עובדת בגישת **Offline-First** מעל מסד נתונים NoSQL מקומי (Hive). כל הפעולות מבוצעות
+  מיידית ובמידת הצורך מסונכרנות ברקע בעת חיבור לרשת.
+
+---
+
+## 🌟 תכונות מרכזיות נוספות
+
+* **⏱️ שעון נוכחות וטיימר משמרת חכם:**
+  * הפעלה, השהיה, חידוש וסיום משמרת בזמן אמת.
+  * ניהול הפסקות בתשלום ושלא בתשלום.
+  * בקרת התראות מורחבת מווילון ההתראות במכשיר (`flutter_local_notifications`).
+
+* **💼 ניהול תפקידים והיסטוריית שכר (Wage Rate History):**
+  * תמיכה בשינויי שכר לפי תאריך תחולה (Effective Dates).
+  * שמירת היסטוריית שכר לכל תפקיד להבטחת חישוב מדויק – שינויי שכר עתידיים אינם משפיעים על משמרות
+    עבר.
+
+* **💰 ניהול טיפים, הוצאות והכנסות:**
+  * תיעוד טיפים בודדים לכל משמרת.
+  * ניהול הוצאות נלוות (נסיעות, אוכל וכדומה).
+  * הגדרת הוצאות והכנסות קבועות אוטומטיות (חודשיות או מחושבות לפי משמרת) לחישוב נטו סופי מדויק.
+
+* **📝 מנוע פיענוח טקסט חופשי (Smart Parser):**
+  * הזנת משמרות מרובות בבת אחת על ידי הדבקת טקסט חופשי בפורמט מובנה.
+  * *דוגמה:* `24.06.2026 - 17:30 - 23:00 45 דקות + 50`
+
+* **📊 דוחות, ניתוח נתונים וייצוא:**
+  * גרפים וסטטיסטיקות מתקדמות (פילוח לפי תפקיד, שעות עבודה, ממוצע שכר, הוצאות והכנסות).
+  * ייצוא נתונים ודוחות בקבצי PDF, CSV ו-Excel.
+
+* **🎨 ממשק משתמש ועיצוב (Material 3 & Motion UI):**
+  * תמיכה מלאה במצב בהיר/כהה (Light/Dark Theme).
+  * עיצוב רספונסיבי המותאם לכל גודלי המסכים (Mobile, Tablet, Desktop, Web).
+  * תמיכה מלאה בעברית (RTL) ואנגלית (LTR).
+  * באנר אישור עוגיות (Cookie Consent) ומציג מסמכים משפטיים מובנה.
+
+---
+
+## 🛠️ מפרט טכני וארכיטקטורה
 
 ### Frontend (Flutter)
 
-* **State Management:** Provider & ProxyProvider.
-* **Persistence:** Hive (Local NoSQL) & Google Drive API.
-* **Localization:** `flutter_localizations` (HE/EN).
-* **Platforms:** Mobile (Android/iOS), Desktop (Windows/macOS/Linux), Web.
+* **Framework:** Flutter 3.x (Dart)
+* **State Management:** Provider & ProxyProvider
+* **Local Persistence:** Hive (NoSQL) & Flutter Secure Storage
+* **Integrations:** Google Drive API & Google Sign-In
+* **Localization:** `flutter_localizations` (HE / EN)
+* **Supported Platforms:** Android, iOS, Windows, macOS, Linux, Web
 
-### Backend (Shiftly Cloud)
+### Backend (Shiftly Cloud Server)
 
-* **Runtime:** Node.js (Express.js).
-* **Database:** PostgreSQL.
-* **Auth:** JWT (JSON Web Tokens) & Bcrypt.
-* **Containerization:** Docker & Docker Compose.
-* **Orchestration:** Kubernetes (K8s) Ready.
+* **Runtime:** Node.js (Express.js)
+* **Database:** PostgreSQL
+* **Authentication:** JWT (JSON Web Tokens) & Bcrypt hashing
+* **Containerization & DevOps:** Docker, Docker Compose, Kubernetes Ready (K8s Manifests)
 
-## התקנה ופיתוח מקומי
+---
 
-###Frontend
+## 🚀 התקנה והרצה מקומית
 
-1. **התקנת תלויות:** `flutter pub get`
-2. **יצירת קבצי Adapters:** `dart run build_runner build --delete-conflicting-outputs`
-3. **הרצה:** `flutter run`
+### הרצת ה-Frontend (Flutter)
 
-### Backend (Docker)
+1. **התקנת תלויות:**
+   ```bash
+   flutter pub get
+   ```
 
-1. וודא ש-Docker Desktop מותקן.
-2. הרץ: `docker compose up --build`
-3. השרת יהיה זמין ב-`http://localhost:3000` ומסד הנתונים ב-Adminer ב-`http://localhost:8080`.
+2. **יצירת קבצי Hive Adapters:**
+   ```bash
+   dart run build_runner build --delete-conflicting-outputs
+   ```
 
-## פורמט הזנה (Smart Paste)
+3. **הרצה במצב פיתוח:**
+   ```bash
+   flutter run
+   ```
 
-`[DD.MM.YYYY] - [HH:mm] - [HH:mm] [תיאור הפסקה] + [טיפים]`
-*דוגמה:* `24.06.2026 - 17:30 - 23:00 45 דקות + 50`
+### בניית גרסאות הפצה מוקטנות (Release Builds)
+
+* **אנדרואיד (APK מפוצל ומוקטן):**
+  ```bash
+  flutter build apk --split-per-abi --release --obfuscate --split-debug-info=build/app/outputs/symbols
+  ```
+  *הקבצים ייווצרו ב-`build/app/outputs/flutter-apk/`.*
+
+* **אייפון (IPA ל-iOS):**
+  ```bash
+  flutter build ipa --release --obfuscate --split-debug-info=build/app/outputs/symbols
+  ```
+  *הקובץ ייווצר ב-`build/ios/ipa/`.*
+
+### הרצת ה-Backend (Docker)
+
+1. ודא ש-Docker Desktop מותקן במחשבך.
+2. הרץ את הקונטיינרים:
+   ```bash
+   docker compose up --build
+   ```
+3. השרת יהיה זמין ב-`http://localhost:3000` ומנהל מסד הנתונים (Adminer) ב-`http://localhost:8080`.
 
 </div>
 
@@ -64,21 +186,38 @@ Linux, Web) ומציעה פתרונות סנכרון מתקדמים.
 
 # English Summary
 
-Shiftly is a comprehensive shift tracking and expense management platform built with Flutter. It
-supports Android, iOS, Windows, macOS, Linux, and Web.
+**Shiftly** is a cross-platform shift tracking, wage calculation, and expense management system
+built with Flutter and Node.js.
 
-## Key Features
+## Key Highlights
 
-- **Real-time Tracking:** Smart timer with break management and notification controls.
-- **Dual Sync Options:**
-    - **BYOS:** Private backup to your own Google Drive.
-    - **Shiftly Cloud:** Real-time sync via Node.js/PostgreSQL backend.
-- **Wage History:** Support for effective-dated hourly rates.
-- **Smart Parser:** Free-text shift entry for bulk additions.
-- **Multilingual:** Full support for Hebrew and English.
+- **User Authentication & Registration:**
+  - **Shiftly Account:** Secure login/registration via JWT and Bcrypt encryption.
+  - **Age Verification:** Age entry requirement during sign-up to ensure compliance with minor
+    employment guidelines (minimum age 12+).
+  - **Guided Onboarding:** Initial setup for currency, default break policies, shift reminders, and
+    primary job roles.
+  - **Profile & Data Management:** Update personal details, change passwords, or permanently delete
+    accounts (GDPR compliant).
+  - **Guest / Local Mode:** Full functionality without account creation using local Hive database
+    storage.
 
-## Tech Stack
+- **Dual-Sync Architecture:**
+  - **BYOS (Bring Your Own Storage):** Private Google Drive backup (`appDataFolder`). Your data
+    stays strictly on your personal Google Drive account.
+  - **Shiftly Cloud:** Real-time synchronization across devices via a dedicated Node.js/PostgreSQL
+    backend.
+  - **Offline-First:** All actions are saved locally in Hive NoSQL first, ensuring fast offline
+    operations.
 
-- **Frontend:** Flutter, Provider, Hive.
-- **Backend:** Node.js, Express, PostgreSQL, JWT.
-- **DevOps:** Docker, Kubernetes.
+- **Advanced Features:**
+  - **Live Shift Timer:** Real-time tracking with paid/unpaid break management and interactive
+    notification actions.
+  - **Wage History:** Support for effective-dated hourly rates per job type.
+  - **Expenses & Tips:** Individual shift tips, automatic monthly/per-shift expenses & incomes, and
+    net salary calculation.
+  - **Smart Parser:** Bulk shift entry via free-text paste (
+    `24.06.2026 - 17:30 - 23:00 45 min + 50`).
+  - **Analytics & Export:** Interactive visual charts and data export to PDF, CSV, and Excel.
+  - **Localization & Modern UI:** Full Hebrew (RTL) and English (LTR) support with Material 3
+    styling and dark/light modes.
