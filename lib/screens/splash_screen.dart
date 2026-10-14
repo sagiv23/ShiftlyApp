@@ -42,12 +42,12 @@ class _SplashScreenState extends State<SplashScreen>
 
     _floatController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 3200),
+      duration: const Duration(milliseconds: 3000),
     );
 
     _exitController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1100),
+      duration: const Duration(milliseconds: 3000),
     );
 
     // 1. Text & loading circle fade out and slide down slightly (0.0 to 0.35)
@@ -179,8 +179,8 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
 
     final elapsed = DateTime.now().difference(startTime).inMilliseconds;
-    if (elapsed < 1200) {
-      await Future.delayed(Duration(milliseconds: 1200 - elapsed));
+    if (elapsed < 3000) {
+      await Future.delayed(Duration(milliseconds: 3000 - elapsed));
     }
     if (!mounted) return;
 
