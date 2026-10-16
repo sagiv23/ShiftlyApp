@@ -4,6 +4,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shiftly/models/automatic_expense.dart';
+import 'package:shiftly/models/overtime_rules.dart';
 import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
 import 'package:shiftly/utils/number_utils.dart';
@@ -41,8 +42,11 @@ class SettingsProvider with ChangeNotifier {
   bool _breaksEnabled = true;
   bool _autoSyncEnabled = true;
   String? _cookieConsent;
+  OvertimeRules _overtimeRules = const OvertimeRules();
 
   ThemeMode get themeMode => _themeMode;
+
+  OvertimeRules get overtimeRules => _overtimeRules;
 
   double get paidBreakDurationMinutes => _paidBreakDurationMinutes;
 
@@ -133,6 +137,34 @@ class SettingsProvider with ChangeNotifier {
     } else {
       _defaultAutomaticIncomes = [];
     }
+
+    final rawOvertime = box.get('overtimeRules');
+    if (rawOvertime != null) {
+      try {
+        if (rawOvertime is Map) {
+          _overtimeRules = OvertimeRules.fromJson(
+            Map<String, dynamic>.from(rawOvertime),
+          );
+        } else if (rawOvertime is String) {
+          _overtimeRules = OvertimeRules.fromJson(
+            jsonDecode(rawOvertime) as Map<String, dynamic>,
+          );
+        }
+      } catch (e) {
+        debugPrint('Failed to parse stored overtime rules: $e');
+        _overtimeRules = const OvertimeRules();
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<void> setOvertimeRules(OvertimeRules rules) async {
+    final err = rules.validate();
+    if (err != null) {
+      throw ArgumentError(err);
+    }
+    _overtimeRules = rules;
+    await _persistence.settingsBox.put('overtimeRules', rules.toJson());
     notifyListeners();
   }
 
@@ -433,6 +465,8 @@ class SettingsProvider with ChangeNotifier {
     _currencySymbol = '₪';
     _locale = const Locale('he', 'IL');
     _breaksEnabled = true;
+    _overtimeRules = const OvertimeRules();
+    await _persistence.settingsBox.delete('overtimeRules');
     notifyListeners();
   }
 }

@@ -2,7 +2,10 @@ import 'dart:convert';
 
 import 'package:hive/hive.dart';
 import 'package:shiftly/models/automatic_expense.dart';
+import 'package:shiftly/models/overtime_rules.dart';
+import 'package:shiftly/models/shift_salary_breakdown.dart';
 import 'package:shiftly/models/shift_wage_segment.dart';
+import 'package:shiftly/services/overtime_calculator.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/number_utils.dart';
 
@@ -255,5 +258,16 @@ class Shift extends HiveObject {
         tips +
         totalAutomaticIncomes -
         totalAutomaticExpenses;
+  }
+
+  ShiftSalaryBreakdown getSalaryBreakdown({
+    OvertimeRules rules = const OvertimeRules(),
+    double fallbackRate = AppConstants.defaultHourlyRate,
+  }) {
+    return OvertimeCalculator.calculateBreakdownForShift(
+      this,
+      rules: rules,
+      fallbackRate: fallbackRate,
+    );
   }
 }

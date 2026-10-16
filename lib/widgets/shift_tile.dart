@@ -87,6 +87,7 @@ class ShiftTile extends StatelessWidget {
     final pay = shift.calculateTotalPay(rate);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final breakType = shift.breakType ?? BreakType.none;
+    final breakdown = shift.getSalaryBreakdown(rules: settings.overtimeRules);
 
     Widget childContent = Padding(
       padding: const EdgeInsets.symmetric(
@@ -161,12 +162,19 @@ class ShiftTile extends StatelessWidget {
                 if (shift.tips > 0 ||
                     shift.totalAutomaticIncomes > 0 ||
                     shift.totalAutomaticExpenses > 0 ||
-                    breakType != BreakType.none) ...[
+                    breakType != BreakType.none ||
+                    breakdown.hasOvertime) ...[
                   const SizedBox(height: 6),
                   Wrap(
                     spacing: 6,
                     runSpacing: 4,
                     children: [
+                      if (breakdown.hasOvertime)
+                        ShiftTag(
+                          label: l.overtime_tag_label,
+                          icon: Icons.more_time_rounded,
+                          color: AppTheme.primaryDark,
+                        ),
                       if (shift.tips > 0)
                         ShiftTag(
                           label:

@@ -49,7 +49,7 @@ class JobType extends HiveObject {
       }
     }
 
-    // Date is before all history — use the earliest known rate
+    // Date is before all history - use the earliest known rate
     return sortedHistory.last.hourlyRate;
   }
 

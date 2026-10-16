@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1386,4 +1385,77 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get common_close => 'Close';
+
+  @override
+  String get settings_section_overtime => 'Overtime Rules';
+
+  @override
+  String get settings_overtime_enable => 'Enable Overtime Calculation';
+
+  @override
+  String get settings_overtime_enable_sub =>
+      'Automatically calculate tiered overtime compensation';
+
+  @override
+  String get settings_overtime_regular_threshold =>
+      'Regular Hours Threshold (hours)';
+
+  @override
+  String get settings_overtime_tier1_limit =>
+      'First Overtime Tier Duration (hours)';
+
+  @override
+  String get settings_overtime_tier1_rate => 'First Tier Multiplier (%)';
+
+  @override
+  String get settings_overtime_tier2_rate => 'Additional Tier Multiplier (%)';
+
+  @override
+  String get settings_overtime_update_button => 'Save Overtime Rules';
+
+  @override
+  String get settings_overtime_saved => 'Overtime rules updated successfully';
+
+  @override
+  String get overtime_notification_detected =>
+      'The shift includes overtime. Salary was calculated according to overtime rates.';
+
+  @override
+  String get overtime_breakdown_title => 'Salary Breakdown';
+
+  @override
+  String get overtime_regular_hours_label => 'Regular hours';
+
+  @override
+  String get overtime_tier1_label => 'Overtime (125%)';
+
+  @override
+  String get overtime_tier2_label => 'Overtime (150%)';
+
+  @override
+  String get overtime_tier_custom_label => 'Overtime ([[rate]]%)';
+
+  @override
+  String get overtime_tag_label => 'Overtime';
+
+  @override
+  String get overtime_total_paid_time => 'Total paid time';
+
+  @override
+  String get overtime_total_earnings => 'Total shift earnings';
+
+  @override
+  String get overtime_unpaid_break => 'Unpaid break';
+
+  @override
+  String get analytics_overtime_section_title => 'Overtime Summary & Hours';
+
+  @override
+  String get analytics_regular_hours => 'Regular Hours';
+
+  @override
+  String get analytics_overtime_hours => 'Overtime Hours';
+
+  @override
+  String get analytics_overtime_earnings => 'Overtime Earnings';
 }

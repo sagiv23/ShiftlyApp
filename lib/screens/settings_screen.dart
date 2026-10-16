@@ -31,6 +31,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _isLoading = true;
   late TextEditingController _paidController;
   late TextEditingController _unpaidController;
+  late TextEditingController _otThresholdController;
+  late TextEditingController _otTier1LimitController;
+  late TextEditingController _otTier1MultiplierController;
+  late TextEditingController _otTier2MultiplierController;
 
   @override
   void initState() {
@@ -53,12 +57,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ? settings.unpaidBreakDurationMinutes.toStringAsFixed(0)
           : '',
     );
+    final otRules = settings.overtimeRules;
+    _otThresholdController = TextEditingController(
+      text: otRules.regularHoursThreshold.toStringAsFixed(1),
+    );
+    _otTier1LimitController = TextEditingController(
+      text: otRules.tier1HoursLimit.toStringAsFixed(1),
+    );
+    _otTier1MultiplierController = TextEditingController(
+      text: (otRules.tier1Multiplier * 100).toStringAsFixed(0),
+    );
+    _otTier2MultiplierController = TextEditingController(
+      text: (otRules.tier2Multiplier * 100).toStringAsFixed(0),
+    );
   }
 
   @override
   void dispose() {
     _paidController.dispose();
     _unpaidController.dispose();
+    _otThresholdController.dispose();
+    _otTier1LimitController.dispose();
+    _otTier1MultiplierController.dispose();
+    _otTier2MultiplierController.dispose();
     super.dispose();
   }
 
@@ -655,6 +676,146 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   const SizedBox(height: AppTheme.spaceLg),
+                  _buildSectionHeader(context, l.settings_section_overtime),
+                  const SizedBox(height: AppTheme.spaceXs),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppTheme.spaceSm),
+                      child: Column(
+                        children: [
+                          SwitchListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              l.settings_overtime_enable,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            subtitle: Text(l.settings_overtime_enable_sub),
+                            secondary: const Icon(
+                              Icons.more_time_rounded,
+                              color: AppTheme.primaryDark,
+                            ),
+                            value: settings.overtimeRules.enabled,
+                            onChanged: (val) {
+                              final updated = settings.overtimeRules.copyWith(
+                                enabled: val,
+                              );
+                              settings.setOvertimeRules(updated);
+                            },
+                            activeThumbColor: AppTheme.primaryDark,
+                            activeTrackColor: AppTheme.primary.withValues(
+                              alpha: 0.35,
+                            ),
+                          ),
+                          if (settings.overtimeRules.enabled) ...[
+                            const Divider(height: 16),
+                            TextField(
+                              controller: _otThresholdController,
+                              decoration: InputDecoration(
+                                labelText: l
+                                    .settings_overtime_regular_threshold,
+                                hintText: '8.0',
+                                prefixIcon: const Icon(Icons.access_time),
+                              ),
+                              keyboardType: const TextInputType
+                                  .numberWithOptions(
+                                decimal: true,
+                              ),
+                            ),
+                            const SizedBox(height: AppTheme.spaceSm),
+                            TextField(
+                              controller: _otTier1LimitController,
+                              decoration: InputDecoration(
+                                labelText: l.settings_overtime_tier1_limit,
+                                hintText: '2.0',
+                                prefixIcon: const Icon(Icons.timelapse),
+                              ),
+                              keyboardType: const TextInputType
+                                  .numberWithOptions(
+                                decimal: true,
+                              ),
+                            ),
+                            const SizedBox(height: AppTheme.spaceSm),
+                            TextField(
+                              controller: _otTier1MultiplierController,
+                              decoration: InputDecoration(
+                                labelText: l.settings_overtime_tier1_rate,
+                                hintText: '125',
+                                prefixIcon: const Icon(Icons.percent),
+                              ),
+                              keyboardType: TextInputType.number,
+                            ),
+                            const SizedBox(height: AppTheme.spaceSm),
+                            TextField(
+                              controller: _otTier2MultiplierController,
+                              decoration: InputDecoration(
+                                labelText: l.settings_overtime_tier2_rate,
+                                hintText: '150',
+                                prefixIcon: const Icon(Icons.percent),
+                              ),
+                              keyboardType: TextInputType.number,
+                            ),
+                            const SizedBox(height: AppTheme.spaceSm),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  final threshold =
+                                      double.tryParse(
+                                          _otThresholdController.text) ??
+                                          8.0;
+                                  final tier1Limit =
+                                      double.tryParse(
+                                          _otTier1LimitController.text) ??
+                                          2.0;
+                                  final tier1Mult =
+                                      (double.tryParse(
+                                        _otTier1MultiplierController.text,
+                                      ) ??
+                                          125.0) /
+                                          100.0;
+                                  final tier2Mult =
+                                      (double.tryParse(
+                                        _otTier2MultiplierController.text,
+                                      ) ??
+                                          150.0) /
+                                          100.0;
+
+                                  final newRules = settings.overtimeRules
+                                      .copyWith(
+                                    regularHoursThreshold: threshold,
+                                    tier1HoursLimit: tier1Limit,
+                                    tier1Multiplier: tier1Mult,
+                                    tier2Multiplier: tier2Mult,
+                                  );
+
+                                  final err = newRules.validate();
+                                  if (err != null) {
+                                    UIUtils.showSnackBar(
+                                      context,
+                                      err,
+                                      isError: true,
+                                    );
+                                    return;
+                                  }
+
+                                  await settings.setOvertimeRules(newRules);
+                                  if (!context.mounted) return;
+                                  UIUtils.showSnackBar(
+                                    context,
+                                    l.settings_overtime_saved,
+                                  );
+                                },
+                                child: Text(l.settings_overtime_update_button),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spaceLg),
                   Row(
                     children: [
                       Expanded(
@@ -830,9 +991,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // Perform Reset
     final shiftProvider = context.read<ShiftProvider>();
     final settingsProvider = context.read<SettingsProvider>();
+    final authProvider = context.read<AuthProvider>();
 
     await shiftProvider.factoryReset();
     await settingsProvider.resetAllSettings();
+    if (authProvider.isLoggedIn) {
+      await authProvider.logout(navigate: false);
+    }
+    if (authProvider.isByosConnected) {
+      await authProvider.disconnectBYOS();
+    }
 
     if (!context.mounted) return;
 

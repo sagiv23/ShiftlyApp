@@ -9,6 +9,7 @@ import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/screens/main_screen.dart';
+import 'package:shiftly/screens/onboarding_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/widgets/app_icon.dart';
 
@@ -178,9 +179,10 @@ class _SplashScreenState extends State<SplashScreen>
     final Widget nextScreen;
     if (auth.isLoggedIn || auth.isGuest) {
       if (!settings.hasCompletedOnboarding) {
-        await settings.completeOnboarding();
+        nextScreen = const OnboardingScreen();
+      } else {
+        nextScreen = const MainScreen();
       }
-      nextScreen = const MainScreen();
     } else {
       nextScreen = const AuthScreen();
     }

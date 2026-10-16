@@ -41,7 +41,7 @@ class UIUtils {
     return style;
   }
 
-  /// Shows a single, themed SnackBar — clears any current one first.
+  /// Shows a single, themed SnackBar - clears any current one first.
   static void showSnackBar(
     BuildContext context,
     String message, {

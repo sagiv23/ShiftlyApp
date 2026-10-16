@@ -109,6 +109,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     double totalTips = 0;
     double totalExpenses = 0;
     double totalIncomes = 0;
+    double totalRegularHours = 0;
+    double totalOvertimeHours = 0;
+    double totalOvertimeEarnings = 0;
     final shiftCount = filteredShifts.length;
 
     for (var shift in filteredShifts) {
@@ -122,6 +125,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       totalTips += shift.tips;
       totalExpenses += shift.totalAutomaticExpenses;
       totalIncomes += shift.totalAutomaticIncomes;
+
+      final breakdown = shift.getSalaryBreakdown(rules: settings.overtimeRules);
+      totalRegularHours += breakdown.regularHours;
+      totalOvertimeHours += breakdown.totalOvertimeHours;
+      totalOvertimeEarnings += breakdown.totalOvertimeEarnings;
     }
 
     final totalGross = totalBaseSalary + totalTips + totalIncomes;
@@ -248,6 +256,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       todSegments: todSegments,
     );
 
+    final overtimeSummaryCard = _buildOvertimeSummaryCard(
+      context,
+      l: l,
+      symbol: symbol,
+      regularHours: totalRegularHours,
+      overtimeHours: totalOvertimeHours,
+      overtimeEarnings: totalOvertimeEarnings,
+    );
+
     return AdaptiveScaffold(
       currentIndex: 1,
       title: l.analytics_title,
@@ -303,6 +320,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                             // 3. Smart Insights Card
                             if (shiftCount > 0) ...[
                               smartInsightsCard,
+                              const SizedBox(height: AppTheme.spaceMd),
+                            ],
+
+                            // 4. Overtime Summary Card
+                            if (shiftCount > 0 && totalOvertimeHours > 0) ...[
+                              overtimeSummaryCard,
                               const SizedBox(height: AppTheme.spaceMd),
                             ],
 
@@ -896,6 +919,130 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildOvertimeSummaryCard(
+    BuildContext context, {
+    required AppLocalizations l,
+    required String symbol,
+    required double regularHours,
+    required double overtimeHours,
+    required double overtimeEarnings,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final totalHours = regularHours + overtimeHours;
+    final otPct = totalHours > 0 ? (overtimeHours / totalHours) * 100 : 0.0;
+
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spaceMd),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        border: Border.all(
+          color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.more_time_rounded, color: AppTheme.primaryDark),
+              const SizedBox(width: 8),
+              Text(
+                l.analytics_overtime_section_title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spaceSm),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l.analytics_regular_hours,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${regularHours.toStringAsFixed(1)} ${l.common_hours_suffix}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontFeatures: [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l.analytics_overtime_hours,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${overtimeHours.toStringAsFixed(1)} ${l.common_hours_suffix} (${otPct.toStringAsFixed(0)}%)',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primaryDark,
+                        fontFeatures: [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l.analytics_overtime_earnings,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      UIUtils.formatCurrency(overtimeEarnings, symbol: symbol),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.profit,
+                        fontFeatures: [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

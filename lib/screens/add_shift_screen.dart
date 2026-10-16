@@ -10,6 +10,7 @@ import 'package:shiftly/models/shift_wage_segment.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/providers/timer_provider.dart';
+import 'package:shiftly/services/overtime_calculator.dart';
 import 'package:shiftly/services/shift_parser.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
@@ -255,6 +256,22 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       0.0,
       (sum, c) => sum + (double.tryParse(c.text) ?? 0.0),
     );
+  }
+
+  double _calculateTotalAutoExpenses() {
+    double total = 0.0;
+    for (var c in _autoExpenseAmountControllers) {
+      total += double.tryParse(c.text) ?? 0.0;
+    }
+    return total;
+  }
+
+  double _calculateTotalAutoIncomes() {
+    double total = 0.0;
+    for (var c in _autoIncomeAmountControllers) {
+      total += double.tryParse(c.text) ?? 0.0;
+    }
+    return total;
   }
 
   List<double> _getTipList(List<TextEditingController> controllers) {
@@ -1339,6 +1356,255 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     );
   }
 
+  Widget _buildOvertimeSalaryBreakdownSection() {
+    final l = AppLocalizations.of(context)!;
+    final settings = context.watch<SettingsProvider>();
+    final shiftProvider = context.read<ShiftProvider>();
+    final symbol = settings.currencySymbol;
+
+    DateTime start = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      _startTime.hour,
+      _startTime.minute,
+    );
+    DateTime end = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      _endTime.hour,
+      _endTime.minute,
+    );
+    if (end.isBefore(start)) {
+      end = end.add(const Duration(days: 1));
+    }
+
+    final job = _selectedJobTypeId != null
+        ? shiftProvider.getJobTypeById(_selectedJobTypeId!)
+        : null;
+    final rate =
+        job?.getRateForDate(_selectedDate) ?? AppConstants.defaultHourlyRate;
+
+    List<ShiftWageSegment> manualWageSegments = [];
+    for (int i = 0; i < _segmentStartTimes.length; i++) {
+      final sTime = _segmentStartTimes[i];
+      final eTime = _segmentEndTimes[i];
+      final pct =
+          double.tryParse(_segmentPercentageControllers[i].text) ?? 100.0;
+      DateTime segStart = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        sTime.hour,
+        sTime.minute,
+      );
+      DateTime segEnd = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        eTime.hour,
+        eTime.minute,
+      );
+      if (segEnd.isBefore(segStart)) {
+        segEnd = segEnd.add(const Duration(days: 1));
+      }
+      manualWageSegments.add(
+        ShiftWageSegment(startTime: segStart, endTime: segEnd, percentage: pct),
+      );
+    }
+
+    final breakdown = OvertimeCalculator.calculateBreakdown(
+      startTime: start,
+      endTime: end,
+      hourlyRate: rate,
+      breakType: _selectedBreakType,
+      unpaidBreakMinutes: settings.unpaidBreakDurationMinutes,
+      rules: settings.overtimeRules,
+      tips: _calculateTotalTips(_tipControllers),
+      automaticIncomes: _calculateTotalAutoIncomes(),
+      automaticExpenses: _calculateTotalAutoExpenses(),
+      wageSegments: manualWageSegments,
+    );
+
+    final isDark = Theme
+        .of(context)
+        .brightness == Brightness.dark;
+
+    return _FormSection(
+      title: l.overtime_breakdown_title,
+      icon: breakdown.hasOvertime
+          ? Icons.more_time_rounded
+          : Icons.calculate_rounded,
+      child: Container(
+        padding: const EdgeInsets.all(AppTheme.spaceSm),
+        decoration: BoxDecoration(
+          color: breakdown.hasOvertime
+              ? AppTheme.primary.withValues(alpha: isDark ? 0.15 : 0.08)
+              : Theme
+              .of(context)
+              .colorScheme
+              .surfaceContainerHighest
+              .withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          border: Border.all(
+            color: breakdown.hasOvertime
+                ? AppTheme.primary.withValues(alpha: 0.3)
+                : Theme
+                .of(context)
+                .dividerColor
+                .withValues(alpha: 0.3),
+          ),
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    l.overtime_regular_hours_label,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${breakdown.regularHours.toStringAsFixed(2)} ${l
+                      .common_hours_suffix} - ${UIUtils.formatCurrency(
+                      breakdown.regularEarnings, symbol: symbol)}',
+                  style: const TextStyle(
+                    fontFeatures: [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ],
+            ),
+            if (breakdown.tier1Hours > 0) ...[
+              const SizedBox(height: 6),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${l.overtime_tier1_label} (${(breakdown.tier1Multiplier *
+                          100).toStringAsFixed(0)}%)',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.primaryDark,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${breakdown.tier1Hours.toStringAsFixed(2)} ${l
+                        .common_hours_suffix} - ${UIUtils.formatCurrency(
+                        breakdown.tier1Earnings, symbol: symbol)}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.primaryDark,
+                      fontFeatures: [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            if (breakdown.tier2Hours > 0) ...[
+              const SizedBox(height: 6),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${l.overtime_tier2_label} (${(breakdown.tier2Multiplier *
+                          100).toStringAsFixed(0)}%)',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.primaryDark,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${breakdown.tier2Hours.toStringAsFixed(2)} ${l
+                        .common_hours_suffix} - ${UIUtils.formatCurrency(
+                        breakdown.tier2Earnings, symbol: symbol)}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.primaryDark,
+                      fontFeatures: [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            if (_selectedBreakType == BreakType.unpaid) ...[
+              const SizedBox(height: 6),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      l.overtime_unpaid_break,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme
+                            .of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '-${breakdown.unpaidBreakHours.toStringAsFixed(2)} ${l
+                        .common_hours_suffix}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            const Divider(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    '${l.overtime_total_paid_time}: ${breakdown.netPaidHours
+                        .toStringAsFixed(2)} ${l.common_hours_suffix}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  UIUtils.formatCurrency(
+                    breakdown.totalShiftPay,
+                    symbol: symbol,
+                  ),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: AppTheme.primaryDark,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildManualForm(List<JobType> jobs) {
     final settings = context.read<SettingsProvider>();
     final symbol = settings.currencySymbol;
@@ -1478,6 +1744,8 @@ class _AddShiftScreenState extends State<AddShiftScreen>
               ],
             ),
           ),
+          const SizedBox(height: AppTheme.spaceSm),
+          _buildOvertimeSalaryBreakdownSection(),
           const SizedBox(height: AppTheme.spaceSm),
           _FormSection(
             title: l.shift_description_label,

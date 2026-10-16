@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/models/automatic_expense.dart';
 import 'package:shiftly/models/job_type.dart';
+import 'package:shiftly/models/overtime_rules.dart';
 import 'package:shiftly/models/wage_entry.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
@@ -38,6 +39,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   late String _currencySymbol;
   late Locale _locale;
   late bool _breaksEnabled;
+  late OvertimeRules _onboardingOvertimeRules;
+  late TextEditingController _onboardingOtThresholdController;
+  late TextEditingController _onboardingOtTier1LimitController;
+  late TextEditingController _onboardingOtTier1MultiplierController;
+  late TextEditingController _onboardingOtTier2MultiplierController;
   final List<TextEditingController> _autoAmountControllers = [];
   final List<TextEditingController> _autoDescControllers = [];
   final List<TextEditingController> _autoIncomeAmountControllers = [];
@@ -56,6 +62,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _currencySymbol = settings.currencySymbol;
     _locale = settings.locale;
     _breaksEnabled = settings.breaksEnabled;
+    _onboardingOvertimeRules = settings.overtimeRules;
+
+    _onboardingOtThresholdController = TextEditingController(
+      text: _onboardingOvertimeRules.regularHoursThreshold.toStringAsFixed(1),
+    );
+    _onboardingOtTier1LimitController = TextEditingController(
+      text: _onboardingOvertimeRules.tier1HoursLimit.toStringAsFixed(1),
+    );
+    _onboardingOtTier1MultiplierController = TextEditingController(
+      text: (_onboardingOvertimeRules.tier1Multiplier * 100).toStringAsFixed(0),
+    );
+    _onboardingOtTier2MultiplierController = TextEditingController(
+      text: (_onboardingOvertimeRules.tier2Multiplier * 100).toStringAsFixed(0),
+    );
 
     for (var e in settings.defaultAutomaticExpenses) {
       _autoAmountControllers.add(
@@ -89,6 +109,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void dispose() {
     _pageController.dispose();
+    _onboardingOtThresholdController.dispose();
+    _onboardingOtTier1LimitController.dispose();
+    _onboardingOtTier1MultiplierController.dispose();
+    _onboardingOtTier2MultiplierController.dispose();
     for (var c in _autoAmountControllers) {
       c.dispose();
     }
@@ -105,7 +129,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _nextPage() {
-    if (_currentPage < 7) {
+    if (_currentPage < 8) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
@@ -197,6 +221,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await settings.setCurrencySymbol(_currencySymbol);
     await settings.setLocale(_locale);
 
+    final threshold =
+        double.tryParse(_onboardingOtThresholdController.text) ?? 8.0;
+    final tier1Limit =
+        double.tryParse(_onboardingOtTier1LimitController.text) ?? 2.0;
+    final tier1Mult =
+        (double.tryParse(_onboardingOtTier1MultiplierController.text) ??
+            125.0) /
+        100.0;
+    final tier2Mult =
+        (double.tryParse(_onboardingOtTier2MultiplierController.text) ??
+            150.0) /
+        100.0;
+
+    final updatedOtRules = _onboardingOvertimeRules.copyWith(
+      regularHoursThreshold: threshold,
+      tier1HoursLimit: tier1Limit,
+      tier1Multiplier: tier1Mult,
+      tier2Multiplier: tier2Mult,
+    );
+    await settings.setOvertimeRules(updatedOtRules);
+
     if (_remindersEnabled) {
       await NotificationService.requestPermissions();
     }
@@ -232,6 +277,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   _buildPage(child: _buildAutoExpensePage()),
                   _buildPage(child: _buildAutoIncomePage()),
                   _buildPage(child: _buildBreakSettingsPage()),
+                  _buildPage(child: _buildOvertimeSettingsPage()),
                   _buildJobTypesPage(),
                 ],
               ),
@@ -279,6 +325,97 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
+      ],
+    );
+  }
+
+  Widget _buildOvertimeSettingsPage() {
+    final l = AppLocalizations.of(context)!;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Icon(Icons.more_time_rounded, size: 64, color: Colors.blue),
+        const SizedBox(height: 24),
+        Text(
+          l.settings_section_overtime,
+          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          l.settings_overtime_enable_sub,
+          style: const TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+        const SizedBox(height: 32),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(
+            l.settings_overtime_enable,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          value: _onboardingOvertimeRules.enabled,
+          onChanged: (val) {
+            setState(() {
+              _onboardingOvertimeRules = _onboardingOvertimeRules.copyWith(
+                enabled: val,
+              );
+            });
+          },
+        ),
+        if (_onboardingOvertimeRules.enabled) ...[
+          const SizedBox(height: 16),
+          TextField(
+            controller: _onboardingOtThresholdController,
+            decoration: InputDecoration(
+              labelText: l.settings_overtime_regular_threshold,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              prefixIcon: const Icon(Icons.access_time),
+            ),
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _onboardingOtTier1LimitController,
+            decoration: InputDecoration(
+              labelText: l.settings_overtime_tier1_limit,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              prefixIcon: const Icon(Icons.timelapse),
+            ),
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _onboardingOtTier1MultiplierController,
+            decoration: InputDecoration(
+              labelText: l.settings_overtime_tier1_rate,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              prefixIcon: const Icon(Icons.percent),
+            ),
+            keyboardType: TextInputType.number,
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _onboardingOtTier2MultiplierController,
+            decoration: InputDecoration(
+              labelText: l.settings_overtime_tier2_rate,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              prefixIcon: const Icon(Icons.percent),
+            ),
+            keyboardType: TextInputType.number,
+          ),
+        ],
       ],
     );
   }
@@ -954,7 +1091,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
-                8,
+                9,
                 (index) => Container(
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   width: _currentPage == index ? 10 : 8,
@@ -979,7 +1116,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                 ),
                 child: Text(
-                  _currentPage == 6 ? l.common_start : l.common_continue,
+                  _currentPage == 8 ? l.common_start : l.common_continue,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

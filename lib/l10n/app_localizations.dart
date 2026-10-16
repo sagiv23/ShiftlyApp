@@ -2671,6 +2671,144 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'סגור'**
   String get common_close;
+
+  /// No description provided for @settings_section_overtime.
+  ///
+  /// In he, this message translates to:
+  /// **'חוקי שעות נוספות'**
+  String get settings_section_overtime;
+
+  /// No description provided for @settings_overtime_enable.
+  ///
+  /// In he, this message translates to:
+  /// **'אפשר חישוב שעות נוספות'**
+  String get settings_overtime_enable;
+
+  /// No description provided for @settings_overtime_enable_sub.
+  ///
+  /// In he, this message translates to:
+  /// **'חשב אוטומטית תגמול שעות נוספות לפי תעריפים'**
+  String get settings_overtime_enable_sub;
+
+  /// No description provided for @settings_overtime_regular_threshold.
+  ///
+  /// In he, this message translates to:
+  /// **'סף שעות רגילות (שעות)'**
+  String get settings_overtime_regular_threshold;
+
+  /// No description provided for @settings_overtime_tier1_limit.
+  ///
+  /// In he, this message translates to:
+  /// **'משך מדרגה ראשונה (שעות)'**
+  String get settings_overtime_tier1_limit;
+
+  /// No description provided for @settings_overtime_tier1_rate.
+  ///
+  /// In he, this message translates to:
+  /// **'אחוז מדרגה ראשונה (%)'**
+  String get settings_overtime_tier1_rate;
+
+  /// No description provided for @settings_overtime_tier2_rate.
+  ///
+  /// In he, this message translates to:
+  /// **'אחוז מדרגה נוספת (%)'**
+  String get settings_overtime_tier2_rate;
+
+  /// No description provided for @settings_overtime_update_button.
+  ///
+  /// In he, this message translates to:
+  /// **'שמור חוקי שעות נוספות'**
+  String get settings_overtime_update_button;
+
+  /// No description provided for @settings_overtime_saved.
+  ///
+  /// In he, this message translates to:
+  /// **'חוקי השעות הנוספות עודכנו בהצלחה'**
+  String get settings_overtime_saved;
+
+  /// No description provided for @overtime_notification_detected.
+  ///
+  /// In he, this message translates to:
+  /// **'המשמרת כוללת שעות נוספות. השכר חושב בהתאם לתעריפי השעות הנוספות.'**
+  String get overtime_notification_detected;
+
+  /// No description provided for @overtime_breakdown_title.
+  ///
+  /// In he, this message translates to:
+  /// **'פירוט שכר'**
+  String get overtime_breakdown_title;
+
+  /// No description provided for @overtime_regular_hours_label.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות רגילות'**
+  String get overtime_regular_hours_label;
+
+  /// No description provided for @overtime_tier1_label.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות נוספות (125%)'**
+  String get overtime_tier1_label;
+
+  /// No description provided for @overtime_tier2_label.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות נוספות (150%)'**
+  String get overtime_tier2_label;
+
+  /// No description provided for @overtime_tier_custom_label.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות נוספות ([[rate]]%)'**
+  String get overtime_tier_custom_label;
+
+  /// No description provided for @overtime_tag_label.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות נוספות'**
+  String get overtime_tag_label;
+
+  /// No description provided for @overtime_total_paid_time.
+  ///
+  /// In he, this message translates to:
+  /// **'סה\"כ זמן בתשלום'**
+  String get overtime_total_paid_time;
+
+  /// No description provided for @overtime_total_earnings.
+  ///
+  /// In he, this message translates to:
+  /// **'סה\"כ שכר משמרת'**
+  String get overtime_total_earnings;
+
+  /// No description provided for @overtime_unpaid_break.
+  ///
+  /// In he, this message translates to:
+  /// **'הפסקה ללא תשלום'**
+  String get overtime_unpaid_break;
+
+  /// No description provided for @analytics_overtime_section_title.
+  ///
+  /// In he, this message translates to:
+  /// **'סיכום שעות נוספות'**
+  String get analytics_overtime_section_title;
+
+  /// No description provided for @analytics_regular_hours.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות רגילות'**
+  String get analytics_regular_hours;
+
+  /// No description provided for @analytics_overtime_hours.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות נוספות'**
+  String get analytics_overtime_hours;
+
+  /// No description provided for @analytics_overtime_earnings.
+  ///
+  /// In he, this message translates to:
+  /// **'שכר שעות נוספות'**
+  String get analytics_overtime_earnings;
 }
 
 class _AppLocalizationsDelegate

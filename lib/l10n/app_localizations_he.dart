@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1373,4 +1372,75 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get common_close => 'סגור';
+
+  @override
+  String get settings_section_overtime => 'חוקי שעות נוספות';
+
+  @override
+  String get settings_overtime_enable => 'אפשר חישוב שעות נוספות';
+
+  @override
+  String get settings_overtime_enable_sub =>
+      'חשב אוטומטית תגמול שעות נוספות לפי תעריפים';
+
+  @override
+  String get settings_overtime_regular_threshold => 'סף שעות רגילות (שעות)';
+
+  @override
+  String get settings_overtime_tier1_limit => 'משך מדרגה ראשונה (שעות)';
+
+  @override
+  String get settings_overtime_tier1_rate => 'אחוז מדרגה ראשונה (%)';
+
+  @override
+  String get settings_overtime_tier2_rate => 'אחוז מדרגה נוספת (%)';
+
+  @override
+  String get settings_overtime_update_button => 'שמור חוקי שעות נוספות';
+
+  @override
+  String get settings_overtime_saved => 'חוקי השעות הנוספות עודכנו בהצלחה';
+
+  @override
+  String get overtime_notification_detected =>
+      'המשמרת כוללת שעות נוספות. השכר חושב בהתאם לתעריפי השעות הנוספות.';
+
+  @override
+  String get overtime_breakdown_title => 'פירוט שכר';
+
+  @override
+  String get overtime_regular_hours_label => 'שעות רגילות';
+
+  @override
+  String get overtime_tier1_label => 'שעות נוספות (125%)';
+
+  @override
+  String get overtime_tier2_label => 'שעות נוספות (150%)';
+
+  @override
+  String get overtime_tier_custom_label => 'שעות נוספות ([[rate]]%)';
+
+  @override
+  String get overtime_tag_label => 'שעות נוספות';
+
+  @override
+  String get overtime_total_paid_time => 'סה\"כ זמן בתשלום';
+
+  @override
+  String get overtime_total_earnings => 'סה\"כ שכר משמרת';
+
+  @override
+  String get overtime_unpaid_break => 'הפסקה ללא תשלום';
+
+  @override
+  String get analytics_overtime_section_title => 'סיכום שעות נוספות';
+
+  @override
+  String get analytics_regular_hours => 'שעות רגילות';
+
+  @override
+  String get analytics_overtime_hours => 'שעות נוספות';
+
+  @override
+  String get analytics_overtime_earnings => 'שכר שעות נוספות';
 }
