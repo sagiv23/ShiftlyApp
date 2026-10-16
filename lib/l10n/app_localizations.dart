@@ -1670,6 +1670,60 @@ abstract class AppLocalizations {
   /// **'שגיאת תקשורת. נא לבדוק את החיבור לאינטרנט או לנסות שוב בעוד מספר שניות'**
   String get auth_error_network;
 
+  /// No description provided for @auth_continue_as_guest.
+  ///
+  /// In he, this message translates to:
+  /// **'המשך כאורח'**
+  String get auth_continue_as_guest;
+
+  /// No description provided for @auth_replace_guest_data_title.
+  ///
+  /// In he, this message translates to:
+  /// **'להחליף את נתוני האורח?'**
+  String get auth_replace_guest_data_title;
+
+  /// No description provided for @auth_replace_guest_data_message.
+  ///
+  /// In he, this message translates to:
+  /// **'התחברות לחשבון קיים תחליף את הנתונים המאוחסנים כעת במכשיר זה בנתונים המשויכים לחשבונך. נתוני האורח שלך עשויים ללכת לאיבוד לצמיתות ולא ניתן יהיה לשחזרם אלא אם יש לך גיבוי. ודא שאתה מבין את ההשלכות הללו לפני ההמשך.'**
+  String get auth_replace_guest_data_message;
+
+  /// No description provided for @auth_replace_guest_data_confirm.
+  ///
+  /// In he, this message translates to:
+  /// **'המשך'**
+  String get auth_replace_guest_data_confirm;
+
+  /// No description provided for @auth_replace_guest_data_cancel.
+  ///
+  /// In he, this message translates to:
+  /// **'ביטול'**
+  String get auth_replace_guest_data_cancel;
+
+  /// No description provided for @auth_guest_mode_title.
+  ///
+  /// In he, this message translates to:
+  /// **'מצב אורח'**
+  String get auth_guest_mode_title;
+
+  /// No description provided for @auth_guest_mode_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'אתה משתמש ב-Shiftly במצב אורח. הנתונים שלך שמורים מקומית במכשיר זה. ניתן ליצור חשבון חדש כדי לסנכרן בין מכשירים או להתחבר לחשבון קיים.'**
+  String get auth_guest_mode_subtitle;
+
+  /// No description provided for @auth_guest_migration_failed.
+  ///
+  /// In he, this message translates to:
+  /// **'טעינת נתוני החשבון נכשלה. נתוני האורח המקומיים שלך נשמרו.'**
+  String get auth_guest_migration_failed;
+
+  /// No description provided for @auth_register_guest_transfer.
+  ///
+  /// In he, this message translates to:
+  /// **'התחברות או הרשמה לחשבון Shiftly'**
+  String get auth_register_guest_transfer;
+
   /// No description provided for @home_welcome_back.
   ///
   /// In he, this message translates to:

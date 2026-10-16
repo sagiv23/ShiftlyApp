@@ -233,21 +233,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     )
                   : Card(
-                      child: ListTile(
-                        leading: const Icon(
-                          Icons.person_add_rounded,
-                          color: AppTheme.primary,
-                          size: 28,
-                        ),
-                        title: Text(
-                          l.settings_byos_login_shiftly,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text(l.settings_byos_login_shiftly_sub),
-                        trailing: const Icon(Icons.chevron_right_rounded),
-                        onTap: () => Navigator.push(
-                          context,
-                          AppPageRoute.slideUp(const AuthScreen()),
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppTheme.spaceMd),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.primary.withValues(
+                                      alpha: 0.12,
+                                    ),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.person_outline_rounded,
+                                    color: AppTheme.primary,
+                                    size: 28,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        l.auth_guest_mode_title,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        l.auth_guest_mode_subtitle,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withValues(alpha: 0.7),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  AppPageRoute.slideUp(const AuthScreen()),
+                                ),
+                                icon: const Icon(
+                                  Icons.person_add_rounded,
+                                  size: 18,
+                                ),
+                                label: Text(l.auth_register_guest_transfer),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppTheme.primary,
+                                  foregroundColor: const Color(0xFF0F172A),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -483,6 +540,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ],
                             ),
+                            const Divider(height: 24),
+                            ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              leading: const Icon(
+                                Icons.delete_outline_rounded,
+                                color: AppTheme.expense,
+                              ),
+                              title: Text(
+                                l.settings_byos_delete_title,
+                                style: const TextStyle(
+                                  color: AppTheme.expense,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              subtitle: Text(
+                                l.settings_byos_delete_sub,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                              onTap: () => _handleDeleteBYOS(context),
+                            ),
                           ] else ...[
                             ListTile(
                               contentPadding: EdgeInsets.zero,
@@ -546,27 +624,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                           ],
-                          const Divider(height: 24),
-                          ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: const Icon(
-                              Icons.delete_outline_rounded,
-                              color: AppTheme.expense,
-                            ),
-                            title: Text(
-                              l.settings_byos_delete_title,
-                              style: const TextStyle(
-                                color: AppTheme.expense,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                            subtitle: Text(
-                              l.settings_byos_delete_sub,
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                            onTap: () => _handleDeleteBYOS(context),
-                          ),
                         ],
                       ),
                     ),

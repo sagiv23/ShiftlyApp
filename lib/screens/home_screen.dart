@@ -144,7 +144,8 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               child: shiftProvider.isLoading && shiftProvider.shifts.isEmpty
                   ? const HomeScreenSkeleton()
-                  : shiftProvider.errorMessage != null &&
+                  : !auth.isGuest &&
+                        shiftProvider.errorMessage != null &&
                         shiftProvider.shifts.isEmpty
                   ? EmptyStateWidget(
                       icon: Icons.cloud_off_rounded,

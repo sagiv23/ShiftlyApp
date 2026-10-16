@@ -6,8 +6,12 @@ class UIUtils {
   /// Formats a double value as currency with the provided [symbol] (defaults to ₪).
   /// Example: 100.5 -> "₪100.50"
   /// Handles RTL negative formatting: "-₪50.00"
-  static String formatCurrency(double amount, {String symbol = '₪'}) {
-    final formatted = amount.abs().toStringAsFixed(2);
+  static String formatCurrency(
+    double amount, {
+    String symbol = '₪',
+    int decimals = 2,
+  }) {
+    final formatted = amount.abs().toStringAsFixed(decimals);
     if (amount < 0) {
       return '\u200E-$symbol$formatted';
     }

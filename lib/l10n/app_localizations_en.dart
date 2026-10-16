@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -835,6 +836,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get auth_error_network =>
       'Network connection error. Please check your internet connection and try again.';
+
+  @override
+  String get auth_continue_as_guest => 'Continue as Guest';
+
+  @override
+  String get auth_replace_guest_data_title => 'Replace Guest Data?';
+
+  @override
+  String get auth_replace_guest_data_message =>
+      'Logging into an existing account will replace the data currently stored on this device with the data associated with your account. Your guest data may be permanently lost and cannot be recovered unless you have a backup. Make sure you understand these consequences before continuing.';
+
+  @override
+  String get auth_replace_guest_data_confirm => 'Continue';
+
+  @override
+  String get auth_replace_guest_data_cancel => 'Cancel';
+
+  @override
+  String get auth_guest_mode_title => 'Guest Mode';
+
+  @override
+  String get auth_guest_mode_subtitle =>
+      'You are using Shiftly in Guest Mode. Your data is saved locally on this device. Create an account to sync across devices or log in to an existing account.';
+
+  @override
+  String get auth_guest_migration_failed =>
+      'Failed to retrieve account data. Your guest data has been preserved.';
+
+  @override
+  String get auth_register_guest_transfer =>
+      'Sign In or Create Shiftly Account';
 
   @override
   String get home_welcome_back => 'Hello, [[name]]';

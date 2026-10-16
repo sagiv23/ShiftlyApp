@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -828,6 +829,36 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String get auth_error_network =>
       'שגיאת תקשורת. נא לבדוק את החיבור לאינטרנט או לנסות שוב בעוד מספר שניות';
+
+  @override
+  String get auth_continue_as_guest => 'המשך כאורח';
+
+  @override
+  String get auth_replace_guest_data_title => 'להחליף את נתוני האורח?';
+
+  @override
+  String get auth_replace_guest_data_message =>
+      'התחברות לחשבון קיים תחליף את הנתונים המאוחסנים כעת במכשיר זה בנתונים המשויכים לחשבונך. נתוני האורח שלך עשויים ללכת לאיבוד לצמיתות ולא ניתן יהיה לשחזרם אלא אם יש לך גיבוי. ודא שאתה מבין את ההשלכות הללו לפני ההמשך.';
+
+  @override
+  String get auth_replace_guest_data_confirm => 'המשך';
+
+  @override
+  String get auth_replace_guest_data_cancel => 'ביטול';
+
+  @override
+  String get auth_guest_mode_title => 'מצב אורח';
+
+  @override
+  String get auth_guest_mode_subtitle =>
+      'אתה משתמש ב-Shiftly במצב אורח. הנתונים שלך שמורים מקומית במכשיר זה. ניתן ליצור חשבון חדש כדי לסנכרן בין מכשירים או להתחבר לחשבון קיים.';
+
+  @override
+  String get auth_guest_migration_failed =>
+      'טעינת נתוני החשבון נכשלה. נתוני האורח המקומיים שלך נשמרו.';
+
+  @override
+  String get auth_register_guest_transfer => 'התחברות או הרשמה לחשבון Shiftly';
 
   @override
   String get home_welcome_back => 'שלום, [[name]]';

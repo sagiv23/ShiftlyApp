@@ -136,7 +136,7 @@ class ExportUtils {
         );
       }
       buffer.writeln(
-        'Pay: ${UIUtils.formatCurrency(pay, symbol: symbol)} (Rate: $rate/hr)\n',
+        'Pay: ${UIUtils.formatCurrency(pay, symbol: symbol)} (Rate: ${UIUtils.formatCurrency(rate, symbol: symbol)}/hr)\n',
       );
       buffer.writeln('----------------------------------------');
     }

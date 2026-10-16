@@ -136,8 +136,6 @@ class _SplashScreenState extends State<SplashScreen>
     final settings = context.read<SettingsProvider>();
     final startTime = DateTime.now();
 
-    bool isUserValid = false;
-
     try {
       await auth.restoreLocalSession().timeout(
         const Duration(seconds: 4),
@@ -147,8 +145,6 @@ class _SplashScreenState extends State<SplashScreen>
       );
 
       if (auth.isLoggedIn) {
-        isUserValid = true;
-
         try {
           await auth.syncProfileAndDrive().timeout(
             const Duration(seconds: 8),
@@ -162,18 +158,13 @@ class _SplashScreenState extends State<SplashScreen>
         } catch (e) {
           debugPrint('Profile sync error during splash: $e');
         }
-
-        isUserValid = auth.isLoggedIn;
       }
     } catch (e) {
       debugPrint('Initialization error during splash screen: $e');
       if (e.toString().contains('unauthorized')) {
-        isUserValid = false;
         try {
           await auth.logout(navigate: false);
         } catch (_) {}
-      } else {
-        isUserValid = auth.isLoggedIn;
       }
     }
     if (!mounted) return;
@@ -185,13 +176,13 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
 
     final Widget nextScreen;
-    if (!isUserValid || !auth.isLoggedIn) {
-      nextScreen = const AuthScreen();
-    } else {
+    if (auth.isLoggedIn || auth.isGuest) {
       if (!settings.hasCompletedOnboarding) {
         await settings.completeOnboarding();
       }
       nextScreen = const MainScreen();
+    } else {
+      nextScreen = const AuthScreen();
     }
 
     if (!mounted) return;

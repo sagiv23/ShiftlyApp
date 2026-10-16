@@ -16,6 +16,7 @@ class AuthProvider with ChangeNotifier {
   final GoogleDriveService _driveService = GoogleDriveService();
 
   bool _isLoggedIn = false;
+  bool _isGuest = false;
   bool _isByosConnected = false;
   bool _isInitializing = true;
   final Completer<void> _initCompleter = Completer<void>();
@@ -36,6 +37,8 @@ class AuthProvider with ChangeNotifier {
   }
 
   bool get isLoggedIn => _isLoggedIn;
+
+  bool get isGuest => _isGuest;
 
   bool get isByosConnected => _isByosConnected;
 
@@ -79,6 +82,7 @@ class AuthProvider with ChangeNotifier {
     try {
       final box = _persistence.settingsBox;
       _isLoggedIn = box.get('isLoggedIn', defaultValue: false);
+      _isGuest = box.get('isGuest', defaultValue: false);
       _isByosConnected = box.get('isByosConnected', defaultValue: false);
       _userName = box.get('userName');
       _userEmail = box.get('userEmail');
@@ -89,7 +93,9 @@ class AuthProvider with ChangeNotifier {
 
       if (_token != null && _token!.isNotEmpty) {
         _isLoggedIn = true;
+        _isGuest = false;
         await box.put('isLoggedIn', true);
+        await box.put('isGuest', false);
         _settingsProvider?.updateAuthToken(_token);
       } else {
         _isLoggedIn = false;
@@ -100,6 +106,19 @@ class AuthProvider with ChangeNotifier {
     } finally {
       notifyListeners();
     }
+  }
+
+  Future<void> continueAsGuest() async {
+    _isLoggedIn = false;
+    _isGuest = true;
+    _userName = null;
+    _userEmail = null;
+    _token = null;
+    final box = _persistence.settingsBox;
+    await box.put('isLoggedIn', false);
+    await box.put('isGuest', true);
+    await SecureStorageHelper.deleteToken();
+    notifyListeners();
   }
 
   Future<bool> syncProfileAndDrive() async {
@@ -220,9 +239,16 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> login(String email, String password) async {
-    final data = await _apiService.login(email, password);
+  Future<Map<String, dynamic>> authenticateOnly(
+    String email,
+    String password,
+  ) async {
+    return await _apiService.login(email, password);
+  }
+
+  Future<void> applyLoginSession(Map<String, dynamic> data) async {
     _isLoggedIn = true;
+    _isGuest = false;
     _userEmail = data['user']['email'];
     _userName = data['user']['name'];
     _token = data['token'];
@@ -249,6 +275,11 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> login(String email, String password) async {
+    final data = await authenticateOnly(email, password);
+    await applyLoginSession(data);
+  }
+
   Future<void> register(
     String name,
     String email,
@@ -262,6 +293,7 @@ class AuthProvider with ChangeNotifier {
       birthDate: birthDate,
     );
     _isLoggedIn = true;
+    _isGuest = false;
     _userName = data['user']['name'];
     _userEmail = data['user']['email'];
     _token = data['token'];
@@ -288,6 +320,7 @@ class AuthProvider with ChangeNotifier {
   Future<void> _saveToPersistence() async {
     final box = _persistence.settingsBox;
     await box.put('isLoggedIn', true);
+    await box.put('isGuest', false);
     await box.put('userEmail', _userEmail ?? '');
     await box.put('userName', _userName ?? '');
     if (_userCreatedAt != null) {
@@ -368,6 +401,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> logout({bool navigate = true}) async {
     _isLoggedIn = false;
+    _isGuest = false;
     _userName = null;
     _userEmail = null;
     _token = null;
@@ -377,6 +411,7 @@ class AuthProvider with ChangeNotifier {
     await _settingsProvider?.resetUserSettings();
     final box = _persistence.settingsBox;
     await box.put('isLoggedIn', false);
+    await box.put('isGuest', false);
     await box.delete('userEmail');
     await box.delete('userName');
     await box.delete('userCreatedAt');

@@ -1102,7 +1102,9 @@ class _WageTimeline extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            '${delta > 0 ? '+' : ''}${delta.toStringAsFixed(2)}',
+                            delta > 0
+                                ? '+${UIUtils.formatCurrency(delta, symbol: symbol)}'
+                                : UIUtils.formatCurrency(delta, symbol: symbol),
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,

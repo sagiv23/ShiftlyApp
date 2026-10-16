@@ -8,6 +8,7 @@ import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/main_screen.dart';
 import 'package:shiftly/screens/onboarding_screen.dart';
+import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
@@ -87,6 +88,31 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     });
   }
 
+  Future<void> _continueAsGuest() async {
+    final authProvider = context.read<AuthProvider>();
+    final settingsProvider = context.read<SettingsProvider>();
+
+    await authProvider.continueAsGuest();
+
+    if (!mounted) return;
+
+    final Widget nextScreen;
+    if (!settingsProvider.hasCompletedOnboarding) {
+      nextScreen = const OnboardingScreen();
+    } else {
+      nextScreen = const MainScreen();
+    }
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      AppPageRoute.fadeScale(
+        nextScreen,
+        duration: const Duration(milliseconds: 200),
+      ),
+      (route) => false,
+    );
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -95,14 +121,62 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     try {
       final authProvider = context.read<AuthProvider>();
       final shiftProvider = context.read<ShiftProvider>();
+      final settingsProvider = context.read<SettingsProvider>();
       final l = AppLocalizations.of(context)!;
 
       if (_authMode == AuthMode.login) {
-        await authProvider.login(
+        // Section 3.A: Confirm before replacing local guest data
+        final hasGuestData =
+            authProvider.isGuest ||
+            shiftProvider.shifts.isNotEmpty ||
+            shiftProvider.expenses.isNotEmpty;
+
+        if (hasGuestData) {
+          final confirmed = await UIUtils.showConfirmDialog(
+            context: context,
+            title: l.auth_replace_guest_data_title,
+            content: l.auth_replace_guest_data_message,
+            confirmLabel: l.auth_replace_guest_data_confirm,
+            cancelLabel: l.auth_replace_guest_data_cancel,
+            isDestructive: true,
+          );
+
+          if (confirmed != true) {
+            setState(() => _isLoading = false);
+            return;
+          }
+        }
+
+        // Authenticate on server
+        final authData = await authProvider.authenticateOnly(
           _emailController.text.trim(),
           _passwordController.text.trim(),
         );
+
+        final token = authData['token']?.toString();
+        if (token == null || token.isEmpty) {
+          throw Exception('No token returned');
+        }
+
+        // Retrieve and validate account data from server before overwriting local guest data
+        final apiService = ApiService();
+        final remoteJobTypes = await apiService.getJobTypes(token);
+        final remoteExpenses = await apiService.getExpenses(token);
+        final remoteShifts = await apiService.getShifts(token);
+
+        final replaced = await shiftProvider.replaceLocalDataAtomic(
+          remoteJobTypes: remoteJobTypes,
+          remoteExpenses: remoteExpenses,
+          remoteShifts: remoteShifts,
+        );
+
+        if (!replaced) {
+          throw Exception('Failed to apply account data');
+        }
+
+        await authProvider.applyLoginSession(authData);
       } else {
+        // Section 3.B: Registering a new account from guest mode
         if (_selectedBirthDate == null) {
           UIUtils.showSnackBar(
             context,
@@ -133,18 +207,29 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
           _passwordController.text.trim(),
           birthDate: _selectedBirthDate,
         );
+
+        // Migrate local guest data to newly created account
+        final migrated = await shiftProvider.migrateGuestDataToServer(
+          authProvider.token!,
+        );
+        if (!migrated) {
+          debugPrint(
+            'Guest data migration failed, local data preserved for retry.',
+          );
+        }
       }
 
       if (!mounted) return;
 
-      final settingsProvider = context.read<SettingsProvider>();
       shiftProvider.updateAuthStatus(
         authProvider.token,
         authProvider.isByosConnected,
         settingsProvider.autoSyncEnabled,
       );
 
-      await shiftProvider.syncWithServer();
+      if (_authMode == AuthMode.login) {
+        await shiftProvider.syncWithServer();
+      }
 
       if (!mounted) return;
       UIUtils.showSnackBar(
@@ -481,6 +566,33 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                         ),
                       ),
                       const SizedBox(height: 12),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: OutlinedButton.icon(
+                          onPressed: _isLoading ? null : _continueAsGuest,
+                          icon: const Icon(
+                            Icons.person_outline_rounded,
+                            color: Colors.white70,
+                          ),
+                          label: Text(
+                            l.auth_continue_as_guest,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Colors.white38),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
 
                       // Legal Disclaimer & Links
                       Padding(

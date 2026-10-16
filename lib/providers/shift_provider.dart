@@ -76,6 +76,7 @@ class ShiftProvider with ChangeNotifier {
 
     if (token == null) {
       _hasSyncedOnStartup = false;
+      _errorMessage = null;
       _invalidateCache();
       return;
     }
@@ -274,8 +275,188 @@ class ShiftProvider with ChangeNotifier {
     }
   }
 
+  /// Migrates existing local guest data to the server for a newly created account.
+  Future<bool> migrateGuestDataToServer(String token) async {
+    try {
+      await _settingsProvider?.syncSettingsToServer(token);
+
+      final jobTypeItems = jobTypes
+          .map(
+            (job) => {
+              'id': job.id,
+              'name': job.name,
+              'hourly_rate': job.hourlyRate,
+              'wage_history': job.wageHistory
+                  ?.map(
+                    (e) => {
+                      'startDate': e.startDate.toIso8601String(),
+                      'hourlyRate': e.hourlyRate,
+                    },
+                  )
+                  .toList(),
+            },
+          )
+          .toList();
+      if (jobTypeItems.isNotEmpty) {
+        await _apiService.batchUpsertJobTypes(token, jobTypeItems);
+      }
+
+      final allFinancialItems = [
+        ...expenses.map(
+          (exp) => {
+            'id': exp.id,
+            'date': exp.date.toIso8601String().split('T')[0],
+            'description': exp.description,
+            'amount': exp.amount,
+            'is_income': false,
+          },
+        ),
+        ...incomes.map(
+          (inc) => {
+            'id': inc.id,
+            'date': inc.date.toIso8601String().split('T')[0],
+            'description': inc.description,
+            'amount': inc.amount,
+            'is_income': true,
+          },
+        ),
+      ];
+      if (allFinancialItems.isNotEmpty) {
+        await _apiService.batchUpsertExpenses(token, allFinancialItems);
+      }
+
+      final shiftItems = shifts.map((shift) {
+        final job = getJobTypeById(shift.jobTypeId);
+        final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 0.0;
+        return {
+          'id': shift.id,
+          'job_type_id': shift.jobTypeId,
+          'date': shift.date.toIso8601String().split('T')[0],
+          'start_time': shift.startTime.toIso8601String(),
+          'end_time': shift.endTime.toIso8601String(),
+          'tips': shift.tips,
+          'break_type': shift.breakType?.toString().split('.').last,
+          'unpaid_break_minutes': shift.unpaidBreakMinutes,
+          'hourly_rate': rate,
+          'automatic_expenses': shift.automaticExpenses
+              ?.map((e) => {'description': e.description, 'amount': e.amount})
+              .toList(),
+          'automatic_incomes': shift.automaticIncomes
+              ?.map((e) => {'description': e.description, 'amount': e.amount})
+              .toList(),
+          'description': shift.description,
+          'total_pay': shift.calculateTotalPay(rate),
+        };
+      }).toList();
+      if (shiftItems.isNotEmpty) {
+        await _apiService.batchUpsertShifts(token, shiftItems);
+      }
+
+      _invalidateCache();
+      return true;
+    } catch (e) {
+      debugPrint('Failed to migrate guest data to server: $e');
+      return false;
+    }
+  }
+
+  /// Safely replaces local datasets with remote account data.
+  /// If writing remote data fails, local guest data is restored from snapshot.
+  Future<bool> replaceLocalDataAtomic({
+    required List<dynamic> remoteJobTypes,
+    required List<dynamic> remoteExpenses,
+    required List<dynamic> remoteShifts,
+  }) async {
+    // 1. Snapshot local guest data
+    final snapshotShifts = _persistence.shiftsBox.values.toList();
+    final snapshotJobs = _persistence.jobTypesBox.values.toList();
+    final snapshotExpenses = _persistence.expensesBox.values.toList();
+
+    try {
+      // 2. Clear local boxes
+      await _persistence.shiftsBox.clear();
+      await _persistence.jobTypesBox.clear();
+      await _persistence.expensesBox.clear();
+
+      // 3. Populate remote job types
+      for (var jobData in remoteJobTypes) {
+        List<WageEntry>? wageHistory;
+        final rawWageHistory =
+            jobData['wage_history'] ?? jobData['wageHistory'];
+        if (rawWageHistory != null && rawWageHistory is List) {
+          wageHistory = rawWageHistory
+              .map(
+                (e) => WageEntry.fromJson(Map<String, dynamic>.from(e as Map)),
+              )
+              .toList();
+        }
+        final rateVal = jobData['hourly_rate'] ?? jobData['hourlyRate'];
+        final hourlyRate = rateVal != null
+            ? double.parse(rateVal.toString())
+            : AppConstants.defaultHourlyRate;
+
+        final job = JobType(
+          id: jobData['id'].toString(),
+          name: jobData['name'].toString(),
+          hourlyRate: hourlyRate,
+          wageHistory: wageHistory,
+        );
+        await _persistence.jobTypesBox.put(job.id, job);
+      }
+
+      // 4. Populate remote expenses
+      for (var expData in remoteExpenses) {
+        final exp = Expense(
+          id: expData['id'].toString(),
+          date: DateTime.parse(expData['date'].toString()),
+          description: expData['description']?.toString() ?? '',
+          amount: double.parse((expData['amount'] ?? 0).toString()),
+          isIncome: expData['is_income'] == true || expData['isIncome'] == true,
+        );
+        await _persistence.expensesBox.put(exp.id, exp);
+      }
+
+      // 5. Populate remote shifts
+      for (var shiftData in remoteShifts) {
+        final shift = Shift.fromJson(
+          Map<String, dynamic>.from(shiftData as Map),
+        );
+        await _persistence.shiftsBox.put(shift.id, shift);
+      }
+
+      _invalidateCache();
+      notifyListeners();
+      return true;
+    } catch (e) {
+      debugPrint(
+        'Failed to apply remote account data. Restoring guest snapshot: $e',
+      );
+      // Rollback to snapshot
+      await _persistence.shiftsBox.clear();
+      await _persistence.jobTypesBox.clear();
+      await _persistence.expensesBox.clear();
+
+      for (var job in snapshotJobs) {
+        await _persistence.jobTypesBox.put(job.id, job);
+      }
+      for (var exp in snapshotExpenses) {
+        await _persistence.expensesBox.put(exp.id, exp);
+      }
+      for (var shift in snapshotShifts) {
+        await _persistence.shiftsBox.put(shift.id, shift);
+      }
+
+      _invalidateCache();
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<void> syncWithServer({bool? keepLocal}) async {
-    if (_authToken == null) return;
+    if (_authToken == null) {
+      _errorMessage = null;
+      return;
+    }
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();

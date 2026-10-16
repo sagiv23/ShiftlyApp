@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/ui_utils.dart';
 
 /// Data point for daily or monthly earnings bar chart
 class BarDataPoint {
@@ -834,7 +835,11 @@ class _WageTrendPainter extends CustomPainter {
 
       // Effective Rate Label above node
       textPainter.text = TextSpan(
-        text: item.effectiveRate.toStringAsFixed(1),
+        text: UIUtils.formatCurrency(
+          item.effectiveRate,
+          symbol: currencySymbol,
+          decimals: 1,
+        ),
         style: TextStyle(
           color: primaryColor,
           fontSize: 10,
@@ -1154,7 +1159,11 @@ class _CumulativeLineChartPainter extends CustomPainter {
 
       // Draw Number Label above Net point
       textPainter.text = TextSpan(
-        text: '${netVal.round()}',
+        text: UIUtils.formatCurrency(
+          netVal,
+          symbol: currencySymbol,
+          decimals: 0,
+        ),
         style: TextStyle(
           color: netColor,
           fontSize: 10,
