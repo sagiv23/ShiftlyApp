@@ -642,19 +642,19 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                 bool remember = false;
                 return StatefulBuilder(
                   builder: (context, setStateSB) => AlertDialog(
-                    title: Text('סוג משמרת לא מזוהה: "$trailingText"'),
+                    title: Text(l.add_shift_unknown_job_title(trailingText)),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'נמצאה סוג משמרת שאינו קיים ברשימת סוגי העבודה שלך. בחר סוג עבודה חלופי או שמור כתיאור:',
+                          l.add_shift_unknown_job_desc,
                         ),
                         const SizedBox(height: 12),
                         DropdownButtonFormField<String>(
                           initialValue: chosenJobId,
-                          decoration: const InputDecoration(
-                            labelText: 'בחר סוג עבודה',
+                          decoration: InputDecoration(
+                            labelText: l.add_shift_select_job_label,
                           ),
                           items: jobTypes
                               .map(
@@ -669,8 +669,8 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                         ),
                         const SizedBox(height: 12),
                         CheckboxListTile(
-                          title: const Text(
-                            'החל אוטומטית על כל המופעים של סוג זה',
+                          title: Text(
+                            l.add_shift_apply_all_instances,
                           ),
                           value: remember,
                           onChanged: (val) =>
@@ -683,12 +683,12 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, {'action': 'skip'}),
-                        child: const Text('דלג'),
+                        child: Text(l.add_shift_skip),
                       ),
                       TextButton(
                         onPressed: () =>
                             Navigator.pop(ctx, {'action': 'description'}),
-                        child: const Text('שמור כתיאור בלבד'),
+                        child: Text(l.add_shift_save_as_desc),
                       ),
                       ElevatedButton(
                         onPressed: () => Navigator.pop(ctx, {
@@ -696,7 +696,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                           'jobId': chosenJobId,
                           'remember': remember,
                         }),
-                        child: const Text('שייך'),
+                        child: Text(l.add_shift_assign),
                       ),
                     ],
                   ),
@@ -1444,7 +1444,9 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                 children: [
                   Expanded(
                     child: Text(
-                      'שבת (${(breakdown.shabbatMultiplier * 100).toStringAsFixed(0)}%)',
+                      l.add_shift_shabbat_breakdown(
+                        (breakdown.shabbatMultiplier * 100).toStringAsFixed(0),
+                      ),
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: Colors.amber.shade800,
@@ -1470,7 +1472,10 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                 children: [
                   Expanded(
                     child: Text(
-                      '${breakdown.holidayName ?? "חג"} (${(breakdown.holidayMultiplier * 100).toStringAsFixed(0)}%)',
+                      l.add_shift_holiday_breakdown(
+                        breakdown.holidayName ?? l.holiday_tag_label,
+                        (breakdown.holidayMultiplier * 100).toStringAsFixed(0),
+                      ),
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: Colors.purple.shade700,

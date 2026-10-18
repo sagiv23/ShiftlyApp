@@ -178,7 +178,7 @@ class ShiftTile extends StatelessWidget {
                       if (breakdown.hasShabbat)
                         ShiftTag(
                           label:
-                              'שבת (${breakdown.shabbatHours.toStringAsFixed(1)}ש)',
+                              '${l.shabbat_tag_label} (${breakdown.shabbatHours.toStringAsFixed(1)} ${l.common_hours_suffix})',
                           customIcon: const MagenDavidIcon(
                             size: 12,
                             color: Colors.amber,
@@ -188,7 +188,7 @@ class ShiftTile extends StatelessWidget {
                       if (breakdown.hasHoliday)
                         ShiftTag(
                           label:
-                              '${breakdown.holidayName ?? 'חג'} (${breakdown.holidayHours.toStringAsFixed(1)}ש)',
+                              '${breakdown.holidayName ?? l.holiday_tag_label} (${breakdown.holidayHours.toStringAsFixed(1)} ${l.common_hours_suffix})',
                           customIcon: const MagenDavidIcon(
                             size: 12,
                             color: Colors.purple,
@@ -237,18 +237,21 @@ class ShiftTile extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppTheme.spaceXs),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              UIUtils.formatCurrency(pay, symbol: settings.currencySymbol),
-              style: UIUtils.getCurrencyStyle(
-                context,
-                pay,
-                positiveColor: AppTheme.primaryDark,
-                baseStyle: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  fontFeatures: [FontFeature.tabularFigures()],
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerRight,
+              child: Text(
+                UIUtils.formatCurrency(pay, symbol: settings.currencySymbol),
+                style: UIUtils.getCurrencyStyle(
+                  context,
+                  pay,
+                  positiveColor: AppTheme.primaryDark,
+                  baseStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    fontFeatures: [FontFeature.tabularFigures()],
+                  ),
                 ),
               ),
             ),
@@ -387,24 +390,30 @@ class ShiftTag extends StatelessWidget {
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (customIcon != null)
-            customIcon!
-          else if (icon != null)
-            Icon(icon, size: 12, color: color),
-          const SizedBox(width: 3),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: color,
-              fontFeatures: const [FontFeature.tabularFigures()],
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 200),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (customIcon != null)
+              customIcon!
+            else if (icon != null)
+              Icon(icon, size: 12, color: color),
+            const SizedBox(width: 3),
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

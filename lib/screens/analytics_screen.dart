@@ -112,6 +112,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     double totalRegularHours = 0;
     double totalOvertimeHours = 0;
     double totalOvertimeEarnings = 0;
+    double totalShabbatHours = 0;
+    double totalShabbatEarnings = 0;
+    double totalHolidayHours = 0;
+    double totalHolidayEarnings = 0;
     final shiftCount = filteredShifts.length;
 
     for (var shift in filteredShifts) {
@@ -137,6 +141,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       totalRegularHours += breakdown.regularHours;
       totalOvertimeHours += breakdown.totalOvertimeHours;
       totalOvertimeEarnings += breakdown.totalOvertimeEarnings;
+      totalShabbatHours += breakdown.shabbatHours;
+      totalShabbatEarnings += breakdown.shabbatEarnings;
+      totalHolidayHours += breakdown.holidayHours;
+      totalHolidayEarnings += breakdown.holidayEarnings;
     }
 
     final totalGross = totalBaseSalary + totalTips + totalIncomes;
@@ -275,6 +283,19 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       overtimeEarnings: totalOvertimeEarnings,
     );
 
+    final shabbatHolidaySummaryCard =
+    (totalShabbatHours > 0 || totalHolidayHours > 0)
+        ? _buildShabbatHolidaySummaryCard(
+      context,
+      l: l,
+      symbol: symbol,
+      shabbatHours: totalShabbatHours,
+      shabbatEarnings: totalShabbatEarnings,
+      holidayHours: totalHolidayHours,
+      holidayEarnings: totalHolidayEarnings,
+    )
+        : null;
+
     return AdaptiveScaffold(
       currentIndex: 1,
       title: l.analytics_title,
@@ -336,6 +357,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                             // 4. Overtime Summary Card
                             if (shiftCount > 0 && totalOvertimeHours > 0) ...[
                               overtimeSummaryCard,
+                              const SizedBox(height: AppTheme.spaceMd),
+                            ],
+
+                            // 5. Shabbat & Holidays Summary Card
+                            if (shabbatHolidaySummaryCard != null) ...[
+                              shabbatHolidaySummaryCard,
                               const SizedBox(height: AppTheme.spaceMd),
                             ],
 
@@ -1050,6 +1077,142 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   ],
                 ),
               ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShabbatHolidaySummaryCard(BuildContext context, {
+    required AppLocalizations l,
+    required String symbol,
+    required double shabbatHours,
+    required double shabbatEarnings,
+    required double holidayHours,
+    required double holidayEarnings,
+  }) {
+    final isDark = Theme
+        .of(context)
+        .brightness == Brightness.dark;
+
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spaceMd),
+      decoration: BoxDecoration(
+        color: Theme
+            .of(context)
+            .cardTheme
+            .color,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        border: Border.all(
+          color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.star_rounded, color: Colors.amber),
+              const SizedBox(width: 8),
+              Text(
+                l.analytics_shabbat_holiday_summary,
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spaceSm),
+          Row(
+            children: [
+              if (shabbatHours > 0)
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l.analytics_shabbat_hours,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme
+                              .of(
+                            context,
+                          )
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${shabbatHours.toStringAsFixed(1)} ${l
+                            .common_hours_suffix}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        UIUtils.formatCurrency(
+                          shabbatEarnings,
+                          symbol: symbol,
+                        ),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.profit,
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              if (holidayHours > 0)
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l.analytics_holiday_hours,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme
+                              .of(
+                            context,
+                          )
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${holidayHours.toStringAsFixed(1)} ${l
+                            .common_hours_suffix}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        UIUtils.formatCurrency(
+                          holidayEarnings,
+                          symbol: symbol,
+                        ),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.profit,
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ],

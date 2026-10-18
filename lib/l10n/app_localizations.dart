@@ -2731,6 +2731,156 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'שכר שעות נוספות'**
   String get analytics_overtime_earnings;
+
+  /// No description provided for @shabbat_tag_label.
+  ///
+  /// In he, this message translates to:
+  /// **'שבת'**
+  String get shabbat_tag_label;
+
+  /// No description provided for @holiday_tag_label.
+  ///
+  /// In he, this message translates to:
+  /// **'חג'**
+  String get holiday_tag_label;
+
+  /// No description provided for @settings_shabbat_section.
+  ///
+  /// In he, this message translates to:
+  /// **'שבת וחגים'**
+  String get settings_shabbat_section;
+
+  /// No description provided for @settings_shabbat_enable.
+  ///
+  /// In he, this message translates to:
+  /// **'חישוב שבת וחגים אוטומטי'**
+  String get settings_shabbat_enable;
+
+  /// No description provided for @settings_shabbat_enable_sub.
+  ///
+  /// In he, this message translates to:
+  /// **'זיהוי כניסת שבת, חגים ושעות מיוחדות'**
+  String get settings_shabbat_enable_sub;
+
+  /// No description provided for @settings_shabbat_multiplier_label.
+  ///
+  /// In he, this message translates to:
+  /// **'מקדם שבת (%)'**
+  String get settings_shabbat_multiplier_label;
+
+  /// No description provided for @settings_holiday_multiplier_label.
+  ///
+  /// In he, this message translates to:
+  /// **'מקדם חג (%)'**
+  String get settings_holiday_multiplier_label;
+
+  /// No description provided for @settings_candle_lighting_label.
+  ///
+  /// In he, this message translates to:
+  /// **'דקות הדלקת נרות לפני שקיעה'**
+  String get settings_candle_lighting_label;
+
+  /// No description provided for @settings_shabbat_exit_label.
+  ///
+  /// In he, this message translates to:
+  /// **'דקות צאת שבת אחרי שקיעה'**
+  String get settings_shabbat_exit_label;
+
+  /// No description provided for @settings_shabbat_saved.
+  ///
+  /// In he, this message translates to:
+  /// **'הגדרות שבת וחג נשמרו בהצלחה'**
+  String get settings_shabbat_saved;
+
+  /// No description provided for @settings_shabbat_save_button.
+  ///
+  /// In he, this message translates to:
+  /// **'שמור הגדרות שבת וחג'**
+  String get settings_shabbat_save_button;
+
+  /// No description provided for @analytics_shabbat_holiday_summary.
+  ///
+  /// In he, this message translates to:
+  /// **'סיכום שבת וחגים'**
+  String get analytics_shabbat_holiday_summary;
+
+  /// No description provided for @analytics_shabbat_hours.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות שבת'**
+  String get analytics_shabbat_hours;
+
+  /// No description provided for @analytics_holiday_hours.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות חג'**
+  String get analytics_holiday_hours;
+
+  /// No description provided for @onboarding_shabbat_title.
+  ///
+  /// In he, this message translates to:
+  /// **'שבת וחגים יהודים'**
+  String get onboarding_shabbat_title;
+
+  /// No description provided for @onboarding_shabbat_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'זיהוי אוטומטי של כניסת שבת, חגים ותעריפים מיוחדים'**
+  String get onboarding_shabbat_subtitle;
+
+  /// No description provided for @add_shift_unknown_job_title.
+  ///
+  /// In he, this message translates to:
+  /// **'סוג משמרת לא מזוהה: \"{trailingText}\"'**
+  String add_shift_unknown_job_title(Object trailingText);
+
+  /// No description provided for @add_shift_unknown_job_desc.
+  ///
+  /// In he, this message translates to:
+  /// **'נמצאה סוג משמרת שאינו קיים ברשימת סוגי העבודה שלך. בחר סוג עבודה חלופי או שמור כתיאור:'**
+  String get add_shift_unknown_job_desc;
+
+  /// No description provided for @add_shift_select_job_label.
+  ///
+  /// In he, this message translates to:
+  /// **'בחר סוג עבודה'**
+  String get add_shift_select_job_label;
+
+  /// No description provided for @add_shift_apply_all_instances.
+  ///
+  /// In he, this message translates to:
+  /// **'החל אוטומטית על כל המופעים של סוג זה'**
+  String get add_shift_apply_all_instances;
+
+  /// No description provided for @add_shift_skip.
+  ///
+  /// In he, this message translates to:
+  /// **'דלג'**
+  String get add_shift_skip;
+
+  /// No description provided for @add_shift_save_as_desc.
+  ///
+  /// In he, this message translates to:
+  /// **'שמור כתיאור בלבד'**
+  String get add_shift_save_as_desc;
+
+  /// No description provided for @add_shift_assign.
+  ///
+  /// In he, this message translates to:
+  /// **'שייך'**
+  String get add_shift_assign;
+
+  /// No description provided for @add_shift_shabbat_breakdown.
+  ///
+  /// In he, this message translates to:
+  /// **'שבת ({rate}%)'**
+  String add_shift_shabbat_breakdown(Object rate);
+
+  /// No description provided for @add_shift_holiday_breakdown.
+  ///
+  /// In he, this message translates to:
+  /// **'{name} ({rate}%)'**
+  String add_shift_holiday_breakdown(Object name, Object rate);
 }
 
 class _AppLocalizationsDelegate

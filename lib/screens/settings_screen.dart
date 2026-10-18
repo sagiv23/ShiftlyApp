@@ -754,7 +754,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: AppTheme.spaceLg),
                   _buildSectionHeader(
                     context,
-                    'שבת וחגים (Shabbat & Holidays)',
+                    l.settings_shabbat_section,
                   ),
                   const SizedBox(height: AppTheme.spaceXs),
                   Card(
@@ -764,12 +764,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         children: [
                           SwitchListTile(
                             contentPadding: EdgeInsets.zero,
-                            title: const Text(
-                              'חישוב שבת וחגים אוטומטי',
-                              style: TextStyle(fontWeight: FontWeight.w500),
+                            title: Text(
+                              l.settings_shabbat_enable,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w500),
                             ),
-                            subtitle: const Text(
-                              'זיהוי כניסת שבת, חגים ושעות מיוחדות',
+                            subtitle: Text(
+                              l.settings_shabbat_enable_sub,
                             ),
                             secondary: const Icon(
                               Icons.star_rounded,
@@ -790,40 +791,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             const Divider(height: 16),
                             TextField(
                               controller: _shabbatMultiplierController,
-                              decoration: const InputDecoration(
-                                labelText: 'מקדם שבת (%) (Shabbat Rate %)',
+                              decoration: InputDecoration(
+                                labelText: l.settings_shabbat_multiplier_label,
                                 hintText: '150',
-                                prefixIcon: Icon(Icons.percent),
+                                prefixIcon: const Icon(Icons.percent),
                               ),
                               keyboardType: TextInputType.number,
                             ),
                             const SizedBox(height: AppTheme.spaceSm),
                             TextField(
                               controller: _holidayMultiplierController,
-                              decoration: const InputDecoration(
-                                labelText: 'מקדם חג (%) (Holiday Rate %)',
+                              decoration: InputDecoration(
+                                labelText: l.settings_holiday_multiplier_label,
                                 hintText: '150',
-                                prefixIcon: Icon(Icons.percent),
+                                prefixIcon: const Icon(Icons.percent),
                               ),
                               keyboardType: TextInputType.number,
                             ),
                             const SizedBox(height: AppTheme.spaceSm),
                             TextField(
                               controller: _candleLightingController,
-                              decoration: const InputDecoration(
-                                labelText: 'דקות הדלקת נרות לפני שקיעה',
+                              decoration: InputDecoration(
+                                labelText: l.settings_candle_lighting_label,
                                 hintText: '20',
-                                prefixIcon: Icon(Icons.light_mode),
+                                prefixIcon: const Icon(Icons.light_mode),
                               ),
                               keyboardType: TextInputType.number,
                             ),
                             const SizedBox(height: AppTheme.spaceSm),
                             TextField(
                               controller: _shabbatExitController,
-                              decoration: const InputDecoration(
-                                labelText: 'דקות צאת שבת אחרי שקיעה',
+                              decoration: InputDecoration(
+                                labelText: l.settings_shabbat_exit_label,
                                 hintText: '40',
-                                prefixIcon: Icon(Icons.dark_mode),
+                                prefixIcon: const Icon(Icons.dark_mode),
                               ),
                               keyboardType: TextInputType.number,
                             ),
@@ -880,10 +881,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   if (!context.mounted) return;
                                   UIUtils.showSnackBar(
                                     context,
-                                    'הגדרות שבת וחג נשמרו בהצלחה',
+                                    l.settings_shabbat_saved,
                                   );
                                 },
-                                child: const Text('שמור הגדרות שבת וחג'),
+                                child: Text(l.settings_shabbat_save_button),
                               ),
                             ),
                           ],

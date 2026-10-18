@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1402,4 +1403,89 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get analytics_overtime_earnings => 'שכר שעות נוספות';
+
+  @override
+  String get shabbat_tag_label => 'שבת';
+
+  @override
+  String get holiday_tag_label => 'חג';
+
+  @override
+  String get settings_shabbat_section => 'שבת וחגים';
+
+  @override
+  String get settings_shabbat_enable => 'חישוב שבת וחגים אוטומטי';
+
+  @override
+  String get settings_shabbat_enable_sub =>
+      'זיהוי כניסת שבת, חגים ושעות מיוחדות';
+
+  @override
+  String get settings_shabbat_multiplier_label => 'מקדם שבת (%)';
+
+  @override
+  String get settings_holiday_multiplier_label => 'מקדם חג (%)';
+
+  @override
+  String get settings_candle_lighting_label => 'דקות הדלקת נרות לפני שקיעה';
+
+  @override
+  String get settings_shabbat_exit_label => 'דקות צאת שבת אחרי שקיעה';
+
+  @override
+  String get settings_shabbat_saved => 'הגדרות שבת וחג נשמרו בהצלחה';
+
+  @override
+  String get settings_shabbat_save_button => 'שמור הגדרות שבת וחג';
+
+  @override
+  String get analytics_shabbat_holiday_summary => 'סיכום שבת וחגים';
+
+  @override
+  String get analytics_shabbat_hours => 'שעות שבת';
+
+  @override
+  String get analytics_holiday_hours => 'שעות חג';
+
+  @override
+  String get onboarding_shabbat_title => 'שבת וחגים יהודים';
+
+  @override
+  String get onboarding_shabbat_subtitle =>
+      'זיהוי אוטומטי של כניסת שבת, חגים ותעריפים מיוחדים';
+
+  @override
+  String add_shift_unknown_job_title(Object trailingText) {
+    return 'סוג משמרת לא מזוהה: \"$trailingText\"';
+  }
+
+  @override
+  String get add_shift_unknown_job_desc =>
+      'נמצאה סוג משמרת שאינו קיים ברשימת סוגי העבודה שלך. בחר סוג עבודה חלופי או שמור כתיאור:';
+
+  @override
+  String get add_shift_select_job_label => 'בחר סוג עבודה';
+
+  @override
+  String get add_shift_apply_all_instances =>
+      'החל אוטומטית על כל המופעים של סוג זה';
+
+  @override
+  String get add_shift_skip => 'דלג';
+
+  @override
+  String get add_shift_save_as_desc => 'שמור כתיאור בלבד';
+
+  @override
+  String get add_shift_assign => 'שייך';
+
+  @override
+  String add_shift_shabbat_breakdown(Object rate) {
+    return 'שבת ($rate%)';
+  }
+
+  @override
+  String add_shift_holiday_breakdown(Object name, Object rate) {
+    return '$name ($rate%)';
+  }
 }

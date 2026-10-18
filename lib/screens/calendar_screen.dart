@@ -274,9 +274,19 @@ class _CalendarScreenState extends State<CalendarScreen>
                                       final holidayName = matchingBoundary.name;
                                       final isHoliday =
                                           matchingBoundary.type == 'holiday';
-                                      final textColor = Theme.of(
+                                      final isDark =
+                                          Theme
+                                              .of(context)
+                                              .brightness ==
+                                              Brightness.dark;
+                                      final textColor = isDark
+                                          ? Colors.white
+                                          : Theme
+                                          .of(
                                         context,
-                                      ).colorScheme.primary;
+                                      )
+                                          .colorScheme
+                                          .onSurface;
 
                                       return Positioned(
                                         bottom: 1,
@@ -411,8 +421,8 @@ class _CalendarScreenState extends State<CalendarScreen>
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          MagenDavidIcon(
-                            color: Theme.of(context).colorScheme.primary,
+                          const MagenDavidIcon(
+                            color: Colors.white,
                             size: 20,
                           ),
                           const SizedBox(width: 10),

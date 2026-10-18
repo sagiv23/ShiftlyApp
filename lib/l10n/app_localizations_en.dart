@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1416,4 +1417,92 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get analytics_overtime_earnings => 'Overtime Earnings';
+
+  @override
+  String get shabbat_tag_label => 'Shabbat';
+
+  @override
+  String get holiday_tag_label => 'Holiday';
+
+  @override
+  String get settings_shabbat_section => 'Shabbat & Holidays';
+
+  @override
+  String get settings_shabbat_enable =>
+      'Automatic Shabbat & Holiday calculation';
+
+  @override
+  String get settings_shabbat_enable_sub =>
+      'Automatic detection of Shabbat, holidays, and special rates';
+
+  @override
+  String get settings_shabbat_multiplier_label => 'Shabbat Rate (%)';
+
+  @override
+  String get settings_holiday_multiplier_label => 'Holiday Rate (%)';
+
+  @override
+  String get settings_candle_lighting_label =>
+      'Candle lighting minutes before sunset';
+
+  @override
+  String get settings_shabbat_exit_label => 'Shabbat exit minutes after sunset';
+
+  @override
+  String get settings_shabbat_saved =>
+      'Shabbat & Holiday settings saved successfully';
+
+  @override
+  String get settings_shabbat_save_button => 'Save Shabbat & Holiday settings';
+
+  @override
+  String get analytics_shabbat_holiday_summary => 'Shabbat & Holidays Summary';
+
+  @override
+  String get analytics_shabbat_hours => 'Shabbat Hours';
+
+  @override
+  String get analytics_holiday_hours => 'Holiday Hours';
+
+  @override
+  String get onboarding_shabbat_title => 'Shabbat & Jewish Holidays';
+
+  @override
+  String get onboarding_shabbat_subtitle =>
+      'Automatic detection of Shabbat, holidays, and special rates';
+
+  @override
+  String add_shift_unknown_job_title(Object trailingText) {
+    return 'Unrecognized shift type: \"$trailingText\"';
+  }
+
+  @override
+  String get add_shift_unknown_job_desc =>
+      'Found a job type that does not exist in your job types list. Choose an alternative job type or save as description:';
+
+  @override
+  String get add_shift_select_job_label => 'Select job type';
+
+  @override
+  String get add_shift_apply_all_instances =>
+      'Apply automatically to all instances of this type';
+
+  @override
+  String get add_shift_skip => 'Skip';
+
+  @override
+  String get add_shift_save_as_desc => 'Save as description only';
+
+  @override
+  String get add_shift_assign => 'Assign';
+
+  @override
+  String add_shift_shabbat_breakdown(Object rate) {
+    return 'Shabbat ($rate%)';
+  }
+
+  @override
+  String add_shift_holiday_breakdown(Object name, Object rate) {
+    return '$name ($rate%)';
+  }
 }

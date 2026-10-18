@@ -4,6 +4,7 @@ import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/models/automatic_expense.dart';
 import 'package:shiftly/models/job_type.dart';
 import 'package:shiftly/models/overtime_rules.dart';
+import 'package:shiftly/models/shabbat_holiday_rules.dart';
 import 'package:shiftly/models/wage_entry.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
@@ -37,10 +38,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   late Locale _locale;
   late bool _breaksEnabled;
   late OvertimeRules _onboardingOvertimeRules;
+  late ShabbatHolidayRules _onboardingShabbatRules;
   late TextEditingController _onboardingOtThresholdController;
   late TextEditingController _onboardingOtTier1LimitController;
   late TextEditingController _onboardingOtTier1MultiplierController;
   late TextEditingController _onboardingOtTier2MultiplierController;
+  late TextEditingController _onboardingShabbatMultiplierController;
+  late TextEditingController _onboardingHolidayMultiplierController;
   final List<TextEditingController> _autoAmountControllers = [];
   final List<TextEditingController> _autoDescControllers = [];
   final List<TextEditingController> _autoIncomeAmountControllers = [];
@@ -58,6 +62,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _locale = settings.locale;
     _breaksEnabled = settings.breaksEnabled;
     _onboardingOvertimeRules = settings.overtimeRules;
+    _onboardingShabbatRules = settings.shabbatHolidayRules;
 
     _onboardingOtThresholdController = TextEditingController(
       text: _onboardingOvertimeRules.regularHoursThreshold.toStringAsFixed(1),
@@ -70,6 +75,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
     _onboardingOtTier2MultiplierController = TextEditingController(
       text: (_onboardingOvertimeRules.tier2Multiplier * 100).toStringAsFixed(0),
+    );
+    _onboardingShabbatMultiplierController = TextEditingController(
+      text: (_onboardingShabbatRules.shabbatMultiplier * 100).toStringAsFixed(
+          0),
+    );
+    _onboardingHolidayMultiplierController = TextEditingController(
+      text: (_onboardingShabbatRules.holidayMultiplier * 100).toStringAsFixed(
+          0),
     );
 
     for (var e in settings.defaultAutomaticExpenses) {
@@ -108,6 +121,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _onboardingOtTier1LimitController.dispose();
     _onboardingOtTier1MultiplierController.dispose();
     _onboardingOtTier2MultiplierController.dispose();
+    _onboardingShabbatMultiplierController.dispose();
+    _onboardingHolidayMultiplierController.dispose();
     for (var c in _autoAmountControllers) {
       c.dispose();
     }
@@ -124,7 +139,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _nextPage() {
-    if (_currentPage < 7) {
+    if (_currentPage < 8) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
@@ -235,6 +250,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
     await settings.setOvertimeRules(updatedOtRules);
 
+    final shabbatMult =
+        (double.tryParse(_onboardingShabbatMultiplierController.text) ??
+            150.0) /
+            100.0;
+    final holidayMult =
+        (double.tryParse(_onboardingHolidayMultiplierController.text) ??
+            150.0) /
+            100.0;
+    final updatedShabbatRules = _onboardingShabbatRules.copyWith(
+      shabbatMultiplier: shabbatMult,
+      holidayMultiplier: holidayMult,
+    );
+    await settings.setShabbatHolidayRules(updatedShabbatRules);
+
     await settings.completeOnboarding();
 
     if (!mounted) return;
@@ -266,8 +295,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   _buildPage(pageIndex: 4, child: _buildAutoIncomePage()),
                   _buildPage(pageIndex: 5, child: _buildBreakSettingsPage()),
                   _buildPage(pageIndex: 6, child: _buildOvertimeSettingsPage()),
+                  _buildPage(
+                    pageIndex: 7,
+                    child: _buildShabbatHolidaySettingsPage(),
+                  ),
                   PageEntranceAnimation(
-                    key: const ValueKey(7),
+                    key: const ValueKey(8),
                     child: _buildJobTypesPage(),
                   ),
                 ],
@@ -398,6 +431,73 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             controller: _onboardingOtTier2MultiplierController,
             decoration: InputDecoration(
               labelText: l.settings_overtime_tier2_rate,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              prefixIcon: const Icon(Icons.percent),
+            ),
+            keyboardType: TextInputType.number,
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildShabbatHolidaySettingsPage() {
+    final l = AppLocalizations.of(context)!;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Icon(Icons.star_rounded, size: 64, color: Colors.amber),
+        const SizedBox(height: 24),
+        Text(
+          l.onboarding_shabbat_title,
+          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          l.onboarding_shabbat_subtitle,
+          style: const TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+        const SizedBox(height: 32),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(
+            l.settings_shabbat_enable,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          value: _onboardingShabbatRules.enabled,
+          onChanged: (val) {
+            setState(() {
+              _onboardingShabbatRules = _onboardingShabbatRules.copyWith(
+                enabled: val,
+              );
+            });
+          },
+          activeThumbColor: AppTheme.primaryDark,
+          activeTrackColor: AppTheme.primary.withValues(alpha: 0.35),
+        ),
+        if (_onboardingShabbatRules.enabled) ...[
+          const SizedBox(height: 24),
+          TextField(
+            controller: _onboardingShabbatMultiplierController,
+            decoration: InputDecoration(
+              labelText: l.settings_shabbat_multiplier_label,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              prefixIcon: const Icon(Icons.percent),
+            ),
+            keyboardType: TextInputType.number,
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _onboardingHolidayMultiplierController,
+            decoration: InputDecoration(
+              labelText: l.settings_holiday_multiplier_label,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -1037,7 +1137,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
-                8,
+                9,
                 (index) => Container(
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   width: _currentPage == index ? 10 : 8,
@@ -1062,7 +1162,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                 ),
                 child: Text(
-                  _currentPage == 7 ? l.common_start : l.common_continue,
+                  _currentPage == 8 ? l.common_start : l.common_continue,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
