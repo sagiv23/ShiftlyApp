@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:hive/hive.dart';
 import 'package:shiftly/models/automatic_expense.dart';
 import 'package:shiftly/models/overtime_rules.dart';
+import 'package:shiftly/models/shabbat_holiday_rules.dart';
 import 'package:shiftly/models/shift_salary_breakdown.dart';
 import 'package:shiftly/models/shift_wage_segment.dart';
 import 'package:shiftly/services/overtime_calculator.dart';
@@ -204,57 +205,37 @@ class Shift extends HiveObject {
     return hourlyRate ?? fallbackRate;
   }
 
-  double calculateBaseSalary(double currentHourlyRate) {
-    final rate = effectiveHourlyRate(currentHourlyRate);
-    if (wageSegments == null || wageSegments!.isEmpty) {
-      return netHours * rate;
+  double calculateBaseSalary(
+    double currentHourlyRate, {
+    OvertimeRules rules = const OvertimeRules(),
+    ShabbatHolidayRules shabbatRules = const ShabbatHolidayRules(
+      enabled: false,
+    ),
+  }) {
+    if (!rules.enabled &&
+        !shabbatRules.enabled &&
+        (wageSegments == null || wageSegments!.isEmpty)) {
+      return netHours * effectiveHourlyRate(currentHourlyRate);
     }
-
-    final grossDuration = durationHours;
-    if (grossDuration <= 0) return 0.0;
-
-    final netRatio = netHours / grossDuration;
-
-    List<DateTime> points = [startTime, endTime];
-    for (var seg in wageSegments!) {
-      DateTime segStart = seg.startTime.isBefore(startTime)
-          ? startTime
-          : (seg.startTime.isAfter(endTime) ? endTime : seg.startTime);
-      DateTime segEnd = seg.endTime.isBefore(startTime)
-          ? startTime
-          : (seg.endTime.isAfter(endTime) ? endTime : seg.endTime);
-      if (segStart.isBefore(segEnd)) {
-        points.add(segStart);
-        points.add(segEnd);
-      }
-    }
-    points.sort();
-    points = points.toSet().toList();
-
-    double totalWeightedPay = 0.0;
-
-    for (int i = 0; i < points.length - 1; i++) {
-      DateTime t1 = points[i];
-      DateTime t2 = points[i + 1];
-      double hours = t2.difference(t1).inSeconds / 3600.0;
-      if (hours <= 0) continue;
-
-      double percentage = 100.0; // default
-      for (var seg in wageSegments!) {
-        if (!t1.isBefore(seg.startTime) && !t2.isAfter(seg.endTime)) {
-          percentage = seg.percentage;
-          break;
-        }
-      }
-
-      totalWeightedPay += hours * rate * (percentage / 100.0);
-    }
-
-    return totalWeightedPay * netRatio;
+    return getSalaryBreakdown(
+      rules: rules,
+      shabbatRules: shabbatRules,
+      fallbackRate: currentHourlyRate,
+    ).totalBaseSalary;
   }
 
-  double calculateTotalPay(double currentHourlyRate) {
-    return calculateBaseSalary(currentHourlyRate) +
+  double calculateTotalPay(
+    double currentHourlyRate, {
+    OvertimeRules rules = const OvertimeRules(),
+    ShabbatHolidayRules shabbatRules = const ShabbatHolidayRules(
+      enabled: false,
+    ),
+  }) {
+    return calculateBaseSalary(
+          currentHourlyRate,
+          rules: rules,
+          shabbatRules: shabbatRules,
+        ) +
         tips +
         totalAutomaticIncomes -
         totalAutomaticExpenses;
@@ -262,11 +243,15 @@ class Shift extends HiveObject {
 
   ShiftSalaryBreakdown getSalaryBreakdown({
     OvertimeRules rules = const OvertimeRules(),
+    ShabbatHolidayRules shabbatRules = const ShabbatHolidayRules(
+      enabled: false,
+    ),
     double fallbackRate = AppConstants.defaultHourlyRate,
   }) {
     return OvertimeCalculator.calculateBreakdownForShift(
       this,
       rules: rules,
+      shabbatHolidayRules: shabbatRules,
       fallbackRate: fallbackRate,
     );
   }

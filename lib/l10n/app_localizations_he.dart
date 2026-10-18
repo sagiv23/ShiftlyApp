@@ -105,22 +105,6 @@ class AppLocalizationsHe extends AppLocalizations {
   String get onboarding_breaks_unpaid_label => 'הפסקה ללא תשלום (דקות)';
 
   @override
-  String get onboarding_reminders_title => 'תזכורות למשמרת';
-
-  @override
-  String get onboarding_reminders_subtitle =>
-      'האם תרצה לקבל תזכורת לפני שהמשמרת מתחילה?';
-
-  @override
-  String get onboarding_reminders_enable => 'הפעל תזכורות';
-
-  @override
-  String get onboarding_reminders_time_label => 'כמה זמן לפני? (שעות)';
-
-  @override
-  String get onboarding_reminders_hours => 'שעות';
-
-  @override
   String get onboarding_auto_expenses_title => 'הוצאות קבועות';
 
   @override
@@ -197,19 +181,10 @@ class AppLocalizationsHe extends AppLocalizations {
   String get settings_section_app => 'אפליקציה';
 
   @override
-  String get settings_section_reminders => 'תזכורות משמרת';
-
-  @override
   String get settings_section_breaks => 'זמני הפסקות (דקות)';
 
   @override
   String get settings_section_danger => 'אזור מסוכן';
-
-  @override
-  String get settings_field_notifications => 'התראות';
-
-  @override
-  String get settings_field_notifications_sub => 'אפשר שליחת התראות מהאפליקציה';
 
   @override
   String get settings_field_theme => 'ערכת נושא';
@@ -222,9 +197,6 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get settings_field_currency_sub => 'המטבע שיוצג עבור שכר והוצאות';
-
-  @override
-  String get settings_field_reminder_time => 'זמן תזכורת (שעות)';
 
   @override
   String get settings_field_breaks_enabled => 'אפשר הפסקות';
@@ -657,19 +629,6 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get add_shift_delete_msg => 'המשמרת נמחקה בהצלחה: ';
-
-  @override
-  String get notification_reminder_title => 'תזכורת למשמרת';
-
-  @override
-  String get notification_reminder_body =>
-      'המשמרת שלך ([[name]]) מתחילה בעוד [[time]]!';
-
-  @override
-  String get notification_channel_reminders_name => 'תזכורות משמרת';
-
-  @override
-  String get notification_channel_reminders_desc => 'תזכורת לפני תחילת משמרת';
 
   @override
   String get notification_timer_channel_name => 'משמרת פעילה';

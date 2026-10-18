@@ -106,22 +106,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboarding_breaks_unpaid_label => 'Unpaid Break (minutes)';
 
   @override
-  String get onboarding_reminders_title => 'Shift Reminders';
-
-  @override
-  String get onboarding_reminders_subtitle =>
-      'Would you like to get a reminder before your shift starts?';
-
-  @override
-  String get onboarding_reminders_enable => 'Enable Reminders';
-
-  @override
-  String get onboarding_reminders_time_label => 'How long before? (hours)';
-
-  @override
-  String get onboarding_reminders_hours => 'hours';
-
-  @override
   String get onboarding_auto_expenses_title => 'Recurring Expenses';
 
   @override
@@ -198,19 +182,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings_section_app => 'Application';
 
   @override
-  String get settings_section_reminders => 'Shift Reminders';
-
-  @override
   String get settings_section_breaks => 'Break Durations (min)';
 
   @override
   String get settings_section_danger => 'Danger Zone';
-
-  @override
-  String get settings_field_notifications => 'Notifications';
-
-  @override
-  String get settings_field_notifications_sub => 'Allow app notifications';
 
   @override
   String get settings_field_theme => 'Theme';
@@ -224,9 +199,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settings_field_currency_sub =>
       'Currency used for salary and expenses';
-
-  @override
-  String get settings_field_reminder_time => 'Reminder Time (hours)';
 
   @override
   String get settings_field_breaks_enabled => 'Enable Breaks';
@@ -659,20 +631,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get add_shift_delete_msg => 'Shift deleted successfully';
-
-  @override
-  String get notification_reminder_title => 'Shift Reminder';
-
-  @override
-  String get notification_reminder_body =>
-      'Your shift ([[name]]) starts in [[time]]!';
-
-  @override
-  String get notification_channel_reminders_name => 'Shift Reminders';
-
-  @override
-  String get notification_channel_reminders_desc =>
-      'Reminders before shift starts';
 
   @override
   String get notification_timer_channel_name => 'Active Shift';

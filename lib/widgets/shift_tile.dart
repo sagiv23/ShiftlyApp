@@ -11,6 +11,7 @@ import '../screens/add_shift_screen.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_page_route.dart';
 import '../utils/ui_utils.dart';
+import 'magen_david_icon.dart';
 
 class ShiftTile extends StatelessWidget {
   final Shift shift;
@@ -51,17 +52,7 @@ class ShiftTile extends StatelessWidget {
       action: SnackBarAction(
         label: l.common_cancel,
         onPressed: () {
-          shiftProvider.addShift(
-            shift,
-            l10n: {
-              'title': l.notification_reminder_title,
-              'body': l.notification_reminder_body,
-              'hours': l.common_hours_suffix,
-              'minutes': l.common_min_suffix,
-              'channelName': l.notification_channel_reminders_name,
-              'channelDesc': l.notification_channel_reminders_desc,
-            },
-          );
+          shiftProvider.addShift(shift);
         },
       ),
     );
@@ -87,7 +78,10 @@ class ShiftTile extends StatelessWidget {
     final pay = shift.calculateTotalPay(rate);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final breakType = shift.breakType ?? BreakType.none;
-    final breakdown = shift.getSalaryBreakdown(rules: settings.overtimeRules);
+    final breakdown = shift.getSalaryBreakdown(
+      rules: settings.overtimeRules,
+      shabbatRules: settings.shabbatHolidayRules,
+    );
 
     Widget childContent = Padding(
       padding: const EdgeInsets.symmetric(
@@ -163,7 +157,9 @@ class ShiftTile extends StatelessWidget {
                     shift.totalAutomaticIncomes > 0 ||
                     shift.totalAutomaticExpenses > 0 ||
                     breakType != BreakType.none ||
-                    breakdown.hasOvertime) ...[
+                    breakdown.hasOvertime ||
+                    breakdown.hasShabbat ||
+                    breakdown.hasHoliday) ...[
                   const SizedBox(height: 6),
                   Wrap(
                     spacing: 6,
@@ -174,6 +170,26 @@ class ShiftTile extends StatelessWidget {
                           label: l.overtime_tag_label,
                           icon: Icons.more_time_rounded,
                           color: AppTheme.primaryDark,
+                        ),
+                      if (breakdown.hasShabbat)
+                        ShiftTag(
+                          label:
+                              'שבת (${breakdown.shabbatHours.toStringAsFixed(1)}ש)',
+                          customIcon: const MagenDavidIcon(
+                            size: 12,
+                            color: Colors.amber,
+                          ),
+                          color: Colors.amber.shade800,
+                        ),
+                      if (breakdown.hasHoliday)
+                        ShiftTag(
+                          label:
+                              '${breakdown.holidayName ?? 'חג'} (${breakdown.holidayHours.toStringAsFixed(1)}ש)',
+                          customIcon: const MagenDavidIcon(
+                            size: 12,
+                            color: Colors.purple,
+                          ),
+                          color: Colors.purple.shade700,
                         ),
                       if (shift.tips > 0)
                         ShiftTag(
@@ -347,13 +363,15 @@ class ShiftTile extends StatelessWidget {
 
 class ShiftTag extends StatelessWidget {
   final String label;
-  final IconData icon;
+  final IconData? icon;
+  final Widget? customIcon;
   final Color color;
 
   const ShiftTag({
     super.key,
     required this.label,
-    required this.icon,
+    this.icon,
+    this.customIcon,
     required this.color,
   });
 
@@ -368,7 +386,10 @@ class ShiftTag extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12, color: color),
+          if (customIcon != null)
+            customIcon!
+          else if (icon != null)
+            Icon(icon, size: 12, color: color),
           const SizedBox(width: 3),
           Text(
             label,

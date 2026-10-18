@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shiftly/models/automatic_expense.dart';
 import 'package:shiftly/models/overtime_rules.dart';
+import 'package:shiftly/models/shabbat_holiday_rules.dart';
 import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
 import 'package:shiftly/utils/number_utils.dart';
@@ -31,8 +32,6 @@ class SettingsProvider with ChangeNotifier {
   double _paidBreakDurationMinutes = 20.0;
   double _unpaidBreakDurationMinutes = 45.0;
   bool _hasCompletedOnboarding = false;
-  bool _shiftRemindersEnabled = true;
-  double _shiftReminderDurationHours = 4.0;
   bool _automaticExpenseEnabled = false;
   List<AutomaticExpense> _defaultAutomaticExpenses = [];
   bool _automaticIncomeEnabled = false;
@@ -43,20 +42,19 @@ class SettingsProvider with ChangeNotifier {
   bool _autoSyncEnabled = true;
   String? _cookieConsent;
   OvertimeRules _overtimeRules = const OvertimeRules();
+  ShabbatHolidayRules _shabbatHolidayRules = const ShabbatHolidayRules();
 
   ThemeMode get themeMode => _themeMode;
 
   OvertimeRules get overtimeRules => _overtimeRules;
+
+  ShabbatHolidayRules get shabbatHolidayRules => _shabbatHolidayRules;
 
   double get paidBreakDurationMinutes => _paidBreakDurationMinutes;
 
   double get unpaidBreakDurationMinutes => _unpaidBreakDurationMinutes;
 
   bool get hasCompletedOnboarding => _hasCompletedOnboarding;
-
-  bool get shiftRemindersEnabled => _shiftRemindersEnabled;
-
-  double get shiftReminderDurationHours => _shiftReminderDurationHours;
 
   bool get automaticExpenseEnabled => _automaticExpenseEnabled;
 
@@ -95,14 +93,6 @@ class SettingsProvider with ChangeNotifier {
     _hasCompletedOnboarding = box.get(
       'hasCompletedOnboarding',
       defaultValue: false,
-    );
-    _shiftRemindersEnabled = box.get(
-      'shiftRemindersEnabled',
-      defaultValue: true,
-    );
-    _shiftReminderDurationHours = box.get(
-      'shiftReminderDurationHours',
-      defaultValue: 4.0,
     );
     _automaticExpenseEnabled = box.get(
       'automaticExpenseEnabled',
@@ -155,6 +145,27 @@ class SettingsProvider with ChangeNotifier {
         _overtimeRules = const OvertimeRules();
       }
     }
+
+    final rawShabbat = box.get('shabbatHolidayRules');
+    if (rawShabbat != null) {
+      try {
+        if (rawShabbat is Map) {
+          _shabbatHolidayRules = ShabbatHolidayRules.fromJson(
+            Map<String, dynamic>.from(rawShabbat),
+          );
+        } else if (rawShabbat is String) {
+          _shabbatHolidayRules = ShabbatHolidayRules.fromJson(
+            jsonDecode(rawShabbat) as Map<String, dynamic>,
+          );
+        }
+      } catch (e) {
+        debugPrint('Failed to parse stored shabbat holiday rules: $e');
+        _shabbatHolidayRules = const ShabbatHolidayRules(enabled: true);
+      }
+    } else {
+      _shabbatHolidayRules = const ShabbatHolidayRules(enabled: true);
+      box.put('shabbatHolidayRules', _shabbatHolidayRules.toJson());
+    }
     notifyListeners();
   }
 
@@ -165,6 +176,16 @@ class SettingsProvider with ChangeNotifier {
     }
     _overtimeRules = rules;
     await _persistence.settingsBox.put('overtimeRules', rules.toJson());
+    notifyListeners();
+  }
+
+  Future<void> setShabbatHolidayRules(ShabbatHolidayRules rules) async {
+    final err = rules.validate();
+    if (err != null) {
+      throw ArgumentError(err);
+    }
+    _shabbatHolidayRules = rules;
+    await _persistence.settingsBox.put('shabbatHolidayRules', rules.toJson());
     notifyListeners();
   }
 
@@ -357,18 +378,6 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setShiftRemindersEnabled(bool enabled) async {
-    _shiftRemindersEnabled = enabled;
-    await _persistence.settingsBox.put('shiftRemindersEnabled', enabled);
-    notifyListeners();
-  }
-
-  Future<void> setShiftReminderDurationHours(double hours) async {
-    _shiftReminderDurationHours = hours;
-    await _persistence.settingsBox.put('shiftReminderDurationHours', hours);
-    notifyListeners();
-  }
-
   Future<void> setBreakDurations(double paid, double unpaid) async {
     _paidBreakDurationMinutes = paid;
     _unpaidBreakDurationMinutes = unpaid;
@@ -456,8 +465,6 @@ class SettingsProvider with ChangeNotifier {
     _paidBreakDurationMinutes = 20.0;
     _unpaidBreakDurationMinutes = 45.0;
     _hasCompletedOnboarding = false;
-    _shiftRemindersEnabled = true;
-    _shiftReminderDurationHours = 4.0;
     _automaticExpenseEnabled = false;
     _defaultAutomaticExpenses = [];
     _automaticIncomeEnabled = false;

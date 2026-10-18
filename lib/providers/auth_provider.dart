@@ -100,6 +100,15 @@ class AuthProvider with ChangeNotifier {
       } else {
         _isLoggedIn = false;
         await box.put('isLoggedIn', false);
+        _isGuest = box.get('isGuest', defaultValue: false);
+      }
+
+      if (_isByosConnected) {
+        try {
+          await _driveService.init();
+        } catch (e) {
+          debugPrint('Drive init failed in restoreLocalSession: $e');
+        }
       }
     } catch (e) {
       debugPrint('Failed to restore local session: $e');
@@ -126,7 +135,15 @@ class AuthProvider with ChangeNotifier {
       if (_isLoggedIn) {
         if (_token == null || _token!.isEmpty) {
           debugPrint('No auth token available, logging out.');
-          await logout(navigate: false);
+          if (!_isByosConnected) {
+            await logout(navigate: false);
+          } else {
+            _isLoggedIn = false;
+            _token = null;
+            await SecureStorageHelper.deleteToken();
+            await _persistence.settingsBox.put('isLoggedIn', false);
+            notifyListeners();
+          }
           return false;
         }
 
@@ -137,7 +154,15 @@ class AuthProvider with ChangeNotifier {
                   profile['id'] == null &&
                   profile['name'] == null)) {
             debugPrint('User does not exist in database.');
-            await logout(navigate: false);
+            if (!_isByosConnected) {
+              await logout(navigate: false);
+            } else {
+              _isLoggedIn = false;
+              _token = null;
+              await SecureStorageHelper.deleteToken();
+              await _persistence.settingsBox.put('isLoggedIn', false);
+              notifyListeners();
+            }
             return false;
           }
 
@@ -156,8 +181,16 @@ class AuthProvider with ChangeNotifier {
         } catch (e) {
           debugPrint('Failed to sync profile on load: $e');
           if (e.toString().contains('unauthorized')) {
-            debugPrint('User check failed with unauthorized. Logging out.');
-            await logout(navigate: false);
+            debugPrint('User check failed with unauthorized.');
+            if (!_isByosConnected) {
+              await logout(navigate: false);
+            } else {
+              _isLoggedIn = false;
+              _token = null;
+              await SecureStorageHelper.deleteToken();
+              await _persistence.settingsBox.put('isLoggedIn', false);
+              notifyListeners();
+            }
             return false;
           } else {
             debugPrint(
@@ -217,6 +250,8 @@ class AuthProvider with ChangeNotifier {
         await box.put('isByosConnected', true);
         await box.put('byosEmail', _byosEmail ?? '');
         notifyListeners();
+      } else {
+        throw Exception('Google Sign-In returned no credentials.');
       }
     } catch (e) {
       debugPrint('BYOS connection failed: $e');
@@ -407,7 +442,9 @@ class AuthProvider with ChangeNotifier {
     _token = null;
     _userCreatedAt = null;
     _userBirthDate = null;
-    await _persistence.clearUserData();
+    if (!_isByosConnected) {
+      await _persistence.clearUserData();
+    }
     await _settingsProvider?.resetUserSettings();
     final box = _persistence.settingsBox;
     await box.put('isLoggedIn', false);

@@ -121,12 +121,19 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           job?.getRateForDate(shift.date) ??
           AppConstants.defaultHourlyRate;
       totalNetHours += shift.netHours;
-      totalBaseSalary += shift.calculateBaseSalary(rate);
+      totalBaseSalary += shift.calculateBaseSalary(
+        rate,
+        rules: settings.overtimeRules,
+        shabbatRules: settings.shabbatHolidayRules,
+      );
       totalTips += shift.tips;
       totalExpenses += shift.totalAutomaticExpenses;
       totalIncomes += shift.totalAutomaticIncomes;
 
-      final breakdown = shift.getSalaryBreakdown(rules: settings.overtimeRules);
+      final breakdown = shift.getSalaryBreakdown(
+        rules: settings.overtimeRules,
+        shabbatRules: settings.shabbatHolidayRules,
+      );
       totalRegularHours += breakdown.regularHours;
       totalOvertimeHours += breakdown.totalOvertimeHours;
       totalOvertimeEarnings += breakdown.totalOvertimeEarnings;

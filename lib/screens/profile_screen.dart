@@ -572,46 +572,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               subtitle: Text(l.settings_byos_method_sub),
                               trailing: ElevatedButton(
                                 onPressed: () async {
-                                  await auth.connectBYOS();
-                                  if (context.mounted && auth.isByosConnected) {
-                                    final confirmed = await UIUtils.showConfirmDialog(
-                                      context: context,
-                                      title:
-                                          l.settings_byos_restore_dialog_title,
-                                      content: l
-                                          .settings_byos_restore_dialog_content,
-                                      confirmLabel:
-                                          l.settings_byos_restore_confirm,
-                                      cancelLabel:
-                                          l.settings_byos_restore_cancel,
-                                    );
-                                    if (confirmed == true && context.mounted) {
-                                      final results = await shiftProvider
-                                          .restoreFromBYOS();
-                                      if (context.mounted) {
-                                        if (results['shifts']! > 0 ||
-                                            results['jobs']! > 0 ||
-                                            results['expenses']! > 0) {
-                                          UIUtils.showSnackBar(
-                                            context,
-                                            l.settings_restore_success
-                                                .replaceFirst(
-                                                  '[[shifts]]',
-                                                  results['shifts'].toString(),
-                                                )
-                                                .replaceFirst(
-                                                  '[[jobs]]',
-                                                  results['jobs'].toString(),
-                                                ),
-                                          );
-                                        } else {
-                                          UIUtils.showSnackBar(
-                                            context,
-                                            l.settings_restore_no_data,
-                                            isError: true,
-                                          );
+                                  try {
+                                    await auth.connectBYOS();
+                                    if (context.mounted &&
+                                        auth.isByosConnected) {
+                                      final confirmed = await UIUtils.showConfirmDialog(
+                                        context: context,
+                                        title: l
+                                            .settings_byos_restore_dialog_title,
+                                        content: l
+                                            .settings_byos_restore_dialog_content,
+                                        confirmLabel:
+                                            l.settings_byos_restore_confirm,
+                                        cancelLabel:
+                                            l.settings_byos_restore_cancel,
+                                      );
+                                      if (confirmed == true &&
+                                          context.mounted) {
+                                        final results = await shiftProvider
+                                            .restoreFromBYOS();
+                                        if (context.mounted) {
+                                          if (results['shifts']! > 0 ||
+                                              results['jobs']! > 0 ||
+                                              results['expenses']! > 0) {
+                                            UIUtils.showSnackBar(
+                                              context,
+                                              l.settings_restore_success
+                                                  .replaceFirst(
+                                                    '[[shifts]]',
+                                                    results['shifts']
+                                                        .toString(),
+                                                  )
+                                                  .replaceFirst(
+                                                    '[[jobs]]',
+                                                    results['jobs'].toString(),
+                                                  ),
+                                            );
+                                          } else {
+                                            UIUtils.showSnackBar(
+                                              context,
+                                              l.settings_restore_no_data,
+                                              isError: true,
+                                            );
+                                          }
                                         }
                                       }
+                                    }
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      UIUtils.showSnackBar(
+                                        context,
+                                        '${l.settings_byos_title}: ${e.toString().replaceAll('Exception: ', '')}',
+                                        isError: true,
+                                      );
                                     }
                                   }
                                 },

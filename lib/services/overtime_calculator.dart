@@ -2,9 +2,11 @@ import 'dart:math';
 
 import 'package:shiftly/models/break_type.dart';
 import 'package:shiftly/models/overtime_rules.dart';
+import 'package:shiftly/models/shabbat_holiday_rules.dart';
 import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/models/shift_salary_breakdown.dart';
 import 'package:shiftly/models/shift_wage_segment.dart';
+import 'package:shiftly/services/shabbat_holiday_service.dart';
 
 class OvertimeCalculator {
   /// Rounding helper for monetary amounts to 2 decimal places.
@@ -13,7 +15,6 @@ class OvertimeCalculator {
   }
 
   /// Calculates elapsed duration in hours with high precision.
-  /// Handles overnight shifts spanning midnight.
   static double calculateGrossDurationHours(DateTime start, DateTime end) {
     var diff = end.difference(start).inSeconds / 3600.0;
     if (diff < 0) {
@@ -41,6 +42,9 @@ class OvertimeCalculator {
     BreakType? breakType,
     double unpaidBreakMinutes = 45.0,
     OvertimeRules rules = const OvertimeRules(),
+    ShabbatHolidayRules shabbatHolidayRules = const ShabbatHolidayRules(
+      enabled: false,
+    ),
     double tips = 0.0,
     double automaticIncomes = 0.0,
     double automaticExpenses = 0.0,
@@ -51,10 +55,9 @@ class OvertimeCalculator {
       breakType,
       unpaidBreakMinutes,
     );
-
     final netPaidHours = max(0.0, grossDurationHours - unpaidBreakHours);
 
-    if (netPaidHours <= 0 || hourlyRate < 0) {
+    if (netPaidHours <= 0 || hourlyRate < 0 || grossDurationHours <= 0) {
       return ShiftSalaryBreakdown(
         grossDurationHours: grossDurationHours,
         unpaidBreakHours: unpaidBreakHours,
@@ -78,11 +81,10 @@ class OvertimeCalculator {
       );
     }
 
+    final netRatio = netPaidHours / grossDurationHours;
+
     // If manual wage segments are provided, evaluate them directly
     if (wageSegments != null && wageSegments.isNotEmpty) {
-      final grossDuration = grossDurationHours;
-      final netRatio = grossDuration > 0 ? (netPaidHours / grossDuration) : 1.0;
-
       List<DateTime> points = [startTime, endTime];
       for (var seg in wageSegments) {
         DateTime segStart = seg.startTime.isBefore(startTime)
@@ -166,51 +168,167 @@ class OvertimeCalculator {
       );
     }
 
-    if (!rules.enabled || !rules.isValid) {
-      final regularEarnings = roundMonetary(netPaidHours * hourlyRate);
-      final totalPay = roundMonetary(
-        regularEarnings + tips + automaticIncomes - automaticExpenses,
-      );
-      return ShiftSalaryBreakdown(
-        grossDurationHours: grossDurationHours,
-        unpaidBreakHours: unpaidBreakHours,
-        netPaidHours: netPaidHours,
-        hourlyRate: hourlyRate,
-        regularHours: netPaidHours,
-        regularEarnings: regularEarnings,
-        tier1Hours: 0.0,
-        tier1Multiplier: rules.tier1Multiplier,
-        tier1Earnings: 0.0,
-        tier2Hours: 0.0,
-        tier2Multiplier: rules.tier2Multiplier,
-        tier2Earnings: 0.0,
-        totalBaseSalary: regularEarnings,
-        tips: tips,
-        automaticIncomes: automaticIncomes,
-        automaticExpenses: automaticExpenses,
-        totalShiftPay: totalPay,
+    // 1. Gather all special period boundaries (Shabbat & Holidays) if enabled
+    List<SpecialPeriodBoundary> specialBoundaries = [];
+    if (shabbatHolidayRules.enabled) {
+      specialBoundaries = ShabbatHolidayService.getBoundariesForRange(
+        startTime,
+        endTime,
+        shabbatHolidayRules,
       );
     }
 
-    final regularHours = min(netPaidHours, rules.regularHoursThreshold);
-    final remainingAfterRegular = max(
-      0.0,
-      netPaidHours - rules.regularHoursThreshold,
-    );
+    // 2. Build collection of interval split points
+    List<DateTime> points = [startTime, endTime];
+    for (var b in specialBoundaries) {
+      if (b.start.isAfter(startTime) && b.start.isBefore(endTime)) {
+        points.add(b.start);
+      }
+      if (b.end.isAfter(startTime) && b.end.isBefore(endTime)) {
+        points.add(b.end);
+      }
+    }
 
-    final tier1Hours = min(remainingAfterRegular, rules.tier1HoursLimit);
-    final tier2Hours = max(0.0, remainingAfterRegular - rules.tier1HoursLimit);
+    points.sort();
+    points = points.toSet().toList();
 
-    final regularEarnings = roundMonetary(regularHours * hourlyRate);
-    final tier1Earnings = roundMonetary(
-      tier1Hours * hourlyRate * rules.tier1Multiplier,
-    );
-    final tier2Earnings = roundMonetary(
-      tier2Hours * hourlyRate * rules.tier2Multiplier,
-    );
+    double regHours = 0;
+    double regEarn = 0;
+    double shabbatHours = 0;
+    double shabbatEarn = 0;
+    double holidayHours = 0;
+    double holidayEarn = 0;
+    String? holidayName;
+    double holidayMult = 1.0;
+    double shabbatMult = 1.0;
+
+    double t1Hours = 0;
+    double t1Earn = 0;
+    double t2Hours = 0;
+    double t2Earn = 0;
+    double t1Mult = rules.tier1Multiplier;
+    double t2Mult = rules.tier2Multiplier;
+
+    // Track cumulative net paid hours across intervals for overtime threshold determination
+    double cumulativeNetHours = 0.0;
+
+    for (int i = 0; i < points.length - 1; i++) {
+      DateTime t1 = points[i];
+      DateTime t2 = points[i + 1];
+      double grossSegHours = t2.difference(t1).inSeconds / 3600.0;
+      if (grossSegHours <= 0) continue;
+      double netSegHours = grossSegHours * netRatio;
+      if (netSegHours <= 0) continue;
+
+      // Determine special period status for this segment
+      SpecialPeriodBoundary? activeBoundary;
+      for (var b in specialBoundaries) {
+        DateTime mid = t1.add(
+          Duration(
+            milliseconds: (t2.difference(t1).inMilliseconds / 2).round(),
+          ),
+        );
+        if (b.contains(mid) ||
+            (b.start.isAtSameMomentAs(t1) || b.end.isAtSameMomentAs(t2))) {
+          activeBoundary = b;
+          break;
+        }
+      }
+
+      double specialMultiplier = 1.0;
+      String periodType = 'regular';
+      if (activeBoundary != null) {
+        if (activeBoundary.type == 'shabbat') {
+          specialMultiplier = activeBoundary.multiplier;
+          periodType = 'shabbat';
+          shabbatMult = max(shabbatMult, specialMultiplier);
+        } else if (activeBoundary.type == 'holiday') {
+          specialMultiplier = activeBoundary.multiplier;
+          periodType = 'holiday';
+          holidayName = activeBoundary.name;
+          holidayMult = max(holidayMult, specialMultiplier);
+        }
+      }
+
+      // Overtime calculation per interval based on cumulativeNetHours
+      double threshold = rules.enabled && rules.isValid
+          ? rules.regularHoursThreshold
+          : double.infinity;
+      double t1Limit = rules.enabled && rules.isValid
+          ? rules.tier1HoursLimit
+          : 0.0;
+
+      double remainingNet = netSegHours;
+      double segCursor = 0.0;
+
+      while (remainingNet > 0.00001) {
+        double currentNetTime = cumulativeNetHours + segCursor;
+        double sliceHours = 0.0;
+        double effectiveMultiplier = specialMultiplier;
+        String tierType = periodType;
+
+        if (rules.enabled && rules.isValid) {
+          if (currentNetTime < threshold) {
+            double spaceInReg = threshold - currentNetTime;
+            sliceHours = min(remainingNet, spaceInReg);
+          } else if (currentNetTime < threshold + t1Limit) {
+            double spaceInT1 = (threshold + t1Limit) - currentNetTime;
+            sliceHours = min(remainingNet, spaceInT1);
+            tierType = 'tier1';
+
+            effectiveMultiplier = _combineMultipliers(
+              specialMultiplier,
+              rules.tier1Multiplier,
+              shabbatHolidayRules.combinationPolicy,
+            );
+            t1Mult = max(t1Mult, rules.tier1Multiplier);
+          } else {
+            sliceHours = remainingNet;
+            tierType = 'tier2';
+
+            effectiveMultiplier = _combineMultipliers(
+              specialMultiplier,
+              rules.tier2Multiplier,
+              shabbatHolidayRules.combinationPolicy,
+            );
+            t2Mult = max(t2Mult, rules.tier2Multiplier);
+          }
+        } else {
+          sliceHours = remainingNet;
+        }
+
+        if (sliceHours <= 0) break;
+
+        double sliceEarnings = roundMonetary(
+          sliceHours * hourlyRate * effectiveMultiplier,
+        );
+
+        if (tierType == 'tier1') {
+          t1Hours += sliceHours;
+          t1Earn += sliceEarnings;
+        } else if (tierType == 'tier2') {
+          t2Hours += sliceHours;
+          t2Earn += sliceEarnings;
+        } else if (tierType == 'shabbat') {
+          shabbatHours += sliceHours;
+          shabbatEarn += sliceEarnings;
+        } else if (tierType == 'holiday') {
+          holidayHours += sliceHours;
+          holidayEarn += sliceEarnings;
+        } else {
+          regHours += sliceHours;
+          regEarn += sliceEarnings;
+        }
+
+        segCursor += sliceHours;
+        remainingNet -= sliceHours;
+      }
+
+      cumulativeNetHours += netSegHours;
+    }
 
     final totalBaseSalary = roundMonetary(
-      regularEarnings + tier1Earnings + tier2Earnings,
+      regEarn + shabbatEarn + holidayEarn + t1Earn + t2Earn,
     );
     final totalShiftPay = roundMonetary(
       totalBaseSalary + tips + automaticIncomes - automaticExpenses,
@@ -221,14 +339,21 @@ class OvertimeCalculator {
       unpaidBreakHours: unpaidBreakHours,
       netPaidHours: netPaidHours,
       hourlyRate: hourlyRate,
-      regularHours: regularHours,
-      regularEarnings: regularEarnings,
-      tier1Hours: tier1Hours,
-      tier1Multiplier: rules.tier1Multiplier,
-      tier1Earnings: tier1Earnings,
-      tier2Hours: tier2Hours,
-      tier2Multiplier: rules.tier2Multiplier,
-      tier2Earnings: tier2Earnings,
+      regularHours: regHours,
+      regularEarnings: regEarn,
+      shabbatHours: shabbatHours,
+      shabbatMultiplier: shabbatMult,
+      shabbatEarnings: shabbatEarn,
+      holidayHours: holidayHours,
+      holidayMultiplier: holidayMult,
+      holidayEarnings: holidayEarn,
+      holidayName: holidayName,
+      tier1Hours: t1Hours,
+      tier1Multiplier: t1Mult,
+      tier1Earnings: t1Earn,
+      tier2Hours: t2Hours,
+      tier2Multiplier: t2Mult,
+      tier2Earnings: t2Earn,
       totalBaseSalary: totalBaseSalary,
       tips: tips,
       automaticIncomes: automaticIncomes,
@@ -237,10 +362,31 @@ class OvertimeCalculator {
     );
   }
 
+  /// Combines special day multiplier (Shabbat/Holiday) with Overtime multiplier according to policy.
+  static double _combineMultipliers(
+    double specialMultiplier,
+    double overtimeMultiplier,
+    String policy,
+  ) {
+    if (specialMultiplier <= 1.0) return overtimeMultiplier;
+    if (overtimeMultiplier <= 1.0) return specialMultiplier;
+
+    switch (policy) {
+      case 'maxOfSpecialAndOvertime':
+        return max(specialMultiplier, overtimeMultiplier);
+      case 'addMultipliers':
+        return specialMultiplier + overtimeMultiplier - 1.0;
+      case 'specialDayMultiplierThenOvertime':
+      default:
+        return specialMultiplier * overtimeMultiplier;
+    }
+  }
+
   /// Calculates breakdown directly from an existing [Shift] model instance.
   static ShiftSalaryBreakdown calculateBreakdownForShift(
     Shift shift, {
     OvertimeRules rules = const OvertimeRules(),
+    ShabbatHolidayRules shabbatHolidayRules = const ShabbatHolidayRules(),
     double fallbackRate = 40.0,
   }) {
     final rate = shift.effectiveHourlyRate(fallbackRate);
@@ -251,6 +397,7 @@ class OvertimeCalculator {
       breakType: shift.breakType,
       unpaidBreakMinutes: shift.unpaidBreakMinutes ?? 45.0,
       rules: rules,
+      shabbatHolidayRules: shabbatHolidayRules,
       tips: shift.tips,
       automaticIncomes: shift.totalAutomaticIncomes,
       automaticExpenses: shift.totalAutomaticExpenses,
@@ -258,13 +405,14 @@ class OvertimeCalculator {
     );
   }
 
-  /// Generates mapped [ShiftWageSegment] objects for a shift based on overtime rules.
+  /// Generates mapped [ShiftWageSegment] objects for a shift based on rules.
   static List<ShiftWageSegment> generateWageSegments({
     required DateTime startTime,
     required DateTime endTime,
     BreakType? breakType,
     double unpaidBreakMinutes = 45.0,
     OvertimeRules rules = const OvertimeRules(),
+    ShabbatHolidayRules shabbatHolidayRules = const ShabbatHolidayRules(),
   }) {
     if (!rules.enabled || !rules.isValid) {
       return [];
@@ -281,7 +429,6 @@ class OvertimeCalculator {
       return [];
     }
 
-    // Ratio of net worked time to total elapsed time
     final netRatio = netPaidHours / grossDurationHours;
 
     final regularHours = min(netPaidHours, rules.regularHoursThreshold);
@@ -297,7 +444,6 @@ class OvertimeCalculator {
     final tier2GrossHours = tier2Hours / netRatio;
 
     List<ShiftWageSegment> segments = [];
-
     DateTime current = startTime;
 
     if (regularGrossHours > 0) {

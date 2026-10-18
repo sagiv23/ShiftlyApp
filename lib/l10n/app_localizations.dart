@@ -284,36 +284,6 @@ abstract class AppLocalizations {
   /// **'הפסקה ללא תשלום (דקות)'**
   String get onboarding_breaks_unpaid_label;
 
-  /// No description provided for @onboarding_reminders_title.
-  ///
-  /// In he, this message translates to:
-  /// **'תזכורות למשמרת'**
-  String get onboarding_reminders_title;
-
-  /// No description provided for @onboarding_reminders_subtitle.
-  ///
-  /// In he, this message translates to:
-  /// **'האם תרצה לקבל תזכורת לפני שהמשמרת מתחילה?'**
-  String get onboarding_reminders_subtitle;
-
-  /// No description provided for @onboarding_reminders_enable.
-  ///
-  /// In he, this message translates to:
-  /// **'הפעל תזכורות'**
-  String get onboarding_reminders_enable;
-
-  /// No description provided for @onboarding_reminders_time_label.
-  ///
-  /// In he, this message translates to:
-  /// **'כמה זמן לפני? (שעות)'**
-  String get onboarding_reminders_time_label;
-
-  /// No description provided for @onboarding_reminders_hours.
-  ///
-  /// In he, this message translates to:
-  /// **'שעות'**
-  String get onboarding_reminders_hours;
-
   /// No description provided for @onboarding_auto_expenses_title.
   ///
   /// In he, this message translates to:
@@ -458,12 +428,6 @@ abstract class AppLocalizations {
   /// **'אפליקציה'**
   String get settings_section_app;
 
-  /// No description provided for @settings_section_reminders.
-  ///
-  /// In he, this message translates to:
-  /// **'תזכורות משמרת'**
-  String get settings_section_reminders;
-
   /// No description provided for @settings_section_breaks.
   ///
   /// In he, this message translates to:
@@ -475,18 +439,6 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'אזור מסוכן'**
   String get settings_section_danger;
-
-  /// No description provided for @settings_field_notifications.
-  ///
-  /// In he, this message translates to:
-  /// **'התראות'**
-  String get settings_field_notifications;
-
-  /// No description provided for @settings_field_notifications_sub.
-  ///
-  /// In he, this message translates to:
-  /// **'אפשר שליחת התראות מהאפליקציה'**
-  String get settings_field_notifications_sub;
 
   /// No description provided for @settings_field_theme.
   ///
@@ -511,12 +463,6 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'המטבע שיוצג עבור שכר והוצאות'**
   String get settings_field_currency_sub;
-
-  /// No description provided for @settings_field_reminder_time.
-  ///
-  /// In he, this message translates to:
-  /// **'זמן תזכורת (שעות)'**
-  String get settings_field_reminder_time;
 
   /// No description provided for @settings_field_breaks_enabled.
   ///
@@ -1333,30 +1279,6 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'המשמרת נמחקה בהצלחה: '**
   String get add_shift_delete_msg;
-
-  /// No description provided for @notification_reminder_title.
-  ///
-  /// In he, this message translates to:
-  /// **'תזכורת למשמרת'**
-  String get notification_reminder_title;
-
-  /// No description provided for @notification_reminder_body.
-  ///
-  /// In he, this message translates to:
-  /// **'המשמרת שלך ([[name]]) מתחילה בעוד [[time]]!'**
-  String get notification_reminder_body;
-
-  /// No description provided for @notification_channel_reminders_name.
-  ///
-  /// In he, this message translates to:
-  /// **'תזכורות משמרת'**
-  String get notification_channel_reminders_name;
-
-  /// No description provided for @notification_channel_reminders_desc.
-  ///
-  /// In he, this message translates to:
-  /// **'תזכורת לפני תחילת משמרת'**
-  String get notification_channel_reminders_desc;
 
   /// No description provided for @notification_timer_channel_name.
   ///

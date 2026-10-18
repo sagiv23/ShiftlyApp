@@ -8,7 +8,7 @@ class OvertimeRules {
   final double tier2Multiplier;
 
   const OvertimeRules({
-    this.enabled = true,
+    this.enabled = false,
     this.regularHoursThreshold = 8.0,
     this.tier1HoursLimit = 2.0,
     this.tier1Multiplier = 1.25,

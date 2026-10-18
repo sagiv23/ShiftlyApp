@@ -2,12 +2,22 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in_all_platforms/google_sign_in_all_platforms.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GoogleDriveService {
   static const String _backupFileName = 'shiftly_backup.json';
+  static const FlutterSecureStorage _secureStorage = FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    webOptions: WebOptions(
+      dbName: 'ShiftlySecureStorage',
+      publicKey: 'ShiftlyKey',
+    ),
+  );
+  static const String _googleTokenKey = 'google_drive_access_token';
 
   // Google Client IDs for Google Sign-In
   static const String _windowsClientId = String.fromEnvironment(
@@ -20,7 +30,7 @@ class GoogleDriveService {
   // Supply at compile time via --dart-define=WINDOWS_CLIENT_SECRET=xxx if needed.
   static const String _windowsClientSecret = String.fromEnvironment(
     'WINDOWS_CLIENT_SECRET',
-    defaultValue: '',
+    defaultValue: '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',
   );
   static const String _mobileWebClientId = String.fromEnvironment(
     'MOBILE_WEB_CLIENT_ID',
@@ -46,6 +56,26 @@ class GoogleDriveService {
             : _windowsClientSecret,
         scopes: [drive.DriveApi.driveAppdataScope],
         redirectPort: 8082,
+        saveAccessToken: (tokenJson) async {
+          try {
+            await _secureStorage.write(key: _googleTokenKey, value: tokenJson);
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString(_googleTokenKey, tokenJson);
+          } catch (e) {
+            debugPrint('GoogleDrive: Failed to save access token: $e');
+          }
+        },
+        retrieveAccessToken: () async {
+          try {
+            String? token = await _secureStorage.read(key: _googleTokenKey);
+            if (token != null && token.isNotEmpty) return token;
+            final prefs = await SharedPreferences.getInstance();
+            return prefs.getString(_googleTokenKey);
+          } catch (e) {
+            debugPrint('GoogleDrive: Failed to retrieve access token: $e');
+            return null;
+          }
+        },
       ),
     );
   }
@@ -53,40 +83,67 @@ class GoogleDriveService {
   /// Attempts to restore a previous session without user interaction.
   Future<void> init() async {
     try {
-      debugPrint('GoogleDrive: Initializing and attempting silent sign-in...');
-      await _googleSignIn.silentSignIn();
+      debugPrint(
+        'GoogleDrive: Initializing and attempting lightweight sign-in...',
+      );
+      await _googleSignIn.lightweightSignIn();
     } catch (e) {
-      debugPrint('GoogleDrive: Silent sign-in failed: $e');
+      debugPrint('GoogleDrive: Lightweight sign-in failed: $e');
     }
   }
 
-  /// Returns a placeholder or email on success, or null on failure.
+  /// Returns user's email on success, or null on failure.
   Future<String?> signIn() async {
     try {
-      final credentials = await _googleSignIn.signIn();
+      GoogleSignInCredentials? credentials = await _googleSignIn
+          .lightweightSignIn();
+      credentials ??= await _googleSignIn.signIn();
       if (credentials != null) {
-        // In this package, credentials might not always have email
-        // depending on scopes and platform.
+        final httpClient = await _getAuthenticatedClient();
+        if (httpClient != null) {
+          try {
+            final driveApi = drive.DriveApi(httpClient);
+            final about = await driveApi.about.get(
+              $fields: 'user(emailAddress,displayName)',
+            );
+            final email = about.user?.emailAddress;
+            if (email != null && email.isNotEmpty) {
+              return email;
+            }
+          } catch (e) {
+            debugPrint('GoogleDrive: Failed to fetch user profile email: $e');
+          }
+        }
         return 'Google Drive User';
       }
       return null;
     } catch (e) {
       debugPrint('Google Sign In Error: $e');
-      return null;
+      rethrow;
     }
   }
 
   Future<void> signOut() async {
     try {
       await _googleSignIn.signOut();
+      await _secureStorage.delete(key: _googleTokenKey);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_googleTokenKey);
     } catch (e) {
       debugPrint('Google Sign Out Error: $e');
     }
   }
 
   Future<http.Client?> _getAuthenticatedClient() async {
-    // In version 2.0.3, authenticatedClient is a getter
-    return await _googleSignIn.authenticatedClient;
+    var client = await _googleSignIn.authenticatedClient;
+    if (client == null) {
+      debugPrint(
+        'GoogleDrive: Authenticated client is null, attempting lightweightSignIn...',
+      );
+      await init();
+      client = await _googleSignIn.authenticatedClient;
+    }
+    return client;
   }
 
   Future<void> uploadBackup(Map<String, dynamic> data) async {
@@ -171,6 +228,34 @@ class GoogleDriveService {
       debugPrint('GoogleDrive: Failed to decode JSON: $e');
       return null;
     }
+  }
+
+  Future<DateTime?> getBackupModifiedTime() async {
+    final httpClient = await _getAuthenticatedClient();
+    if (httpClient == null) {
+      debugPrint(
+        'GoogleDrive: Cannot get modified time, authenticated client is null.',
+      );
+      return null;
+    }
+
+    try {
+      final driveApi = drive.DriveApi(httpClient);
+      final fileList = await driveApi.files.list(
+        q: "name = '$_backupFileName'",
+        spaces: 'appDataFolder',
+        $fields: 'files(id, modifiedTime)',
+      );
+
+      if (fileList.files?.isNotEmpty ?? false) {
+        final modifiedTime = fileList.files!.first.modifiedTime;
+        debugPrint('GoogleDrive: Backup file modifiedTime: $modifiedTime');
+        return modifiedTime;
+      }
+    } catch (e) {
+      debugPrint('GoogleDrive: Error getting backup modifiedTime: $e');
+    }
+    return null;
   }
 
   Future<bool> deleteBackup() async {

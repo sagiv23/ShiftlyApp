@@ -8,7 +8,6 @@ import 'package:shiftly/models/wage_entry.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/main_screen.dart';
-import 'package:shiftly/services/notification_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
@@ -32,8 +31,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   // State
   late double _paidMinutes;
   late double _unpaidMinutes;
-  late bool _remindersEnabled;
-  late double _reminderHours;
   late bool _autoExpenseEnabled;
   late bool _autoIncomeEnabled;
   late String _currencySymbol;
@@ -55,8 +52,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final settings = context.read<SettingsProvider>();
     _paidMinutes = settings.paidBreakDurationMinutes;
     _unpaidMinutes = settings.unpaidBreakDurationMinutes;
-    _remindersEnabled = settings.shiftRemindersEnabled;
-    _reminderHours = settings.shiftReminderDurationHours;
     _autoExpenseEnabled = settings.automaticExpenseEnabled;
     _autoIncomeEnabled = settings.automaticIncomeEnabled;
     _currencySymbol = settings.currencySymbol;
@@ -129,7 +124,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _nextPage() {
-    if (_currentPage < 8) {
+    if (_currentPage < 7) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
@@ -212,8 +207,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     await settings.setBreakDurations(_paidMinutes, _unpaidMinutes);
     await settings.setBreaksEnabled(_breaksEnabled);
-    await settings.setShiftRemindersEnabled(_remindersEnabled);
-    await settings.setShiftReminderDurationHours(_reminderHours);
     await settings.setAutomaticExpenseEnabled(_autoExpenseEnabled);
     await settings.updateDefaultAutomaticExpenses(expenses);
     await settings.setAutomaticIncomeEnabled(_autoIncomeEnabled);
@@ -242,10 +235,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
     await settings.setOvertimeRules(updatedOtRules);
 
-    if (_remindersEnabled) {
-      await NotificationService.requestPermissions();
-    }
-
     await settings.completeOnboarding();
 
     if (!mounted) return;
@@ -270,15 +259,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 physics: const NeverScrollableScrollPhysics(),
                 onPageChanged: (page) => setState(() => _currentPage = page),
                 children: [
-                  _buildPage(child: _buildWelcomePage()),
-                  _buildPage(child: _buildLanguagePage()),
-                  _buildPage(child: _buildReminderSettingsPage()),
-                  _buildPage(child: _buildCurrencyPage()),
-                  _buildPage(child: _buildAutoExpensePage()),
-                  _buildPage(child: _buildAutoIncomePage()),
-                  _buildPage(child: _buildBreakSettingsPage()),
-                  _buildPage(child: _buildOvertimeSettingsPage()),
-                  _buildJobTypesPage(),
+                  _buildPage(pageIndex: 0, child: _buildWelcomePage()),
+                  _buildPage(pageIndex: 1, child: _buildLanguagePage()),
+                  _buildPage(pageIndex: 2, child: _buildCurrencyPage()),
+                  _buildPage(pageIndex: 3, child: _buildAutoExpensePage()),
+                  _buildPage(pageIndex: 4, child: _buildAutoIncomePage()),
+                  _buildPage(pageIndex: 5, child: _buildBreakSettingsPage()),
+                  _buildPage(pageIndex: 6, child: _buildOvertimeSettingsPage()),
+                  PageEntranceAnimation(
+                    key: const ValueKey(7),
+                    child: _buildJobTypesPage(),
+                  ),
                 ],
               ),
             ),
@@ -289,9 +280,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildPage({required Widget child}) {
+  Widget _buildPage({required Widget child, required int pageIndex}) {
     return PageEntranceAnimation(
-      key: ValueKey(_currentPage),
+      key: ValueKey(pageIndex),
       child: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
@@ -558,55 +549,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildReminderSettingsPage() {
-    final l = AppLocalizations.of(context)!;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Icon(
-          Icons.notifications_active_outlined,
-          size: 64,
-          color: Colors.blue,
-        ),
-        const SizedBox(height: 24),
-        Text(
-          l.onboarding_reminders_title,
-          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          l.onboarding_reminders_subtitle,
-          style: const TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-        const SizedBox(height: 40),
-        SwitchListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(
-            l.onboarding_reminders_enable,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          value: _remindersEnabled,
-          onChanged: (val) => setState(() => _remindersEnabled = val),
-          activeThumbColor: AppTheme.primaryDark,
-          activeTrackColor: AppTheme.primary.withValues(alpha: 0.35),
-        ),
-        if (_remindersEnabled) ...[
-          const SizedBox(height: 32),
-          _buildDurationSlider(
-            label: l.onboarding_reminders_time_label,
-            value: _reminderHours,
-            min: 0.5,
-            max: 24,
-            divisions: 47,
-            displaySuffix: l.onboarding_reminders_hours,
-            onChanged: (val) => setState(() => _reminderHours = val),
-          ),
-        ],
-      ],
-    );
-  }
-
   Widget _buildAutoExpensePage() {
     final l = AppLocalizations.of(context)!;
     return Column(
@@ -684,8 +626,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             IconButton(
               icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
               onPressed: () => setState(() {
-                _autoAmountControllers.removeAt(index);
-                _autoDescControllers.removeAt(index);
+                final amountC = _autoAmountControllers.removeAt(index);
+                final descC = _autoDescControllers.removeAt(index);
+                amountC.dispose();
+                descC.dispose();
               }),
             ),
         ],
@@ -774,8 +718,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             IconButton(
               icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
               onPressed: () => setState(() {
-                _autoIncomeAmountControllers.removeAt(index);
-                _autoIncomeDescControllers.removeAt(index);
+                final amountC = _autoIncomeAmountControllers.removeAt(index);
+                final descC = _autoIncomeDescControllers.removeAt(index);
+                amountC.dispose();
+                descC.dispose();
               }),
             ),
         ],
@@ -1091,7 +1037,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
-                9,
+                8,
                 (index) => Container(
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   width: _currentPage == index ? 10 : 8,
@@ -1116,7 +1062,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                 ),
                 child: Text(
-                  _currentPage == 8 ? l.common_start : l.common_continue,
+                  _currentPage == 7 ? l.common_start : l.common_continue,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

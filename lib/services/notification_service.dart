@@ -12,7 +12,6 @@ class NotificationService {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
   static Function(String)? onActionReceived;
-  static bool _initialized = false;
 
   static bool get _isSupported {
     if (kIsWeb) return false;
@@ -79,7 +78,6 @@ class NotificationService {
       );
 
       await requestPermissions();
-      _initialized = true;
     } catch (e) {
       debugPrint('Error in NotificationService.init: $e');
     }
@@ -147,88 +145,6 @@ class NotificationService {
       debugPrint('Error requesting notification permissions: $e');
     }
     return false;
-  }
-
-  static Future<void> scheduleShiftReminder({
-    required int id,
-    required String shiftName,
-    required DateTime startTime,
-    required double reminderDurationHours,
-    required String title,
-    required String bodyTemplate,
-    required String hoursLabel,
-    required String minutesLabel,
-    required String channelName,
-    required String channelDescription,
-  }) async {
-    if (!_isSupported) return;
-
-    try {
-      if (!_initialized) {
-        debugPrint('NotificationService not initialized; skipping schedule.');
-        return;
-      }
-
-      final reminderTime = startTime.subtract(
-        Duration(minutes: (reminderDurationHours * 60).toInt()),
-      );
-
-      final now = DateTime.now();
-
-      if (reminderTime.isBefore(now.add(const Duration(minutes: 5)))) {
-        debugPrint(
-          'Reminder too close or in past, skipping for battery saving.',
-        );
-        return;
-      }
-
-      final androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'shift_reminder_channel',
-        channelName,
-        channelDescription: channelDescription,
-        importance: Importance.high,
-        priority: Priority.high,
-      );
-
-      const DarwinNotificationDetails darwinPlatformChannelSpecifics =
-          DarwinNotificationDetails(
-            presentAlert: true,
-            presentBadge: true,
-            presentSound: true,
-          );
-
-      final notificationDetails = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: darwinPlatformChannelSpecifics,
-        macOS: darwinPlatformChannelSpecifics,
-      );
-
-      final String timeText = reminderDurationHours >= 1
-          ? '${reminderDurationHours.toStringAsFixed(0)} $hoursLabel'
-          : '${(reminderDurationHours * 60).toInt()} $minutesLabel';
-
-      final String body = bodyTemplate
-          .replaceAll('[[name]]', shiftName)
-          .replaceAll('[[time]]', timeText);
-
-      final scheduledDate = tz.TZDateTime.from(reminderTime, tz.local);
-      final notificationId = toNotificationId(id);
-
-      await _notificationsPlugin.zonedSchedule(
-        id: notificationId,
-        title: title,
-        body: body,
-        scheduledDate: scheduledDate,
-        notificationDetails: notificationDetails,
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      );
-
-      debugPrint(
-        'Scheduled reminder id=$notificationId for $shiftName at $scheduledDate',
-      );
-    } catch (e) {
-      debugPrint('Error scheduling shift reminder: $e');
-    }
   }
 
   static Future<void> showTimerNotification({

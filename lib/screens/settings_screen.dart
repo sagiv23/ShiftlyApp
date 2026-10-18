@@ -8,7 +8,6 @@ import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/profile_screen.dart';
-import 'package:shiftly/services/notification_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
@@ -35,6 +34,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late TextEditingController _otTier1LimitController;
   late TextEditingController _otTier1MultiplierController;
   late TextEditingController _otTier2MultiplierController;
+  late TextEditingController _shabbatMultiplierController;
+  late TextEditingController _holidayMultiplierController;
+  late TextEditingController _candleLightingController;
+  late TextEditingController _shabbatExitController;
 
   @override
   void initState() {
@@ -70,6 +73,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _otTier2MultiplierController = TextEditingController(
       text: (otRules.tier2Multiplier * 100).toStringAsFixed(0),
     );
+
+    final shabbatRules = settings.shabbatHolidayRules;
+    _shabbatMultiplierController = TextEditingController(
+      text: (shabbatRules.shabbatMultiplier * 100).toStringAsFixed(0),
+    );
+    _holidayMultiplierController = TextEditingController(
+      text: (shabbatRules.holidayMultiplier * 100).toStringAsFixed(0),
+    );
+    _candleLightingController = TextEditingController(
+      text: shabbatRules.candleLightingMinutesBeforeSunset.toStringAsFixed(0),
+    );
+    _shabbatExitController = TextEditingController(
+      text: shabbatRules.shabbatExitMinutesAfterSunset.toStringAsFixed(0),
+    );
   }
 
   @override
@@ -80,6 +97,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _otTier1LimitController.dispose();
     _otTier1MultiplierController.dispose();
     _otTier2MultiplierController.dispose();
+    _shabbatMultiplierController.dispose();
+    _holidayMultiplierController.dispose();
+    _candleLightingController.dispose();
+    _shabbatExitController.dispose();
     super.dispose();
   }
 
@@ -384,37 +405,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Card(
                     child: Column(
                       children: [
-                        SwitchListTile(
-                          title: Text(l.settings_field_notifications),
-                          subtitle: Text(l.settings_field_notifications_sub),
-                          secondary: Icon(
-                            Icons.notifications_active_outlined,
-                            color: AppTheme.primaryDark,
-                          ),
-                          value: settings.shiftRemindersEnabled,
-                          onChanged: (val) async {
-                            await settings.setShiftRemindersEnabled(val);
-                            if (val) {
-                              await NotificationService.requestPermissions();
-                            }
-                            if (!context.mounted) return;
-                            context.read<ShiftProvider>().refreshAllReminders({
-                              'title': l.notification_reminder_title,
-                              'body': l.notification_reminder_body,
-                              'hours': l.common_hours_suffix,
-                              'minutes': l.common_min_suffix,
-                              'channelName':
-                                  l.notification_channel_reminders_name,
-                              'channelDesc':
-                                  l.notification_channel_reminders_desc,
-                            });
-                          },
-                          activeThumbColor: AppTheme.primaryDark,
-                          activeTrackColor: AppTheme.primary.withValues(
-                            alpha: 0.35,
-                          ),
-                        ),
-                        const Divider(height: 1, indent: 56),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                           child: Column(
@@ -532,63 +522,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ],
                     ),
                   ),
-                  if (settings.shiftRemindersEnabled) ...[
-                    const SizedBox(height: AppTheme.spaceLg),
-                    _buildSectionHeader(context, l.settings_section_reminders),
-                    const SizedBox(height: AppTheme.spaceXs),
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppTheme.spaceSm),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  l.settings_field_reminder_time,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Text(
-                                  '${(settings.shiftReminderDurationHours * 10).round() / 10} ${l.common_hours_suffix}'
-                                      .replaceAll('.0 ', ' '),
-                                  style: const TextStyle(
-                                    color: AppTheme.primaryDark,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Slider(
-                              value: settings.shiftReminderDurationHours,
-                              min: 0.5,
-                              max: 24,
-                              divisions: 47,
-                              onChanged: (val) async {
-                                await settings.setShiftReminderDurationHours(
-                                  val,
-                                );
-                                if (!context.mounted) return;
-                                context
-                                    .read<ShiftProvider>()
-                                    .refreshAllReminders({
-                                      'title': l.notification_reminder_title,
-                                      'body': l.notification_reminder_body,
-                                      'hours': l.common_hours_suffix,
-                                      'minutes': l.common_min_suffix,
-                                      'channelName':
-                                          l.notification_channel_reminders_name,
-                                      'channelDesc':
-                                          l.notification_channel_reminders_desc,
-                                    });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+
                   const SizedBox(height: AppTheme.spaceLg),
                   _buildSectionHeader(context, l.settings_section_breaks),
                   const SizedBox(height: AppTheme.spaceXs),
@@ -713,15 +647,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             TextField(
                               controller: _otThresholdController,
                               decoration: InputDecoration(
-                                labelText: l
-                                    .settings_overtime_regular_threshold,
+                                labelText:
+                                    l.settings_overtime_regular_threshold,
                                 hintText: '8.0',
                                 prefixIcon: const Icon(Icons.access_time),
                               ),
-                              keyboardType: const TextInputType
-                                  .numberWithOptions(
-                                decimal: true,
-                              ),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
                             ),
                             const SizedBox(height: AppTheme.spaceSm),
                             TextField(
@@ -731,10 +665,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 hintText: '2.0',
                                 prefixIcon: const Icon(Icons.timelapse),
                               ),
-                              keyboardType: const TextInputType
-                                  .numberWithOptions(
-                                decimal: true,
-                              ),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
                             ),
                             const SizedBox(height: AppTheme.spaceSm),
                             TextField(
@@ -763,32 +697,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 onPressed: () async {
                                   final threshold =
                                       double.tryParse(
-                                          _otThresholdController.text) ??
-                                          8.0;
+                                        _otThresholdController.text,
+                                      ) ??
+                                      8.0;
                                   final tier1Limit =
                                       double.tryParse(
-                                          _otTier1LimitController.text) ??
-                                          2.0;
+                                        _otTier1LimitController.text,
+                                      ) ??
+                                      2.0;
                                   final tier1Mult =
                                       (double.tryParse(
-                                        _otTier1MultiplierController.text,
-                                      ) ??
+                                            _otTier1MultiplierController.text,
+                                          ) ??
                                           125.0) /
-                                          100.0;
+                                      100.0;
                                   final tier2Mult =
                                       (double.tryParse(
-                                        _otTier2MultiplierController.text,
-                                      ) ??
+                                            _otTier2MultiplierController.text,
+                                          ) ??
                                           150.0) /
-                                          100.0;
+                                      100.0;
 
                                   final newRules = settings.overtimeRules
                                       .copyWith(
-                                    regularHoursThreshold: threshold,
-                                    tier1HoursLimit: tier1Limit,
-                                    tier1Multiplier: tier1Mult,
-                                    tier2Multiplier: tier2Mult,
-                                  );
+                                        regularHoursThreshold: threshold,
+                                        tier1HoursLimit: tier1Limit,
+                                        tier1Multiplier: tier1Mult,
+                                        tier2Multiplier: tier2Mult,
+                                      );
 
                                   final err = newRules.validate();
                                   if (err != null) {
@@ -808,6 +744,146 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   );
                                 },
                                 child: Text(l.settings_overtime_update_button),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spaceLg),
+                  _buildSectionHeader(
+                    context,
+                    'שבת וחגים (Shabbat & Holidays)',
+                  ),
+                  const SizedBox(height: AppTheme.spaceXs),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppTheme.spaceSm),
+                      child: Column(
+                        children: [
+                          SwitchListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: const Text(
+                              'חישוב שבת וחגים אוטומטי',
+                              style: TextStyle(fontWeight: FontWeight.w500),
+                            ),
+                            subtitle: const Text(
+                              'זיהוי כניסת שבת, חגים ושעות מיוחדות',
+                            ),
+                            secondary: const Icon(
+                              Icons.star_rounded,
+                              color: AppTheme.primaryDark,
+                            ),
+                            value: settings.shabbatHolidayRules.enabled,
+                            onChanged: (val) {
+                              final updated = settings.shabbatHolidayRules
+                                  .copyWith(enabled: val);
+                              settings.setShabbatHolidayRules(updated);
+                            },
+                            activeThumbColor: AppTheme.primaryDark,
+                            activeTrackColor: AppTheme.primary.withValues(
+                              alpha: 0.35,
+                            ),
+                          ),
+                          if (settings.shabbatHolidayRules.enabled) ...[
+                            const Divider(height: 16),
+                            TextField(
+                              controller: _shabbatMultiplierController,
+                              decoration: const InputDecoration(
+                                labelText: 'מקדם שבת (%) (Shabbat Rate %)',
+                                hintText: '150',
+                                prefixIcon: Icon(Icons.percent),
+                              ),
+                              keyboardType: TextInputType.number,
+                            ),
+                            const SizedBox(height: AppTheme.spaceSm),
+                            TextField(
+                              controller: _holidayMultiplierController,
+                              decoration: const InputDecoration(
+                                labelText: 'מקדם חג (%) (Holiday Rate %)',
+                                hintText: '150',
+                                prefixIcon: Icon(Icons.percent),
+                              ),
+                              keyboardType: TextInputType.number,
+                            ),
+                            const SizedBox(height: AppTheme.spaceSm),
+                            TextField(
+                              controller: _candleLightingController,
+                              decoration: const InputDecoration(
+                                labelText: 'דקות הדלקת נרות לפני שקיעה',
+                                hintText: '20',
+                                prefixIcon: Icon(Icons.light_mode),
+                              ),
+                              keyboardType: TextInputType.number,
+                            ),
+                            const SizedBox(height: AppTheme.spaceSm),
+                            TextField(
+                              controller: _shabbatExitController,
+                              decoration: const InputDecoration(
+                                labelText: 'דקות צאת שבת אחרי שקיעה',
+                                hintText: '40',
+                                prefixIcon: Icon(Icons.dark_mode),
+                              ),
+                              keyboardType: TextInputType.number,
+                            ),
+                            const SizedBox(height: AppTheme.spaceSm),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  final shabbatMult =
+                                      (double.tryParse(
+                                            _shabbatMultiplierController.text,
+                                          ) ??
+                                          150.0) /
+                                      100.0;
+                                  final holidayMult =
+                                      (double.tryParse(
+                                            _holidayMultiplierController.text,
+                                          ) ??
+                                          150.0) /
+                                      100.0;
+                                  final candle =
+                                      double.tryParse(
+                                        _candleLightingController.text,
+                                      ) ??
+                                      20.0;
+                                  final exit =
+                                      double.tryParse(
+                                        _shabbatExitController.text,
+                                      ) ??
+                                      40.0;
+
+                                  final newRules = settings.shabbatHolidayRules
+                                      .copyWith(
+                                        shabbatMultiplier: shabbatMult,
+                                        holidayMultiplier: holidayMult,
+                                        candleLightingMinutesBeforeSunset:
+                                            candle,
+                                        shabbatExitMinutesAfterSunset: exit,
+                                      );
+
+                                  final err = newRules.validate();
+                                  if (err != null) {
+                                    UIUtils.showSnackBar(
+                                      context,
+                                      err,
+                                      isError: true,
+                                    );
+                                    return;
+                                  }
+
+                                  await settings.setShabbatHolidayRules(
+                                    newRules,
+                                  );
+                                  if (!context.mounted) return;
+                                  UIUtils.showSnackBar(
+                                    context,
+                                    'הגדרות שבת וחג נשמרו בהצלחה',
+                                  );
+                                },
+                                child: const Text('שמור הגדרות שבת וחג'),
                               ),
                             ),
                           ],

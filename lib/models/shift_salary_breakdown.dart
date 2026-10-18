@@ -7,6 +7,15 @@ class ShiftSalaryBreakdown {
   final double regularHours;
   final double regularEarnings;
 
+  final double shabbatHours;
+  final double shabbatMultiplier;
+  final double shabbatEarnings;
+
+  final double holidayHours;
+  final double holidayMultiplier;
+  final double holidayEarnings;
+  final String? holidayName;
+
   final double tier1Hours;
   final double tier1Multiplier;
   final double tier1Earnings;
@@ -28,6 +37,13 @@ class ShiftSalaryBreakdown {
     required this.hourlyRate,
     required this.regularHours,
     required this.regularEarnings,
+    this.shabbatHours = 0.0,
+    this.shabbatMultiplier = 1.0,
+    this.shabbatEarnings = 0.0,
+    this.holidayHours = 0.0,
+    this.holidayMultiplier = 1.0,
+    this.holidayEarnings = 0.0,
+    this.holidayName,
     required this.tier1Hours,
     required this.tier1Multiplier,
     required this.tier1Earnings,
@@ -42,6 +58,10 @@ class ShiftSalaryBreakdown {
   });
 
   bool get hasOvertime => (tier1Hours > 0.0001 || tier2Hours > 0.0001);
+
+  bool get hasShabbat => shabbatHours > 0.0001;
+
+  bool get hasHoliday => holidayHours > 0.0001;
 
   double get totalOvertimeHours => tier1Hours + tier2Hours;
 

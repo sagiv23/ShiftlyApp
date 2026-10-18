@@ -13,7 +13,6 @@ import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/google_drive_service.dart';
-import 'package:shiftly/services/notification_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_page_route.dart';
@@ -53,7 +52,16 @@ class ShiftProvider with ChangeNotifier {
     _cachedIncomesGroupedByMonth = null;
   }
 
-  ShiftProvider(this._persistence);
+  ShiftProvider(this._persistence) {
+    _loadStoredLastBackupTime();
+  }
+
+  void _loadStoredLastBackupTime() {
+    final raw = _persistence.settingsBox.get('byos_last_backup_time');
+    if (raw != null && raw is String) {
+      _lastBackupTime = DateTime.tryParse(raw);
+    }
+  }
 
   bool _hasSyncedOnStartup = false;
   SettingsProvider? _settingsProvider;
@@ -73,6 +81,10 @@ class ShiftProvider with ChangeNotifier {
     _settingsProvider?.setOnAutomaticSettingsChanged(() {
       applyAutomaticExpensesAndIncomesToAllShifts();
     });
+
+    if (_isBYOS) {
+      fetchLastBackupTimeFromDrive();
+    }
 
     if (token == null) {
       _hasSyncedOnStartup = false;
@@ -151,6 +163,23 @@ class ShiftProvider with ChangeNotifier {
     }
   }
 
+  Future<void> fetchLastBackupTimeFromDrive() async {
+    if (!_isBYOS) return;
+    try {
+      final modifiedTime = await _driveService.getBackupModifiedTime();
+      if (modifiedTime != null) {
+        _lastBackupTime = modifiedTime.toLocal();
+        await _persistence.settingsBox.put(
+          'byos_last_backup_time',
+          _lastBackupTime!.toIso8601String(),
+        );
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('ShiftProvider: Error fetching Drive backup time: $e');
+    }
+  }
+
   Future<bool> _performBackup() async {
     if (_isBYOS) {
       try {
@@ -179,6 +208,10 @@ class ShiftProvider with ChangeNotifier {
         };
         await _driveService.uploadBackup(data);
         _lastBackupTime = DateTime.now();
+        await _persistence.settingsBox.put(
+          'byos_last_backup_time',
+          _lastBackupTime!.toIso8601String(),
+        );
         notifyListeners();
         return true;
       } catch (e) {
@@ -262,7 +295,7 @@ class ShiftProvider with ChangeNotifier {
       }
 
       debugPrint('Restore complete. Shifts: $shiftCount, Jobs: $jobCount');
-      _lastBackupTime = DateTime.now();
+      await fetchLastBackupTimeFromDrive();
       _invalidateCache();
       return {'shifts': shiftCount, 'jobs': jobCount, 'expenses': expCount};
     } catch (e) {
@@ -606,13 +639,15 @@ class ShiftProvider with ChangeNotifier {
       _invalidateCache();
     } catch (e) {
       if (e.toString().contains('unauthorized')) {
-        navigatorKey.currentState?.pushAndRemoveUntil(
-          AppPageRoute.fadeScale(
-            const AuthScreen(),
-            duration: const Duration(milliseconds: 200),
-          ),
-          (route) => false,
-        );
+        if (!_isBYOS) {
+          navigatorKey.currentState?.pushAndRemoveUntil(
+            AppPageRoute.fadeScale(
+              const AuthScreen(),
+              duration: const Duration(milliseconds: 200),
+            ),
+            (route) => false,
+          );
+        }
       }
       debugPrint('Sync failed: $e');
       _errorMessage = e.toString();
@@ -804,26 +839,16 @@ class ShiftProvider with ChangeNotifier {
     return _cachedJobTypes!;
   }
 
-  bool get _remindersEnabled =>
-      _persistence.settingsBox.get('shiftRemindersEnabled', defaultValue: true);
-
-  double get _reminderDuration => _persistence.settingsBox.get(
-    'shiftReminderDurationHours',
-    defaultValue: 4.0,
-  );
-
-  Future<void> addShift(Shift shift, {Map<String, String>? l10n}) async {
+  Future<void> addShift(Shift shift) async {
     await _persistence.shiftsBox.put(shift.id, shift);
-    _scheduleReminder(shift, l10n: l10n);
     _syncShiftToServer(shift);
     _triggerBackup();
     _invalidateCache();
     notifyListeners();
   }
 
-  Future<void> updateShift(Shift shift, {Map<String, String>? l10n}) async {
+  Future<void> updateShift(Shift shift) async {
     await shift.save();
-    _scheduleReminder(shift, l10n: l10n);
     _syncShiftToServer(shift);
     _triggerBackup();
     _invalidateCache();
@@ -832,44 +857,12 @@ class ShiftProvider with ChangeNotifier {
 
   Future<void> deleteShift(String id) async {
     await _persistence.shiftsBox.delete(id);
-    NotificationService.cancelNotification(id.hashCode);
     if (_authToken != null) {
       await _apiService.deleteShift(_authToken!, id);
     }
     _triggerBackup();
     _invalidateCache();
     notifyListeners();
-  }
-
-  void _scheduleReminder(Shift shift, {Map<String, String>? l10n}) {
-    if (!_remindersEnabled || l10n == null) return;
-
-    final job = getJobTypeById(shift.jobTypeId);
-    NotificationService.scheduleShiftReminder(
-      id: shift.id.hashCode,
-      shiftName: job?.name ?? 'Shift',
-      startTime: shift.startTime,
-      reminderDurationHours: _reminderDuration,
-      title: l10n['title'] ?? 'Shift Reminder',
-      bodyTemplate: l10n['body'] ?? 'Your shift ({name}) starts in {time}!',
-      hoursLabel: l10n['hours'] ?? 'hours',
-      minutesLabel: l10n['minutes'] ?? 'minutes',
-      channelName: l10n['channelName'] ?? 'Shift Reminders',
-      channelDescription:
-          l10n['channelDesc'] ?? 'Reminders before shift starts',
-    );
-  }
-
-  void refreshAllReminders(Map<String, String> l10n) {
-    for (var shift in shifts) {
-      NotificationService.cancelNotification(shift.id.hashCode);
-    }
-
-    if (_remindersEnabled) {
-      for (var shift in shifts) {
-        _scheduleReminder(shift, l10n: l10n);
-      }
-    }
   }
 
   // Expense Methods
@@ -1015,9 +1008,6 @@ class ShiftProvider with ChangeNotifier {
   }
 
   Future<void> factoryReset() async {
-    for (var shift in shifts) {
-      NotificationService.cancelNotification(shift.id.hashCode);
-    }
     await _persistence.deleteAllData();
     _invalidateCache();
     notifyListeners();

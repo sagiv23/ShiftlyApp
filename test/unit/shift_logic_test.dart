@@ -242,8 +242,8 @@ void main() {
     test(
       'calculate total pay with tips, auto expenses, auto incomes and unpaid break',
       () {
-        final start = DateTime(2026, 10, 10, 8, 0);
-        final end = DateTime(2026, 10, 10, 18, 0); // 10 hours gross
+        final start = DateTime(2026, 10, 7, 8, 0);
+        final end = DateTime(2026, 10, 7, 18, 0); // 10 hours gross
         final shift = Shift(
           id: 's_total',
           date: start,

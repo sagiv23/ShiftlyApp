@@ -435,17 +435,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     );
     if (!overlapConfirmed || !mounted) return;
 
-    shiftProvider.addShift(
-      shift,
-      l10n: {
-        'title': l.notification_reminder_title,
-        'body': l.notification_reminder_body,
-        'hours': l.common_hours_suffix,
-        'minutes': l.common_min_suffix,
-        'channelName': l.notification_channel_reminders_name,
-        'channelDesc': l.notification_channel_reminders_desc,
-      },
-    );
+    shiftProvider.addShift(shift);
     timerProvider.resetTimer();
 
     if (!mounted) return;
@@ -572,17 +562,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       s.wageSegments = wageSegments;
 
       if (!mounted) return;
-      shiftProvider.updateShift(
-        s,
-        l10n: {
-          'title': l.notification_reminder_title,
-          'body': l.notification_reminder_body,
-          'hours': l.common_hours_suffix,
-          'minutes': l.common_min_suffix,
-          'channelName': l.notification_channel_reminders_name,
-          'channelDesc': l.notification_channel_reminders_desc,
-        },
-      );
+      shiftProvider.updateShift(s);
 
       UIUtils.showSnackBar(context, l.add_shift_shift_saved);
     } else {
@@ -605,17 +585,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         wageSegments: wageSegments,
       );
       if (!mounted) return;
-      shiftProvider.addShift(
-        shift,
-        l10n: {
-          'title': l.notification_reminder_title,
-          'body': l.notification_reminder_body,
-          'hours': l.common_hours_suffix,
-          'minutes': l.common_min_suffix,
-          'channelName': l.notification_channel_reminders_name,
-          'channelDesc': l.notification_channel_reminders_desc,
-        },
-      );
+      shiftProvider.addShift(shift);
 
       UIUtils.showSnackBar(context, l.add_shift_shift_saved);
     }
@@ -770,17 +740,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         );
         if (!overlapConfirmed) continue;
         if (!mounted) continue;
-        shiftProvider.addShift(
-          shift,
-          l10n: {
-            'title': l.notification_reminder_title,
-            'body': l.notification_reminder_body,
-            'hours': l.common_hours_suffix,
-            'minutes': l.common_min_suffix,
-            'channelName': l.notification_channel_reminders_name,
-            'channelDesc': l.notification_channel_reminders_desc,
-          },
-        );
+        shiftProvider.addShift(shift);
         addedCount++;
       }
     }
@@ -1427,9 +1387,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       wageSegments: manualWageSegments,
     );
 
-    final isDark = Theme
-        .of(context)
-        .brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return _FormSection(
       title: l.overtime_breakdown_title,
@@ -1441,19 +1399,14 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         decoration: BoxDecoration(
           color: breakdown.hasOvertime
               ? AppTheme.primary.withValues(alpha: isDark ? 0.15 : 0.08)
-              : Theme
-              .of(context)
-              .colorScheme
-              .surfaceContainerHighest
-              .withValues(alpha: 0.5),
+              : Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           border: Border.all(
             color: breakdown.hasOvertime
                 ? AppTheme.primary.withValues(alpha: 0.3)
-                : Theme
-                .of(context)
-                .dividerColor
-                .withValues(alpha: 0.3),
+                : Theme.of(context).dividerColor.withValues(alpha: 0.3),
           ),
         ),
         child: Column(
@@ -1469,9 +1422,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${breakdown.regularHours.toStringAsFixed(2)} ${l
-                      .common_hours_suffix} - ${UIUtils.formatCurrency(
-                      breakdown.regularEarnings, symbol: symbol)}',
+                  '${breakdown.regularHours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.regularEarnings, symbol: symbol)}',
                   style: const TextStyle(
                     fontFeatures: [FontFeature.tabularFigures()],
                   ),
@@ -1485,8 +1436,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                 children: [
                   Expanded(
                     child: Text(
-                      '${l.overtime_tier1_label} (${(breakdown.tier1Multiplier *
-                          100).toStringAsFixed(0)}%)',
+                      '${l.overtime_tier1_label} (${(breakdown.tier1Multiplier * 100).toStringAsFixed(0)}%)',
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         color: AppTheme.primaryDark,
@@ -1495,9 +1445,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    '${breakdown.tier1Hours.toStringAsFixed(2)} ${l
-                        .common_hours_suffix} - ${UIUtils.formatCurrency(
-                        breakdown.tier1Earnings, symbol: symbol)}',
+                    '${breakdown.tier1Hours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.tier1Earnings, symbol: symbol)}',
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       color: AppTheme.primaryDark,
@@ -1514,8 +1462,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                 children: [
                   Expanded(
                     child: Text(
-                      '${l.overtime_tier2_label} (${(breakdown.tier2Multiplier *
-                          100).toStringAsFixed(0)}%)',
+                      '${l.overtime_tier2_label} (${(breakdown.tier2Multiplier * 100).toStringAsFixed(0)}%)',
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         color: AppTheme.primaryDark,
@@ -1524,9 +1471,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    '${breakdown.tier2Hours.toStringAsFixed(2)} ${l
-                        .common_hours_suffix} - ${UIUtils.formatCurrency(
-                        breakdown.tier2Earnings, symbol: symbol)}',
+                    '${breakdown.tier2Hours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.tier2Earnings, symbol: symbol)}',
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       color: AppTheme.primaryDark,
@@ -1546,25 +1491,20 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                       l.overtime_unpaid_break,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Theme
-                            .of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.6),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    '-${breakdown.unpaidBreakHours.toStringAsFixed(2)} ${l
-                        .common_hours_suffix}',
+                    '-${breakdown.unpaidBreakHours.toStringAsFixed(2)} ${l.common_hours_suffix}',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Theme
-                          .of(context)
-                          .colorScheme
-                          .onSurface
-                          .withValues(alpha: 0.6),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -1576,8 +1516,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
               children: [
                 Expanded(
                   child: Text(
-                    '${l.overtime_total_paid_time}: ${breakdown.netPaidHours
-                        .toStringAsFixed(2)} ${l.common_hours_suffix}',
+                    '${l.overtime_total_paid_time}: ${breakdown.netPaidHours.toStringAsFixed(2)} ${l.common_hours_suffix}',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
