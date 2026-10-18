@@ -137,9 +137,9 @@ void main() {
     });
 
     test('6. A shift crossing the start of a holiday', () {
-      // 2026 Passover First Days starts March 31, 2026 evening (approx 18:00)
-      final start = DateTime(2026, 3, 31, 15, 0);
-      final end = DateTime(2026, 3, 31, 21, 0); // 6 hours
+      // 2026 Passover First Days starts April 1, 2026 evening (approx 18:00)
+      final start = DateTime(2026, 4, 1, 15, 0);
+      final end = DateTime(2026, 4, 1, 21, 0); // 6 hours
       const rate = 40.0;
 
       final breakdown = OvertimeCalculator.calculateBreakdown(
@@ -222,7 +222,7 @@ void main() {
       );
 
       expect(breakdown.netPaidHours, 10.0);
-      expect(breakdown.shabbatHours, 8.0); // first 8h at shabbat rate
+      expect(breakdown.shabbatHours, 10.0); // all 10h on Shabbat
       expect(
         breakdown.tier1Hours,
         2.0,
@@ -248,7 +248,7 @@ void main() {
 
       expect(breakdown.unpaidBreakHours, 0.75);
       expect(breakdown.netPaidHours, 10.0);
-      expect(breakdown.shabbatHours, 8.0);
+      expect(breakdown.shabbatHours, 10.0);
       expect(breakdown.tier1Hours, 2.0);
     });
 

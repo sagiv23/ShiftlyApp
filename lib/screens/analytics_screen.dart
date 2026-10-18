@@ -170,6 +170,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final barDataPoints = _generateBarDataPoints(
       filteredShifts,
       shiftProvider,
+      settings,
       l,
     );
 
@@ -188,6 +189,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final donutSegments = _generateDonutSegments(
       filteredShifts,
       shiftProvider,
+      settings,
       jobTypes,
       l,
     );
@@ -203,6 +205,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final durationCategories = _generateDurationCategories(
       filteredShifts,
       shiftProvider,
+      settings,
       l,
     );
 
@@ -1254,6 +1257,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   List<BarDataPoint> _generateBarDataPoints(
     List<Shift> shifts,
     ShiftProvider shiftProvider,
+    SettingsProvider settings,
     AppLocalizations l,
   ) {
     final Map<String, List<Shift>> grouped = {};
@@ -1284,7 +1288,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               job?.getRateForDate(s.date) ??
               AppConstants.defaultHourlyRate;
           hours += s.netHours;
-          base += s.calculateBaseSalary(rate);
+          base += s.calculateBaseSalary(
+            rate,
+            rules: settings.overtimeRules,
+            shabbatRules: settings.shabbatHolidayRules,
+          );
           tips += s.tips;
           expenses += s.totalAutomaticExpenses;
           incomes += s.totalAutomaticIncomes;
@@ -1324,7 +1332,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               job?.getRateForDate(s.date) ??
               AppConstants.defaultHourlyRate;
           hours += s.netHours;
-          base += s.calculateBaseSalary(rate);
+          base += s.calculateBaseSalary(
+            rate,
+            rules: settings.overtimeRules,
+            shabbatRules: settings.shabbatHolidayRules,
+          );
           tips += s.tips;
           expenses += s.totalAutomaticExpenses;
           incomes += s.totalAutomaticIncomes;
@@ -1367,7 +1379,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               job?.getRateForDate(s.date) ??
               AppConstants.defaultHourlyRate;
           hours += s.netHours;
-          base += s.calculateBaseSalary(rate);
+          base += s.calculateBaseSalary(
+            rate,
+            rules: settings.overtimeRules,
+            shabbatRules: settings.shabbatHolidayRules,
+          );
           tips += s.tips;
           expenses += s.totalAutomaticExpenses;
           incomes += s.totalAutomaticIncomes;
@@ -1417,6 +1433,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   List<DonutSegment> _generateDonutSegments(
     List<Shift> shifts,
     ShiftProvider shiftProvider,
+    SettingsProvider settings,
     List<JobType> jobTypes,
     AppLocalizations l,
   ) {
@@ -1438,7 +1455,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             s.hourlyRate ??
             job?.getRateForDate(s.date) ??
             AppConstants.defaultHourlyRate;
-        jobPay += s.calculateTotalPay(rate);
+        jobPay += s.calculateTotalPay(
+          rate,
+          rules: settings.overtimeRules,
+          shabbatRules: settings.shabbatHolidayRules,
+        );
         hours += s.netHours;
       }
 
@@ -1606,6 +1627,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   List<ShiftDurationCategory> _generateDurationCategories(
     List<Shift> shifts,
     ShiftProvider shiftProvider,
+    SettingsProvider settings,
     AppLocalizations l,
   ) {
     int shortCount = 0, stdCount = 0, longCount = 0;
@@ -1618,7 +1640,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           s.hourlyRate ??
           job?.getRateForDate(s.date) ??
           AppConstants.defaultHourlyRate;
-      final pay = s.calculateTotalPay(rate);
+      final pay = s.calculateTotalPay(
+        rate,
+        rules: settings.overtimeRules,
+        shabbatRules: settings.shabbatHolidayRules,
+      );
 
       if (s.netHours < 6) {
         shortCount++;

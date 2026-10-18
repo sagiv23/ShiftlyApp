@@ -39,7 +39,7 @@ class ShabbatHolidayService {
     if (!rules.enabled) return [];
 
     String cacheKey =
-        'api_${rules.latitude}_${rules.longitude}_${rules.candleLightingMinutesBeforeSunset}_${rules.shabbatExitMinutesAfterSunset}_${start.year}_${start.month}_${end.year}_${end.month}_${rules.diaspora}';
+        'api_${rules.latitude}_${rules.longitude}_${rules.candleLightingMinutesBeforeSunset}_${rules.shabbatExitMinutesAfterSunset}_${start.year}_${start.month}_${start.day}_${end.year}_${end.month}_${end.day}_${rules.diaspora}';
     if (_cache.containsKey(cacheKey)) {
       return _cache[cacheKey]!;
     }
@@ -137,7 +137,7 @@ class ShabbatHolidayService {
     if (!rules.enabled) return [];
 
     String cacheKey =
-        '${rules.latitude}_${rules.longitude}_${rules.candleLightingMinutesBeforeSunset}_${rules.shabbatExitMinutesAfterSunset}_${start.year}_${start.month}_${end.year}_${end.month}_${rules.diaspora}';
+        '${rules.latitude}_${rules.longitude}_${rules.candleLightingMinutesBeforeSunset}_${rules.shabbatExitMinutesAfterSunset}_${start.year}_${start.month}_${start.day}_${end.year}_${end.month}_${end.day}_${rules.diaspora}_${rules.includeCholHaMoed}';
     if (_cache.containsKey(cacheKey)) {
       return _cache[cacheKey]!;
     }
@@ -246,11 +246,15 @@ class ShabbatHolidayService {
     cosHourAngle = cosHourAngle.clamp(-1.0, 1.0);
     double hourAngle = acos(cosHourAngle);
 
-    double solarNoon = 720 - 4 * lon - eqtime;
-    double sunsetMinutes = solarNoon + hourAngle * 180 / pi * 4;
+    double solarNoon = 720 - 4 * lon - eqtime; // minutes UTC
+    double sunsetMinutesUtc =
+        solarNoon + hourAngle * 180 / pi * 4; // minutes UTC
 
-    int hour = (sunsetMinutes / 60).floor() % 24;
-    int minute = (sunsetMinutes % 60).round();
+    int tzOffsetMinutes = date.timeZoneOffset.inMinutes;
+    double localSunsetMinutes = sunsetMinutesUtc + tzOffsetMinutes;
+
+    int hour = (localSunsetMinutes / 60).floor() % 24;
+    int minute = (localSunsetMinutes % 60).round();
 
     if (hour < 16 || hour > 21) {
       hour = 18;
@@ -275,13 +279,18 @@ class ShabbatHolidayService {
     List<Map<String, dynamic>> knownHolidays = [
       // 2025
       {
-        'start': DateTime(2025, 4, 11, 18, 0),
-        'end': DateTime(2025, 4, 20, 20, 0),
-        'name': 'פסח',
+        'start': DateTime(2025, 4, 12, 18, 0),
+        'end': DateTime(2025, 4, 13, 20, 0),
+        'name': 'פסח (יום ראשון)',
+      },
+      {
+        'start': DateTime(2025, 4, 18, 18, 0),
+        'end': DateTime(2025, 4, 19, 20, 0),
+        'name': 'פסח (שביעי של פסח)',
       },
       {
         'start': DateTime(2025, 6, 1, 18, 0),
-        'end': DateTime(2025, 6, 3, 20, 0),
+        'end': DateTime(2025, 6, 2, 20, 0),
         'name': 'שבועות',
       },
       {
@@ -291,23 +300,33 @@ class ShabbatHolidayService {
       },
       {
         'start': DateTime(2025, 10, 1, 18, 0),
-        'end': DateTime(2025, 10, 3, 20, 0),
+        'end': DateTime(2025, 10, 2, 20, 0),
         'name': 'יום כיפור',
       },
       {
         'start': DateTime(2025, 10, 6, 18, 0),
+        'end': DateTime(2025, 10, 7, 20, 0),
+        'name': 'סוכות (יום ראשון)',
+      },
+      {
+        'start': DateTime(2025, 10, 13, 18, 0),
         'end': DateTime(2025, 10, 14, 20, 0),
-        'name': 'סוכות ושמחת תורה',
+        'name': 'שמיני עצרת ושמחת תורה',
       },
 
       // 2026
       {
-        'start': DateTime(2026, 3, 31, 18, 0),
-        'end': DateTime(2026, 4, 8, 20, 0),
-        'name': 'פסח',
+        'start': DateTime(2026, 4, 1, 18, 0),
+        'end': DateTime(2026, 4, 2, 20, 0),
+        'name': 'פסח (יום ראשון)',
       },
       {
-        'start': DateTime(2026, 5, 20, 18, 0),
+        'start': DateTime(2026, 4, 7, 18, 0),
+        'end': DateTime(2026, 4, 8, 20, 0),
+        'name': 'פסח (שביעי של פסח)',
+      },
+      {
+        'start': DateTime(2026, 5, 21, 18, 0),
         'end': DateTime(2026, 5, 22, 20, 0),
         'name': 'שבועות',
       },
@@ -323,15 +342,25 @@ class ShabbatHolidayService {
       },
       {
         'start': DateTime(2026, 9, 25, 18, 0),
-        'end': DateTime(2026, 10, 4, 20, 0),
-        'name': 'סוכות ושמחת תורה',
+        'end': DateTime(2026, 9, 26, 20, 0),
+        'name': 'סוכות (יום ראשון)',
+      },
+      {
+        'start': DateTime(2026, 10, 2, 18, 0),
+        'end': DateTime(2026, 10, 3, 20, 0),
+        'name': 'שמיני עצרת ושמחת תורה',
       },
 
       // 2027
       {
         'start': DateTime(2027, 4, 21, 18, 0),
-        'end': DateTime(2027, 4, 29, 20, 0),
-        'name': 'פסח',
+        'end': DateTime(2027, 4, 22, 20, 0),
+        'name': 'פסח (יום ראשון)',
+      },
+      {
+        'start': DateTime(2027, 4, 27, 18, 0),
+        'end': DateTime(2027, 4, 28, 20, 0),
+        'name': 'פסח (שביעי של פסח)',
       },
       {
         'start': DateTime(2027, 6, 10, 18, 0),
@@ -350,10 +379,50 @@ class ShabbatHolidayService {
       },
       {
         'start': DateTime(2027, 10, 15, 18, 0),
+        'end': DateTime(2027, 10, 16, 20, 0),
+        'name': 'סוכות (יום ראשון)',
+      },
+      {
+        'start': DateTime(2027, 10, 22, 18, 0),
         'end': DateTime(2027, 10, 23, 20, 0),
-        'name': 'סוכות ושמחת תורה',
+        'name': 'שמיני עצרת ושמחת תורה',
       },
     ];
+
+    if (rules.includeCholHaMoed) {
+      knownHolidays.addAll([
+        {
+          'start': DateTime(2025, 4, 13, 20, 0),
+          'end': DateTime(2025, 4, 18, 18, 0),
+          'name': 'חול המועד פסח',
+        },
+        {
+          'start': DateTime(2025, 10, 7, 20, 0),
+          'end': DateTime(2025, 10, 13, 18, 0),
+          'name': 'חול המועד סוכות',
+        },
+        {
+          'start': DateTime(2026, 4, 2, 20, 0),
+          'end': DateTime(2026, 4, 7, 18, 0),
+          'name': 'חול המועד פסח',
+        },
+        {
+          'start': DateTime(2026, 9, 26, 20, 0),
+          'end': DateTime(2026, 10, 2, 18, 0),
+          'name': 'חול המועד סוכות',
+        },
+        {
+          'start': DateTime(2027, 4, 22, 20, 0),
+          'end': DateTime(2027, 4, 27, 18, 0),
+          'name': 'חול המועד פסח',
+        },
+        {
+          'start': DateTime(2027, 10, 16, 20, 0),
+          'end': DateTime(2027, 10, 22, 18, 0),
+          'name': 'חול המועד סוכות',
+        },
+      ]);
+    }
 
     for (var h in knownHolidays) {
       DateTime hStart = h['start'];

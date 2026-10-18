@@ -41,11 +41,17 @@ class HomeScreen extends StatelessWidget {
     double grandTotalIncomes = 0;
     int grandTotalShifts = shiftProvider.filteredShifts.length;
 
+    final settings = context.watch<SettingsProvider>();
+
     for (var shift in shiftProvider.filteredShifts) {
       final job = shiftProvider.getJobTypeById(shift.jobTypeId);
       final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
       grandTotalNetHours += shift.netHours;
-      grandTotalBaseSalary += shift.calculateBaseSalary(rate);
+      grandTotalBaseSalary += shift.calculateBaseSalary(
+        rate,
+        rules: settings.overtimeRules,
+        shabbatRules: settings.shabbatHolidayRules,
+      );
       grandTotalTips += shift.tips;
       grandTotalExpenses += shift.totalAutomaticExpenses;
       grandTotalIncomes += shift.totalAutomaticIncomes;
@@ -343,11 +349,17 @@ class _MonthExpansionSection extends StatelessWidget {
     double totalMonthIncomes = 0;
     int monthShiftCount = shifts.length;
 
+    final settings = context.watch<SettingsProvider>();
+
     for (var shift in shifts) {
       final job = shiftProvider.getJobTypeById(shift.jobTypeId);
       final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
       totalNetHours += shift.netHours;
-      totalBaseSalary += shift.calculateBaseSalary(rate);
+      totalBaseSalary += shift.calculateBaseSalary(
+        rate,
+        rules: settings.overtimeRules,
+        shabbatRules: settings.shabbatHolidayRules,
+      );
       totalTips += shift.tips;
       totalMonthExpenses += shift.totalAutomaticExpenses;
       totalMonthIncomes += shift.totalAutomaticIncomes;

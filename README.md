@@ -1,9 +1,13 @@
 # Shiftly - Multi-Platform Shift & Salary Tracker
 
+# Shiftly - מערכת מתקדמת לניהול משמרות ושכר
+
 <div dir="rtl">
 
-**Shiftly** היא פלטפורמה מתקדמת ומקיפה לניהול, מעקב וחישוב משמרות עבודה, שכר והוצאות נלוות.
-האפליקציה מיועדת לספק מענה מדויק לחישובי שכר נטו ברוטו, ניהול הפסקות, מעקב טיפים, והוצאות אוטומטיות.
+**Shiftly** היא פלטפורמה מתקדמת ומקיפה לניהול, מעקב וחישוב משמרות עבודה, שכר והוצאות נלוות, המותאמת
+במיוחד לשוק העבודה בישראל (כולל חוקי עבודה, שעות נוספות, שבתות וחגים) וכן לשימוש בינלאומי.
+האפליקציה מיועדת לספק מענה מדויק לחישובי שכר נטו/ברוטו, ניהול הפסקות, מעקב טיפים, חישובי שבת וחגים
+אוטומטיים, והוצאות נלוות.
 
 האפליקציה נבנתה בארכיטקטורת **Cross-Platform** מלאה התומכת ב-Android, iOS, Windows, macOS, Linux
 ו-Web, ומציעה אפשרויות סנכרון גמישות החל מעבודה מקומית בלבד, דרך גיבוי פרטי ב-Google Drive (BYOS),
@@ -13,7 +17,7 @@
 
 ## 🔑 ניהול משתמשים: התחברות והרשמה
 
-shiftly מציעה חוויית משתמש גמישה ומותאמת אישית לניהול הזהות והנתונים:
+Shiftly מציעה חוויית משתמש גמישה ומותאמת אישית לניהול הזהות והנתונים:
 
 ### 1. הרשמה לחשבון (Registration)
 
@@ -31,7 +35,7 @@ shiftly מציעה חוויית משתמש גמישה ומותאמת אישית 
 * **עדכון פרופיל ושינוי סיסמה:** אפשרות לעדכון פרטים אישיים (שם, אימייל, תאריך לידה) ושינוי סיסמה
   תוך אימות סיסמה ישנה.
 * **מחיקת חשבון (Delete Account):** תמיכה מלאה בפרטיות המשתמש עם אפשרות למחיקת החשבון וכל הנתונים
-  הנלווים אליו מהשרת באופן לצמיתות.
+  הנלווים אליו מהשרת לצמיתות.
 
 ### 3. עבודה במצב אורח / מקומי (Guest Mode / Offline)
 
@@ -68,12 +72,12 @@ Shiftly מציעה שני מודלים מתקדמים לסנכרון וגיבו�
 * **פרטיות מוחלטת:** הנתונים שלכם נשמרים ישירות במיכל הנתונים הפרטי שלכם ב-Google Drive (
   `appDataFolder`). הנתונים אינם עוברים או נשמרים בשרתי Shiftly.
 * **גיבוי אוטומטי וידני:** סנכרון אוטומטי של כל שינוי במשמרות, הוצאות ותפקידים, לצד אפשרות לגיבוי
-  יזם ושחזור בלחיצת כפתור.
+  יזום ושחזור בלחיצת כפתור.
 * **שליטה מלאה:** אפשרות לניתוק החשבון ומחיקת קובץ הגיבוי הפרטי מ-Google Drive בכל עת.
 
 ### 2. Shiftly Cloud (סנכרון ענן מלא)
 
-* **סנכרון בזמן אמת:** עבודה מ מול שרת מרכזי המאפשרת מעבר חלק בין מספר מכשירים (סמארטפון, מחשב,
+* **סנכרון בזמן אמת:** עבודה מול שרת מרכזי המאפשרת מעבר חלק בין מספר מכשירים (סמארטפון, מחשב,
   דפדפן).
 * **סנכרון הגדרות אוטומטיות:** סנכרון של משמרות, תפקידים, הוצאות/הכנסות קבועות והגדרות אפליקציה
   מותאמות אישית.
@@ -85,36 +89,50 @@ Shiftly מציעה שני מודלים מתקדמים לסנכרון וגיבו�
 
 ---
 
-## 🌟 תכונות מרכזיות נוספות
+## 🌟 תכונות מרכזיות ומנועי חישוב מתקדמים
 
 * **⏱️ שעון נוכחות וטיימר משמרת חכם:**
-  * הפעלה, השהיה, חידוש וסיום משמרת בזמן אמת.
-  * ניהול הפסקות בתשלום ושלא בתשלום.
-  * בקרת התראות מורחבת מווילון ההתראות במכשיר (`flutter_local_notifications`).
+    * הפעלה, השהיה, חידוש וסיום משמרת בזמן אמת.
+    * ניהול הפסקות בתשלום ושלא בתשלום.
+    * בקרת התראות מורחבת מווילון ההתראות במכשיר (`flutter_local_notifications`).
+
+* **⚖️ מנוע חישוב שעות נוספות (Overtime Calculator):**
+    * חישוב אוטומטי של שעות נוספות יומיות ושבועיות בהתאם לכללים גמישים או לחוקי העבודה המקובלים (
+      שעות 1-2 ראשונות בתעריף מוגדל, ומעבר לכך בתעריף נוסף).
+
+* **✡️ חישוב שבתות וחגים אוטומטי (Shabbat & Holiday Service):**
+    * זיהוי מדויק של כניסת ויציאת שבת וחגים (כולל ערבי חג וחג שני) בהתאם ללוח השברי/עברי ולמיקום
+      המשתמש.
+    * חישוב תעריפי שכר מיוחדים לשבתות וחגים (לדוגמה 150%, 200%) להבטיח שכר מדוייק לכל דקת עבודה.
+
+* **📅 תצוגת לוח שנה (Calendar View):**
+    * לוח שנה אינטראקטיבי המציג את כל המשמרות, סיכומי שכר יומיים וחודשיים, ומאפשר ניווט והוספת
+      משמרות מהירה ישירות מהתאריך הרצוי.
 
 * **💼 ניהול תפקידים והיסטוריית שכר (Wage Rate History):**
-  * תמיכה בשינויי שכר לפי תאריך תחולה (Effective Dates).
-  * שמירת היסטוריית שכר לכל תפקיד להבטחת חישוב מדויק – שינויי שכר עתידיים אינם משפיעים על משמרות
-    עבר.
+    * תמיכה בשינויי שכר לפי תאריך תחולה (Effective Dates).
+    * שמירת היסטוריית שכר לכל תפקיד להבטחת חישוב מדויק - שינויי שכר עתידיים אינם משפיעים על משמרות
+      עבר.
 
 * **💰 ניהול טיפים, הוצאות והכנסות:**
-  * תיעוד טיפים בודדים לכל משמרת.
-  * ניהול הוצאות נלוות (נסיעות, אוכל וכדומה).
-  * הגדרת הוצאות והכנסות קבועות אוטומטיות (חודשיות או מחושבות לפי משמרת) לחישוב נטו סופי מדויק.
+    * תיעוד טיפים בודדים לכל משמרת.
+    * ניהול הוצאות נלוות (נסיעות, אוכל וכדומה).
+    * הגדרת הוצאות והכנסות קבועות אוטומטיות (חודשיות או מחושבות לפי משמרת) לחישוב נטו סופי מדויק.
 
 * **📝 מנוע פיענוח טקסט חופשי (Smart Parser):**
-  * הזנת משמרות מרובות בבת אחת על ידי הדבקת טקסט חופשי בפורמט מובנה.
-  * *דוגמה:* `24.06.2026 - 17:30 - 23:00 45 דקות + 50`
+    * הזנת משמרות מרובות בבת אחת על ידי הדבקת טקסט חופשי בפורמט מובנה.
+    * *דוגמה:* `24.06.2026 - 17:30 - 23:00 45 דקות + 50`
 
-* **📊 דוחות, ניתוח נתונים וייצוא:**
-  * גרפים וסטטיסטיקות מתקדמות (פילוח לפי תפקיד, שעות עבודה, ממוצע שכר, הוצאות והכנסות).
-  * ייצוא נתונים ודוחות בקבצי PDF, CSV ו-Excel.
+* **📊 דוחות, ניתוח נתונים וייצוא (Analytics & Export):**
+    * גרפים וסטטיסטיקות מתקדמות (פילוח לפי תפקיד, שעות עבודה, ממוצע שכר, הוצאות והכנסות).
+    * ייצוא נתונים ודוחות מקצועיים בקבצי **PDF, CSV ו-Excel**.
 
-* **🎨 ממשק משתמש ועיצוב (Material 3 & Motion UI):**
-  * תמיכה מלאה במצב בהיר/כהה (Light/Dark Theme).
-  * עיצוב רספונסיבי המותאם לכל גודלי המסכים (Mobile, Tablet, Desktop, Web).
-  * תמיכה מלאה בעברית (RTL) ואנגלית (LTR).
-  * באנר אישור עוגיות (Cookie Consent) ומציג מסמכים משפטיים מובנה.
+* **🎨 ממשק משתמש ועיצוב (Adaptive Scaffold & Material 3):**
+    * תמיכה מלאה במצב בהיר/כהה (Light/Dark Theme).
+    * עיצוב רספונסיבי חכם באמצעות `AdaptiveScaffold` המותאם לכל גודלי המסכים (Mobile, Tablet,
+      Desktop, Web).
+    * תמיכה מלאה בעברית (RTL) ואנגלית (LTR).
+    * באנר אישור עוגיות (Cookie Consent) ומציג מסמכים משפטיים מובנה (`LegalDocumentViewer`).
 
 ---
 
@@ -146,12 +164,10 @@ Shiftly מציעה שני מודלים מתקדמים לסנכרון וגיבו�
    ```bash
    flutter pub get
    ```
-
 2. **יצירת קבצי Hive Adapters:**
    ```bash
    dart run build_runner build --delete-conflicting-outputs
    ```
-
 3. **הרצה במצב פיתוח:**
    ```bash
    flutter run
@@ -164,7 +180,6 @@ Shiftly מציעה שני מודלים מתקדמים לסנכרון וגיבו�
   flutter build apk --split-per-abi --release --obfuscate --split-debug-info=build/app/outputs/symbols
   ```
   *הקבצים ייווצרו ב-`build/app/outputs/flutter-apk/`.*
-
 * **אייפון (IPA ל-iOS):**
   ```bash
   flutter build ipa --release --obfuscate --split-debug-info=build/app/outputs/symbols
@@ -187,37 +202,46 @@ Shiftly מציעה שני מודלים מתקדמים לסנכרון וגיבו�
 # English Summary
 
 **Shiftly** is a cross-platform shift tracking, wage calculation, and expense management system
-built with Flutter and Node.js.
+built with Flutter and Node.js, tailor-made for both Israeli labor regulations (overtime, Shabbat,
+and Jewish holidays) and global use.
 
 ## Key Highlights
 
 - **User Authentication & Registration:**
-  - **Shiftly Account:** Secure login/registration via JWT and Bcrypt encryption.
-  - **Age Verification:** Age entry requirement during sign-up to ensure compliance with minor
-    employment guidelines (minimum age 12+).
-  - **Guided Onboarding:** Initial setup for currency, default break policies, shift reminders, and
-    primary job roles.
-  - **Profile & Data Management:** Update personal details, change passwords, or permanently delete
-    accounts (GDPR compliant).
-  - **Guest / Local Mode:** Full functionality without account creation using local Hive database
-    storage.
+    - **Shiftly Account:** Secure login/registration via JWT and Bcrypt encryption.
+    - **Age Verification:** Age entry requirement during sign-up to ensure compliance with minor
+      employment guidelines (minimum age 12+).
+    - **Guided Onboarding:** Initial setup for currency, default break policies, shift reminders,
+      and primary job roles.
+    - **Profile & Data Management:** Update personal details, change passwords, or permanently
+      delete accounts (GDPR-compliant).
+    - **Guest / Local Mode:** Full functionality without account creation using local Hive database
+      storage.
 
 - **Dual-Sync Architecture:**
-  - **BYOS (Bring Your Own Storage):** Private Google Drive backup (`appDataFolder`). Your data
-    stays strictly on your personal Google Drive account.
-  - **Shiftly Cloud:** Real-time synchronization across devices via a dedicated Node.js/PostgreSQL
-    backend.
-  - **Offline-First:** All actions are saved locally in Hive NoSQL first, ensuring fast offline
-    operations.
+    - **BYOS (Bring Your Own Storage):** Private Google Drive backup (`appDataFolder`). Your data
+      stays strictly on your personal Google Drive account.
+    - **Shiftly Cloud:** Real-time synchronization across devices via a dedicated Node.js/PostgreSQL
+      backend.
+    - **Offline-First:** All actions are saved locally in Hive NoSQL first, ensuring fast offline
+      operations.
 
-- **Advanced Features:**
-  - **Live Shift Timer:** Real-time tracking with paid/unpaid break management and interactive
-    notification actions.
-  - **Wage History:** Support for effective-dated hourly rates per job type.
-  - **Expenses & Tips:** Individual shift tips, automatic monthly/per-shift expenses & incomes, and
-    net salary calculation.
-  - **Smart Parser:** Bulk shift entry via free-text paste (
-    `24.06.2026 - 17:30 - 23:00 45 min + 50`).
-  - **Analytics & Export:** Interactive visual charts and data export to PDF, CSV, and Excel.
-  - **Localization & Modern UI:** Full Hebrew (RTL) and English (LTR) support with Material 3
-    styling and dark/light modes.
+- **Advanced Calculation & Features:**
+    - **Live Shift Timer:** Real-time tracking with paid/unpaid break management and interactive
+      notification actions.
+    - **Overtime Calculator:** Automated daily and weekly overtime calculations based on
+      customizable rules or standard labor laws.
+    - **Shabbat & Holiday Engine:** Automatic detection of Shabbat and Jewish holidays (including
+      eves and second days) with specialized wage rate multipliers (e.g., 150%, 200%).
+    - **Calendar View:** Interactive monthly/weekly calendar view with daily and monthly wage
+      summaries and quick shift creation.
+    - **Wage History:** Support for effective-dated hourly rates per job type.
+    - **Expenses & Tips:** Individual shift tips, automatic monthly/per-shift expenses & incomes,
+      and net salary calculation.
+    - **Smart Parser:** Bulk shift entry via free-text paste (
+      `24.06.2026 - 17:30 - 23:00 45 min + 50`).
+    - **Analytics & Export:** Interactive visual charts and professional data export to **PDF, CSV,
+      and Excel**.
+    - **Adaptive UI & Compliance:** Adaptive Scaffold for all screen sizes (mobile, tablet, desktop,
+      web), full Hebrew (RTL) / English (LTR) support, Cookie Consent banner, and Legal Document
+      Viewer.

@@ -368,7 +368,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
               l.add_shift_overlap_unknown_job;
           final date = AppConstants.formatDate(shift.startTime);
           final time =
-              '${DateFormat.Hm().format(shift.startTime)}–${DateFormat.Hm().format(shift.endTime)}';
+              '${DateFormat.Hm().format(shift.startTime)}-${DateFormat.Hm().format(shift.endTime)}';
           return '• $jobName · $date · $time';
         })
         .join('\n');
@@ -1381,6 +1381,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       breakType: _selectedBreakType,
       unpaidBreakMinutes: settings.unpaidBreakDurationMinutes,
       rules: settings.overtimeRules,
+      shabbatHolidayRules: settings.shabbatHolidayRules,
       tips: _calculateTotalTips(_tipControllers),
       automaticIncomes: _calculateTotalAutoIncomes(),
       automaticExpenses: _calculateTotalAutoExpenses(),
@@ -1391,20 +1392,27 @@ class _AddShiftScreenState extends State<AddShiftScreen>
 
     return _FormSection(
       title: l.overtime_breakdown_title,
-      icon: breakdown.hasOvertime
+      icon:
+          breakdown.hasOvertime || breakdown.hasShabbat || breakdown.hasHoliday
           ? Icons.more_time_rounded
           : Icons.calculate_rounded,
       child: Container(
         padding: const EdgeInsets.all(AppTheme.spaceSm),
         decoration: BoxDecoration(
-          color: breakdown.hasOvertime
+          color:
+              (breakdown.hasOvertime ||
+                  breakdown.hasShabbat ||
+                  breakdown.hasHoliday)
               ? AppTheme.primary.withValues(alpha: isDark ? 0.15 : 0.08)
               : Theme.of(
                   context,
                 ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           border: Border.all(
-            color: breakdown.hasOvertime
+            color:
+                (breakdown.hasOvertime ||
+                    breakdown.hasShabbat ||
+                    breakdown.hasHoliday)
                 ? AppTheme.primary.withValues(alpha: 0.3)
                 : Theme.of(context).dividerColor.withValues(alpha: 0.3),
           ),
@@ -1429,6 +1437,58 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                 ),
               ],
             ),
+            if (breakdown.hasShabbat) ...[
+              const SizedBox(height: 6),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'שבת (${(breakdown.shabbatMultiplier * 100).toStringAsFixed(0)}%)',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.amber.shade800,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${breakdown.shabbatHours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.shabbatEarnings, symbol: symbol)}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.amber.shade800,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            if (breakdown.hasHoliday) ...[
+              const SizedBox(height: 6),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${breakdown.holidayName ?? "חג"} (${(breakdown.holidayMultiplier * 100).toStringAsFixed(0)}%)',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.purple.shade700,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${breakdown.holidayHours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.holidayEarnings, symbol: symbol)}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.purple.shade700,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                ],
+              ),
+            ],
             if (breakdown.tier1Hours > 0) ...[
               const SizedBox(height: 6),
               Row(

@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1144,7 +1145,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analytics_duration_range_short => '< 6 hours';
 
   @override
-  String get analytics_duration_range_standard => '6–9 hours';
+  String get analytics_duration_range_standard => '6-9 hours';
 
   @override
   String get analytics_duration_range_long => '> 9 hours';

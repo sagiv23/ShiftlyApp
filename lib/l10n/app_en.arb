@@ -365,7 +365,7 @@
   "analytics_net_extras_pct_subtitle": "{percent}% of total net pay",
   "common_unknown_job": "Unknown Job",
   "analytics_duration_range_short": "< 6 hours",
-  "analytics_duration_range_standard": "6–9 hours",
+  "analytics_duration_range_standard": "6-9 hours",
   "analytics_duration_range_long": "> 9 hours",
   "profile_title": "User Profile",
   "profile_created_at": "Account created: [[date]]",

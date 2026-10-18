@@ -75,7 +75,11 @@ class ShiftTile extends StatelessWidget {
     final l = AppLocalizations.of(context)!;
     final job = shiftProvider.getJobTypeById(shift.jobTypeId);
     final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
-    final pay = shift.calculateTotalPay(rate);
+    final pay = shift.calculateTotalPay(
+      rate,
+      rules: settings.overtimeRules,
+      shabbatRules: settings.shabbatHolidayRules,
+    );
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final breakType = shift.breakType ?? BreakType.none;
     final breakdown = shift.getSalaryBreakdown(
@@ -150,7 +154,7 @@ class ShiftTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "${DateFormat.Hm().format(shift.startTime)} – ${DateFormat.Hm().format(shift.endTime)}  ·  ${shift.netHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
+                  "${DateFormat.Hm().format(shift.startTime)} - ${DateFormat.Hm().format(shift.endTime)}  ·  ${shift.netHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 if (shift.tips > 0 ||

@@ -6,6 +6,8 @@ import 'package:shiftly/main.dart';
 import 'package:shiftly/models/automatic_expense.dart';
 import 'package:shiftly/models/expense.dart';
 import 'package:shiftly/models/job_type.dart';
+import 'package:shiftly/models/overtime_rules.dart';
+import 'package:shiftly/models/shabbat_holiday_rules.dart';
 import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/models/shift_filter.dart';
 import 'package:shiftly/models/wage_entry.dart';
@@ -378,7 +380,7 @@ class ShiftProvider with ChangeNotifier {
               ?.map((e) => {'description': e.description, 'amount': e.amount})
               .toList(),
           'description': shift.description,
-          'total_pay': shift.calculateTotalPay(rate),
+          'total_pay': _calculateShiftTotalPay(shift, rate),
         };
       }).toList();
       if (shiftItems.isNotEmpty) {
@@ -630,7 +632,7 @@ class ShiftProvider with ChangeNotifier {
                 ?.map((e) => {'description': e.description, 'amount': e.amount})
                 .toList(),
             'description': shift.description,
-            'total_pay': shift.calculateTotalPay(rate),
+            'total_pay': _calculateShiftTotalPay(shift, rate),
           };
         }).toList();
         await _apiService.batchUpsertShifts(_authToken!, shiftItems);
@@ -711,7 +713,7 @@ class ShiftProvider with ChangeNotifier {
           ?.map((e) => {'description': e.description, 'amount': e.amount})
           .toList(),
       'description': shift.description,
-      'total_pay': shift.calculateTotalPay(rate),
+      'total_pay': _calculateShiftTotalPay(shift, rate),
     });
   }
 
@@ -773,7 +775,7 @@ class ShiftProvider with ChangeNotifier {
           shift.hourlyRate ??
           job?.getRateForDate(shift.date) ??
           AppConstants.defaultHourlyRate;
-      final totalPay = shift.calculateTotalPay(rate);
+      final totalPay = _calculateShiftTotalPay(shift, rate);
 
       if (filter.minWage != null && totalPay < filter.minWage!) return false;
       if (filter.maxWage != null && totalPay > filter.maxWage!) return false;
@@ -975,6 +977,15 @@ class ShiftProvider with ChangeNotifier {
     return _cachedIncomesGroupedByMonth!;
   }
 
+  double _calculateShiftTotalPay(Shift shift, double rate) {
+    return shift.calculateTotalPay(
+      rate,
+      rules: _settingsProvider?.overtimeRules ?? const OvertimeRules(),
+      shabbatRules:
+          _settingsProvider?.shabbatHolidayRules ?? const ShabbatHolidayRules(),
+    );
+  }
+
   // ── Filter Helpers ────────────────────────────────────────────────
   double get maxCapturedWage {
     if (shifts.isEmpty) return 0;
@@ -985,7 +996,7 @@ class ShiftProvider with ChangeNotifier {
               s.hourlyRate ??
               job?.getRateForDate(s.date) ??
               AppConstants.defaultHourlyRate;
-          return s.calculateTotalPay(rate);
+          return _calculateShiftTotalPay(s, rate);
         })
         .reduce((a, b) => a > b ? a : b);
   }

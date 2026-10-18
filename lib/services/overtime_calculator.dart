@@ -194,13 +194,15 @@ class OvertimeCalculator {
 
     double regHours = 0;
     double regEarn = 0;
+
     double shabbatHours = 0;
     double shabbatEarn = 0;
+    double shabbatMult = 1.0;
+
     double holidayHours = 0;
     double holidayEarn = 0;
     String? holidayName;
     double holidayMult = 1.0;
-    double shabbatMult = 1.0;
 
     double t1Hours = 0;
     double t1Earn = 0;
@@ -209,7 +211,19 @@ class OvertimeCalculator {
     double t1Mult = rules.tier1Multiplier;
     double t2Mult = rules.tier2Multiplier;
 
-    // Track cumulative net paid hours across intervals for overtime threshold determination
+    double weekdayRegH = 0;
+    double weekdayT1H = 0;
+    double weekdayT2H = 0;
+
+    double shabbatRegH = 0;
+    double shabbatT1H = 0;
+    double shabbatT2H = 0;
+
+    double holidayRegH = 0;
+    double holidayT1H = 0;
+    double holidayT2H = 0;
+
+    double totalBaseSalaryAcc = 0.0;
     double cumulativeNetHours = 0.0;
 
     for (int i = 0; i < points.length - 1; i++) {
@@ -250,7 +264,6 @@ class OvertimeCalculator {
         }
       }
 
-      // Overtime calculation per interval based on cumulativeNetHours
       double threshold = rules.enabled && rules.isValid
           ? rules.regularHoursThreshold
           : double.infinity;
@@ -265,17 +278,18 @@ class OvertimeCalculator {
         double currentNetTime = cumulativeNetHours + segCursor;
         double sliceHours = 0.0;
         double effectiveMultiplier = specialMultiplier;
-        String tierType = periodType;
+        String tier = 'regular';
 
         if (rules.enabled && rules.isValid) {
           if (currentNetTime < threshold) {
             double spaceInReg = threshold - currentNetTime;
             sliceHours = min(remainingNet, spaceInReg);
+            tier = 'regular';
+            effectiveMultiplier = specialMultiplier;
           } else if (currentNetTime < threshold + t1Limit) {
             double spaceInT1 = (threshold + t1Limit) - currentNetTime;
             sliceHours = min(remainingNet, spaceInT1);
-            tierType = 'tier1';
-
+            tier = 'tier1';
             effectiveMultiplier = _combineMultipliers(
               specialMultiplier,
               rules.tier1Multiplier,
@@ -284,8 +298,7 @@ class OvertimeCalculator {
             t1Mult = max(t1Mult, rules.tier1Multiplier);
           } else {
             sliceHours = remainingNet;
-            tierType = 'tier2';
-
+            tier = 'tier2';
             effectiveMultiplier = _combineMultipliers(
               specialMultiplier,
               rules.tier2Multiplier,
@@ -295,6 +308,8 @@ class OvertimeCalculator {
           }
         } else {
           sliceHours = remainingNet;
+          tier = 'regular';
+          effectiveMultiplier = specialMultiplier;
         }
 
         if (sliceHours <= 0) break;
@@ -302,22 +317,51 @@ class OvertimeCalculator {
         double sliceEarnings = roundMonetary(
           sliceHours * hourlyRate * effectiveMultiplier,
         );
+        totalBaseSalaryAcc += sliceEarnings;
 
-        if (tierType == 'tier1') {
-          t1Hours += sliceHours;
-          t1Earn += sliceEarnings;
-        } else if (tierType == 'tier2') {
-          t2Hours += sliceHours;
-          t2Earn += sliceEarnings;
-        } else if (tierType == 'shabbat') {
+        if (periodType == 'shabbat') {
           shabbatHours += sliceHours;
           shabbatEarn += sliceEarnings;
-        } else if (tierType == 'holiday') {
+          if (tier == 'regular') {
+            shabbatRegH += sliceHours;
+          } else if (tier == 'tier1') {
+            shabbatT1H += sliceHours;
+            t1Hours += sliceHours;
+            t1Earn += sliceEarnings;
+          } else if (tier == 'tier2') {
+            shabbatT2H += sliceHours;
+            t2Hours += sliceHours;
+            t2Earn += sliceEarnings;
+          }
+        } else if (periodType == 'holiday') {
           holidayHours += sliceHours;
           holidayEarn += sliceEarnings;
+          if (tier == 'regular') {
+            holidayRegH += sliceHours;
+          } else if (tier == 'tier1') {
+            holidayT1H += sliceHours;
+            t1Hours += sliceHours;
+            t1Earn += sliceEarnings;
+          } else if (tier == 'tier2') {
+            holidayT2H += sliceHours;
+            t2Hours += sliceHours;
+            t2Earn += sliceEarnings;
+          }
         } else {
-          regHours += sliceHours;
-          regEarn += sliceEarnings;
+          // Regular weekday
+          if (tier == 'regular') {
+            regHours += sliceHours;
+            regEarn += sliceEarnings;
+            weekdayRegH += sliceHours;
+          } else if (tier == 'tier1') {
+            t1Hours += sliceHours;
+            t1Earn += sliceEarnings;
+            weekdayT1H += sliceHours;
+          } else if (tier == 'tier2') {
+            t2Hours += sliceHours;
+            t2Earn += sliceEarnings;
+            weekdayT2H += sliceHours;
+          }
         }
 
         segCursor += sliceHours;
@@ -327,9 +371,7 @@ class OvertimeCalculator {
       cumulativeNetHours += netSegHours;
     }
 
-    final totalBaseSalary = roundMonetary(
-      regEarn + shabbatEarn + holidayEarn + t1Earn + t2Earn,
-    );
+    final totalBaseSalary = roundMonetary(totalBaseSalaryAcc);
     final totalShiftPay = roundMonetary(
       totalBaseSalary + tips + automaticIncomes - automaticExpenses,
     );
@@ -354,6 +396,15 @@ class OvertimeCalculator {
       tier2Hours: t2Hours,
       tier2Multiplier: t2Mult,
       tier2Earnings: t2Earn,
+      weekdayRegularHours: weekdayRegH,
+      weekdayTier1Hours: weekdayT1H,
+      weekdayTier2Hours: weekdayT2H,
+      shabbatRegularHours: shabbatRegH,
+      shabbatTier1Hours: shabbatT1H,
+      shabbatTier2Hours: shabbatT2H,
+      holidayRegularHours: holidayRegH,
+      holidayTier1Hours: holidayT1H,
+      holidayTier2Hours: holidayT2H,
       totalBaseSalary: totalBaseSalary,
       tips: tips,
       automaticIncomes: automaticIncomes,
@@ -414,10 +465,6 @@ class OvertimeCalculator {
     OvertimeRules rules = const OvertimeRules(),
     ShabbatHolidayRules shabbatHolidayRules = const ShabbatHolidayRules(),
   }) {
-    if (!rules.enabled || !rules.isValid) {
-      return [];
-    }
-
     final grossDurationHours = calculateGrossDurationHours(startTime, endTime);
     final unpaidBreakHours = calculateUnpaidBreakHours(
       breakType,
@@ -429,59 +476,138 @@ class OvertimeCalculator {
       return [];
     }
 
-    final netRatio = netPaidHours / grossDurationHours;
-
-    final regularHours = min(netPaidHours, rules.regularHoursThreshold);
-    final remainingAfterRegular = max(
-      0.0,
-      netPaidHours - rules.regularHoursThreshold,
+    final breakdown = calculateBreakdown(
+      startTime: startTime,
+      endTime: endTime,
+      hourlyRate: 100.0,
+      breakType: breakType,
+      unpaidBreakMinutes: unpaidBreakMinutes,
+      rules: rules,
+      shabbatHolidayRules: shabbatHolidayRules,
     );
-    final tier1Hours = min(remainingAfterRegular, rules.tier1HoursLimit);
-    final tier2Hours = max(0.0, remainingAfterRegular - rules.tier1HoursLimit);
 
-    final regularGrossHours = regularHours / netRatio;
-    final tier1GrossHours = tier1Hours / netRatio;
-    final tier2GrossHours = tier2Hours / netRatio;
+    if (!breakdown.hasOvertime &&
+        !breakdown.hasShabbat &&
+        !breakdown.hasHoliday) {
+      return [];
+    }
 
+    // Build segments matching actual intervals
+    List<SpecialPeriodBoundary> specialBoundaries = [];
+    if (shabbatHolidayRules.enabled) {
+      specialBoundaries = ShabbatHolidayService.getBoundariesForRange(
+        startTime,
+        endTime,
+        shabbatHolidayRules,
+      );
+    }
+
+    List<DateTime> points = [startTime, endTime];
+    for (var b in specialBoundaries) {
+      if (b.start.isAfter(startTime) && b.start.isBefore(endTime)) {
+        points.add(b.start);
+      }
+      if (b.end.isAfter(startTime) && b.end.isBefore(endTime)) {
+        points.add(b.end);
+      }
+    }
+
+    points.sort();
+    points = points.toSet().toList();
+
+    double cumulativeNetHours = 0.0;
+    final netRatio = netPaidHours / grossDurationHours;
     List<ShiftWageSegment> segments = [];
-    DateTime current = startTime;
 
-    if (regularGrossHours > 0) {
-      final segEnd = current.add(
-        Duration(milliseconds: (regularGrossHours * 3600 * 1000).round()),
-      );
-      segments.add(
-        ShiftWageSegment(
-          startTime: current,
-          endTime: segEnd,
-          percentage: 100.0,
-        ),
-      );
-      current = segEnd;
-    }
+    for (int i = 0; i < points.length - 1; i++) {
+      DateTime t1 = points[i];
+      DateTime t2 = points[i + 1];
+      double grossSegHours = t2.difference(t1).inSeconds / 3600.0;
+      if (grossSegHours <= 0) continue;
+      double netSegHours = grossSegHours * netRatio;
 
-    if (tier1GrossHours > 0) {
-      final segEnd = current.add(
-        Duration(milliseconds: (tier1GrossHours * 3600 * 1000).round()),
-      );
-      segments.add(
-        ShiftWageSegment(
-          startTime: current,
-          endTime: segEnd,
-          percentage: rules.tier1Multiplier * 100.0,
-        ),
-      );
-      current = segEnd;
-    }
+      SpecialPeriodBoundary? activeBoundary;
+      for (var b in specialBoundaries) {
+        DateTime mid = t1.add(
+          Duration(
+            milliseconds: (t2.difference(t1).inMilliseconds / 2).round(),
+          ),
+        );
+        if (b.contains(mid) ||
+            (b.start.isAtSameMomentAs(t1) || b.end.isAtSameMomentAs(t2))) {
+          activeBoundary = b;
+          break;
+        }
+      }
 
-    if (tier2GrossHours > 0) {
-      segments.add(
-        ShiftWageSegment(
-          startTime: current,
-          endTime: endTime,
-          percentage: rules.tier2Multiplier * 100.0,
-        ),
-      );
+      double specialMultiplier = activeBoundary != null
+          ? activeBoundary.multiplier
+          : 1.0;
+
+      double threshold = rules.enabled && rules.isValid
+          ? rules.regularHoursThreshold
+          : double.infinity;
+      double t1Limit = rules.enabled && rules.isValid
+          ? rules.tier1HoursLimit
+          : 0.0;
+
+      double remainingNet = netSegHours;
+      double segCursor = 0.0;
+      DateTime currentStart = t1;
+
+      while (remainingNet > 0.00001) {
+        double currentNetTime = cumulativeNetHours + segCursor;
+        double sliceHours = 0.0;
+        double effectiveMultiplier = specialMultiplier;
+
+        if (rules.enabled && rules.isValid) {
+          if (currentNetTime < threshold) {
+            double spaceInReg = threshold - currentNetTime;
+            sliceHours = min(remainingNet, spaceInReg);
+            effectiveMultiplier = specialMultiplier;
+          } else if (currentNetTime < threshold + t1Limit) {
+            double spaceInT1 = (threshold + t1Limit) - currentNetTime;
+            sliceHours = min(remainingNet, spaceInT1);
+            effectiveMultiplier = _combineMultipliers(
+              specialMultiplier,
+              rules.tier1Multiplier,
+              shabbatHolidayRules.combinationPolicy,
+            );
+          } else {
+            sliceHours = remainingNet;
+            effectiveMultiplier = _combineMultipliers(
+              specialMultiplier,
+              rules.tier2Multiplier,
+              shabbatHolidayRules.combinationPolicy,
+            );
+          }
+        } else {
+          sliceHours = remainingNet;
+          effectiveMultiplier = specialMultiplier;
+        }
+
+        if (sliceHours <= 0) break;
+
+        double grossSliceHours = sliceHours / netRatio;
+        DateTime currentEnd = currentStart.add(
+          Duration(milliseconds: (grossSliceHours * 3600 * 1000).round()),
+        );
+        if (currentEnd.isAfter(t2)) currentEnd = t2;
+
+        segments.add(
+          ShiftWageSegment(
+            startTime: currentStart,
+            endTime: currentEnd,
+            percentage: roundMonetary(effectiveMultiplier * 100.0),
+          ),
+        );
+
+        currentStart = currentEnd;
+        segCursor += sliceHours;
+        remainingNet -= sliceHours;
+      }
+
+      cumulativeNetHours += netSegHours;
     }
 
     return segments;

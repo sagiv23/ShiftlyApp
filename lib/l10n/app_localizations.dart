@@ -2231,7 +2231,7 @@ abstract class AppLocalizations {
   /// No description provided for @analytics_duration_range_standard.
   ///
   /// In he, this message translates to:
-  /// **'6–9 שעות'**
+  /// **'6-9 שעות'**
   String get analytics_duration_range_standard;
 
   /// No description provided for @analytics_duration_range_long.

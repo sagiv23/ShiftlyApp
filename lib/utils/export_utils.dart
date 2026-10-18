@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:file_saver/file_saver.dart';
 import 'package:intl/intl.dart';
+import 'package:shiftly/models/overtime_rules.dart';
+import 'package:shiftly/models/shabbat_holiday_rules.dart';
 import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/utils/app_constants.dart';
@@ -13,6 +15,8 @@ class ExportUtils {
     required List<Shift> shifts,
     required String format, // 'csv' or 'txt'
     required String currencySymbol,
+    OvertimeRules rules = const OvertimeRules(),
+    ShabbatHolidayRules shabbatRules = const ShabbatHolidayRules(),
   }) async {
     if (shifts.isEmpty) return null;
 
@@ -21,11 +25,23 @@ class ExportUtils {
     MimeType mimeType;
     if (format == 'csv') {
       extension = 'csv';
-      content = _generateCsv(shiftProvider, shifts, currencySymbol);
+      content = _generateCsv(
+        shiftProvider,
+        shifts,
+        currencySymbol,
+        rules,
+        shabbatRules,
+      );
       mimeType = MimeType.csv;
     } else {
       extension = 'txt';
-      content = _generateText(shiftProvider, shifts, currencySymbol);
+      content = _generateText(
+        shiftProvider,
+        shifts,
+        currencySymbol,
+        rules,
+        shabbatRules,
+      );
       mimeType = MimeType.text;
     }
 
@@ -51,6 +67,8 @@ class ExportUtils {
     ShiftProvider shiftProvider,
     List<Shift> shifts,
     String symbol,
+    OvertimeRules rules,
+    ShabbatHolidayRules shabbatRules,
   ) {
     final buffer = StringBuffer();
     buffer.writeln(
@@ -63,7 +81,11 @@ class ExportUtils {
           shift.hourlyRate ??
           job?.getRateForDate(shift.date) ??
           AppConstants.defaultHourlyRate;
-      final pay = shift.calculateTotalPay(rate);
+      final pay = shift.calculateTotalPay(
+        rate,
+        rules: rules,
+        shabbatRules: shabbatRules,
+      );
       final dateStr = AppConstants.formatDate(shift.date);
       final startStr = AppConstants.formatTime(shift.startTime);
       final endStr = AppConstants.formatTime(shift.endTime);
@@ -85,6 +107,8 @@ class ExportUtils {
     ShiftProvider shiftProvider,
     List<Shift> shifts,
     String symbol,
+    OvertimeRules rules,
+    ShabbatHolidayRules shabbatRules,
   ) {
     final buffer = StringBuffer();
     buffer.writeln('=== SHIFTLY EXPORT REPORT ===');
@@ -107,9 +131,17 @@ class ExportUtils {
           shift.hourlyRate ??
           job?.getRateForDate(shift.date) ??
           AppConstants.defaultHourlyRate;
-      final pay = shift.calculateTotalPay(rate);
+      final pay = shift.calculateTotalPay(
+        rate,
+        rules: rules,
+        shabbatRules: shabbatRules,
+      );
       totalHours += shift.netHours;
-      totalBase += shift.calculateBaseSalary(rate);
+      totalBase += shift.calculateBaseSalary(
+        rate,
+        rules: rules,
+        shabbatRules: shabbatRules,
+      );
       totalTips += shift.tips;
       totalIncomes += shift.totalAutomaticIncomes;
       totalExpenses += shift.totalAutomaticExpenses;

@@ -248,6 +248,8 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                       shifts: shiftsToExport,
                       format: _format,
                       currencySymbol: settings.currencySymbol,
+                      rules: settings.overtimeRules,
+                      shabbatRules: settings.shabbatHolidayRules,
                     );
 
                     if (!context.mounted) return;
