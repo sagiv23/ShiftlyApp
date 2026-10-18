@@ -116,6 +116,11 @@ class GoogleDriveService {
         }
         return 'Google Drive User';
       }
+      debugPrint(
+        'GoogleDrive: signIn() returned null credentials. '
+        'Verify Android package name (com.shiftly.app) and SHA-1 fingerprint '
+        'are configured in Google Cloud Console, or that the account is listed as a Test User.',
+      );
       return null;
     } catch (e) {
       debugPrint('Google Sign In Error: $e');
