@@ -473,5 +473,83 @@
   "add_shift_save_as_desc": "שמור כתיאור בלבד",
   "add_shift_assign": "שייך",
   "add_shift_shabbat_breakdown": "שבת ({rate}%)",
-  "add_shift_holiday_breakdown": "{name} ({rate}%)"
+  "add_shift_holiday_breakdown": "{name} ({rate}%)",
+  "settings_update_section": "עדכוני אפליקציה",
+  "settings_update_check_button": "בדוק עדכונים מ-GitHub",
+  "settings_update_current_version": "גרסה נוכחית: v{version}",
+  "@settings_update_current_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "settings_update_checking_toast": "בודק עדכונים מ-GitHub Releases...",
+  "settings_update_error_toast": "לא ניתן להתחבר ל-GitHub כעת. נסה שוב מאוחר יותר.",
+  "settings_update_latest_toast": "האפליקציה בגרסה העדכנית ביותר! (v{version})",
+  "@settings_update_latest_toast": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_title": "עדכון גרסה חדש!",
+  "update_dialog_version_available": "גרסה {version} זמינה להורדה",
+  "@update_dialog_version_available": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_installed_version": "גרסה מותקנת: {version}",
+  "@update_dialog_installed_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_new_version": "חדש: {version}",
+  "@update_dialog_new_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_whats_new": "מה חדש בגרסה זו:",
+  "update_dialog_downloading": "מוריד קובץ עדכון...",
+  "update_dialog_later": "מאוחר יותר",
+  "update_dialog_open_browser": "פתח בדפדפן",
+  "update_dialog_update_now": "עדכן עכשיו",
+  "update_dialog_open_download": "פתח להורדה",
+  "update_dialog_mandatory_notice": "עדכון זה הינו חובה על מנת להמשיך להשתמש באפליקציה.",
+  "update_service_no_changelog": "אין פירוט שינויים זמין.",
+  "update_service_download_failed": "הורדת הקובץ נכשלה (קוד שגיאה: {statusCode})",
+  "@update_service_download_failed": {
+    "placeholders": {
+      "statusCode": {
+        "type": "Object"
+      }
+    }
+  },
+  "update_service_no_installer": "לא נמצאה אפליקציה להתקנת קובצי APK במכשיר. נסה לפתוח בדפדפן.",
+  "update_service_cannot_launch_installer": "לא ניתן להפעיל את מתקין האפליקציות ({message})",
+  "@update_service_cannot_launch_installer": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "update_service_download_error": "שגיאה במהלך הורדת העדכון: {error}",
+  "@update_service_download_error": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  }
 }

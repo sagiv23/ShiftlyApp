@@ -11,6 +11,8 @@ import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/cookie_consent_banner.dart';
 import 'package:shiftly/widgets/skeleton_loaders.dart';
+import 'package:shiftly/services/update_service.dart';
+import 'package:shiftly/widgets/update_dialog.dart';
 
 class LazyTabPageWrapper extends StatefulWidget {
   final Widget child;
@@ -69,6 +71,17 @@ class _MainScreenState extends State<MainScreen> {
     _currentIndex = widget.initialIndex;
     // Pre-cache only the initial screen for lightning-fast splash transition
     _cachedScreens[_currentIndex] = _getScreenForIndex(_currentIndex);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForUpdatesOnStartup();
+    });
+  }
+
+  Future<void> _checkForUpdatesOnStartup() async {
+    final updateInfo = await UpdateService.checkForUpdates();
+    if (mounted && updateInfo != null && updateInfo.isNewer) {
+      UpdateDialog.show(context, updateInfo, isForceUpdate: true);
+    }
   }
 
   Widget _getScreenForIndex(int index) {

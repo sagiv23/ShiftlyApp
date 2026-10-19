@@ -1487,4 +1487,90 @@ class AppLocalizationsHe extends AppLocalizations {
   String add_shift_holiday_breakdown(Object name, Object rate) {
     return '$name ($rate%)';
   }
+
+  @override
+  String get settings_update_section => 'עדכוני אפליקציה';
+
+  @override
+  String get settings_update_check_button => 'בדוק עדכונים מ-GitHub';
+
+  @override
+  String settings_update_current_version(String version) {
+    return 'גרסה נוכחית: v$version';
+  }
+
+  @override
+  String get settings_update_checking_toast =>
+      'בודק עדכונים מ-GitHub Releases...';
+
+  @override
+  String get settings_update_error_toast =>
+      'לא ניתן להתחבר ל-GitHub כעת. נסה שוב מאוחר יותר.';
+
+  @override
+  String settings_update_latest_toast(String version) {
+    return 'האפליקציה בגרסה העדכנית ביותר! (v$version)';
+  }
+
+  @override
+  String get update_dialog_title => 'עדכון גרסה חדש!';
+
+  @override
+  String update_dialog_version_available(String version) {
+    return 'גרסה $version זמינה להורדה';
+  }
+
+  @override
+  String update_dialog_installed_version(String version) {
+    return 'גרסה מותקנת: $version';
+  }
+
+  @override
+  String update_dialog_new_version(String version) {
+    return 'חדש: $version';
+  }
+
+  @override
+  String get update_dialog_whats_new => 'מה חדש בגרסה זו:';
+
+  @override
+  String get update_dialog_downloading => 'מוריד קובץ עדכון...';
+
+  @override
+  String get update_dialog_later => 'מאוחר יותר';
+
+  @override
+  String get update_dialog_open_browser => 'פתח בדפדפן';
+
+  @override
+  String get update_dialog_update_now => 'עדכן עכשיו';
+
+  @override
+  String get update_dialog_open_download => 'פתח להורדה';
+
+  @override
+  String get update_dialog_mandatory_notice =>
+      'עדכון זה הינו חובה על מנת להמשיך להשתמש באפליקציה.';
+
+  @override
+  String get update_service_no_changelog => 'אין פירוט שינויים זמין.';
+
+  @override
+  String update_service_download_failed(Object statusCode) {
+    return 'הורדת הקובץ נכשלה (קוד שגיאה: $statusCode)';
+  }
+
+  @override
+  String get update_service_no_installer =>
+      'לא נמצאה אפליקציה להתקנת קובצי APK במכשיר. נסה לפתוח בדפדפן.';
+
+  @override
+  String update_service_cannot_launch_installer(String message) {
+    return 'לא ניתן להפעיל את מתקין האפליקציות ($message)';
+  }
+
+  @override
+  String update_service_download_error(Object error) {
+    return 'שגיאה במהלך הורדת העדכון: $error';
+  }
 }

@@ -2881,6 +2881,138 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'{name} ({rate}%)'**
   String add_shift_holiday_breakdown(Object name, Object rate);
+
+  /// No description provided for @settings_update_section.
+  ///
+  /// In he, this message translates to:
+  /// **'עדכוני אפליקציה'**
+  String get settings_update_section;
+
+  /// No description provided for @settings_update_check_button.
+  ///
+  /// In he, this message translates to:
+  /// **'בדוק עדכונים מ-GitHub'**
+  String get settings_update_check_button;
+
+  /// No description provided for @settings_update_current_version.
+  ///
+  /// In he, this message translates to:
+  /// **'גרסה נוכחית: v{version}'**
+  String settings_update_current_version(String version);
+
+  /// No description provided for @settings_update_checking_toast.
+  ///
+  /// In he, this message translates to:
+  /// **'בודק עדכונים מ-GitHub Releases...'**
+  String get settings_update_checking_toast;
+
+  /// No description provided for @settings_update_error_toast.
+  ///
+  /// In he, this message translates to:
+  /// **'לא ניתן להתחבר ל-GitHub כעת. נסה שוב מאוחר יותר.'**
+  String get settings_update_error_toast;
+
+  /// No description provided for @settings_update_latest_toast.
+  ///
+  /// In he, this message translates to:
+  /// **'האפליקציה בגרסה העדכנית ביותר! (v{version})'**
+  String settings_update_latest_toast(String version);
+
+  /// No description provided for @update_dialog_title.
+  ///
+  /// In he, this message translates to:
+  /// **'עדכון גרסה חדש!'**
+  String get update_dialog_title;
+
+  /// No description provided for @update_dialog_version_available.
+  ///
+  /// In he, this message translates to:
+  /// **'גרסה {version} זמינה להורדה'**
+  String update_dialog_version_available(String version);
+
+  /// No description provided for @update_dialog_installed_version.
+  ///
+  /// In he, this message translates to:
+  /// **'גרסה מותקנת: {version}'**
+  String update_dialog_installed_version(String version);
+
+  /// No description provided for @update_dialog_new_version.
+  ///
+  /// In he, this message translates to:
+  /// **'חדש: {version}'**
+  String update_dialog_new_version(String version);
+
+  /// No description provided for @update_dialog_whats_new.
+  ///
+  /// In he, this message translates to:
+  /// **'מה חדש בגרסה זו:'**
+  String get update_dialog_whats_new;
+
+  /// No description provided for @update_dialog_downloading.
+  ///
+  /// In he, this message translates to:
+  /// **'מוריד קובץ עדכון...'**
+  String get update_dialog_downloading;
+
+  /// No description provided for @update_dialog_later.
+  ///
+  /// In he, this message translates to:
+  /// **'מאוחר יותר'**
+  String get update_dialog_later;
+
+  /// No description provided for @update_dialog_open_browser.
+  ///
+  /// In he, this message translates to:
+  /// **'פתח בדפדפן'**
+  String get update_dialog_open_browser;
+
+  /// No description provided for @update_dialog_update_now.
+  ///
+  /// In he, this message translates to:
+  /// **'עדכן עכשיו'**
+  String get update_dialog_update_now;
+
+  /// No description provided for @update_dialog_open_download.
+  ///
+  /// In he, this message translates to:
+  /// **'פתח להורדה'**
+  String get update_dialog_open_download;
+
+  /// No description provided for @update_dialog_mandatory_notice.
+  ///
+  /// In he, this message translates to:
+  /// **'עדכון זה הינו חובה על מנת להמשיך להשתמש באפליקציה.'**
+  String get update_dialog_mandatory_notice;
+
+  /// No description provided for @update_service_no_changelog.
+  ///
+  /// In he, this message translates to:
+  /// **'אין פירוט שינויים זמין.'**
+  String get update_service_no_changelog;
+
+  /// No description provided for @update_service_download_failed.
+  ///
+  /// In he, this message translates to:
+  /// **'הורדת הקובץ נכשלה (קוד שגיאה: {statusCode})'**
+  String update_service_download_failed(Object statusCode);
+
+  /// No description provided for @update_service_no_installer.
+  ///
+  /// In he, this message translates to:
+  /// **'לא נמצאה אפליקציה להתקנת קובצי APK במכשיר. נסה לפתוח בדפדפן.'**
+  String get update_service_no_installer;
+
+  /// No description provided for @update_service_cannot_launch_installer.
+  ///
+  /// In he, this message translates to:
+  /// **'לא ניתן להפעיל את מתקין האפליקציות ({message})'**
+  String update_service_cannot_launch_installer(String message);
+
+  /// No description provided for @update_service_download_error.
+  ///
+  /// In he, this message translates to:
+  /// **'שגיאה במהלך הורדת העדכון: {error}'**
+  String update_service_download_error(Object error);
 }
 
 class _AppLocalizationsDelegate

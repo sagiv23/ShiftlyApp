@@ -95,9 +95,20 @@ class GoogleDriveService {
   /// Returns user's email on success, or null on failure.
   Future<String?> signIn() async {
     try {
-      GoogleSignInCredentials? credentials = await _googleSignIn
-          .lightweightSignIn();
-      credentials ??= await _googleSignIn.signIn();
+      GoogleSignInCredentials? credentials;
+      try {
+        credentials = await _googleSignIn.lightweightSignIn();
+      } catch (e) {
+        debugPrint(
+          'GoogleDrive: lightweightSignIn did not find valid cached credentials: $e',
+        );
+      }
+
+      if (credentials == null) {
+        debugPrint('GoogleDrive: Prompting user for interactive Google Sign-In...');
+        credentials = await _googleSignIn.signIn();
+      }
+
       if (credentials != null) {
         final httpClient = await _getAuthenticatedClient();
         if (httpClient != null) {

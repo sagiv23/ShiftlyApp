@@ -473,5 +473,83 @@
   "add_shift_save_as_desc": "Save as description only",
   "add_shift_assign": "Assign",
   "add_shift_shabbat_breakdown": "Shabbat ({rate}%)",
-  "add_shift_holiday_breakdown": "{name} ({rate}%)"
+  "add_shift_holiday_breakdown": "{name} ({rate}%)",
+  "settings_update_section": "App Updates",
+  "settings_update_check_button": "Check for updates from GitHub",
+  "settings_update_current_version": "Current version: v{version}",
+  "@settings_update_current_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "settings_update_checking_toast": "Checking for updates from GitHub Releases...",
+  "settings_update_error_toast": "Unable to connect to GitHub. Please try again later.",
+  "settings_update_latest_toast": "The app is up to date! (v{version})",
+  "@settings_update_latest_toast": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_title": "New Version Available!",
+  "update_dialog_version_available": "Version {version} is available for download",
+  "@update_dialog_version_available": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_installed_version": "Installed version: {version}",
+  "@update_dialog_installed_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_new_version": "New: {version}",
+  "@update_dialog_new_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_whats_new": "What's new in this version:",
+  "update_dialog_downloading": "Downloading update file...",
+  "update_dialog_later": "Later",
+  "update_dialog_open_browser": "Open in Browser",
+  "update_dialog_update_now": "Update Now",
+  "update_dialog_open_download": "Open Download Page",
+  "update_dialog_mandatory_notice": "This update is required to continue using the app.",
+  "update_service_no_changelog": "No changelog details available.",
+  "update_service_download_failed": "File download failed (Error code: {statusCode})",
+  "@update_service_download_failed": {
+    "placeholders": {
+      "statusCode": {
+        "type": "Object"
+      }
+    }
+  },
+  "update_service_no_installer": "No app found to install APK files on device. Try opening in browser.",
+  "update_service_cannot_launch_installer": "Unable to launch package installer ({message})",
+  "@update_service_cannot_launch_installer": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "update_service_download_error": "Error during update download: {error}",
+  "@update_service_download_error": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  }
 }

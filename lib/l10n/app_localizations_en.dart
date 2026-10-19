@@ -1504,4 +1504,90 @@ class AppLocalizationsEn extends AppLocalizations {
   String add_shift_holiday_breakdown(Object name, Object rate) {
     return '$name ($rate%)';
   }
+
+  @override
+  String get settings_update_section => 'App Updates';
+
+  @override
+  String get settings_update_check_button => 'Check for updates from GitHub';
+
+  @override
+  String settings_update_current_version(String version) {
+    return 'Current version: v$version';
+  }
+
+  @override
+  String get settings_update_checking_toast =>
+      'Checking for updates from GitHub Releases...';
+
+  @override
+  String get settings_update_error_toast =>
+      'Unable to connect to GitHub. Please try again later.';
+
+  @override
+  String settings_update_latest_toast(String version) {
+    return 'The app is up to date! (v$version)';
+  }
+
+  @override
+  String get update_dialog_title => 'New Version Available!';
+
+  @override
+  String update_dialog_version_available(String version) {
+    return 'Version $version is available for download';
+  }
+
+  @override
+  String update_dialog_installed_version(String version) {
+    return 'Installed version: $version';
+  }
+
+  @override
+  String update_dialog_new_version(String version) {
+    return 'New: $version';
+  }
+
+  @override
+  String get update_dialog_whats_new => 'What\'s new in this version:';
+
+  @override
+  String get update_dialog_downloading => 'Downloading update file...';
+
+  @override
+  String get update_dialog_later => 'Later';
+
+  @override
+  String get update_dialog_open_browser => 'Open in Browser';
+
+  @override
+  String get update_dialog_update_now => 'Update Now';
+
+  @override
+  String get update_dialog_open_download => 'Open Download Page';
+
+  @override
+  String get update_dialog_mandatory_notice =>
+      'This update is required to continue using the app.';
+
+  @override
+  String get update_service_no_changelog => 'No changelog details available.';
+
+  @override
+  String update_service_download_failed(Object statusCode) {
+    return 'File download failed (Error code: $statusCode)';
+  }
+
+  @override
+  String get update_service_no_installer =>
+      'No app found to install APK files on device. Try opening in browser.';
+
+  @override
+  String update_service_cannot_launch_installer(String message) {
+    return 'Unable to launch package installer ($message)';
+  }
+
+  @override
+  String update_service_download_error(Object error) {
+    return 'Error during update download: $error';
+  }
 }

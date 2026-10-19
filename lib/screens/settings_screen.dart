@@ -12,11 +12,14 @@ import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shiftly/services/update_service.dart';
 import 'package:shiftly/utils/legal_utils.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/skeleton_loaders.dart';
+import 'package:shiftly/widgets/update_dialog.dart';
 import 'package:uuid/uuid.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -28,6 +31,9 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _isLoading = true;
+  String _currentVersion = '1.0.0';
+  bool _isCheckingUpdates = false;
+
   late TextEditingController _paidController;
   late TextEditingController _unpaidController;
   late TextEditingController _otThresholdController;
@@ -42,6 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
+    _loadVersion();
     Future.delayed(const Duration(milliseconds: 220), () {
       if (mounted) {
         setState(() {
@@ -87,6 +94,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _shabbatExitController = TextEditingController(
       text: shabbatRules.shabbatExitMinutesAfterSunset.toStringAsFixed(0),
     );
+  }
+
+  Future<void> _loadVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (mounted) {
+        setState(() {
+          _currentVersion = info.version.isNotEmpty ? info.version : '1.0.0';
+        });
+      }
+    } catch (_) {}
   }
 
   @override
@@ -931,6 +949,68 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         symbol: symbol,
                       ),
                     ),
+                  const SizedBox(height: AppTheme.spaceLg),
+                  _buildSectionHeader(context, l.settings_update_section),
+                  const SizedBox(height: AppTheme.spaceXs),
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(
+                        Icons.system_update_rounded,
+                        color: AppTheme.primaryDark,
+                      ),
+                      title: Text(l.settings_update_check_button),
+                      subtitle: Text(
+                        l.settings_update_current_version(_currentVersion),
+                      ),
+                      trailing: _isCheckingUpdates
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.refresh_rounded),
+                      onTap: _isCheckingUpdates
+                          ? null
+                          : () async {
+                              final checkingMsg = l.settings_update_checking_toast;
+                              final errorMsg = l.settings_update_error_toast;
+                              final latestMsg = l.settings_update_latest_toast;
+
+                              setState(() {
+                                _isCheckingUpdates = true;
+                              });
+                              UIUtils.showSnackBar(
+                                context,
+                                checkingMsg,
+                              );
+                              final updateInfo =
+                                  await UpdateService.checkForUpdates();
+                              if (!context.mounted) return;
+                              setState(() {
+                                _isCheckingUpdates = false;
+                              });
+
+                              if (updateInfo == null) {
+                                UIUtils.showSnackBar(
+                                  context,
+                                  errorMsg,
+                                  isError: true,
+                                );
+                              } else if (!updateInfo.isNewer) {
+                                UIUtils.showSnackBar(
+                                  context,
+                                  latestMsg(updateInfo.currentVersion),
+                                );
+                              } else {
+                                UpdateDialog.show(
+                                  context,
+                                  updateInfo,
+                                  isForceUpdate: true,
+                                );
+                              }
+                            },
+                    ),
+                  ),
                   const SizedBox(height: AppTheme.spaceLg),
                   _buildSectionHeader(context, l.legal_cookie_title),
                   const SizedBox(height: AppTheme.spaceXs),
