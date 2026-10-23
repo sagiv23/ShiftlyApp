@@ -228,22 +228,25 @@ class _SplashScreenState extends State<SplashScreen>
 
     final bgColors = isDark
         ? [
-            const Color(0xFF131B2E),
-            const Color(0xFF0A0F1D),
+      AppTheme.darkCard,
+      AppTheme.darkBackground,
             const Color(0xFF04060C),
           ]
         : [
-            const Color(0xFFF8FAFC),
+      AppTheme.lightBackground,
             const Color(0xFFEEF2F6),
-            const Color(0xFFE2E8F0),
+      AppTheme.lightBorder,
           ];
 
-    final titleColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final titleColor = Theme
+        .of(context)
+        .colorScheme
+        .onSurface;
     final cardBg = isDark
-        ? const Color(0xFF1E293B).withValues(alpha: 0.65)
-        : Colors.white.withValues(alpha: 0.85);
+        ? AppTheme.darkCard.withValues(alpha: 0.65)
+        : AppTheme.lightCard.withValues(alpha: 0.85);
     final cardBorder = isDark
-        ? Colors.white.withValues(alpha: 0.12)
+        ? AppTheme.darkBorder.withValues(alpha: 0.8)
         : AppTheme.primary.withValues(alpha: 0.18);
 
     return Scaffold(

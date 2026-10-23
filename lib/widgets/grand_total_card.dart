@@ -41,13 +41,13 @@ class GrandTotalCard extends StatelessWidget {
         gradient: LinearGradient(
           colors: isDark
               ? [
-                  const Color(0xFF0EA5E9),
+                  AppTheme.primaryDark,
                   const Color(0xFF0369A1),
-                  const Color(0xFF1E293B),
+                  AppTheme.darkCard,
                 ]
               : [
-                  const Color(0xFF38BDF8),
-                  const Color(0xFF0EA5E9),
+                  AppTheme.primary,
+                  AppTheme.primaryDark,
                   const Color(0xFF0284C7),
                 ],
           begin: Alignment.topLeft,
