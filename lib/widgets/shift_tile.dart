@@ -236,28 +236,26 @@ class ShiftTile extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: AppTheme.spaceXs),
-          Flexible(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerRight,
-              child: Text(
-                UIUtils.formatCurrency(pay, symbol: settings.currencySymbol),
-                style: UIUtils.getCurrencyStyle(
-                  context,
-                  pay,
-                  positiveColor: AppTheme.primaryDark,
-                  baseStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    fontFeatures: [FontFeature.tabularFigures()],
-                  ),
+          const Spacer(),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerRight,
+            child: Text(
+              UIUtils.formatCurrency(pay, symbol: settings.currencySymbol),
+              style: UIUtils.getCurrencyStyle(
+                context,
+                pay,
+                positiveColor: AppTheme.primaryDark,
+                baseStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  fontFeatures: [FontFeature.tabularFigures()],
                 ),
               ),
             ),
           ),
           if (isWide) ...[
-            const SizedBox(width: 4),
+            const SizedBox(width: 8),
             IconButton(
               icon: const Icon(Icons.edit_outlined, size: 20),
               tooltip: l.common_edit,

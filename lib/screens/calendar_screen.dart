@@ -288,6 +288,13 @@ class _CalendarScreenState extends State<CalendarScreen>
                                           .colorScheme
                                           .onSurface;
 
+                                      final hasShift =
+                                          events.isNotEmpty ||
+                                          _getShiftsForDay(
+                                            day,
+                                            allShifts,
+                                          ).isNotEmpty;
+
                                       return Positioned(
                                         bottom: 1,
                                         child: GestureDetector(
@@ -300,14 +307,24 @@ class _CalendarScreenState extends State<CalendarScreen>
                                           child: Container(
                                             padding: const EdgeInsets.all(3),
                                             decoration: BoxDecoration(
-                                              color: textColor.withValues(
+                                              color: hasShift
+                                                  ? Theme
+                                                  .of(context)
+                                                  .colorScheme
+                                                  .primaryContainer
+                                                  : textColor.withValues(
                                                 alpha: 0.12,
                                               ),
                                               shape: BoxShape.circle,
                                             ),
                                             child: MagenDavidIcon(
                                               size: 13,
-                                              color: textColor,
+                                              color: hasShift
+                                                  ? Theme
+                                                  .of(context)
+                                                  .colorScheme
+                                                  .onPrimaryContainer
+                                                  : textColor,
                                             ),
                                           ),
                                         ),

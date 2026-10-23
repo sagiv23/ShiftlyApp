@@ -1501,7 +1501,10 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                 children: [
                   Expanded(
                     child: Text(
-                      '${l.overtime_tier1_label} (${(breakdown.tier1Multiplier * 100).toStringAsFixed(0)}%)',
+                      l.overtime_tier_custom_label.replaceFirst(
+                        '[[rate]]',
+                        (breakdown.tier1Multiplier * 100).toStringAsFixed(0),
+                      ),
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         color: AppTheme.primaryDark,
@@ -1527,7 +1530,10 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                 children: [
                   Expanded(
                     child: Text(
-                      '${l.overtime_tier2_label} (${(breakdown.tier2Multiplier * 100).toStringAsFixed(0)}%)',
+                      l.overtime_tier_custom_label.replaceFirst(
+                        '[[rate]]',
+                        (breakdown.tier2Multiplier * 100).toStringAsFixed(0),
+                      ),
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         color: AppTheme.primaryDark,
