@@ -5,6 +5,10 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Shiftly - מדיניות פרטיות | Privacy Policy</title>
 
+    <!-- App Favicon & Icons -->
+    <link href="assets/icon/app_icon.png" rel="icon" type="image/png">
+    <link href="assets/icon/app_icon.png" rel="apple-touch-icon">
+
     <!-- Google Site Verification -->
     <meta content="google17f0b1fea8d70e31" name="google-site-verification"/>
 
@@ -45,8 +49,8 @@
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 20px 8%;
-          background-color: rgba(15, 23, 42, 0.9);
+          padding: 16px 8%;
+          background-color: rgba(15, 23, 42, 0.92);
           backdrop-filter: blur(12px);
           position: sticky;
           top: 0;
@@ -61,16 +65,11 @@
           text-decoration: none;
         }
 
-        .logo-icon {
+        .logo-img {
           width: 40px;
           height: 40px;
-          background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #0F172A;
-          font-size: 20px;
+          border-radius: 10px;
+          object-fit: cover;
         }
 
         .logo-text {
@@ -81,20 +80,20 @@
 
         .container {
           max-width: 900px;
-          margin: 50px auto;
-          padding: 0 24px;
+          margin: 40px auto;
+          padding: 0 20px;
         }
 
         .card {
           background-color: var(--card-bg);
           border: 1px solid var(--card-border);
           border-radius: 24px;
-          padding: 40px;
+          padding: 36px;
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         h1 {
-          font-size: 36px;
+          font-size: 32px;
           font-weight: 800;
           margin-bottom: 12px;
           color: #FFFFFF;
@@ -107,7 +106,7 @@
         }
 
         h2 {
-          font-size: 22px;
+          font-size: 20px;
           font-weight: 700;
           margin: 28px 0 12px;
           color: var(--primary);
@@ -133,7 +132,6 @@
           color: var(--primary);
           text-decoration: none;
           font-weight: 600;
-          margin-bottom: 24px;
         }
 
         .btn-back:hover {
@@ -146,15 +144,19 @@
           color: var(--text-muted);
           font-size: 14px;
         }
+
+        @media (max-width: 768px) {
+          .navbar { padding: 14px 5%; }
+          .card { padding: 24px; }
+          h1 { font-size: 26px; }
+        }
     </style>
 </head>
 <body>
 
 <nav class="navbar">
     <a class="logo-container" href="index.html">
-        <div class="logo-icon">
-            <i class="fa-solid fa-bolt"></i>
-        </div>
+        <img alt="Shiftly Icon" class="logo-img" src="assets/icon/app_icon.png"/>
         <span class="logo-text">Shiftly</span>
     </a>
     <a class="btn-back" href="index.html"><i class="fa-solid fa-arrow-right"></i> חזרה לדף הבית</a>
@@ -163,7 +165,7 @@
 <div class="container">
     <div class="card">
         <h1>🛡️ מדיניות פרטיות | Privacy Policy</h1>
-        <div class="subtitle">תאריך עדכון אחרון: 19 באוקטובר 2026</div>
+        <div class="subtitle">תאריך עדכון אחרון: 23 באוקטובר 2026</div>
 
         <h2>1. כללי והתחייבות לפרטיות</h2>
         <p>מסמך זה מפרט את מדיניות הפרטיות של אפליקציית Shiftly ("האפליקציה"). אנו מחויבים להגנה
@@ -175,8 +177,8 @@
             <li><strong>פרטי חשבון:</strong> במידה ונרשמת לחשבון Shiftly, נשמרים שם, כתובת דוא"ל
                 ותאריך לידה לצורך זיהוי וניהול החשבון.
             </li>
-            <li><strong>נתוני משמרות ושכר:</strong> כל הנתונים הזניים (משמרות, תפקידים, הוצאות ושכר)
-                נשמרים באופן מאובטח.
+            <li><strong>נתוני משמרות ושכר:</strong> כל הנתונים המוזנים (משמרות, תפקידים, הוצאות
+                ושכר) נשמרים באופן מאובטח.
             </li>
             <li><strong>גיבוי פרטי ב-Google Drive (BYOS):</strong> בעת הפעלת גיבוי בענן, האפליקציה
                 משתמשת בהרשאה <code>https://www.googleapis.com/auth/drive.appdata</code> כדי לשמור
@@ -194,7 +196,7 @@
             ישירות ממסך הפרופיל באפליקציה.</p>
 
         <h2>5. יצירת קשר</h2>
-        <p>לכל שאלה או פנייה בנושא פרטיות ניתן ליצור קשר בכתובת: <code>support@shiftly.app</code>
+        <p>לכל שאלה או פנייה בנושא פרטיות ניתן ליצור קשר בכתובת: <code>shiftlyapp23@gmail.com</code>
         </p>
     </div>
 

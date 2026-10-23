@@ -63,7 +63,7 @@
 ### 6. יצירת קשר
 
 לכל שאלה או פנייה בנושא פרטיות, ניתן ליצור קשר בכתובת:
-📧 `support@shiftly.app` או לצפות
+📧 `shiftlyapp23@gmail.com` או לצפות
 ב[תצוגת האינטרנט של מדיניות הפרטיות](https://sagiv23.github.io/Shiftly/privacy.html).
 
 </div>
@@ -103,4 +103,4 @@ records directly from the Profile screen within the App.
 
 ### 5. Contact Information
 
-For privacy queries or data requests, contact us at: `support@shiftly.app`.
+For privacy queries or data requests, contact us at: `shiftlyapp23@gmail.com`.

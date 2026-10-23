@@ -5,6 +5,10 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Shiftly - מערכת מתקדמת לניהול משמרות, שכר והוצאות</title>
 
+    <!-- App Favicon & Apple Touch Icon -->
+    <link href="assets/icon/app_icon.png" rel="icon" type="image/png">
+    <link href="assets/icon/app_icon.png" rel="apple-touch-icon">
+
     <!-- Google Site Verification -->
     <meta content="google17f0b1fea8d70e31" name="google-site-verification"/>
 
@@ -32,6 +36,10 @@
           --warning: #FBBF24;
         }
 
+        html {
+          scroll-behavior: smooth;
+        }
+
         * {
           box-sizing: border-box;
           margin: 0;
@@ -52,12 +60,12 @@
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 20px 8%;
-          background-color: rgba(15, 23, 42, 0.9);
+          padding: 16px 8%;
+          background-color: rgba(15, 23, 42, 0.92);
           backdrop-filter: blur(12px);
           position: sticky;
           top: 0;
-          z-index: 100;
+          z-index: 1000;
           border-bottom: 1px solid var(--card-border);
         }
 
@@ -68,17 +76,12 @@
           text-decoration: none;
         }
 
-        .logo-icon {
+        .logo-img {
           width: 44px;
           height: 44px;
-          background: linear-gradient(135deg, var(--primary), var(--primary-dark));
           border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #0F172A;
-          font-size: 22px;
-          box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
+          object-fit: cover;
+          box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
         }
 
         .logo-text {
@@ -100,17 +103,24 @@
           text-decoration: none;
           font-weight: 500;
           transition: all 0.2s;
+          font-size: 16px;
         }
 
         .nav-links a:hover {
           color: var(--primary);
         }
 
+        .nav-buttons {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
         .btn-primary {
           background: linear-gradient(135deg, var(--primary), var(--primary-dark));
           color: #0F172A;
           font-weight: 700;
-          padding: 12px 24px;
+          padding: 10px 20px;
           border-radius: 12px;
           text-decoration: none;
           display: inline-flex;
@@ -118,6 +128,7 @@
           gap: 8px;
           transition: transform 0.2s, box-shadow 0.2s;
           box-shadow: 0 4px 20px rgba(56, 189, 248, 0.25);
+          font-size: 15px;
         }
 
         .btn-primary:hover {
@@ -125,9 +136,24 @@
           box-shadow: 0 6px 25px rgba(56, 189, 248, 0.4);
         }
 
+        /* Mobile Toggle Button */
+        .mobile-toggle {
+          display: none;
+          background: var(--card-bg);
+          border: 1px solid var(--card-border);
+          color: var(--text-main);
+          width: 42px;
+          height: 42px;
+          border-radius: 10px;
+          font-size: 20px;
+          cursor: pointer;
+          align-items: center;
+          justify-content: center;
+        }
+
         /* Hero Section */
         .hero {
-          padding: 80px 8% 60px;
+          padding: 60px 6% 40px;
           text-align: center;
           max-width: 1100px;
           margin: 0 auto;
@@ -148,7 +174,7 @@
         }
 
         .hero h1 {
-          font-size: 52px;
+          font-size: 48px;
           font-weight: 800;
           line-height: 1.2;
           margin-bottom: 20px;
@@ -162,7 +188,7 @@
         }
 
         .hero p {
-          font-size: 20px;
+          font-size: 19px;
           color: var(--text-muted);
           max-width: 750px;
           margin: 0 auto 36px;
@@ -171,7 +197,7 @@
         .download-buttons {
           display: flex;
           justify-content: center;
-          gap: 16px;
+          gap: 14px;
           flex-wrap: wrap;
           margin-bottom: 48px;
         }
@@ -180,7 +206,7 @@
           background-color: var(--card-bg);
           color: var(--text-main);
           border: 1px solid var(--card-border);
-          padding: 12px 24px;
+          padding: 12px 22px;
           border-radius: 12px;
           font-weight: 600;
           text-decoration: none;
@@ -188,6 +214,7 @@
           align-items: center;
           gap: 10px;
           transition: all 0.2s;
+          font-size: 15px;
         }
 
         .btn-outline:hover {
@@ -196,19 +223,43 @@
           transform: translateY(-2px);
         }
 
-        /* Feature Cards Grid */
+        /* Features Wrapper (Anchor Target) */
+        .features-wrapper {
+          scroll-margin-top: 100px;
+          padding: 40px 6% 60px;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .section-header {
+          text-align: center;
+          margin-bottom: 36px;
+        }
+
+        .section-header h2 {
+          font-size: 34px;
+          font-weight: 800;
+          margin-bottom: 10px;
+          color: #FFFFFF;
+        }
+
+        .section-header p {
+          color: var(--text-muted);
+          font-size: 17px;
+        }
+
+        /* Feature Cards Grid (4 Cards) */
         .app-preview-container {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
           gap: 24px;
-          margin-top: 40px;
         }
 
         .preview-card {
           background-color: var(--card-bg);
           border: 1px solid var(--card-border);
           border-radius: 20px;
-          padding: 30px;
+          padding: 28px;
           text-align: right;
           transition: transform 0.2s, border-color 0.2s;
         }
@@ -219,14 +270,14 @@
         }
 
         .card-icon {
-          width: 50px;
-          height: 50px;
+          width: 48px;
+          height: 48px;
           border-radius: 14px;
           display: flex;
           align-items: center;
           justify-content: center;
           font-size: 22px;
-          margin-bottom: 20px;
+          margin-bottom: 18px;
         }
 
         .icon-blue { background: rgba(56, 189, 248, 0.15); color: var(--primary); }
@@ -246,37 +297,13 @@
           color: var(--text-muted);
         }
 
-        /* Features Section */
-        .features-section {
-          padding: 80px 8%;
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .section-header {
-          text-align: center;
-          margin-bottom: 50px;
-        }
-
-        .section-header h2 {
-          font-size: 36px;
-          font-weight: 800;
-          margin-bottom: 12px;
-          color: #FFFFFF;
-        }
-
-        .section-header p {
-          color: var(--text-muted);
-          font-size: 18px;
-        }
-
         /* Legal Section Footer Box */
         .legal-box {
           background-color: var(--card-bg);
           border: 1px solid var(--card-border);
           border-radius: 20px;
-          padding: 40px;
-          margin: 60px 8%;
+          padding: 36px 24px;
+          margin: 40px 6% 60px;
           text-align: center;
         }
 
@@ -284,6 +311,7 @@
           font-size: 24px;
           font-weight: 700;
           margin-bottom: 12px;
+          color: #FFFFFF;
         }
 
         .legal-box p {
@@ -300,9 +328,9 @@
 
         /* Footer */
         footer {
-          background-color: rgba(15, 23, 42, 0.95);
+          background-color: rgba(15, 23, 42, 0.98);
           border-top: 1px solid var(--card-border);
-          padding: 40px 8% 30px;
+          padding: 40px 6% 30px;
           text-align: center;
         }
 
@@ -321,6 +349,7 @@
         .footer-links {
           display: flex;
           gap: 20px;
+          flex-wrap: wrap;
         }
 
         .footer-links a {
@@ -340,11 +369,77 @@
           margin-top: 24px;
         }
 
+        /* Mobile Responsive Adjustments */
         @media (max-width: 768px) {
-          .hero h1 { font-size: 36px; }
-          .hero p { font-size: 16px; }
-          .navbar { padding: 16px 5%; }
-          .footer-content { flex-direction: column; text-align: center; }
+          .navbar {
+            padding: 14px 5%;
+          }
+
+          .mobile-toggle {
+            display: flex;
+          }
+
+          .nav-links {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            left: 0;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            flex-direction: column;
+            padding: 20px;
+            gap: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+          }
+
+          .nav-links.active {
+            display: flex;
+          }
+
+          .nav-buttons {
+            display: none;
+          }
+
+          .hero {
+            padding: 40px 5% 30px;
+          }
+
+          .hero h1 {
+            font-size: 32px;
+          }
+
+          .hero p {
+            font-size: 16px;
+          }
+
+          .download-buttons {
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+          }
+
+          .download-buttons a {
+            justify-content: center;
+            width: 100%;
+          }
+
+          .features-wrapper {
+            padding: 20px 5% 40px;
+          }
+
+          .section-header h2 {
+            font-size: 26px;
+          }
+
+          .footer-content {
+            flex-direction: column;
+            text-align: center;
+          }
+
+          .footer-links {
+            justify-content: center;
+          }
         }
     </style>
 </head>
@@ -353,21 +448,25 @@
 <!-- Navbar -->
 <nav class="navbar">
     <a class="logo-container" href="#">
-        <div class="logo-icon">
-            <i class="fa-solid fa-bolt"></i>
-        </div>
+        <img alt="Shiftly Icon" class="logo-img" src="assets/icon/app_icon.png"/>
         <span class="logo-text">Shiftly</span>
     </a>
 
-    <ul class="nav-links">
-        <li><a href="#features">תכונות</a></li>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#features">תכונות האפליקציה</a></li>
         <li><a href="privacy.html">מדיניות פרטיות</a></li>
         <li><a href="terms.html">תנאי שימוש</a></li>
     </ul>
 
-    <a class="btn-primary" href="https://github.com/sagiv23/Shiftly/releases" target="_blank">
-        <i class="fa-brands fa-android"></i> הורד APK
-    </a>
+    <div class="nav-buttons">
+        <a class="btn-primary" href="https://github.com/sagiv23/Shiftly/releases" target="_blank">
+            <i class="fa-solid fa-download"></i> הורד אפליקציה
+        </a>
+    </div>
+
+    <button aria-label="תפריט" class="mobile-toggle" id="mobileToggle">
+        <i class="fa-solid fa-bars"></i>
+    </button>
 </nav>
 
 <!-- Hero Section -->
@@ -378,12 +477,12 @@
 
     <h1>מערכת מתקדמת לניהול <span>משמרות ושכר</span> בכל הפלטפורמות</h1>
 
-    <p>Shiftly מעניקה לך שליטה מלאה על המשמרות, השעות הנוספות, הטיפים וההוצאות — עם חישובים מדויקים
+    <p>Shiftly מעניקה לך שליטה מלאה על המשמרות, השעות הנוספות, הטיפים וההוצאות - עם חישובים מדויקים
         לפי חוקי העבודה בישראל וסנכרון ענן מאובטח.</p>
 
     <div class="download-buttons">
         <a class="btn-primary" href="https://github.com/sagiv23/Shiftly/releases" target="_blank">
-            <i class="fa-solid fa-download"></i> הורד ל-Android (APK)
+            <i class="fa-solid fa-download"></i> הורדה ל-Android &amp; iOS
         </a>
         <a class="btn-outline" href="privacy.html">
             <i class="fa-solid fa-user-shield"></i> מדיניות פרטיות
@@ -392,9 +491,18 @@
             <i class="fa-solid fa-gavel"></i> תנאי שימוש
         </a>
     </div>
+</section>
 
-    <!-- App Features Preview Cards Grid -->
-    <div class="app-preview-container" id="features">
+<!-- Features Target Section -->
+<section class="features-wrapper" id="features">
+    <div class="section-header">
+        <h2><i class="fa-solid fa-list-check" style="color: var(--primary);"></i> תכונות האפליקציה
+        </h2>
+        <p>ארבעת הכלים המרכזיים לניהול חכם של שעות, שכר והוצאות</p>
+    </div>
+
+    <!-- App Features Preview Cards Grid (4 Cards) -->
+    <div class="app-preview-container">
         <div class="preview-card">
             <div class="card-icon icon-blue">
                 <i class="fa-solid fa-clock"></i>
@@ -450,9 +558,8 @@
 <footer>
     <div class="footer-content">
         <a class="logo-container" href="#">
-            <div class="logo-icon" style="width:36px; height:36px; font-size:18px;">
-                <i class="fa-solid fa-bolt"></i>
-            </div>
+            <img alt="Shiftly Icon" class="logo-img" src="assets/icon/app_icon.png"
+                 style="width:36px; height:36px;"/>
             <span class="logo-text" style="font-size:20px;">Shiftly</span>
         </a>
 
@@ -467,6 +574,24 @@
         &copy; 2026 Shiftly App. כל הזכויות שמורות.
     </div>
 </footer>
+
+<script>
+    // Mobile Nav Toggle Script
+    const mobileToggle = document.getElementById('mobileToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    if (mobileToggle && navLinks) {
+      mobileToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+      });
+
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          navLinks.classList.remove('active');
+        });
+      });
+    }
+</script>
 
 </body>
 </html>
