@@ -34,31 +34,6 @@ jobs:
           path: |
             *.apk
 
-  build-web:
-    name: Build Web
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-      - name: Install dependencies
-        run: flutter pub get
-      - name: Run build_runner
-        run: flutter pub run build_runner build --delete-conflicting-outputs
-      - name: Build Web
-        run: flutter build web --release
-      - name: Archive Web
-        run: |
-          cd build/web
-          zip -r ../../web-release.zip .
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-assets
-          path: web-release.zip
-
   build-windows:
     name: Build Windows
     runs-on: windows-latest
@@ -165,7 +140,7 @@ jobs:
 
   create-release:
     name: Create GitHub Release
-    needs: [ build-android, build-web, build-windows, build-linux, build-macos, build-ios ]
+    needs: [ build-android, build-windows, build-linux, build-macos, build-ios ]
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifacts
@@ -193,14 +168,13 @@ jobs:
             #### iOS / iPhone:
             * **`ios-release.ipa`:** קובץ להתקנה ב-iOS. *שימו לב: הקובץ נבנה ללא חתימת מפתח (Unsigned), וניתן להתקנה באמצעות AltStore, TrollStore, Sideloadly או כלי פיתוח.*
 
-            #### Desktop & Web:
-            * יש להוריד את קובץ ה-Zip המתאים לפלטפורמה (`windows`, `macos`, `linux`, `web`), לחלץ ולהריץ.
+            #### Desktop:
+            * יש להוריד את קובץ ה-Zip המתאים לפלטפורמה (`windows`, `macos`, `linux`), לחלץ ולהריץ.
 
             </div>
 
           files: |
             release-assets/*.apk
-            release-assets/web-release.zip
             release-assets/windows-release.zip
             release-assets/linux-release.zip
             release-assets/macos-release.zip

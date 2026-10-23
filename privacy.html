@@ -78,6 +78,12 @@
           color: var(--text-main);
         }
 
+        .nav-actions {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+
         .container {
           max-width: 900px;
           margin: 40px auto;
@@ -159,7 +165,12 @@
         <img alt="Shiftly Icon" class="logo-img" src="assets/icon/app_icon.png"/>
         <span class="logo-text">Shiftly</span>
     </a>
-    <a class="btn-back" href="index.html"><i class="fa-solid fa-arrow-right"></i> חזרה לדף הבית</a>
+    <div class="nav-actions">
+        <a href="https://shiftly-ujfd.onrender.com/" style="color: var(--primary); text-decoration: none; font-weight: 600;"
+           target="_blank"><i
+                class="fa-solid fa-globe"></i> כניסה ל-Shiftly Web</a>
+        <a class="btn-back" href="index.html"><i class="fa-solid fa-arrow-right"></i> חזרה לדף הבית</a>
+    </div>
 </nav>
 
 <div class="container">

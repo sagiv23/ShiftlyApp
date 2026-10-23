@@ -9,9 +9,9 @@
   <br />
 
   <p style="text-align: center;">
-    <a href="PRIVACY.md"><img src="https://img.shields.io/badge/🛡️_Privacy_Policy-Protected-38BDF8?style=for-the-badge&logoColor=0F172A" alt="Privacy Policy" /></a>
-    <a href="TERMS.md"><img src="https://img.shields.io/badge/⚖️_Terms_of_Service-Verified-0EA5E9?style=for-the-badge&logoColor=white" alt="Terms of Service" /></a>
-    <img src="https://img.shields.io/badge/Flutter-3.x-38BDF8?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter" />
+    <a href="https://shiftly-ujfd.onrender.com/" target="_blank"><img src="https://img.shields.io/badge/🌐_Shiftly_Web-Live_App-38BDF8?style=for-the-badge&logoColor=0F172A" alt="Shiftly Web" /></a>
+    <a href="PRIVACY.md"><img src="https://img.shields.io/badge/🛡️_Privacy_Policy-Protected-0EA5E9?style=for-the-badge" alt="Privacy Policy" /></a>
+    <a href="TERMS.md"><img src="https://img.shields.io/badge/⚖️_Terms_of_Service-Verified-0EA5E9?style=for-the-badge" alt="Terms of Service" /></a>
     <img src="https://img.shields.io/badge/Platforms-Android%20%7C%20iOS%20%7C%20Web%20%7C%20Desktop-22C55E?style=for-the-badge" alt="Platforms" />
   </p>
 
