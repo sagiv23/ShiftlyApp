@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Shiftly - מערכת מתקדמת לניהול משמרות, שכר והוצאות</title>
+
+    <!-- Google Site Verification -->
+    <meta content="google17f0b1fea8d70e31" name="google-site-verification"/>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          rel="stylesheet">
+
+    <style>
+        :root {
+          --bg-color: #0F172A;
+          --card-bg: #1E293B;
+          --card-border: #334155;
+          --primary: #38BDF8;
+          --primary-dark: #0EA5E9;
+          --text-main: #F1F5F9;
+          --text-muted: #94A3B8;
+          --profit: #22C55E;
+          --expense: #F87171;
+          --warning: #FBBF24;
+        }
+
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+
+        body {
+          font-family: 'Rubik', system-ui, -apple-system, sans-serif;
+          background-color: var(--bg-color);
+          color: var(--text-main);
+          line-height: 1.6;
+          direction: rtl;
+          overflow-x: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px 8%;
+          background-color: rgba(15, 23, 42, 0.9);
+          backdrop-filter: blur(12px);
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          border-bottom: 1px solid var(--card-border);
+        }
+
+        .logo-container {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          text-decoration: none;
+        }
+
+        .logo-icon {
+          width: 44px;
+          height: 44px;
+          background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #0F172A;
+          font-size: 22px;
+          box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
+        }
+
+        .logo-text {
+          font-size: 26px;
+          font-weight: 800;
+          color: var(--text-main);
+          letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+          display: flex;
+          gap: 24px;
+          align-items: center;
+          list-style: none;
+        }
+
+        .nav-links a {
+          color: var(--text-muted);
+          text-decoration: none;
+          font-weight: 500;
+          transition: all 0.2s;
+        }
+
+        .nav-links a:hover {
+          color: var(--primary);
+        }
+
+        .btn-primary {
+          background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+          color: #0F172A;
+          font-weight: 700;
+          padding: 12px 24px;
+          border-radius: 12px;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          transition: transform 0.2s, box-shadow 0.2s;
+          box-shadow: 0 4px 20px rgba(56, 189, 248, 0.25);
+        }
+
+        .btn-primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 25px rgba(56, 189, 248, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+          padding: 80px 8% 60px;
+          text-align: center;
+          max-width: 1100px;
+          margin: 0 auto;
+        }
+
+        .badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 18px;
+          background-color: var(--card-bg);
+          border: 1px solid var(--card-border);
+          border-radius: 20px;
+          color: var(--primary);
+          font-size: 14px;
+          font-weight: 600;
+          margin-bottom: 24px;
+        }
+
+        .hero h1 {
+          font-size: 52px;
+          font-weight: 800;
+          line-height: 1.2;
+          margin-bottom: 20px;
+          color: #FFFFFF;
+        }
+
+        .hero h1 span {
+          background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+          font-size: 20px;
+          color: var(--text-muted);
+          max-width: 750px;
+          margin: 0 auto 36px;
+        }
+
+        .download-buttons {
+          display: flex;
+          justify-content: center;
+          gap: 16px;
+          flex-wrap: wrap;
+          margin-bottom: 48px;
+        }
+
+        .btn-outline {
+          background-color: var(--card-bg);
+          color: var(--text-main);
+          border: 1px solid var(--card-border);
+          padding: 12px 24px;
+          border-radius: 12px;
+          font-weight: 600;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+          border-color: var(--primary);
+          color: var(--primary);
+          transform: translateY(-2px);
+        }
+
+        /* Feature Cards Grid */
+        .app-preview-container {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 24px;
+          margin-top: 40px;
+        }
+
+        .preview-card {
+          background-color: var(--card-bg);
+          border: 1px solid var(--card-border);
+          border-radius: 20px;
+          padding: 30px;
+          text-align: right;
+          transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .preview-card:hover {
+          transform: translateY(-4px);
+          border-color: var(--primary);
+        }
+
+        .card-icon {
+          width: 50px;
+          height: 50px;
+          border-radius: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 22px;
+          margin-bottom: 20px;
+        }
+
+        .icon-blue { background: rgba(56, 189, 248, 0.15); color: var(--primary); }
+        .icon-green { background: rgba(34, 197, 94, 0.15); color: var(--profit); }
+        .icon-orange { background: rgba(251, 191, 36, 0.15); color: var(--warning); }
+        .icon-purple { background: rgba(168, 85, 247, 0.15); color: #A855F7; }
+
+        .preview-card h3 {
+          font-size: 20px;
+          font-weight: 700;
+          margin-bottom: 10px;
+          color: #FFFFFF;
+        }
+
+        .preview-card p {
+          font-size: 15px;
+          color: var(--text-muted);
+        }
+
+        /* Features Section */
+        .features-section {
+          padding: 80px 8%;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .section-header {
+          text-align: center;
+          margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+          font-size: 36px;
+          font-weight: 800;
+          margin-bottom: 12px;
+          color: #FFFFFF;
+        }
+
+        .section-header p {
+          color: var(--text-muted);
+          font-size: 18px;
+        }
+
+        /* Legal Section Footer Box */
+        .legal-box {
+          background-color: var(--card-bg);
+          border: 1px solid var(--card-border);
+          border-radius: 20px;
+          padding: 40px;
+          margin: 60px 8%;
+          text-align: center;
+        }
+
+        .legal-box h3 {
+          font-size: 24px;
+          font-weight: 700;
+          margin-bottom: 12px;
+        }
+
+        .legal-box p {
+          color: var(--text-muted);
+          margin-bottom: 24px;
+        }
+
+        .legal-buttons {
+          display: flex;
+          justify-content: center;
+          gap: 16px;
+          flex-wrap: wrap;
+        }
+
+        /* Footer */
+        footer {
+          background-color: rgba(15, 23, 42, 0.95);
+          border-top: 1px solid var(--card-border);
+          padding: 40px 8% 30px;
+          text-align: center;
+        }
+
+        .footer-content {
+          max-width: 1100px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 20px;
+          padding-bottom: 24px;
+          border-bottom: 1px solid var(--card-border);
+        }
+
+        .footer-links {
+          display: flex;
+          gap: 20px;
+        }
+
+        .footer-links a {
+          color: var(--text-muted);
+          text-decoration: none;
+          font-size: 15px;
+          transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+          color: var(--primary);
+        }
+
+        .copyright {
+          color: var(--text-muted);
+          font-size: 14px;
+          margin-top: 24px;
+        }
+
+        @media (max-width: 768px) {
+          .hero h1 { font-size: 36px; }
+          .hero p { font-size: 16px; }
+          .navbar { padding: 16px 5%; }
+          .footer-content { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <a class="logo-container" href="#">
+        <div class="logo-icon">
+            <i class="fa-solid fa-bolt"></i>
+        </div>
+        <span class="logo-text">Shiftly</span>
+    </a>
+
+    <ul class="nav-links">
+        <li><a href="#features">תכונות</a></li>
+        <li><a href="privacy.html">מדיניות פרטיות</a></li>
+        <li><a href="terms.html">תנאי שימוש</a></li>
+    </ul>
+
+    <a class="btn-primary" href="https://github.com/sagiv23/Shiftly/releases" target="_blank">
+        <i class="fa-brands fa-android"></i> הורד APK
+    </a>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="badge">
+        <i class="fa-solid fa-shield-halved"></i> מוגן ב-BYOS Google Drive &amp; Shiftly Cloud
+    </div>
+
+    <h1>מערכת מתקדמת לניהול <span>משמרות ושכר</span> בכל הפלטפורמות</h1>
+
+    <p>Shiftly מעניקה לך שליטה מלאה על המשמרות, השעות הנוספות, הטיפים וההוצאות — עם חישובים מדויקים
+        לפי חוקי העבודה בישראל וסנכרון ענן מאובטח.</p>
+
+    <div class="download-buttons">
+        <a class="btn-primary" href="https://github.com/sagiv23/Shiftly/releases" target="_blank">
+            <i class="fa-solid fa-download"></i> הורד ל-Android (APK)
+        </a>
+        <a class="btn-outline" href="privacy.html">
+            <i class="fa-solid fa-user-shield"></i> מדיניות פרטיות
+        </a>
+        <a class="btn-outline" href="terms.html">
+            <i class="fa-solid fa-gavel"></i> תנאי שימוש
+        </a>
+    </div>
+
+    <!-- App Features Preview Cards Grid -->
+    <div class="app-preview-container" id="features">
+        <div class="preview-card">
+            <div class="card-icon icon-blue">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <h3>שעון נוכחות וטיימר חכם</h3>
+            <p>הפעלה וסיום משמרת בזמן אמת, מעקב הפסקות בתשלום/ללא תשלום, ובקרה נוחה מווילון ההתראות
+                במכשיר.</p>
+        </div>
+
+        <div class="preview-card">
+            <div class="card-icon icon-green">
+                <i class="fa-solid fa-calculator"></i>
+            </div>
+            <h3>חישוב שעות נוספות ושבתות</h3>
+            <p>חישוב אוטומטי של שעות נוספות (125%, 150%) וזיהוי אוטומטי של כניסת ויציאת שבת וחגים
+                תחת תעריפים מיוחדים.</p>
+        </div>
+
+        <div class="preview-card">
+            <div class="card-icon icon-orange">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <h3>גיבוי פרטי (BYOS) &amp; Cloud</h3>
+            <p>שמירה וסנכרון מוצפן ישירות ב-Google Drive הפרטי שלך (AppData) או סנכרון בזמן אמת בין
+                מכשירים ב-Shiftly Cloud.</p>
+        </div>
+
+        <div class="preview-card">
+            <div class="card-icon icon-purple">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+            </div>
+            <h3>דוחות וייצוא ב-PDF &amp; Excel</h3>
+            <p>ניתוח נתונים גרפי מתקדם, תיעוד טיפים והוצאות נלוות, וייצוא דוחות מקצועיים בלחיצת
+                כפתור.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Legal Box Section -->
+<section class="legal-box">
+    <h3>🛡️ פרטיות ואבטחת מידע ב-Shiftly</h3>
+    <p>Shiftly מחויבת לשמירה מלאה על פרטיות המשתמשים. הנתונים שלך נשמרים בצורה מאובטחת ואינם נמכרים
+        לצדדים שלישיים.</p>
+    <div class="legal-buttons">
+        <a class="btn-outline" href="privacy.html"><i class="fa-solid fa-shield-halved"></i> מדיניות
+            פרטיות מלאה</a>
+        <a class="btn-outline" href="terms.html"><i class="fa-solid fa-file-contract"></i> תנאי
+            שימוש והבהרה משפטית</a>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-content">
+        <a class="logo-container" href="#">
+            <div class="logo-icon" style="width:36px; height:36px; font-size:18px;">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <span class="logo-text" style="font-size:20px;">Shiftly</span>
+        </a>
+
+        <div class="footer-links">
+            <a href="privacy.html">מדיניות פרטיות (Privacy Policy)</a>
+            <a href="terms.html">תנאי שימוש (Terms of Service)</a>
+            <a href="https://github.com/sagiv23/Shiftly" target="_blank">GitHub Repository</a>
+        </div>
+    </div>
+
+    <div class="copyright">
+        &copy; 2026 Shiftly App. כל הזכויות שמורות.
+    </div>
+</footer>
+
+</body>
+</html>
