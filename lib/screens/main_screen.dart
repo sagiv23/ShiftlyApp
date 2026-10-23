@@ -6,12 +6,12 @@ import 'package:shiftly/screens/expenses_income_screen.dart';
 import 'package:shiftly/screens/home_screen.dart';
 import 'package:shiftly/screens/settings_screen.dart';
 import 'package:shiftly/screens/shift_descriptions_screen.dart';
+import 'package:shiftly/services/update_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/cookie_consent_banner.dart';
 import 'package:shiftly/widgets/skeleton_loaders.dart';
-import 'package:shiftly/services/update_service.dart';
 import 'package:shiftly/widgets/update_dialog.dart';
 
 class LazyTabPageWrapper extends StatefulWidget {

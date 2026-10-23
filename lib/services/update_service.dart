@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_filex/open_filex.dart';
@@ -45,13 +46,15 @@ class UpdateService {
           ? packageInfo.version
           : '1.0.0';
 
-      final response = await http.get(
-        Uri.parse(latestReleaseApiUrl),
-        headers: {
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'Shiftly-App',
-        },
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse(latestReleaseApiUrl),
+            headers: {
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'Shiftly-App',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode != 200) {
         debugPrint(
@@ -63,7 +66,8 @@ class UpdateService {
       final Map<String, dynamic> json = jsonDecode(response.body);
 
       final String tagName = json['tag_name'] ?? '';
-      final String versionName = tagName.startsWith('v') || tagName.startsWith('V')
+      final String versionName =
+          tagName.startsWith('v') || tagName.startsWith('V')
           ? tagName.substring(1)
           : tagName;
 
@@ -71,7 +75,8 @@ class UpdateService {
           l?.update_service_no_changelog ?? 'אין פירוט שינויים זמין.';
       final String changelog = json['body'] ?? fallbackChangelog;
       final String releaseUrl =
-          json['html_url'] ?? 'https://github.com/$repoOwner/$repoName/releases';
+          json['html_url'] ??
+          'https://github.com/$repoOwner/$repoName/releases';
 
       DateTime? publishedAt;
       if (json['published_at'] != null) {
@@ -115,10 +120,9 @@ class UpdateService {
       final List<int> latestParts = _parseVersion(latest);
       final List<int> currentParts = _parseVersion(current);
 
-      final int maxLength =
-          latestParts.length > currentParts.length
-              ? latestParts.length
-              : currentParts.length;
+      final int maxLength = latestParts.length > currentParts.length
+          ? latestParts.length
+          : currentParts.length;
 
       for (int i = 0; i < maxLength; i++) {
         final int l = i < latestParts.length ? latestParts[i] : 0;
@@ -138,7 +142,9 @@ class UpdateService {
     final String cleanVersion = v.split('+').first.trim();
     return cleanVersion
         .split('.')
-        .map((part) => int.tryParse(part.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0)
+        .map(
+          (part) => int.tryParse(part.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0,
+        )
         .toList();
   }
 
@@ -158,7 +164,8 @@ class UpdateService {
       final http.StreamedResponse response = await client.send(request);
 
       if (response.statusCode != 200) {
-        final String errStr = l?.update_service_download_failed(response.statusCode) ??
+        final String errStr =
+            l?.update_service_download_failed(response.statusCode) ??
             'הורדת הקובץ נכשלה (קוד שגיאה: ${response.statusCode})';
         onError(errStr);
         return;
@@ -199,22 +206,25 @@ class UpdateService {
       );
 
       if (openResult.type != ResultType.done) {
-        debugPrint('OpenFilex result type: ${openResult.type}, message: ${openResult.message}');
+        debugPrint(
+          'OpenFilex result type: ${openResult.type}, message: ${openResult.message}',
+        );
         if (openResult.type == ResultType.noAppToOpen) {
-          final String noInstallerStr = l?.update_service_no_installer ??
+          final String noInstallerStr =
+              l?.update_service_no_installer ??
               'לא נמצאה אפליקציה להתקנת קובצי APK במכשיר. נסה לפתוח בדפדפן.';
           onError(noInstallerStr);
         } else {
           final String cannotLaunchStr =
               l?.update_service_cannot_launch_installer(openResult.message) ??
-                  'לא ניתן להפעיל את מתקין האפליקציות (${openResult.message})';
+              'לא ניתן להפעיל את מתקין האפליקציות (${openResult.message})';
           onError(cannotLaunchStr);
         }
       }
     } catch (e) {
       debugPrint('Error downloading and installing APK: $e');
-      final String downloadErrStr = l?.update_service_download_error(e) ??
-          'שגיאה במהלך הורדת העדכון: $e';
+      final String downloadErrStr =
+          l?.update_service_download_error(e) ?? 'שגיאה במהלך הורדת העדכון: $e';
       onError(downloadErrStr);
     }
   }

@@ -22,10 +22,8 @@ class UpdateDialog extends StatefulWidget {
     return showDialog<void>(
       context: context,
       barrierDismissible: !isForceUpdate,
-      builder: (context) => UpdateDialog(
-        updateInfo: updateInfo,
-        isForceUpdate: isForceUpdate,
-      ),
+      builder: (context) =>
+          UpdateDialog(updateInfo: updateInfo, isForceUpdate: isForceUpdate),
     );
   }
 
@@ -151,7 +149,10 @@ class _UpdateDialogState extends State<UpdateDialog> {
               if (widget.isForceUpdate) ...[
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: AppTheme.expense.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
@@ -184,11 +185,12 @@ class _UpdateDialogState extends State<UpdateDialog> {
 
               // Badges section (Current vs New)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? AppTheme.darkCard
-                      : AppTheme.lightBackground,
+                  color: isDark ? AppTheme.darkCard : AppTheme.lightBackground,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isDark
@@ -274,7 +276,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(l.update_dialog_downloading),
-                        Text('${(_downloadProgress * 100).toStringAsFixed(0)}%'),
+                        Text(
+                          '${(_downloadProgress * 100).toStringAsFixed(0)}%',
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),

@@ -284,16 +284,16 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
 
     final shabbatHolidaySummaryCard =
-    (totalShabbatHours > 0 || totalHolidayHours > 0)
+        (totalShabbatHours > 0 || totalHolidayHours > 0)
         ? _buildShabbatHolidaySummaryCard(
-      context,
-      l: l,
-      symbol: symbol,
-      shabbatHours: totalShabbatHours,
-      shabbatEarnings: totalShabbatEarnings,
-      holidayHours: totalHolidayHours,
-      holidayEarnings: totalHolidayEarnings,
-    )
+            context,
+            l: l,
+            symbol: symbol,
+            shabbatHours: totalShabbatHours,
+            shabbatEarnings: totalShabbatEarnings,
+            holidayHours: totalHolidayHours,
+            holidayEarnings: totalHolidayEarnings,
+          )
         : null;
 
     return AdaptiveScaffold(
@@ -1084,7 +1084,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
   }
 
-  Widget _buildShabbatHolidaySummaryCard(BuildContext context, {
+  Widget _buildShabbatHolidaySummaryCard(
+    BuildContext context, {
     required AppLocalizations l,
     required String symbol,
     required double shabbatHours,
@@ -1092,17 +1093,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     required double holidayHours,
     required double holidayEarnings,
   }) {
-    final isDark = Theme
-        .of(context)
-        .brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(AppTheme.spaceMd),
       decoration: BoxDecoration(
-        color: Theme
-            .of(context)
-            .cardTheme
-            .color,
+        color: Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         border: Border.all(
           color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
@@ -1118,7 +1114,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               Text(
                 l.analytics_shabbat_holiday_summary,
                 style: const TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 16),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
             ],
           ),
@@ -1134,19 +1132,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         l.analytics_shabbat_hours,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Theme
-                              .of(
+                          color: Theme.of(
                             context,
-                          )
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.6),
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${shabbatHours.toStringAsFixed(1)} ${l
-                            .common_hours_suffix}',
+                        '${shabbatHours.toStringAsFixed(1)} ${l.common_hours_suffix}',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -1155,10 +1148,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        UIUtils.formatCurrency(
-                          shabbatEarnings,
-                          symbol: symbol,
-                        ),
+                        UIUtils.formatCurrency(shabbatEarnings, symbol: symbol),
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -1178,19 +1168,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         l.analytics_holiday_hours,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Theme
-                              .of(
+                          color: Theme.of(
                             context,
-                          )
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.6),
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${holidayHours.toStringAsFixed(1)} ${l
-                            .common_hours_suffix}',
+                        '${holidayHours.toStringAsFixed(1)} ${l.common_hours_suffix}',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -1199,10 +1184,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        UIUtils.formatCurrency(
-                          holidayEarnings,
-                          symbol: symbol,
-                        ),
+                        UIUtils.formatCurrency(holidayEarnings, symbol: symbol),
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,

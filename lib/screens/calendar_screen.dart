@@ -275,18 +275,13 @@ class _CalendarScreenState extends State<CalendarScreen>
                                       final isHoliday =
                                           matchingBoundary.type == 'holiday';
                                       final isDark =
-                                          Theme
-                                              .of(context)
-                                              .brightness ==
-                                              Brightness.dark;
+                                          Theme.of(context).brightness ==
+                                          Brightness.dark;
                                       final textColor = isDark
                                           ? Colors.white
-                                          : Theme
-                                          .of(
-                                        context,
-                                      )
-                                          .colorScheme
-                                          .onSurface;
+                                          : Theme.of(
+                                              context,
+                                            ).colorScheme.onSurface;
 
                                       final hasShift =
                                           events.isNotEmpty ||
@@ -308,22 +303,20 @@ class _CalendarScreenState extends State<CalendarScreen>
                                             padding: const EdgeInsets.all(3),
                                             decoration: BoxDecoration(
                                               color: hasShift
-                                                  ? Theme
-                                                  .of(context)
-                                                  .colorScheme
-                                                  .primaryContainer
+                                                  ? Theme.of(context)
+                                                        .colorScheme
+                                                        .primaryContainer
                                                   : textColor.withValues(
-                                                alpha: 0.12,
-                                              ),
+                                                      alpha: 0.12,
+                                                    ),
                                               shape: BoxShape.circle,
                                             ),
                                             child: MagenDavidIcon(
                                               size: 13,
                                               color: hasShift
-                                                  ? Theme
-                                                  .of(context)
-                                                  .colorScheme
-                                                  .onPrimaryContainer
+                                                  ? Theme.of(context)
+                                                        .colorScheme
+                                                        .onPrimaryContainer
                                                   : textColor,
                                             ),
                                           ),
@@ -438,10 +431,7 @@ class _CalendarScreenState extends State<CalendarScreen>
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const MagenDavidIcon(
-                            color: Colors.white,
-                            size: 20,
-                          ),
+                          const MagenDavidIcon(color: Colors.white, size: 20),
                           const SizedBox(width: 10),
                           Flexible(
                             child: Text(

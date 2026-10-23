@@ -105,7 +105,9 @@ class GoogleDriveService {
       }
 
       if (credentials == null) {
-        debugPrint('GoogleDrive: Prompting user for interactive Google Sign-In...');
+        debugPrint(
+          'GoogleDrive: Prompting user for interactive Google Sign-In...',
+        );
         credentials = await _googleSignIn.signIn();
       }
 

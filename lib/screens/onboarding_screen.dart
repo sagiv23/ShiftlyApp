@@ -78,11 +78,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
     _onboardingShabbatMultiplierController = TextEditingController(
       text: (_onboardingShabbatRules.shabbatMultiplier * 100).toStringAsFixed(
-          0),
+        0,
+      ),
     );
     _onboardingHolidayMultiplierController = TextEditingController(
       text: (_onboardingShabbatRules.holidayMultiplier * 100).toStringAsFixed(
-          0),
+        0,
+      ),
     );
 
     for (var e in settings.defaultAutomaticExpenses) {
@@ -253,11 +255,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final shabbatMult =
         (double.tryParse(_onboardingShabbatMultiplierController.text) ??
             150.0) /
-            100.0;
+        100.0;
     final holidayMult =
         (double.tryParse(_onboardingHolidayMultiplierController.text) ??
             150.0) /
-            100.0;
+        100.0;
     final updatedShabbatRules = _onboardingShabbatRules.copyWith(
       shabbatMultiplier: shabbatMult,
       holidayMultiplier: holidayMult,

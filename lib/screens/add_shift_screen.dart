@@ -647,9 +647,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          l.add_shift_unknown_job_desc,
-                        ),
+                        Text(l.add_shift_unknown_job_desc),
                         const SizedBox(height: 12),
                         DropdownButtonFormField<String>(
                           initialValue: chosenJobId,
@@ -669,9 +667,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                         ),
                         const SizedBox(height: 12),
                         CheckboxListTile(
-                          title: Text(
-                            l.add_shift_apply_all_instances,
-                          ),
+                          title: Text(l.add_shift_apply_all_instances),
                           value: remember,
                           onChanged: (val) =>
                               setStateSB(() => remember = val ?? false),

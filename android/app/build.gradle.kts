@@ -4,8 +4,8 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-import java.io.FileInputStream
-import java.util.Properties
+import java . io . FileInputStream
+        import java . util . Properties
 
 val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
@@ -36,12 +36,15 @@ android {
 
     signingConfigs {
         create("release") {
-            val keyPath = System.getenv("KEYSTORE_PATH") ?: keystoreProperties.getProperty("storeFile")
+            val keyPath =
+                System.getenv("KEYSTORE_PATH") ?: keystoreProperties.getProperty("storeFile")
             if (keyPath != null && file(keyPath).exists()) {
                 storeFile = file(keyPath)
-                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: keystoreProperties.getProperty("storePassword")
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                    ?: keystoreProperties.getProperty("storePassword")
                 keyAlias = System.getenv("KEY_ALIAS") ?: keystoreProperties.getProperty("keyAlias")
-                keyPassword = System.getenv("KEY_PASSWORD") ?: keystoreProperties.getProperty("keyPassword")
+                keyPassword =
+                    System.getenv("KEY_PASSWORD") ?: keystoreProperties.getProperty("keyPassword")
             } else {
                 val debugKeystore = file("debug.keystore")
                 if (debugKeystore.exists()) {
@@ -59,7 +62,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+            val releaseSigningConfig = signingConfigs.getByName("release")
+            signingConfig = if (releaseSigningConfig.storeFile != null) {
+                releaseSigningConfig
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }

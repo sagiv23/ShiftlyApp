@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/models/job_type.dart';
@@ -8,12 +9,11 @@ import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/profile_screen.dart';
+import 'package:shiftly/services/update_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:shiftly/services/update_service.dart';
 import 'package:shiftly/utils/legal_utils.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
@@ -770,10 +770,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   const SizedBox(height: AppTheme.spaceLg),
-                  _buildSectionHeader(
-                    context,
-                    l.settings_shabbat_section,
-                  ),
+                  _buildSectionHeader(context, l.settings_shabbat_section),
                   const SizedBox(height: AppTheme.spaceXs),
                   Card(
                     child: Padding(
@@ -785,11 +782,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             title: Text(
                               l.settings_shabbat_enable,
                               style: const TextStyle(
-                                  fontWeight: FontWeight.w500),
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                            subtitle: Text(
-                              l.settings_shabbat_enable_sub,
-                            ),
+                            subtitle: Text(l.settings_shabbat_enable_sub),
                             secondary: const Icon(
                               Icons.star_rounded,
                               color: AppTheme.primaryDark,
@@ -972,17 +968,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onTap: _isCheckingUpdates
                           ? null
                           : () async {
-                              final checkingMsg = l.settings_update_checking_toast;
+                              final checkingMsg =
+                                  l.settings_update_checking_toast;
                               final errorMsg = l.settings_update_error_toast;
                               final latestMsg = l.settings_update_latest_toast;
 
                               setState(() {
                                 _isCheckingUpdates = true;
                               });
-                              UIUtils.showSnackBar(
-                                context,
-                                checkingMsg,
-                              );
+                              UIUtils.showSnackBar(context, checkingMsg);
                               final updateInfo =
                                   await UpdateService.checkForUpdates();
                               if (!context.mounted) return;
