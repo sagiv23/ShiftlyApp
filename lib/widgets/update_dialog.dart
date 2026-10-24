@@ -294,48 +294,66 @@ class _UpdateDialogState extends State<UpdateDialog> {
 
               // Actions
               if (!_isDownloading) ...[
-                Row(
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    if (!widget.isForceUpdate) ...[
+                    if (!widget.isForceUpdate)
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
                         child: Text(l.update_dialog_later),
+                      )
+                    else
+                      TextButton.icon(
+                        onPressed: () {
+                          UpdateService.openReleaseInBrowser(
+                            widget.updateInfo.releaseUrl,
+                          );
+                        },
+                        icon: const Icon(Icons.open_in_browser, size: 18),
+                        label: Text(l.update_dialog_open_browser),
                       ),
-                      const Spacer(),
-                    ] else ...[
-                      const Spacer(),
-                    ],
-                    IconButton(
-                      tooltip: l.update_dialog_open_browser,
-                      onPressed: () {
-                        UpdateService.openReleaseInBrowser(
-                          widget.updateInfo.releaseUrl,
-                        );
-                      },
-                      icon: const Icon(Icons.open_in_browser),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: widget.isForceUpdate
-                            ? AppTheme.expense
-                            : AppTheme.primaryDark,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (!widget.isForceUpdate) ...[
+                          TextButton.icon(
+                            onPressed: () {
+                              UpdateService.openReleaseInBrowser(
+                                widget.updateInfo.releaseUrl,
+                              );
+                            },
+                            icon: const Icon(Icons.open_in_browser, size: 18),
+                            label: Text(l.update_dialog_open_browser),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: widget.isForceUpdate
+                                ? AppTheme.expense
+                                : AppTheme.primaryDark,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                          onPressed: _startDownload,
+                          icon: const Icon(Icons.download_rounded, size: 20),
+                          label: Text(
+                            widget.updateInfo.downloadUrl != null
+                                ? l.update_dialog_update_now
+                                : l.update_dialog_open_download,
+                          ),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                      ),
-                      onPressed: _startDownload,
-                      icon: const Icon(Icons.download_rounded, size: 20),
-                      label: Text(
-                        widget.updateInfo.downloadUrl != null
-                            ? l.update_dialog_update_now
-                            : l.update_dialog_open_download,
-                      ),
+                      ],
                     ),
                   ],
                 ),

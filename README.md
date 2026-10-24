@@ -144,6 +144,10 @@ flutter run
   ```bash
   flutter build apk --split-per-abi --release --obfuscate --split-debug-info=build/app/outputs/symbols
   ```
+  כדי להתקין עדכונים מעל אפליקציה קיימת, כל גרסאות ה-APK חייבות להשתמש באותו `applicationId`
+  ובאותו מפתח חתימה. לבניית גרסאות דרך GitHub Actions יש להגדיר את הסודות
+  `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` ו-`ANDROID_KEY_PASSWORD`
+  עם מפתח החתימה הקבוע של האפליקציה.
 * **iOS IPA:**
   ```bash
   flutter build ipa --release --obfuscate --split-debug-info=build/app/outputs/symbols

@@ -233,11 +233,7 @@ class UpdateService {
   static Future<bool> openReleaseInBrowser(String url) async {
     try {
       final Uri uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        return await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        return false;
-      }
+      return await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (e) {
       debugPrint('Error launching release URL: $e');
       return false;

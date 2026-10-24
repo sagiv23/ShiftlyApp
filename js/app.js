@@ -359,7 +359,7 @@ function initDownloadsModal() {
         <span style="font-size: 13px; color: var(--text-muted);">
           <i class="fa-solid fa-shield-halved" style="color: var(--profit);"></i> קבצים מאומתים וחתומים ישירות ממאגר הפיתוח
         </span>
-        <a href="https://github.com/sagiv23/Shiftly/releases" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 8px 16px;">
+        <a href="https://github.com/sagiv23/ShiftlyApp/releases" target="_blank" class="btn btn-outline" style="font-size: 13px; padding: 8px 16px;">
           <i class="fa-brands fa-github"></i> עמוד GitHub Releases
         </a>
       </div>
@@ -409,7 +409,7 @@ function initDownloadsModal() {
   if (downloadsOverlay) downloadsOverlay.addEventListener('click', closeDownloadsModal);
 
   // Intercept all links pointing to GitHub releases (including ShiftlyApp if any)
-  const downloadLinks = document.querySelectorAll('a[href*="github.com/sagiv23/Shiftly"]');
+  const downloadLinks = document.querySelectorAll('a[href*="github.com/sagiv23/ShiftlyApp"]');
   downloadLinks.forEach(link => {
     // Do not intercept links inside the downloads modal
     if (link.closest('#downloadsModal')) return;
@@ -432,7 +432,7 @@ async function fetchReleasesData() {
   if (!bodyEl) return;
 
   try {
-    const response = await fetch('https://api.github.com/repos/sagiv23/Shiftly/releases/latest');
+    const response = await fetch('https://api.github.com/repos/sagiv23/ShiftlyApp/releases/latest');
     if (!response.ok) throw new Error('Failed to fetch GitHub latest release');
 
     const release = await response.json();
@@ -441,7 +441,7 @@ async function fetchReleasesData() {
         <div class="downloads-error">
           <i class="fa-solid fa-triangle-exclamation" style="font-size: 32px; color: var(--warning); margin-bottom: 12px;"></i>
           <p>לא נמצאו גרסאות זמינות כרגע.</p>
-          <a href="https://github.com/sagiv23/Shiftly/releases" target="_blank" class="btn btn-primary" style="margin-top: 16px;">פתח עמוד Releases ב-GitHub</a>
+          <a href="https://github.com/sagiv23/ShiftlyApp/releases" target="_blank" class="btn btn-primary" style="margin-top: 16px;">פתח עמוד Releases ב-GitHub</a>
         </div>
       `;
       return;
@@ -528,7 +528,7 @@ async function fetchReleasesData() {
       <div class="downloads-error">
         <i class="fa-solid fa-triangle-exclamation" style="font-size: 32px; color: var(--warning); margin-bottom: 12px;"></i>
         <p>שגיאה בטעינת הנתונים מ-GitHub API.</p>
-        <a href="https://github.com/sagiv23/Shiftly/releases" target="_blank" class="btn btn-primary" style="margin-top: 16px;">
+        <a href="https://github.com/sagiv23/ShiftlyApp/releases" target="_blank" class="btn btn-primary" style="margin-top: 16px;">
           <i class="fa-brands fa-github"></i> מעבר ישיר לעמוד GitHub Releases
         </a>
       </div>
