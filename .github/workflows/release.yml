@@ -140,14 +140,12 @@ jobs:
         with:
           body: |
             # Shiftly Release
-
             <div dir="rtl">
             * **Android APK** - התקנה ישירה למכשירי אנדרואיד.
             * **Windows** - קובץ ZIP למחשבי Windows.
             * **macOS** - קובץ ZIP למחשבי Mac.
             * **iOS** - קובץ IPA לא חתום; נדרשת חתימה עם חשבון Apple Developer כדי להתקין.
             </div>
-
           files: |
             release-assets/*.apk
             release-assets/windows-release.zip
