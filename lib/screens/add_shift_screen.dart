@@ -836,7 +836,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         AppTheme.spaceMd,
         AppTheme.spaceMd,
         AppTheme.spaceMd,
-        120, // Bottom space for ads and system navigation
+        AppTheme.spaceLg,
       ),
       child: Column(
         children: [
@@ -1621,7 +1621,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         AppTheme.spaceSm,
         AppTheme.spaceSm,
         AppTheme.spaceSm,
-        120, // Bottom space for ads and system navigation
+        AppTheme.spaceLg,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1792,7 +1792,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         AppTheme.spaceSm,
         AppTheme.spaceSm,
         AppTheme.spaceSm,
-        120, // Bottom space for ads and system navigation
+        AppTheme.spaceLg,
       ),
       child: Column(
         children: [

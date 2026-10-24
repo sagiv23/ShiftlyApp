@@ -14,15 +14,15 @@ class AppTheme {
   static const Color secondary = Color(0xFF818CF8);
   static const Color tertiary = Color(0xFFC084FC);
 
-  static const Color lightBackground = Color(0xFFF8FAFC);
+  static const Color lightBackground = Color(0xFFF2F5F9);
   static const Color lightCard = Color(0xFFFFFFFF);
-  static const Color lightSurfaceElevated = Color(0xFFF1F5F9);
-  static const Color lightBorder = Color(0xFFE2E8F0);
+  static const Color lightSurfaceElevated = Color(0xFFE9EEF4);
+  static const Color lightBorder = Color(0xFFD6DFEB);
 
-  static const Color darkBackground = Color(0xFF07090E);
-  static const Color darkCard = Color(0xFF131C31);
-  static const Color darkSurfaceElevated = Color(0xFF1E293B);
-  static const Color darkBorder = Color(0xFF26354E);
+  static const Color darkBackground = Color(0xFF0C111B);
+  static const Color darkCard = Color(0xFF131C2E);
+  static const Color darkSurfaceElevated = Color(0xFF1D2A44);
+  static const Color darkBorder = Color(0xFF273856);
 
   // ── Semantic Colors ───────────────────────────────────────────────
   static const Color profit = Color(0xFF34D399);

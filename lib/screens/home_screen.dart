@@ -175,7 +175,7 @@ class HomeScreen extends StatelessWidget {
                         AppTheme.spaceSm,
                         AppTheme.spaceXs,
                         AppTheme.spaceSm,
-                        120, // Increased for ad space and system navigation
+                        AppTheme.spaceLg,
                       ),
                       itemCount: groupedShifts.isEmpty
                           ? 1

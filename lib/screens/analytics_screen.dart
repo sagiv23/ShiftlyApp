@@ -308,7 +308,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   AppTheme.spaceSm,
                   AppTheme.spaceXs,
                   AppTheme.spaceSm,
-                  120,
+                  AppTheme.spaceLg,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -359,7 +359,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             AppTheme.spaceSm,
             AppTheme.spaceSm,
             AppTheme.spaceSm,
-            120, // Increased for ad space and system navigation
+            AppTheme.spaceLg,
           ),
           children: [
             PageEntranceAnimation(

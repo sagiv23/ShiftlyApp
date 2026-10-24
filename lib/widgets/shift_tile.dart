@@ -236,7 +236,7 @@ class ShiftTile extends StatelessWidget {
               ],
             ),
           ),
-          const Spacer(),
+          const SizedBox(width: 8),
           FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerRight,
