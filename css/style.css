@@ -1678,11 +1678,266 @@ input:checked + .toggle-slider:before {
   }
 }
 
+/* --- Downloads Center Modal --- */
+.downloads-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  width: 90%;
+  max-width: 680px;
+  max-height: 85vh;
+  background: rgba(11, 17, 31, 0.98);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-xl);
+  z-index: 2000;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s var(--ease-out-cubic);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(56, 189, 248, 0.15);
+}
+
+.downloads-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.downloads-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.downloads-modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.downloads-modal-title-wrap h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.downloads-modal-body {
+  overflow-y: auto;
+  max-height: 52vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-right: 4px;
+  padding-left: 4px;
+}
+
+.downloads-loading, .downloads-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+}
+
+.release-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.release-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.release-version-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-family: var(--font-accent);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.release-date {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.release-notes {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  background: var(--bg-surface-elevated);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.assets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.asset-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  gap: 16px;
+  transition: border-color 0.2s ease;
+}
+
+.asset-item:hover {
+  border-color: var(--primary);
+}
+
+.asset-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.asset-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: rgba(56, 189, 248, 0.1);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.asset-details {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.asset-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #FFFFFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.asset-meta {
+  font-size: 12px;
+  color: var(--text-dim);
+  display: flex;
+  gap: 12px;
+}
+
+.downloads-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 /* ==========================================================================
    Comprehensive Mobile & Small Phone Screen Optimization (< 768px, < 480px)
    ========================================================================== */
 
 @media (max-width: 768px) {
+  /* Downloads Modal Mobile Optimization */
+  .downloads-modal {
+    width: 96%;
+    max-width: 100%;
+    max-height: 90vh;
+    padding: 20px 16px;
+    gap: 16px;
+    border-radius: var(--radius-lg);
+  }
+
+  .downloads-modal-header {
+    padding-bottom: 14px;
+  }
+
+  .downloads-modal-title-wrap h3 {
+    font-size: 17px;
+  }
+
+  .downloads-modal-body {
+    max-height: 60vh;
+    gap: 16px;
+  }
+
+  .release-card {
+    padding: 16px;
+  }
+
+  .asset-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .asset-info {
+    width: 100%;
+  }
+
+  .asset-name {
+    white-space: normal;
+    word-break: break-all;
+  }
+
+  .asset-item .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .downloads-modal-footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .downloads-modal-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
   .navbar {
     width: calc(100% - 20px);
     padding: 0 16px;
