@@ -50,3 +50,5 @@ client_secrets.env
 **/server/.env
 server/node_modules/
 
+# Widget Preview related
+.widget_preview/

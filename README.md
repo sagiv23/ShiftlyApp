@@ -65,8 +65,8 @@
   `24.06.2026 - 17:30 - 23:00 45 דקות + 50`).
 * **📊 ניתוח נתונים וייצוא דוחות:** גרפים וסטטיסטיקות מתקדמות עם אפשרות ייצוא דוחות מקצועיים בקבצי *
   *PDF, CSV ו-Excel**.
-* **🔄 עדכוני אפליקציה אוטומטיים (In-App Updates):** בדיקת עדכונים אוטומטית מ מול GitHub Releases
-  והורדת גרסאות APK ישירות בתוך האפליקציה.
+* **🔄 עדכונים והורדות מ-GitHub Releases:** בחירת APK ל-Android, ZIP ל-Windows ול-macOS, ו-IPA ל-iOS.
+  קובץ ה-IPA שנבנה כרגע אינו חתום, ולכן אינו ניתן להתקנה רגילה ללא חתימה והפצה מתאימות של Apple.
 
 ---
 
@@ -148,6 +148,7 @@ flutter run
   ובאותו מפתח חתימה. לבניית גרסאות דרך GitHub Actions יש להגדיר את הסודות
   `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` ו-`ANDROID_KEY_PASSWORD`
   עם מפתח החתימה הקבוע של האפליקציה.
+  ה-IPA של iOS נבנה ללא חתימה; הפצה והתקנה במכשירי iPhone דורשות חתימת Apple והגדרת הפצה מתאימה.
 * **iOS IPA:**
   ```bash
   flutter build ipa --release --obfuscate --split-debug-info=build/app/outputs/symbols
@@ -182,5 +183,6 @@ bonuses, and multi-device sync.
   detection with special wage multipliers.
 - **Dual-Sync Architecture:** BYOS (Private Google Drive AppData folder backup) & Shiftly Cloud (
   real-time Node.js/PostgreSQL sync).
-- **In-App Auto Updates:** Checks for new GitHub Releases and prompts in-app APK downloads on
-  Android.
+- **GitHub Releases Downloads:** Selects the Android APK, Windows/macOS ZIP, or iOS IPA for the
+  current platform. The current iOS IPA is unsigned and requires appropriate Apple signing and
+  distribution before it can be installed.

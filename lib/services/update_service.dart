@@ -15,6 +15,7 @@ class AppUpdateInfo {
   final String versionName;
   final String currentVersion;
   final String changelog;
+  final bool changelogIsRtl;
   final String? downloadUrl;
   final String releaseUrl;
   final DateTime? publishedAt;
@@ -25,6 +26,7 @@ class AppUpdateInfo {
     required this.versionName,
     required this.currentVersion,
     required this.changelog,
+    required this.changelogIsRtl,
     this.downloadUrl,
     required this.releaseUrl,
     this.publishedAt,
@@ -73,7 +75,12 @@ class UpdateService {
 
       final String fallbackChangelog =
           l?.update_service_no_changelog ?? 'אין פירוט שינויים זמין.';
-      final String changelog = json['body'] ?? fallbackChangelog;
+      final String rawChangelog = json['body'] is String
+          ? json['body'] as String
+          : '';
+      final String changelog = _releaseNotesToPlainText(
+        rawChangelog.isEmpty ? fallbackChangelog : rawChangelog,
+      );
       final String releaseUrl =
           json['html_url'] ??
           'https://github.com/$repoOwner/$repoName/releases';
@@ -83,18 +90,9 @@ class UpdateService {
         publishedAt = DateTime.tryParse(json['published_at']);
       }
 
-      // Search for APK file in release assets
-      String? downloadUrl;
-      if (json['assets'] is List) {
-        final List assets = json['assets'];
-        for (final asset in assets) {
-          final String name = (asset['name'] ?? '').toString().toLowerCase();
-          if (name.endsWith('.apk')) {
-            downloadUrl = asset['browser_download_url'];
-            break;
-          }
-        }
-      }
+      final String? downloadUrl = _downloadUrlForCurrentPlatform(
+        json['assets'],
+      );
 
       final bool isNewer = _isVersionNewer(versionName, currentVersion);
 
@@ -103,6 +101,10 @@ class UpdateService {
         versionName: versionName,
         currentVersion: currentVersion,
         changelog: changelog,
+        changelogIsRtl: RegExp(
+          r'<div\s+[^>]*dir\s*=\s*["\x27]rtl["\x27]',
+          caseSensitive: false,
+        ).hasMatch(rawChangelog),
         downloadUrl: downloadUrl,
         releaseUrl: releaseUrl,
         publishedAt: publishedAt,
@@ -112,6 +114,53 @@ class UpdateService {
       debugPrint('Error checking for updates: $e');
       return null;
     }
+  }
+
+  static String? _downloadUrlForCurrentPlatform(dynamic assets) {
+    if (kIsWeb || assets is! List) return null;
+
+    final (extension, platformName) = switch (defaultTargetPlatform) {
+      TargetPlatform.android => ('.apk', null),
+      TargetPlatform.windows => ('.zip', 'windows'),
+      TargetPlatform.macOS => ('.zip', 'macos'),
+      TargetPlatform.iOS => ('.ipa', null),
+      _ => (null, null),
+    };
+    if (extension == null) return null;
+
+    for (final asset in assets) {
+      if (asset is! Map) continue;
+      final String name = (asset['name'] ?? '').toString().toLowerCase();
+      if (!name.endsWith(extension) ||
+          (platformName != null && !name.contains(platformName))) {
+        continue;
+      }
+      final String url = (asset['browser_download_url'] ?? '').toString();
+      if (url.isNotEmpty) return url;
+    }
+    return null;
+  }
+
+  static String _releaseNotesToPlainText(String notes) {
+    final String plainText = notes
+        .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
+        .replaceAll(RegExp(r'<li[^>]*>', caseSensitive: false), '\n• ')
+        .replaceAll(RegExp(r'</(div|p|h[1-6]|li)>', caseSensitive: false), '\n')
+        .replaceAll(RegExp(r'<[^>]*>'), '')
+        .replaceAll(RegExp(r'^\s*#{1,6}\s*', multiLine: true), '')
+        .replaceAll(RegExp(r'^\s*[*-]\s+', multiLine: true), '• ')
+        .replaceAll(RegExp(r'\*\*(.*?)\*\*'), r'$1')
+        .replaceAll(RegExp(r'\*(.*?)\*'), r'$1')
+        .replaceAll(RegExp(r'`([^`]*)`'), r'$1');
+
+    return plainText
+        .replaceAll('&nbsp;', ' ')
+        .replaceAll('&amp;', '&')
+        .replaceAll('&lt;', '<')
+        .replaceAll('&gt;', '>')
+        .replaceAll('&quot;', '"')
+        .replaceAll('&#39;', "'")
+        .trim();
   }
 
   /// Compares semver version strings (e.g. "1.0.1" vs "1.0.0").

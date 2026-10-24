@@ -458,7 +458,16 @@ async function fetchReleasesData() {
       assets.forEach(asset => {
         const sizeMb = (asset.size / (1024 * 1024)).toFixed(1) + ' MB';
         const downloadCount = asset.download_count ?? 0;
-        const fileName = asset.name.toLowerCase();
+        const assetName = String(asset.name || '');
+        const fileName = assetName.toLowerCase();
+        let downloadUrl;
+        try {
+          const parsedUrl = new URL(asset.browser_download_url);
+          if (parsedUrl.protocol !== 'https:' || parsedUrl.hostname !== 'github.com') return;
+          downloadUrl = parsedUrl.href;
+        } catch (_) {
+          return;
+        }
 
         let iconClass = 'fa-solid fa-file-arrow-down';
         let platformLabel = 'קובץ התקנה';
@@ -466,9 +475,18 @@ async function fetchReleasesData() {
         if (fileName.endsWith('.apk')) {
           iconClass = 'fa-brands fa-android';
           platformLabel = 'Android APK';
+        } else if (fileName.endsWith('.ipa')) {
+          iconClass = 'fa-brands fa-apple';
+          platformLabel = 'iOS IPA (נדרשת חתימה להתקנה)';
         } else if (fileName.endsWith('.exe') || fileName.endsWith('.msi')) {
           iconClass = 'fa-brands fa-windows';
           platformLabel = 'Windows Installer';
+        } else if (fileName.includes('windows') && fileName.endsWith('.zip')) {
+          iconClass = 'fa-brands fa-windows';
+          platformLabel = 'Windows ZIP';
+        } else if (fileName.includes('macos') && fileName.endsWith('.zip')) {
+          iconClass = 'fa-brands fa-apple';
+          platformLabel = 'macOS ZIP';
         } else if (fileName.endsWith('.dmg') || fileName.endsWith('.app.zip')) {
           iconClass = 'fa-brands fa-apple';
           platformLabel = 'macOS App';
@@ -482,17 +500,17 @@ async function fetchReleasesData() {
             <div class="asset-info">
               <div class="asset-icon"><i class="${iconClass}"></i></div>
               <div class="asset-details">
-                <span class="asset-name" title="${asset.name}">${asset.name}</span>
+                <span class="asset-name" title="${escapeHtml(assetName)}">${escapeHtml(assetName)}</span>
                 <span class="asset-meta">
-                  <span>${platformLabel}</span>
+                  <span>${escapeHtml(platformLabel)}</span>
                   <span>•</span>
-                  <span>${sizeMb}</span>
+                  <span>${escapeHtml(sizeMb)}</span>
                   <span>•</span>
-                  <span>הורדות: ${downloadCount}</span>
+                  <span>הורדות: ${escapeHtml(downloadCount)}</span>
                 </span>
               </div>
             </div>
-            <a href="${asset.browser_download_url}" class="btn btn-primary" style="padding: 8px 16px; font-size: 13px; flex-shrink: 0;" download target="_blank">
+            <a href="${escapeHtml(downloadUrl)}" class="btn btn-primary" style="padding: 8px 16px; font-size: 13px; flex-shrink: 0;" target="_blank" rel="noopener noreferrer">
               <i class="fa-solid fa-download"></i> הורד
             </a>
           </div>
@@ -510,11 +528,11 @@ async function fetchReleasesData() {
       <div class="release-card">
         <div class="release-header-row">
           <div class="release-version-pill">
-            <i class="fa-solid fa-tag"></i> ${tag} (הגרסה האחרונה)
+            <i class="fa-solid fa-tag"></i> ${escapeHtml(tag)} (הגרסה האחרונה)
           </div>
-          <span class="release-date">${date}</span>
+          <span class="release-date">${escapeHtml(date)}</span>
         </div>
-        <h4 style="color: #FFFFFF; font-size: 16px; font-weight: 700;">${name}</h4>
+        <h4 style="color: #FFFFFF; font-size: 16px; font-weight: 700;">${escapeHtml(name)}</h4>
         <div class="release-notes">${body}</div>
         <div class="assets-list">
           ${assetsHtml}
@@ -537,11 +555,33 @@ async function fetchReleasesData() {
 }
 
 function markedOrPlain(text) {
-  return text
+  const isRtl = /<div\s+[^>]*dir\s*=\s*["']rtl["'][^>]*>/i.test(text);
+  const markdown = text
+    .replace(/<div\s+[^>]*dir\s*=\s*["']rtl["'][^>]*>/gi, '')
+    .replace(/<\/div>/gi, '')
+    .split(/\r?\n/)
+    .map(line => {
+      const escaped = escapeHtml(line.trim());
+      if (/^#{1,6}\s/.test(escaped)) {
+        return `<strong>${escaped.replace(/^#{1,6}\s*/, '')}</strong>`;
+      }
+      if (/^[*-]\s+/.test(escaped)) {
+        return `• ${escaped.replace(/^[*-]\s+/, '')}`;
+      }
+      return escaped
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>');
+    })
+    .join('<br>');
+
+  return isRtl ? `<div dir="rtl">${markdown}</div>` : markdown;
+}
+
+function escapeHtml(value) {
+  return String(value)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/\n/g, '<br>');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }

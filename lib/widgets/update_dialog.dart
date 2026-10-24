@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/services/update_service.dart';
@@ -39,7 +40,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
   Future<void> _startDownload() async {
     final downloadUrl = widget.updateInfo.downloadUrl;
     if (downloadUrl == null || downloadUrl.isEmpty) {
-      // Fallback to browser if no direct APK asset found
       await UpdateService.openReleaseInBrowser(widget.updateInfo.releaseUrl);
       if (!widget.isForceUpdate && mounted) {
         Navigator.of(context).pop();
@@ -48,6 +48,17 @@ class _UpdateDialogState extends State<UpdateDialog> {
     }
 
     final l = AppLocalizations.of(context);
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      final opened = await UpdateService.openReleaseInBrowser(downloadUrl);
+      if (!opened && mounted) {
+        setState(() {
+          _errorMessage = l?.update_service_download_error(
+            'לא ניתן לפתוח את קישור ההורדה',
+          );
+        });
+      }
+      return;
+    }
 
     setState(() {
       _isDownloading = true;
@@ -250,9 +261,14 @@ class _UpdateDialogState extends State<UpdateDialog> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: SingleChildScrollView(
-                  child: Text(
-                    widget.updateInfo.changelog,
-                    style: theme.textTheme.bodySmall?.copyWith(height: 1.4),
+                  child: Directionality(
+                    textDirection: widget.updateInfo.changelogIsRtl
+                        ? TextDirection.rtl
+                        : Directionality.of(context),
+                    child: Text(
+                      widget.updateInfo.changelog,
+                      style: theme.textTheme.bodySmall?.copyWith(height: 1.4),
+                    ),
                   ),
                 ),
               ),
@@ -348,7 +364,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
                           onPressed: _startDownload,
                           icon: const Icon(Icons.download_rounded, size: 20),
                           label: Text(
-                            widget.updateInfo.downloadUrl != null
+                            widget.updateInfo.downloadUrl != null &&
+                                    defaultTargetPlatform ==
+                                        TargetPlatform.android
                                 ? l.update_dialog_update_now
                                 : l.update_dialog_open_download,
                           ),
