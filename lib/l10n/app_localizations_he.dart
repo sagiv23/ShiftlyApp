@@ -1588,4 +1588,17 @@ class AppLocalizationsHe extends AppLocalizations {
   String update_service_download_error(Object error) {
     return 'שגיאה במהלך הורדת העדכון: $error';
   }
+
+  @override
+  String get common_show_password => 'הצג סיסמה';
+
+  @override
+  String get common_hide_password => 'הסתר סיסמה';
+
+  @override
+  String get accessibility_statement => 'הצהרת נגישות';
+
+  @override
+  String get settings_accessibility_sub =>
+      'מידע על נגישות האפליקציה ודרכי פנייה';
 }

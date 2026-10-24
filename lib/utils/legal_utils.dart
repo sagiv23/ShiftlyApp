@@ -16,6 +16,11 @@ class LegalUtils {
     LegalDocumentViewer.show(context, LegalDocumentType.termsOfService);
   }
 
+  /// Opens the Accessibility Statement document viewer.
+  static void showAccessibilityStatement(BuildContext context) {
+    LegalDocumentViewer.show(context, LegalDocumentType.accessibilityStatement);
+  }
+
   /// Opens the Cookie & Privacy Preferences modal sheet.
   static Future<void> showCookiePreferences(BuildContext context) {
     return CookiePreferencesModal.show(context);

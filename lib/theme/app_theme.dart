@@ -202,11 +202,11 @@ class AppTheme {
           borderSide: const BorderSide(color: expenseSoft, width: 1.5),
         ),
         labelStyle: TextStyle(
-          color: colorScheme.onSurface.withValues(alpha: 0.65),
+          color: colorScheme.onSurface.withValues(alpha: 0.75),
           fontWeight: FontWeight.w600,
         ),
         hintStyle: TextStyle(
-          color: colorScheme.onSurface.withValues(alpha: 0.4),
+          color: colorScheme.onSurface.withValues(alpha: 0.60),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -406,17 +406,21 @@ class AppTheme {
   }
 }
 
-/// Scales down slightly on press for tactile micro-interaction.
+/// Scales down slightly on press for tactile micro-interaction with accessibility semantics.
 class ScalePress extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
   final double scale;
+  final String? buttonLabel;
+  final String? buttonHint;
 
   const ScalePress({
     super.key,
     required this.child,
     this.onTap,
     this.scale = 0.96,
+    this.buttonLabel,
+    this.buttonHint,
   });
 
   @override
@@ -428,24 +432,31 @@ class _ScalePressState extends State<ScalePress> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: widget.onTap == null
-          ? null
-          : (_) => setState(() => _pressed = true),
-      onTapUp: widget.onTap == null
-          ? null
-          : (_) {
-              setState(() => _pressed = false);
-              widget.onTap?.call();
-            },
-      onTapCancel: widget.onTap == null
-          ? null
-          : () => setState(() => _pressed = false),
-      child: AnimatedScale(
-        scale: _pressed ? widget.scale : 1.0,
-        duration: const Duration(milliseconds: 120),
-        curve: Curves.easeOut,
-        child: widget.child,
+    return Semantics(
+      button: true,
+      enabled: widget.onTap != null,
+      label: widget.buttonLabel,
+      hint: widget.buttonHint,
+      onTap: widget.onTap,
+      child: GestureDetector(
+        onTapDown: widget.onTap == null
+            ? null
+            : (_) => setState(() => _pressed = true),
+        onTapUp: widget.onTap == null
+            ? null
+            : (_) {
+                setState(() => _pressed = false);
+                widget.onTap?.call();
+              },
+        onTapCancel: widget.onTap == null
+            ? null
+            : () => setState(() => _pressed = false),
+        child: AnimatedScale(
+          scale: _pressed ? widget.scale : 1.0,
+          duration: const Duration(milliseconds: 120),
+          curve: Curves.easeOut,
+          child: widget.child,
+        ),
       ),
     );
   }

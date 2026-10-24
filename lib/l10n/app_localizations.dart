@@ -3043,6 +3043,30 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'שגיאה במהלך הורדת העדכון: {error}'**
   String update_service_download_error(Object error);
+
+  /// No description provided for @common_show_password.
+  ///
+  /// In he, this message translates to:
+  /// **'הצג סיסמה'**
+  String get common_show_password;
+
+  /// No description provided for @common_hide_password.
+  ///
+  /// In he, this message translates to:
+  /// **'הסתר סיסמה'**
+  String get common_hide_password;
+
+  /// No description provided for @accessibility_statement.
+  ///
+  /// In he, this message translates to:
+  /// **'הצהרת נגישות'**
+  String get accessibility_statement;
+
+  /// No description provided for @settings_accessibility_sub.
+  ///
+  /// In he, this message translates to:
+  /// **'מידע על נגישות האפליקציה ודרכי פנייה'**
+  String get settings_accessibility_sub;
 }
 
 class _AppLocalizationsDelegate

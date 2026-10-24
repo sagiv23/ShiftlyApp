@@ -55,23 +55,29 @@ class DatePickerField extends StatelessWidget {
         ? AppConstants.formatDate(selectedDate)
         : (hint ?? displayLabel);
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: () => _selectDate(context),
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: displayLabel,
-          suffixIcon: Icon(icon, size: 20),
-        ),
-        child: Text(
-          formattedText,
-          style: selectedDate == null
-              ? TextStyle(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.5),
-                )
-              : null,
+    return Semantics(
+      button: true,
+      label: displayLabel,
+      value: formattedText,
+      hint: displayLabel,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => _selectDate(context),
+        child: InputDecorator(
+          decoration: InputDecoration(
+            labelText: displayLabel,
+            suffixIcon: Icon(icon, size: 20),
+          ),
+          child: Text(
+            formattedText,
+            style: selectedDate == null
+                ? TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.5),
+                  )
+                : null,
+          ),
         ),
       ),
     );

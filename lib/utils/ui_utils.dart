@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/theme/app_theme.dart';
 
@@ -48,6 +49,11 @@ class UIUtils {
     bool isError = false,
     SnackBarAction? action,
   }) {
+    // Accessibility announcement for screen readers (WCAG 4.1.3)
+    final textDirection = Directionality.of(context);
+    final view = View.of(context);
+    SemanticsService.sendAnnouncement(view, message, textDirection);
+
     final messenger = ScaffoldMessenger.of(context);
     messenger.hideCurrentSnackBar();
 

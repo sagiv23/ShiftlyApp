@@ -275,6 +275,9 @@ class ShiftTile extends StatelessWidget {
       ),
     );
 
+    final shiftSemanticLabel =
+        '${job?.name ?? ""}, ${DateFormat('dd/MM/yyyy').format(shift.date)}, ${shift.netHours.toStringAsFixed(1)} ${l.common_hours_suffix}';
+
     Widget tileContent;
     if (useCardDecoration) {
       tileContent = Container(
@@ -295,15 +298,20 @@ class ShiftTile extends StatelessWidget {
         ),
         child: Material(
           color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-            onTap: () => _editShift(context),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTheme.spaceSm,
-                vertical: AppTheme.spaceXs,
+          child: Semantics(
+            button: true,
+            label: shiftSemanticLabel,
+            hint: l.add_shift_edit_title,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+              onTap: () => _editShift(context),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spaceSm,
+                  vertical: AppTheme.spaceXs,
+                ),
+                child: childContent,
               ),
-              child: childContent,
             ),
           ),
         ),
@@ -314,10 +322,15 @@ class ShiftTile extends StatelessWidget {
             margin ?? const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
         child: Material(
           color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-            onTap: () => _editShift(context),
-            child: childContent,
+          child: Semantics(
+            button: true,
+            label: shiftSemanticLabel,
+            hint: l.add_shift_edit_title,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+              onTap: () => _editShift(context),
+              child: childContent,
+            ),
           ),
         ),
       );

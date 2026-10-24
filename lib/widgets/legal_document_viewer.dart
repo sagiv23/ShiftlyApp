@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/theme/app_theme.dart';
 
-enum LegalDocumentType { privacyPolicy, termsOfService }
+enum LegalDocumentType { privacyPolicy, termsOfService, accessibilityStatement }
 
 class LegalDocumentViewer extends StatelessWidget {
   final LegalDocumentType type;
@@ -23,8 +23,19 @@ class LegalDocumentViewer extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isPrivacy = type == LegalDocumentType.privacyPolicy;
-    final title = isPrivacy ? l.legal_privacy_policy : l.legal_terms_of_service;
+
+    final String title;
+    final IconData titleIcon;
+    if (type == LegalDocumentType.privacyPolicy) {
+      title = l.legal_privacy_policy;
+      titleIcon = Icons.privacy_tip_outlined;
+    } else if (type == LegalDocumentType.termsOfService) {
+      title = l.legal_terms_of_service;
+      titleIcon = Icons.gavel_outlined;
+    } else {
+      title = 'הצהרת נגישות (ת"י 5568)';
+      titleIcon = Icons.accessibility_new_rounded;
+    }
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.88,
@@ -51,11 +62,7 @@ class LegalDocumentViewer extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                Icon(
-                  isPrivacy ? Icons.privacy_tip_outlined : Icons.gavel_outlined,
-                  color: AppTheme.primaryDark,
-                  size: 26,
-                ),
+                Icon(titleIcon, color: AppTheme.primaryDark, size: 26),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -67,6 +74,7 @@ class LegalDocumentViewer extends StatelessWidget {
                   ),
                 ),
                 IconButton(
+                  tooltip: l.common_close,
                   icon: const Icon(Icons.close_rounded),
                   onPressed: () => Navigator.pop(context),
                 ),
@@ -82,10 +90,12 @@ class LegalDocumentViewer extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (isPrivacy)
+                  if (type == LegalDocumentType.privacyPolicy)
                     _buildPrivacyPolicyContent(context, l)
+                  else if (type == LegalDocumentType.termsOfService)
+                    _buildTermsContent(context, l)
                   else
-                    _buildTermsContent(context, l),
+                    _buildAccessibilityContent(context, l),
                   const SizedBox(height: 32),
                 ],
               ),
@@ -292,6 +302,44 @@ class LegalDocumentViewer extends StatelessWidget {
           fontWeight: FontWeight.w500,
         ),
       ),
+    );
+  }
+
+  Widget _buildAccessibilityContent(BuildContext context, AppLocalizations l) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle(
+          '♿ הצהרת נגישות לאפליקציית Shiftly (ת"י 5568 / WCAG 2.1 AA)',
+        ),
+        _buildParagraph(
+          'אפליקציית Shiftly מונגשת בהתאם לתקן ת"י 5568 ברמת AA ולפי הנחיות הנגישות הבינלאומיות WCAG 2.1 AA.',
+        ),
+        const SizedBox(height: 16),
+        _buildSectionTitle('1. התאמות שבוצעו באפליקציה'),
+        _buildBullet(
+          'תמיכה מלאה בקוראי מסך (TalkBack ב-Android / VoiceOver ב-iOS) עם סמנטיקה קולית מותאמת (Semantics).',
+        ),
+        _buildBullet(
+          'הגדלת שטחי מגע (Touch Targets) לגודל של 48x48dp לפחות עבור משתמשים עם מוגבלויות מוטוריות.',
+        ),
+        _buildBullet(
+          'ניגודיות צבעים גבוהה ועומדת בתקן (יחס של 4.5:1 לפחות עבור טקסט רגיל).',
+        ),
+        _buildBullet(
+          'הכרזות קוליות דינמיות בזמן אמת (Live Announcements) בעת הפעלת טיימר, שמירת משמרת ושינויי סטטוס.',
+        ),
+        _buildBullet(
+          'תמיכה מלאה בהגדלת גופן דינמית בהתאם להגדרות נגישות המערכת של המכשיר.',
+        ),
+        const SizedBox(height: 16),
+        _buildSectionTitle('2. פרטי רכז/ת נגישות ופניות בנושאי נגישות'),
+        _buildParagraph(
+          'במידה ונתקלת ברכיב שאינו נגיש או שיש לך הצעה לשיפור הנגישות באפליקציה, ניתן ליצור קשר:',
+        ),
+        _buildBullet('דוא"ל לפניות נגישות: shiftlyapp23@gmail.com'),
+        _buildBullet('זמן מענה משוער: עד 2 ימי עסקים'),
+      ],
     );
   }
 }

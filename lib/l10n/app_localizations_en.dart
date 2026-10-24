@@ -1605,4 +1605,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String update_service_download_error(Object error) {
     return 'Error during update download: $error';
   }
+
+  @override
+  String get common_show_password => 'Show password';
+
+  @override
+  String get common_hide_password => 'Hide password';
+
+  @override
+  String get accessibility_statement => 'Accessibility Statement';
+
+  @override
+  String get settings_accessibility_sub =>
+      'Accessibility info and contact details';
 }

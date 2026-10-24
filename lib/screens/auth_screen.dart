@@ -528,6 +528,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                           subtextColor: subtextColor,
                           mutedTextColor: mutedTextColor,
                           suffixIcon: IconButton(
+                            tooltip: _obscurePassword
+                                ? l.common_show_password
+                                : l.common_hide_password,
                             icon: Icon(
                               _obscurePassword
                                   ? Icons.visibility_outlined

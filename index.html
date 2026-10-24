@@ -29,8 +29,11 @@
 </head>
 <body>
 
+<!-- Accessibility Skip Link (WCAG 2.4.1) -->
+<a class="skip-link" href="#main-content">דילוג לתוכן המרכזי</a>
+
 <!-- Ambient Dynamic Background & Interactive Canvas -->
-<div class="ambient-canvas-container">
+<div aria-hidden="true" class="ambient-canvas-container">
     <canvas id="bgCanvas"></canvas>
     <div class="gradient-orb orb-1"></div>
     <div class="gradient-orb orb-2"></div>
@@ -38,7 +41,7 @@
 </div>
 
 <!-- Interactive Cursor Spotlight (Desktop) -->
-<div class="cursor-spotlight"></div>
+<div aria-hidden="true" class="cursor-spotlight"></div>
 
 <div class="page-wrapper">
 
@@ -64,21 +67,23 @@
 
         <div class="nav-actions">
             <a class="btn btn-primary" href="https://shiftly-ujfd.onrender.com/" target="_blank">
-                <i class="fa-solid fa-globe"></i> כניסה ל-Shiftly Web
+                <i aria-hidden="true" class="fa-solid fa-globe"></i> כניסה ל-Shiftly Web
             </a>
             <a class="btn btn-glass" href="https://github.com/sagiv23/Shiftly/releases"
                target="_blank">
-                <i class="fa-solid fa-download"></i> הורדות
+                <i aria-hidden="true" class="fa-solid fa-download"></i> הורדות
             </a>
-            <button aria-label="תפריט נייד" class="mobile-toggle" id="mobileToggle">
-                <i class="fa-solid fa-bars"></i>
+            <button aria-controls="mobileDrawer" aria-expanded="false" aria-label="תפריט נייד"
+                    class="mobile-toggle" id="mobileToggle">
+                <i aria-hidden="true" class="fa-solid fa-bars"></i>
             </button>
         </div>
     </nav>
 
     <!-- Mobile Drawer Overlay & Menu -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
-    <div class="mobile-drawer" id="mobileDrawer">
+    <div aria-label="תפריט נייד" aria-modal="true" class="mobile-drawer" id="mobileDrawer"
+         role="dialog" tabindex="-1">
         <div class="drawer-header">
             <a class="logo-container" href="#">
                 <img alt="Shiftly Icon" class="logo-img" src="assets/icon/app_icon.png"
@@ -86,660 +91,735 @@
                 <span class="logo-text" style="font-size:20px;">Shiftly</span>
             </a>
             <button aria-label="סגור תפריט" class="drawer-close" id="drawerClose">
-                <i class="fa-solid fa-xmark"></i>
+                <i aria-hidden="true" class="fa-solid fa-xmark"></i>
             </button>
         </div>
         <ul class="drawer-links">
-            <li><a class="drawer-link" href="#calculator"><i class="fa-solid fa-calculator"
+            <li><a class="drawer-link" href="#calculator"><i aria-hidden="true"
+                                                             class="fa-solid fa-calculator"
                                                              style="color: var(--primary);"></i>
                 מחשבון משמרות לייב</a></li>
-            <li><a class="drawer-link" href="#features"><i class="fa-solid fa-layer-group"
+            <li><a class="drawer-link" href="#features"><i aria-hidden="true"
+                                                           class="fa-solid fa-layer-group"
                                                            style="color: var(--primary);"></i>
                 תכונות האפליקציה</a></li>
-            <li><a class="drawer-link" href="#architecture"><i class="fa-solid fa-shield-halved"
+            <li><a class="drawer-link" href="#architecture"><i aria-hidden="true"
+                                                               class="fa-solid fa-shield-halved"
                                                                style="color: var(--profit);"></i>
                 אבטחה וגיבוי פרטי</a></li>
-            <li><a class="drawer-link" href="#comparison"><i class="fa-solid fa-table-list"
+            <li><a class="drawer-link" href="#comparison"><i aria-hidden="true"
+                                                             class="fa-solid fa-table-list"
                                                              style="color: var(--secondary);"></i>
                 טבלת השוואה</a></li>
-            <li><a class="drawer-link" href="#faq"><i class="fa-solid fa-circle-question"
+            <li><a class="drawer-link" href="#faq"><i aria-hidden="true"
+                                                      class="fa-solid fa-circle-question"
                                                       style="color: var(--tertiary);"></i> שאלות
                 נפוצות</a></li>
-            <li><a class="drawer-link" href="privacy.html"><i class="fa-solid fa-lock"></i> מדיניות
+            <li><a class="drawer-link" href="privacy.html"><i aria-hidden="true"
+                                                              class="fa-solid fa-lock"></i> מדיניות
                 פרטיות</a></li>
-            <li><a class="drawer-link" href="terms.html"><i class="fa-solid fa-gavel"></i> תנאי
+            <li><a class="drawer-link" href="terms.html"><i aria-hidden="true"
+                                                            class="fa-solid fa-gavel"></i> תנאי
                 שימוש</a></li>
+            <li><a class="drawer-link" href="accessibility.html"><i aria-hidden="true"
+                                                                    class="fa-solid fa-universal-access"></i>
+                הצהרת
+                נגישות</a></li>
         </ul>
         <div style="margin-top: auto; display: flex; flex-direction: column; gap: 12px;">
             <a class="btn btn-primary" href="https://shiftly-ujfd.onrender.com/"
                style="width: 100%;" target="_blank">
-                <i class="fa-solid fa-globe"></i> כניסה ל-Shiftly Web
+                <i aria-hidden="true" class="fa-solid fa-globe"></i> כניסה ל-Shiftly Web
             </a>
             <a class="btn btn-outline" href="https://github.com/sagiv23/Shiftly/releases"
                style="width: 100%;" target="_blank">
-                <i class="fa-solid fa-download"></i> הורדה ל-Android &amp; iOS
+                <i aria-hidden="true" class="fa-solid fa-download"></i> הורדה ל-Android &amp; iOS
             </a>
         </div>
     </div>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-badge-pill">
-            <span class="pulse-dot"></span>
-            <span>Shiftly v0.1.8 • מנוע חישוב שכר, שעות נוספות ו-BYOS Google Drive</span>
-        </div>
+    <!-- Main Content Wrapper (WCAG 1.3.1 Landmark) -->
+    <main id="main-content">
 
-        <h1 class="hero-title">
-            השליטה המלאה על <span class="gradient-text">המשמרות, השכר וההוצאות</span> שלך בכל
-            פלטפורמה
-        </h1>
-
-        <p class="hero-description">
-            Shiftly מעניקה לך דיוק מתמטי מושלם בחישוב שעות נוספות (125%, 150%), זיהוי כניסת/יציאת
-            שבת וחגים לפי הלוח העברי, ניהול טיפים ונסיעות - עם סנכרון מוצפן ב-Google Drive הפרטי שלך
-            (BYOS).
-        </p>
-
-        <div class="hero-cta-group">
-            <a class="btn btn-primary" href="https://shiftly-ujfd.onrender.com/"
-               style="padding: 16px 36px; font-size: 17px;" target="_blank">
-                <i class="fa-solid fa-rocket"></i> כניסה ל-Shiftly Web
-            </a>
-            <a class="btn btn-glass" href="https://github.com/sagiv23/Shiftly/releases"
-               style="padding: 16px 32px; font-size: 16px;" target="_blank">
-                <i class="fa-solid fa-download"></i> הורדה לנייד ולמחשב
-            </a>
-            <a class="btn btn-outline" href="#calculator"
-               style="padding: 16px 28px; font-size: 16px;">
-                <i class="fa-solid fa-calculator"></i> נסה את המחשבון
-            </a>
-        </div>
-
-        <!-- Interactive Shiftly Live Calculator Mockup in Hero -->
-        <div class="hero-showcase-container" id="calculator">
-            <div class="showcase-glow-backdrop"></div>
-
-            <div class="floating-status-pill pill-1">
-                <i class="fa-solid fa-lock" style="color: var(--profit);"></i>
-                <span>גיבוי מוצפן ב-Google Drive הפרטי (BYOS)</span>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-badge-pill">
+                <span class="pulse-dot"></span>
+                <span>Shiftly v0.1.8 • מנוע שכר ומשמרות מתקדם</span>
             </div>
 
-            <div class="floating-status-pill pill-2">
-                <i class="fa-solid fa-stopwatch" style="color: var(--primary);"></i>
-                <span>טיימר נוכחות פעיל מווילון ההתראות</span>
-            </div>
+            <h1 class="hero-title">
+                השליטה המלאה על <span class="gradient-text">המשמרות, השכר וההוצאות</span> שלך בכל
+                פלטפורמה
+            </h1>
 
-            <div class="showcase-glass-card">
-                <div class="calc-header">
-                    <div class="calc-title">
-                        <i class="fa-solid fa-calculator"></i>
-                        <span>מחשבון שעות נוספות ושבת בלייב</span>
-                    </div>
-                    <span class="calc-live-tag"><i class="fa-solid fa-circle-check"></i> מנוע חישוב חוקי עבודה בישראל</span>
-                </div>
-
-                <div class="calc-grid">
-                    <!-- Left Column: Inputs Panel -->
-                    <div class="calc-inputs-panel">
-                        <div class="form-group">
-                            <label class="form-label" for="hourlyRate">
-                                <span>שכר שעתי בסיס (₪):</span>
-                                <span style="color: var(--primary); font-family: var(--font-accent);">ILS / HR</span>
-                            </label>
-                            <div class="form-input-wrapper">
-                                <input class="form-input" id="hourlyRate" max="300" min="30"
-                                       step="1" type="number" value="55">
-                                <span class="form-input-suffix">₪/שעה</span>
-                            </div>
-                        </div>
-
-                        <div class="form-group range-slider-wrapper">
-                            <label class="form-label" for="shiftHours">
-                                <span>משך המשמרת (בשעות):</span>
-                                <span id="shiftHoursVal"
-                                      style="color: var(--profit); font-family: var(--font-accent); font-weight: 700;">10.5 שעות</span>
-                            </label>
-                            <input class="calc-range-slider" id="shiftHours" max="16" min="4"
-                                   step="0.5" type="range" value="10.5">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="breakMinutes">
-                                <span>הפסקה ללא תשלום (בדקות):</span>
-                            </label>
-                            <div class="form-input-wrapper">
-                                <input class="form-input" id="breakMinutes" max="120" min="0"
-                                       step="15" type="number" value="30">
-                                <span class="form-input-suffix">דקות</span>
-                            </div>
-                        </div>
-
-                        <div class="toggle-row">
-                            <div style="display: flex; flex-direction: column;">
-                                <span style="font-weight: 700; color: #FFFFFF; font-size: 15px;">משמרת שבת / חג (תעריף מוגדל)</span>
-                                <span style="font-size: 12px; color: var(--text-muted);">מחשב אוטומטית 150%, 175%, 200%</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input id="shabbatToggle" type="checkbox">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="tipsInput">
-                                <span>טיפים והחזר הוצאות נסיעה (₪):</span>
-                            </label>
-                            <div class="form-input-wrapper">
-                                <input class="form-input" id="tipsInput" min="0" step="10"
-                                       type="number" value="80">
-                                <span class="form-input-suffix">₪ נטו</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Column: Results Panel -->
-                    <div class="calc-results-panel">
-                        <div>
-                            <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 16px; display: flex; justify-content: space-between;">
-                                <span>פירוט מדרגות שכר:</span>
-                                <span style="color: var(--primary);">Shiftly Engine v0.1.8</span>
-                            </div>
-
-                            <div class="result-breakdown-list">
-                                <div class="breakdown-item">
-                                    <span>שעות רגילות (100%):</span>
-                                    <span class="val" id="resRegHours">8.0 ש"ע (₪440)</span>
-                                </div>
-                                <div class="breakdown-item highlight">
-                                    <span>שעות נוספות 125%:</span>
-                                    <span class="val" id="resOt1Hours">2.0 ש"ע (₪138)</span>
-                                </div>
-                                <div class="breakdown-item highlight">
-                                    <span>שעות נוספות 150%:</span>
-                                    <span class="val" id="resOt2Hours">0.0 ש"ע (₪0)</span>
-                                </div>
-                                <div class="breakdown-item">
-                                    <span>תוספות (טיפים/נסיעות):</span>
-                                    <span class="val" id="resExtraEarnings">₪80</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="result-total-box">
-                            <div class="total-label">סה"כ נטו לתשלום למשמרת:</div>
-                            <div class="total-amount" id="resTotalAmount">₪657.50</div>
-                            <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">*
-                                מבוסס על מנוע החישוב האוטומטי של Shiftly.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Impact Metrics Ribbon -->
-    <section class="metrics-ribbon-section">
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-number">100%</div>
-                <div class="metric-label">דיוק בחישוב שעות נוספות ושבתות</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-number">0</div>
-                <div class="metric-label">דליפת נתונים (BYOS - הכל בדרייב שלך)</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-number">6</div>
-                <div class="metric-label">פלטפורמות נתמכות במקביל</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-number">&lt; 1 sec</div>
-                <div class="metric-label">זמן סנכרון בזמן אמת בין מכשירים</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Bento Grid Section -->
-    <section class="section-wrapper" id="features">
-        <div class="section-header-centered">
-            <div class="section-tag"><i class="fa-solid fa-microchip"></i> טכנולוגיה וחדשנות</div>
-            <h2 class="section-title">כל מה שצריך לניהול משמרות, שכר ודוחות במקום אחד</h2>
-            <p class="section-subtitle">נבחרת הכלים המקיפה ביותר לעובדים, פרילנסרים ומנהלים - עם
-                ארכיטקטורה מאובטחת ועבודה מלאה במצב אופליין.</p>
-        </div>
-
-        <div class="bento-grid">
-            <div class="bento-card span-2">
-                <div>
-                    <div class="bento-icon-wrapper icon-cyan">
-                        <i class="fa-solid fa-clock"></i>
-                    </div>
-                    <h3 class="bento-title">שעון נוכחות וטיימר חכם בזמן אמת</h3>
-                    <p class="bento-desc">הפעלה, השהיה, חידוש וסיום משמרת בלחיצה אחת. כולל ניהול
-                        הפסקות בתשלום ושלא בתשלום, בקרה נוחה ישירות מווילון ההתראות במכשיר (Live
-                        Notification), והתראות חכמות על תום משמרת.</p>
-                </div>
-                <div class="bento-pills-list">
-                    <span class="bento-pill">וילון התראות אינטראקטיבי</span>
-                    <span class="bento-pill">ניהול הפסקות מורכב</span>
-                    <span class="bento-pill">התראות סיום משמרת</span>
-                </div>
-            </div>
-
-            <div class="bento-card">
-                <div>
-                    <div class="bento-icon-wrapper icon-emerald">
-                        <i class="fa-solid fa-calculator"></i>
-                    </div>
-                    <h3 class="bento-title">מנוע שעות נוספות ושבתות</h3>
-                    <p class="bento-desc">חישוב מבוסס דיני עבודה בישראל: מדרגות שעות נוספות (125%,
-                        150%) וזיהוי אוטומטי של כניסת/יציאת שבת וחגים לפי לוח עברי ותמיכה במיקום
-                        גיאוגרפי.</p>
-                </div>
-                <div class="bento-pills-list">
-                    <span class="bento-pill">לוח עברי אוטומטי</span>
-                    <span class="bento-pill">125% / 150% / 200%</span>
-                </div>
-            </div>
-
-            <div class="bento-card">
-                <div>
-                    <div class="bento-icon-wrapper icon-amber">
-                        <i class="fa-solid fa-shield-halved"></i>
-                    </div>
-                    <h3 class="bento-title">גיבוי פרטי (BYOS) Google Drive</h3>
-                    <p class="bento-desc">Bring Your Own Storage: הנתונים שלך מגובים באופן מוצפן
-                        ישירות בתיקיית ה-AppData הפרטית של ה-Google Drive שלך. אף גורם חיצוני לא
-                        רואה את נתוני הגיבוי שלך.</p>
-                </div>
-                <div class="bento-pills-list">
-                    <span class="bento-pill">הצפנה מלאה</span>
-                    <span class="bento-pill">אפס גישה לצד ג'</span>
-                </div>
-            </div>
-
-            <div class="bento-card">
-                <div>
-                    <div class="bento-icon-wrapper icon-purple">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    </div>
-                    <h3 class="bento-title">מנוע פיענוח טקסט (Smart Parser)</h3>
-                    <p class="bento-desc">הדבקת סידור עבודה שלם בטקסט חופשי (למשל: "24.06.2026 -
-                        17:30 - 23:00 45 דקות + 50") והפיכתו המיידית לסידור משמרות מעובד תוך שבריר
-                        שנייה.</p>
-                </div>
-                <div class="bento-pills-list">
-                    <span class="bento-pill">פענוח טקסט חופשי</span>
-                    <span class="bento-pill">יבוא מרובה</span>
-                </div>
-            </div>
-
-            <div class="bento-card">
-                <div>
-                    <div class="bento-icon-wrapper icon-indigo">
-                        <i class="fa-solid fa-file-invoice-dollar"></i>
-                    </div>
-                    <h3 class="bento-title">דוחות מתקדמים וייצוא PDF/Excel</h3>
-                    <p class="bento-desc">גרפים וסטטיסטיקות עומק, ניתוח הכנסות לפי תפקידים, תיעוד
-                        טיפים והוצאות נלוות, וייצוא דוחות מקצועיים בקבצי PDF, CSV ו-Excel בלחיצת
-                        כפתור.</p>
-                </div>
-                <div class="bento-pills-list">
-                    <span class="bento-pill">ייצוא PDF &amp; Excel</span>
-                    <span class="bento-pill">ניתוח טיפים והוצאות</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Architecture & Security Visualizer Section -->
-    <section class="section-wrapper" id="architecture">
-        <div class="architecture-container">
-            <div class="arch-grid">
-                <div>
-                    <div class="section-tag"
-                         style="background: rgba(52, 211, 153, 0.15); border-color: rgba(52, 211, 153, 0.3); color: var(--profit);">
-                        <i class="fa-solid fa-lock"></i> ארכיטקטורת סנכרון כפולה
-                    </div>
-                    <h2 class="section-title">הנתונים שלך שייכים לך. תמיד.</h2>
-                    <p class="section-subtitle" style="margin-bottom: 24px;">
-                        Shiftly משלבת ארכיטקטורה פורצת דרך המאפשרת לך לבחור בין גיבוי פרטי מוצפן
-                        ב-Google Drive של החשבון האישי שלך (BYOS), לבין סנכרון בזמן אמת מול Shiftly
-                        Cloud.
-                    </p>
-                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px;">
-                        <li style="display: flex; align-items: center; gap: 12px; font-weight: 600;">
-                            <i class="fa-solid fa-circle-check" style="color: var(--profit);"></i>
-                            <span>Offline-First (Hive NoSQL): עבודה מלאה ללא צורך בחיבור לרשת</span>
-                        </li>
-                        <li style="display: flex; align-items: center; gap: 12px; font-weight: 600;">
-                            <i class="fa-solid fa-circle-check" style="color: var(--profit);"></i>
-                            <span>BYOS AppData Scope: קובץ הגיבוי מוצפן בתוך תיקיית ה-Drive המוצפנת שלך</span>
-                        </li>
-                        <li style="display: flex; align-items: center; gap: 12px; font-weight: 600;">
-                            <i class="fa-solid fa-circle-check" style="color: var(--profit);"></i>
-                            <span>Shiftly Cloud Sync: REST API מהיר ב-Node.js + PostgreSQL לסנכרון בין מכשירים</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="arch-diagram-card">
-                    <div class="arch-node">
-                        <div class="arch-node-icon"><i class="fa-solid fa-mobile-screen-button"></i>
-                        </div>
-                        <div class="arch-node-info">
-                            <h4>Shiftly Flutter Client</h4>
-                            <p>אחסון מקומי מוצפן (Hive NoSQL &amp; SecureStorage)</p>
-                        </div>
-                    </div>
-
-                    <div class="arch-connector"><i class="fa-solid fa-arrow-down-up-lock"></i></div>
-
-                    <div class="arch-node">
-                        <div class="arch-node-icon"
-                             style="background: rgba(34, 197, 94, 0.15); color: var(--profit);"><i
-                                class="fa-brands fa-google-drive"></i></div>
-                        <div class="arch-node-info">
-                            <h4>BYOS Google Drive Private Backup</h4>
-                            <p>תיקיית appDataFolder מוצפנת אישית ב-Drive שלך</p>
-                        </div>
-                    </div>
-
-                    <div class="arch-connector"><i class="fa-solid fa-arrow-down-up-lock"></i></div>
-
-                    <div class="arch-node">
-                        <div class="arch-node-icon"
-                             style="background: rgba(129, 140, 248, 0.15); color: var(--secondary);">
-                            <i class="fa-solid fa-server"></i></div>
-                        <div class="arch-node-info">
-                            <h4>Shiftly Cloud Real-Time API</h4>
-                            <p>Express.js + PostgreSQL עם הצפנת SSL &amp; JWT Tokens</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Comparison Matrix Section -->
-    <section class="section-wrapper" id="comparison">
-        <div class="section-header-centered">
-            <div class="section-tag"><i class="fa-solid fa-scale-balanced"></i> השוואת תכונות</div>
-            <h2 class="section-title">למה Shiftly מובילה בניהול משמרות ושכר?</h2>
-            <p class="section-subtitle">ראה כיצד Shiftly מתעלה על גיליונות אקסל ידניים ואפליקציות
-                נוכחות בסיסיות.</p>
-        </div>
-
-        <!-- Desktop Comparison Table -->
-        <div class="comparison-table-wrapper">
-            <table class="comparison-table">
-                <thead>
-                <tr>
-                    <th>תכונה / יתרון</th>
-                    <th class="highlight-col">Shiftly App</th>
-                    <th>אפליקציות נוכחות רגילות</th>
-                    <th>גיליון Excel / נייר</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td><strong>חישוב שעות נוספות (125%, 150%)</strong></td>
-                    <td class="highlight-col"><i class="fa-solid fa-circle-check check-icon"></i>
-                        אוטומטי
-                    </td>
-                    <td><i class="fa-solid fa-circle-minus" style="color: var(--warning);"></i> חלקן
-                        בתשלום
-                    </td>
-                    <td><i class="fa-solid fa-circle-xmark cross-icon"></i> נוסחאות ידניות</td>
-                </tr>
-                <tr>
-                    <td><strong>זיהוי כניסת/יציאת שבת לפי הלוח העברי</strong></td>
-                    <td class="highlight-col"><i class="fa-solid fa-circle-check check-icon"></i>
-                        אוטומטי בלייב
-                    </td>
-                    <td><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</td>
-                    <td><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</td>
-                </tr>
-                <tr>
-                    <td><strong>גיבוי מוצפן ב-Google Drive הפרטי (BYOS)</strong></td>
-                    <td class="highlight-col"><i class="fa-solid fa-circle-check check-icon"></i>
-                        מובנה בחינם
-                    </td>
-                    <td><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</td>
-                    <td><i class="fa-solid fa-circle-xmark cross-icon"></i> ידני בלבד</td>
-                </tr>
-                <tr>
-                    <td><strong>מנוע פענוח טקסט חופשי (Smart Parser)</strong></td>
-                    <td class="highlight-col"><i class="fa-solid fa-circle-check check-icon"></i>
-                        כלול
-                    </td>
-                    <td><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</td>
-                    <td><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</td>
-                </tr>
-                <tr>
-                    <td><strong>תמיכה מולטי-פלטפורם (Web, Mobile, Desktop)</strong></td>
-                    <td class="highlight-col"><i class="fa-solid fa-circle-check check-icon"></i> 6
-                        פלטפורמות
-                    </td>
-                    <td><i class="fa-solid fa-circle-minus" style="color: var(--warning);"></i>
-                        מובייל בלבד
-                    </td>
-                    <td><i class="fa-solid fa-circle-minus" style="color: var(--warning);"></i> דורש
-                        מחשב
-                    </td>
-                </tr>
-                <tr>
-                    <td><strong>עבודה אופליין מלאה ללא חיבור אינטרנט</strong></td>
-                    <td class="highlight-col"><i class="fa-solid fa-circle-check check-icon"></i>
-                        100% Offline-First
-                    </td>
-                    <td><i class="fa-solid fa-circle-minus" style="color: var(--warning);"></i>
-                        חלקית
-                    </td>
-                    <td><i class="fa-solid fa-circle-check check-icon"></i> כן</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Mobile Responsive Comparison Cards -->
-        <div class="comparison-mobile-cards">
-            <div class="comp-card">
-                <h4 class="comp-card-title">חישוב שעות נוספות (125%, 150%)</h4>
-                <div class="comp-card-row highlight">
-                    <span class="comp-brand">Shiftly App</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-check check-icon"></i> אוטומטי</span>
-                </div>
-                <div class="comp-card-row">
-                    <span class="comp-brand">אפליקציות רגילות</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-minus" style="color: var(--warning);"></i> חלקן בתשלום</span>
-                </div>
-                <div class="comp-card-row">
-                    <span class="comp-brand">גיליון Excel / נייר</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-xmark cross-icon"></i> נוסחאות ידניות</span>
-                </div>
-            </div>
-
-            <div class="comp-card">
-                <h4 class="comp-card-title">זיהוי כניסת/יציאת שבת לפי הלוח העברי</h4>
-                <div class="comp-card-row highlight">
-                    <span class="comp-brand">Shiftly App</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-check check-icon"></i> אוטומטי בלייב</span>
-                </div>
-                <div class="comp-card-row">
-                    <span class="comp-brand">אפליקציות רגילות</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</span>
-                </div>
-                <div class="comp-card-row">
-                    <span class="comp-brand">גיליון Excel / נייר</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</span>
-                </div>
-            </div>
-
-            <div class="comp-card">
-                <h4 class="comp-card-title">גיבוי מוצפן ב-Google Drive (BYOS)</h4>
-                <div class="comp-card-row highlight">
-                    <span class="comp-brand">Shiftly App</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-check check-icon"></i> מובנה בחינם</span>
-                </div>
-                <div class="comp-card-row">
-                    <span class="comp-brand">אפליקציות רגילות</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</span>
-                </div>
-                <div class="comp-card-row">
-                    <span class="comp-brand">גיליון Excel / נייר</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-xmark cross-icon"></i> ידני בלבד</span>
-                </div>
-            </div>
-
-            <div class="comp-card">
-                <h4 class="comp-card-title">מנוע פענוח טקסט חופשי (Smart Parser)</h4>
-                <div class="comp-card-row highlight">
-                    <span class="comp-brand">Shiftly App</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-check check-icon"></i> כלול</span>
-                </div>
-                <div class="comp-card-row">
-                    <span class="comp-brand">אפליקציות רגילות</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</span>
-                </div>
-                <div class="comp-card-row">
-                    <span class="comp-brand">גיליון Excel / נייר</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</span>
-                </div>
-            </div>
-
-            <div class="comp-card">
-                <h4 class="comp-card-title">תמיכה מולטי-פלטפורם (Web, Mobile, Desktop)</h4>
-                <div class="comp-card-row highlight">
-                    <span class="comp-brand">Shiftly App</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-check check-icon"></i> 6 פלטפורמות</span>
-                </div>
-                <div class="comp-card-row">
-                    <span class="comp-brand">אפליקציות רגילות</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-minus" style="color: var(--warning);"></i> מובייל בלבד</span>
-                </div>
-                <div class="comp-card-row">
-                    <span class="comp-brand">גיליון Excel / נייר</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-minus" style="color: var(--warning);"></i> דורש מחשב</span>
-                </div>
-            </div>
-
-            <div class="comp-card">
-                <h4 class="comp-card-title">עבודה אופליין מלאה ללא חיבור אינטרנט</h4>
-                <div class="comp-card-row highlight">
-                    <span class="comp-brand">Shiftly App</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-check check-icon"></i> 100% Offline-First</span>
-                </div>
-                <div class="comp-card-row">
-                    <span class="comp-brand">אפליקציות רגילות</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-minus" style="color: var(--warning);"></i> חלקית</span>
-                </div>
-                <div class="comp-card-row">
-                    <span class="comp-brand">גיליון Excel / נייר</span>
-                    <span class="comp-val"><i class="fa-solid fa-circle-check check-icon"></i> כן</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Accordion Section -->
-    <section class="section-wrapper" id="faq">
-        <div class="section-header-centered">
-            <div class="section-tag"><i class="fa-solid fa-circle-question"></i> שאלות נפוצות</div>
-            <h2 class="section-title">כל מה שרצית לדעת על Shiftly</h2>
-            <p class="section-subtitle">תשובות לשאלות הנפוצות ביותר בנושאי אבטחה, חישובי שכר וסנכרון
-                ענן.</p>
-        </div>
-
-        <div class="faq-accordion">
-            <div class="faq-item active">
-                <button class="faq-question">
-                    <span>האם חישובי השכר ב-Shiftly מהווים תלוש שכר רשמי?</span>
-                    <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
-                </button>
-                <div class="faq-answer">
-                    <p>Shiftly הינה אפליקציית מעקב וניהול אישי בלבד. החישובים מתבססים על נתוני השכר
-                        והשעות שהוזנו על ידך. תלוש השכר הרשמי המונפק על ידי המעסיק הינו המסמך המשפטי
-                        המחייב היחיד, ואפליקציית Shiftly אינה מהווה ייעוץ משפטי או מס רשמי.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question">
-                    <span>מהו גיבוי BYOS (Bring Your Own Storage) ואיך הוא מגן עלי?</span>
-                    <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
-                </button>
-                <div class="faq-answer">
-                    <p>BYOS פירושו שהאפליקציה שומרת את קובץ הגיבוי המוצפן בתיקיית ה-AppData הפרטית
-                        של חשבון ה-Google Drive האישי שלך. השימוש בהרשאת Drive מוגבל אך ורק לתיקייה
-                        זו, כך שלאף גורם חיצוני (כולל מפתחי האפליקציה) אין גישה או צפייה בנתונים
-                        שלך.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question">
-                    <span>איך פועל חישוב שעות השבת והחגים המיוחד?</span>
-                    <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
-                </button>
-                <div class="faq-answer">
-                    <p>האפליקציה כוללת מנוע אסטרונומי ולוח עברי פנימי המזהה במדויק את תזמוני כניסת
-                        ויציאת השבת והחגים לפי המיקום הגיאוגרפי בישראל. במידה ומשמרת נכנסת לתחום
-                        השבת, השעות מחושבות לפי התעריף המוגדל (150%, 175%, 200%) בהתאם להגדרות.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question">
-                    <span>האם האפליקציה עובדת ללא חיבור לאינטרנט (Offline)?</span>
-                    <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
-                </button>
-                <div class="faq-answer">
-                    <p>בהחלט! Shiftly נבנתה בארכיטקטורת Offline-First בעזרת בסיס נתונים מקומי מהיר
-                        (Hive NoSQL). כל המשמרות, הטיפים וההגדרות נשמרים מקומית במכשיר ועובדים באופן
-                        מלא גם ללא חיבור לרשת. בעת התחברות מחודשת, הנתונים מסתנכרנים אוטומטית
-                        בענן.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question">
-                    <span>באיזה פלטפורמות ניתן להשתמש ב-Shiftly?</span>
-                    <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
-                </button>
-                <div class="faq-answer">
-                    <p>Shiftly זמינה כאפליקציית Web מלאה לכל דפדפן, כאפליקציית Android (הורדת APK
-                        ישירה מ-GitHub Releases), כאפליקציית iOS, וכן כאפליקציית שולחן עבודה
-                        ל-Windows, macOS ו-Linux.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Legal Box & Trust Banner -->
-    <section class="section-wrapper">
-        <div class="legal-banner-box">
-            <h3 style="font-size: 28px; font-weight: 800; color: #FFFFFF; margin-bottom: 12px;">🛡️
-                מחויבות מלאה לפרטיות ושקיפות</h3>
-            <p style="color: var(--text-muted); max-width: 720px; margin: 0 auto 28px; font-size: 17px;">
-                כל הנתונים שלך נשמרים בצורה מאובטחת. איננו מוכרים, משכירים או מעבירים נתונים אישיים
-                לצדדים שלישיים.
+            <p class="hero-description">
+                Shiftly מעניקה לך דיוק מתמטי מושלם בחישוב שעות נוספות (125%, 150%), זיהוי
+                כניסת/יציאת
+                שבת וחגים לפי הלוח העברי, ניהול טיפים ונסיעות - עם סנכרון מוצפן ב-Google Drive הפרטי
+                שלך
+                (BYOS).
             </p>
-            <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+
+            <div class="hero-cta-group">
                 <a class="btn btn-primary" href="https://shiftly-ujfd.onrender.com/"
-                   target="_blank">
-                    <i class="fa-solid fa-globe"></i> כניסה ל-Shiftly Web
+                   style="padding: 16px 36px; font-size: 17px;" target="_blank">
+                    <i class="fa-solid fa-rocket"></i> כניסה ל-Shiftly Web
                 </a>
-                <a class="btn btn-glass" href="privacy.html">
-                    <i class="fa-solid fa-shield-halved"></i> מדיניות פרטיות
+                <a class="btn btn-glass" href="https://github.com/sagiv23/Shiftly/releases"
+                   style="padding: 16px 32px; font-size: 16px;" target="_blank">
+                    <i class="fa-solid fa-download"></i> הורדה לנייד ולמחשב
                 </a>
-                <a class="btn btn-outline" href="terms.html">
-                    <i class="fa-solid fa-file-contract"></i> תנאי שימוש
+                <a class="btn btn-outline" href="#calculator"
+                   style="padding: 16px 28px; font-size: 16px;">
+                    <i class="fa-solid fa-calculator"></i> נסה את המחשבון
                 </a>
             </div>
-        </div>
-    </section>
+
+            <!-- Interactive Shiftly Live Calculator Mockup in Hero -->
+            <div class="hero-showcase-container" id="calculator">
+                <div class="showcase-glow-backdrop"></div>
+
+                <div class="floating-status-pill pill-1">
+                    <i class="fa-solid fa-lock" style="color: var(--profit);"></i>
+                    <span>גיבוי מוצפן ב-Google Drive הפרטי (BYOS)</span>
+                </div>
+
+                <div class="floating-status-pill pill-2">
+                    <i class="fa-solid fa-stopwatch" style="color: var(--primary);"></i>
+                    <span>טיימר נוכחות פעיל מווילון ההתראות</span>
+                </div>
+
+                <div class="showcase-glass-card">
+                    <div class="calc-header">
+                        <div class="calc-title">
+                            <i class="fa-solid fa-calculator"></i>
+                            <span>מחשבון שעות נוספות ושבת בלייב</span>
+                        </div>
+                        <span class="calc-live-tag"><i class="fa-solid fa-circle-check"></i> מנוע חישוב חוקי עבודה בישראל</span>
+                    </div>
+
+                    <div class="calc-grid">
+                        <!-- Left Column: Inputs Panel -->
+                        <div class="calc-inputs-panel">
+                            <div class="form-group">
+                                <label class="form-label" for="hourlyRate">
+                                    <span>שכר שעתי בסיס (₪):</span>
+                                    <span style="color: var(--primary); font-family: var(--font-accent);">ILS / HR</span>
+                                </label>
+                                <div class="form-input-wrapper">
+                                    <input class="form-input" id="hourlyRate" max="300" min="30"
+                                           step="1" type="number" value="55">
+                                    <span class="form-input-suffix">₪/שעה</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group range-slider-wrapper">
+                                <label class="form-label" for="shiftHours">
+                                    <span>משך המשמרת (בשעות):</span>
+                                    <span id="shiftHoursVal"
+                                          style="color: var(--profit); font-family: var(--font-accent); font-weight: 700;">10.5 שעות</span>
+                                </label>
+                                <input class="calc-range-slider" id="shiftHours" max="16" min="4"
+                                       step="0.5" type="range" value="10.5">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="breakMinutes">
+                                    <span>הפסקה ללא תשלום (בדקות):</span>
+                                </label>
+                                <div class="form-input-wrapper">
+                                    <input class="form-input" id="breakMinutes" max="120" min="0"
+                                           step="15" type="number" value="30">
+                                    <span class="form-input-suffix">דקות</span>
+                                </div>
+                            </div>
+
+                            <div class="toggle-row">
+                                <div style="display: flex; flex-direction: column;">
+                                <span id="shabbatToggleLabel"
+                                      style="font-weight: 700; color: #FFFFFF; font-size: 15px;">משמרת שבת / חג (תעריף מוגדל)</span>
+                                    <span style="font-size: 12px; color: var(--text-muted);">מחשב אוטומטית 150%, 175%, 200%</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input aria-label="משמרת שבת / חג (תעריף מוגדל)"
+                                           id="shabbatToggle"
+                                           type="checkbox">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="tipsInput">
+                                    <span>טיפים והחזר הוצאות נסיעה (₪):</span>
+                                </label>
+                                <div class="form-input-wrapper">
+                                    <input class="form-input" id="tipsInput" min="0" step="10"
+                                           type="number" value="80">
+                                    <span class="form-input-suffix">₪ נטו</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Results Panel -->
+                        <div aria-atomic="true" aria-live="polite" class="calc-results-panel"
+                             role="status">
+                            <div>
+                                <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 16px; display: flex; justify-content: space-between;">
+                                    <span>פירוט מדרגות שכר:</span>
+                                    <span style="color: var(--primary);">Shiftly Engine v0.1.8</span>
+                                </div>
+
+                                <div class="result-breakdown-list">
+                                    <div class="breakdown-item">
+                                        <span>שעות רגילות (100%):</span>
+                                        <span class="val" id="resRegHours">8.0 ש"ע (₪440)</span>
+                                    </div>
+                                    <div class="breakdown-item highlight">
+                                        <span>שעות נוספות 125%:</span>
+                                        <span class="val" id="resOt1Hours">2.0 ש"ע (₪138)</span>
+                                    </div>
+                                    <div class="breakdown-item highlight">
+                                        <span>שעות נוספות 150%:</span>
+                                        <span class="val" id="resOt2Hours">0.0 ש"ע (₪0)</span>
+                                    </div>
+                                    <div class="breakdown-item">
+                                        <span>תוספות (טיפים/נסיעות):</span>
+                                        <span class="val" id="resExtraEarnings">₪80</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="result-total-box">
+                                <div class="total-label">סה"כ נטו לתשלום למשמרת:</div>
+                                <div class="total-amount" id="resTotalAmount">₪657.50</div>
+                                <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">
+                                    *
+                                    מבוסס על מנוע החישוב האוטומטי של Shiftly.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Impact Metrics Ribbon -->
+        <section class="metrics-ribbon-section">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-number">100%</div>
+                    <div class="metric-label">דיוק בחישוב שעות נוספות ושבתות</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">0</div>
+                    <div class="metric-label">דליפת נתונים (BYOS - הכל בדרייב שלך)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">6</div>
+                    <div class="metric-label">פלטפורמות נתמכות במקביל</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">&lt; 1 sec</div>
+                    <div class="metric-label">זמן סנכרון בזמן אמת בין מכשירים</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Bento Grid Section -->
+        <section class="section-wrapper" id="features">
+            <div class="section-header-centered">
+                <div class="section-tag"><i class="fa-solid fa-microchip"></i> טכנולוגיה וחדשנות
+                </div>
+                <h2 class="section-title">כל מה שצריך לניהול משמרות, שכר ודוחות במקום אחד</h2>
+                <p class="section-subtitle">נבחרת הכלים המקיפה ביותר לעובדים, פרילנסרים ומנהלים - עם
+                    ארכיטקטורה מאובטחת ועבודה מלאה במצב אופליין.</p>
+            </div>
+
+            <div class="bento-grid">
+                <div class="bento-card span-2">
+                    <div>
+                        <div class="bento-icon-wrapper icon-cyan">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <h3 class="bento-title">שעון נוכחות וטיימר חכם בזמן אמת</h3>
+                        <p class="bento-desc">הפעלה, השהיה, חידוש וסיום משמרת בלחיצה אחת. כולל ניהול
+                            הפסקות בתשלום ושלא בתשלום, בקרה נוחה ישירות מווילון ההתראות במכשיר (Live
+                            Notification), והתראות חכמות על תום משמרת.</p>
+                    </div>
+                    <div class="bento-pills-list">
+                        <span class="bento-pill">וילון התראות אינטראקטיבי</span>
+                        <span class="bento-pill">ניהול הפסקות מורכב</span>
+                        <span class="bento-pill">התראות סיום משמרת</span>
+                    </div>
+                </div>
+
+                <div class="bento-card">
+                    <div>
+                        <div class="bento-icon-wrapper icon-emerald">
+                            <i class="fa-solid fa-calculator"></i>
+                        </div>
+                        <h3 class="bento-title">מנוע שעות נוספות ושבתות</h3>
+                        <p class="bento-desc">חישוב מבוסס דיני עבודה בישראל: מדרגות שעות נוספות
+                            (125%,
+                            150%) וזיהוי אוטומטי של כניסת/יציאת שבת וחגים לפי לוח עברי ותמיכה במיקום
+                            גיאוגרפי.</p>
+                    </div>
+                    <div class="bento-pills-list">
+                        <span class="bento-pill">לוח עברי אוטומטי</span>
+                        <span class="bento-pill">125% / 150% / 200%</span>
+                    </div>
+                </div>
+
+                <div class="bento-card">
+                    <div>
+                        <div class="bento-icon-wrapper icon-amber">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3 class="bento-title">גיבוי פרטי (BYOS) Google Drive</h3>
+                        <p class="bento-desc">Bring Your Own Storage: הנתונים שלך מגובים באופן מוצפן
+                            ישירות בתיקיית ה-AppData הפרטית של ה-Google Drive שלך. אף גורם חיצוני לא
+                            רואה את נתוני הגיבוי שלך.</p>
+                    </div>
+                    <div class="bento-pills-list">
+                        <span class="bento-pill">הצפנה מלאה</span>
+                        <span class="bento-pill">אפס גישה לצד ג'</span>
+                    </div>
+                </div>
+
+                <div class="bento-card">
+                    <div>
+                        <div class="bento-icon-wrapper icon-purple">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <h3 class="bento-title">מנוע פיענוח טקסט (Smart Parser)</h3>
+                        <p class="bento-desc">הדבקת סידור עבודה שלם בטקסט חופשי (למשל: "24.06.2026 -
+                            17:30 - 23:00 45 דקות + 50") והפיכתו המיידית לסידור משמרות מעובד תוך
+                            שבריר
+                            שנייה.</p>
+                    </div>
+                    <div class="bento-pills-list">
+                        <span class="bento-pill">פענוח טקסט חופשי</span>
+                        <span class="bento-pill">יבוא מרובה</span>
+                    </div>
+                </div>
+
+                <div class="bento-card">
+                    <div>
+                        <div class="bento-icon-wrapper icon-indigo">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                        </div>
+                        <h3 class="bento-title">דוחות מתקדמים וייצוא PDF/Excel</h3>
+                        <p class="bento-desc">גרפים וסטטיסטיקות עומק, ניתוח הכנסות לפי תפקידים,
+                            תיעוד
+                            טיפים והוצאות נלוות, וייצוא דוחות מקצועיים בקבצי PDF, CSV ו-Excel בלחיצת
+                            כפתור.</p>
+                    </div>
+                    <div class="bento-pills-list">
+                        <span class="bento-pill">ייצוא PDF &amp; Excel</span>
+                        <span class="bento-pill">ניתוח טיפים והוצאות</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture & Security Visualizer Section -->
+        <section class="section-wrapper" id="architecture">
+            <div class="architecture-container">
+                <div class="arch-grid">
+                    <div>
+                        <div class="section-tag"
+                             style="background: rgba(52, 211, 153, 0.15); border-color: rgba(52, 211, 153, 0.3); color: var(--profit);">
+                            <i class="fa-solid fa-lock"></i> ארכיטקטורת סנכרון כפולה
+                        </div>
+                        <h2 class="section-title">הנתונים שלך שייכים לך. תמיד.</h2>
+                        <p class="section-subtitle" style="margin-bottom: 24px;">
+                            Shiftly משלבת ארכיטקטורה פורצת דרך המאפשרת לך לבחור בין גיבוי פרטי מוצפן
+                            ב-Google Drive של החשבון האישי שלך (BYOS), לבין סנכרון בזמן אמת מול
+                            Shiftly
+                            Cloud.
+                        </p>
+                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px;">
+                            <li style="display: flex; align-items: center; gap: 12px; font-weight: 600;">
+                                <i class="fa-solid fa-circle-check"
+                                   style="color: var(--profit);"></i>
+                                <span>Offline-First (Hive NoSQL): עבודה מלאה ללא צורך בחיבור לרשת</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 12px; font-weight: 600;">
+                                <i class="fa-solid fa-circle-check"
+                                   style="color: var(--profit);"></i>
+                                <span>BYOS AppData Scope: קובץ הגיבוי מוצפן בתוך תיקיית ה-Drive המוצפנת שלך</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 12px; font-weight: 600;">
+                                <i class="fa-solid fa-circle-check"
+                                   style="color: var(--profit);"></i>
+                                <span>Shiftly Cloud Sync: REST API מהיר ב-Node.js + PostgreSQL לסנכרון בין מכשירים</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="arch-diagram-card">
+                        <div class="arch-node">
+                            <div class="arch-node-icon"><i
+                                    class="fa-solid fa-mobile-screen-button"></i>
+                            </div>
+                            <div class="arch-node-info">
+                                <h4>Shiftly Flutter Client</h4>
+                                <p>אחסון מקומי מוצפן (Hive NoSQL &amp; SecureStorage)</p>
+                            </div>
+                        </div>
+
+                        <div class="arch-connector"><i class="fa-solid fa-arrow-down-up-lock"></i>
+                        </div>
+
+                        <div class="arch-node">
+                            <div class="arch-node-icon"
+                                 style="background: rgba(34, 197, 94, 0.15); color: var(--profit);">
+                                <i
+                                        class="fa-brands fa-google-drive"></i></div>
+                            <div class="arch-node-info">
+                                <h4>BYOS Google Drive Private Backup</h4>
+                                <p>תיקיית appDataFolder מוצפנת אישית ב-Drive שלך</p>
+                            </div>
+                        </div>
+
+                        <div class="arch-connector"><i class="fa-solid fa-arrow-down-up-lock"></i>
+                        </div>
+
+                        <div class="arch-node">
+                            <div class="arch-node-icon"
+                                 style="background: rgba(129, 140, 248, 0.15); color: var(--secondary);">
+                                <i class="fa-solid fa-server"></i></div>
+                            <div class="arch-node-info">
+                                <h4>Shiftly Cloud Real-Time API</h4>
+                                <p>Express.js + PostgreSQL עם הצפנת SSL &amp; JWT Tokens</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Matrix Section -->
+        <section class="section-wrapper" id="comparison">
+            <div class="section-header-centered">
+                <div class="section-tag"><i class="fa-solid fa-scale-balanced"></i> השוואת תכונות
+                </div>
+                <h2 class="section-title">למה Shiftly מובילה בניהול משמרות ושכר?</h2>
+                <p class="section-subtitle">ראה כיצד Shiftly מתעלה על גיליונות אקסל ידניים
+                    ואפליקציות
+                    נוכחות בסיסיות.</p>
+            </div>
+
+            <!-- Desktop Comparison Table -->
+            <div class="comparison-table-wrapper">
+                <table class="comparison-table">
+                    <thead>
+                    <tr>
+                        <th>תכונה / יתרון</th>
+                        <th class="highlight-col">Shiftly App</th>
+                        <th>אפליקציות נוכחות רגילות</th>
+                        <th>גיליון Excel / נייר</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><strong>חישוב שעות נוספות (125%, 150%)</strong></td>
+                        <td class="highlight-col"><i
+                                class="fa-solid fa-circle-check check-icon"></i>
+                            אוטומטי
+                        </td>
+                        <td><i class="fa-solid fa-circle-minus" style="color: var(--warning);"></i>
+                            חלקן
+                            בתשלום
+                        </td>
+                        <td><i class="fa-solid fa-circle-xmark cross-icon"></i> נוסחאות ידניות</td>
+                    </tr>
+                    <tr>
+                        <td><strong>זיהוי כניסת/יציאת שבת לפי הלוח העברי</strong></td>
+                        <td class="highlight-col"><i
+                                class="fa-solid fa-circle-check check-icon"></i>
+                            אוטומטי בלייב
+                        </td>
+                        <td><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</td>
+                        <td><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</td>
+                    </tr>
+                    <tr>
+                        <td><strong>גיבוי מוצפן ב-Google Drive הפרטי (BYOS)</strong></td>
+                        <td class="highlight-col"><i
+                                class="fa-solid fa-circle-check check-icon"></i>
+                            מובנה בחינם
+                        </td>
+                        <td><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</td>
+                        <td><i class="fa-solid fa-circle-xmark cross-icon"></i> ידני בלבד</td>
+                    </tr>
+                    <tr>
+                        <td><strong>מנוע פענוח טקסט חופשי (Smart Parser)</strong></td>
+                        <td class="highlight-col"><i
+                                class="fa-solid fa-circle-check check-icon"></i>
+                            כלול
+                        </td>
+                        <td><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</td>
+                        <td><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</td>
+                    </tr>
+                    <tr>
+                        <td><strong>תמיכה מולטי-פלטפורם (Web, Mobile, Desktop)</strong></td>
+                        <td class="highlight-col"><i
+                                class="fa-solid fa-circle-check check-icon"></i> 6
+                            פלטפורמות
+                        </td>
+                        <td><i class="fa-solid fa-circle-minus" style="color: var(--warning);"></i>
+                            מובייל בלבד
+                        </td>
+                        <td><i class="fa-solid fa-circle-minus" style="color: var(--warning);"></i>
+                            דורש
+                            מחשב
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>עבודה אופליין מלאה ללא חיבור אינטרנט</strong></td>
+                        <td class="highlight-col"><i
+                                class="fa-solid fa-circle-check check-icon"></i>
+                            100% Offline-First
+                        </td>
+                        <td><i class="fa-solid fa-circle-minus" style="color: var(--warning);"></i>
+                            חלקית
+                        </td>
+                        <td><i class="fa-solid fa-circle-check check-icon"></i> כן</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Responsive Comparison Cards -->
+            <div class="comparison-mobile-cards">
+                <div class="comp-card">
+                    <h4 class="comp-card-title">חישוב שעות נוספות (125%, 150%)</h4>
+                    <div class="comp-card-row highlight">
+                        <span class="comp-brand">Shiftly App</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-check check-icon"></i> אוטומטי</span>
+                    </div>
+                    <div class="comp-card-row">
+                        <span class="comp-brand">אפליקציות רגילות</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-minus"
+                                                  style="color: var(--warning);"></i> חלקן בתשלום</span>
+                    </div>
+                    <div class="comp-card-row">
+                        <span class="comp-brand">גיליון Excel / נייר</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-xmark cross-icon"></i> נוסחאות ידניות</span>
+                    </div>
+                </div>
+
+                <div class="comp-card">
+                    <h4 class="comp-card-title">זיהוי כניסת/יציאת שבת לפי הלוח העברי</h4>
+                    <div class="comp-card-row highlight">
+                        <span class="comp-brand">Shiftly App</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-check check-icon"></i> אוטומטי בלייב</span>
+                    </div>
+                    <div class="comp-card-row">
+                        <span class="comp-brand">אפליקציות רגילות</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</span>
+                    </div>
+                    <div class="comp-card-row">
+                        <span class="comp-brand">גיליון Excel / נייר</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</span>
+                    </div>
+                </div>
+
+                <div class="comp-card">
+                    <h4 class="comp-card-title">גיבוי מוצפן ב-Google Drive (BYOS)</h4>
+                    <div class="comp-card-row highlight">
+                        <span class="comp-brand">Shiftly App</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-check check-icon"></i> מובנה בחינם</span>
+                    </div>
+                    <div class="comp-card-row">
+                        <span class="comp-brand">אפליקציות רגילות</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</span>
+                    </div>
+                    <div class="comp-card-row">
+                        <span class="comp-brand">גיליון Excel / נייר</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-xmark cross-icon"></i> ידני בלבד</span>
+                    </div>
+                </div>
+
+                <div class="comp-card">
+                    <h4 class="comp-card-title">מנוע פענוח טקסט חופשי (Smart Parser)</h4>
+                    <div class="comp-card-row highlight">
+                        <span class="comp-brand">Shiftly App</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-check check-icon"></i> כלול</span>
+                    </div>
+                    <div class="comp-card-row">
+                        <span class="comp-brand">אפליקציות רגילות</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</span>
+                    </div>
+                    <div class="comp-card-row">
+                        <span class="comp-brand">גיליון Excel / נייר</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-xmark cross-icon"></i> ללא תמיכה</span>
+                    </div>
+                </div>
+
+                <div class="comp-card">
+                    <h4 class="comp-card-title">תמיכה מולטי-פלטפורם (Web, Mobile, Desktop)</h4>
+                    <div class="comp-card-row highlight">
+                        <span class="comp-brand">Shiftly App</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-check check-icon"></i> 6 פלטפורמות</span>
+                    </div>
+                    <div class="comp-card-row">
+                        <span class="comp-brand">אפליקציות רגילות</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-minus"
+                                                  style="color: var(--warning);"></i> מובייל בלבד</span>
+                    </div>
+                    <div class="comp-card-row">
+                        <span class="comp-brand">גיליון Excel / נייר</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-minus"
+                                                  style="color: var(--warning);"></i> דורש מחשב</span>
+                    </div>
+                </div>
+
+                <div class="comp-card">
+                    <h4 class="comp-card-title">עבודה אופליין מלאה ללא חיבור אינטרנט</h4>
+                    <div class="comp-card-row highlight">
+                        <span class="comp-brand">Shiftly App</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-check check-icon"></i> 100% Offline-First</span>
+                    </div>
+                    <div class="comp-card-row">
+                        <span class="comp-brand">אפליקציות רגילות</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-minus"
+                                                  style="color: var(--warning);"></i> חלקית</span>
+                    </div>
+                    <div class="comp-card-row">
+                        <span class="comp-brand">גיליון Excel / נייר</span>
+                        <span class="comp-val"><i class="fa-solid fa-circle-check check-icon"></i> כן</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Accordion Section -->
+        <section class="section-wrapper" id="faq">
+            <div class="section-header-centered">
+                <div class="section-tag"><i class="fa-solid fa-circle-question"></i> שאלות נפוצות
+                </div>
+                <h2 class="section-title">כל מה שרצית לדעת על Shiftly</h2>
+                <p class="section-subtitle">תשובות לשאלות הנפוצות ביותר בנושאי אבטחה, חישובי שכר
+                    וסנכרון
+                    ענן.</p>
+            </div>
+
+            <div class="faq-accordion">
+                <div class="faq-item active">
+                    <button aria-controls="faq-ans-1" aria-expanded="true" class="faq-question"
+                            id="faq-q-1">
+                        <span>האם חישובי השכר ב-Shiftly מהווים תלוש שכר רשמי?</span>
+                        <span class="faq-icon"><i aria-hidden="true"
+                                                  class="fa-solid fa-chevron-down"></i></span>
+                    </button>
+                    <div aria-labelledby="faq-q-1" class="faq-answer" id="faq-ans-1" role="region">
+                        <p>Shiftly הינה אפליקציית מעקב וניהול אישי בלבד. החישובים מתבססים על נתוני
+                            השכר
+                            והשעות שהוזנו על ידך. תלוש השכר הרשמי המונפק על ידי המעסיק הינו המסמך
+                            המשפטי
+                            המחייב היחיד, ואפליקציית Shiftly אינה מהווה ייעוץ משפטי או מס רשמי.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button aria-controls="faq-ans-2" aria-expanded="false" class="faq-question"
+                            id="faq-q-2">
+                        <span>מהו גיבוי BYOS (Bring Your Own Storage) ואיך הוא מגן עלי?</span>
+                        <span class="faq-icon"><i aria-hidden="true"
+                                                  class="fa-solid fa-chevron-down"></i></span>
+                    </button>
+                    <div aria-labelledby="faq-q-2" class="faq-answer" id="faq-ans-2" role="region">
+                        <p>BYOS פירושו שהאפליקציה שומרת את קובץ הגיבוי המוצפן בתיקיית ה-AppData
+                            הפרטית
+                            של חשבון ה-Google Drive האישי שלך. השימוש בהרשאת Drive מוגבל אך ורק
+                            לתיקייה
+                            זו, כך שלאף גורם חיצוני (כולל מפתחי האפליקציה) אין גישה או צפייה בנתונים
+                            שלך.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button aria-controls="faq-ans-3" aria-expanded="false" class="faq-question"
+                            id="faq-q-3">
+                        <span>איך פועל חישוב שעות השבת והחגים המיוחד?</span>
+                        <span class="faq-icon"><i aria-hidden="true"
+                                                  class="fa-solid fa-chevron-down"></i></span>
+                    </button>
+                    <div aria-labelledby="faq-q-3" class="faq-answer" id="faq-ans-3" role="region">
+                        <p>האפליקציה כוללת מנוע אסטרונומי ולוח עברי פנימי המזהה במדויק את תזמוני
+                            כניסת
+                            ויציאת השבת והחגים לפי המיקום הגיאוגרפי בישראל. במידה ומשמרת נכנסת לתחום
+                            השבת, השעות מחושבות לפי התעריף המוגדל (150%, 175%, 200%) בהתאם
+                            להגדרות.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button aria-controls="faq-ans-4" aria-expanded="false" class="faq-question"
+                            id="faq-q-4">
+                        <span>האם האפליקציה עובדת ללא חיבור לאינטרנט (Offline)?</span>
+                        <span class="faq-icon"><i aria-hidden="true"
+                                                  class="fa-solid fa-chevron-down"></i></span>
+                    </button>
+                    <div aria-labelledby="faq-q-4" class="faq-answer" id="faq-ans-4" role="region">
+                        <p>בהחלט! Shiftly נבנתה בארכיטקטורת Offline-First בעזרת בסיס נתונים מקומי
+                            מהיר
+                            (Hive NoSQL). כל המשמרות, הטיפים וההגדרות נשמרים מקומית במכשיר ועובדים
+                            באופן
+                            מלא גם ללא חיבור לרשת. בעת התחברות מחודשת, הנתונים מסתנכרנים אוטומטית
+                            בענן.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button aria-controls="faq-ans-5" aria-expanded="false" class="faq-question"
+                            id="faq-q-5">
+                        <span>באיזה פלטפורמות ניתן להשתמש ב-Shiftly?</span>
+                        <span class="faq-icon"><i aria-hidden="true"
+                                                  class="fa-solid fa-chevron-down"></i></span>
+                    </button>
+                    <div aria-labelledby="faq-q-5" class="faq-answer" id="faq-ans-5" role="region">
+                        <p>Shiftly זמינה כאפליקציית Web מלאה לכל דפדפן, כאפליקציית Android (הורדת
+                            APK
+                            ישירה מ-GitHub Releases), כאפליקציית iOS, וכן כאפליקציית שולחן עבודה
+                            ל-Windows, macOS ו-Linux.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legal Box & Trust Banner -->
+        <section class="section-wrapper">
+            <div class="legal-banner-box">
+                <h3 style="font-size: 28px; font-weight: 800; color: #FFFFFF; margin-bottom: 12px;">
+                    🛡️
+                    מחויבות מלאה לפרטיות ושקיפות</h3>
+                <p style="color: var(--text-muted); max-width: 720px; margin: 0 auto 28px; font-size: 17px;">
+                    כל הנתונים שלך נשמרים בצורה מאובטחת. איננו מוכרים, משכירים או מעבירים נתונים
+                    אישיים
+                    לצדדים שלישיים.
+                </p>
+                <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+                    <a class="btn btn-primary" href="https://shiftly-ujfd.onrender.com/"
+                       target="_blank">
+                        <i aria-hidden="true" class="fa-solid fa-globe"></i> כניסה ל-Shiftly Web
+                    </a>
+                    <a class="btn btn-glass" href="privacy.html">
+                        <i aria-hidden="true" class="fa-solid fa-shield-halved"></i> מדיניות פרטיות
+                    </a>
+                    <a class="btn btn-outline" href="terms.html">
+                        <i aria-hidden="true" class="fa-solid fa-file-contract"></i> תנאי שימוש
+                    </a>
+                    <a class="btn btn-glass" href="accessibility.html">
+                        <i aria-hidden="true" class="fa-solid fa-universal-access"></i> הצהרת נגישות
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
 
     <!-- Agency-Grade Footer -->
     <footer class="footer">
@@ -785,8 +865,8 @@
                     <ul>
                         <li><a href="privacy.html">מדיניות פרטיות (Privacy Policy)</a></li>
                         <li><a href="terms.html">תנאי שימוש (Terms of Service)</a></li>
+                        <li><a href="accessibility.html">הצהרת נגישות (Accessibility)</a></li>
                         <li><a href="PRIVACY.md">מסמך PRIVACY.md</a></li>
-                        <li><a href="TERMS.md">מסמך TERMS.md</a></li>
                     </ul>
                 </div>
             </div>
@@ -794,7 +874,7 @@
             <div class="footer-bottom">
                 <div>&copy; 2026 Shiftly App. כל הזכויות שמורות.</div>
                 <button aria-label="חזרה לראש הדף" class="back-to-top-btn" id="backToTop">
-                    <i class="fa-solid fa-chevron-up"></i>
+                    <i aria-hidden="true" class="fa-solid fa-chevron-up"></i>
                 </button>
             </div>
         </div>

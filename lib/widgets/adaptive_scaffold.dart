@@ -93,8 +93,12 @@ class AdaptiveScaffold extends StatelessWidget {
       mainScaffold = Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: titleWidget ??
-              (title != null ? Text(title!) : Text(l.common_app_name)),
+          title: Semantics(
+            header: true,
+            child:
+                titleWidget ??
+                (title != null ? Text(title!) : Text(l.common_app_name)),
+          ),
           bottom: bottom,
           actions: actions,
         ),
@@ -141,11 +145,9 @@ class AdaptiveScaffold extends StatelessWidget {
             selectedFontSize: 12,
             unselectedFontSize: 11,
             selectedItemColor: AppTheme.primary,
-            unselectedItemColor: Theme
-                .of(context)
-                .colorScheme
-                .onSurface
-                .withValues(alpha: 0.55),
+            unselectedItemColor: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.55),
             selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
             unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
             items: navItems,
@@ -158,8 +160,12 @@ class AdaptiveScaffold extends StatelessWidget {
       mainScaffold = Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: titleWidget ??
-              (title != null ? Text(title!) : Text(l.common_app_name)),
+          title: Semantics(
+            header: true,
+            child:
+                titleWidget ??
+                (title != null ? Text(title!) : Text(l.common_app_name)),
+          ),
           bottom: bottom,
           actions: actions,
         ),
@@ -224,8 +230,7 @@ class SideMenuContent extends StatelessWidget {
                         width: 38,
                         height: 38,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) =>
-                        const Icon(
+                        errorBuilder: (_, _, _) => const Icon(
                           Icons.access_time_filled_rounded,
                           size: 38,
                         ),
@@ -238,11 +243,7 @@ class SideMenuContent extends StatelessWidget {
                     children: [
                       Text(
                         l.common_app_name,
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .titleLarge
-                            ?.copyWith(
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.5,
                         ),
@@ -363,8 +364,9 @@ class _SideNavItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
       child: Material(
-        color: isSelected ? primary.withValues(alpha: 0.15) : Colors
-            .transparent,
+        color: isSelected
+            ? primary.withValues(alpha: 0.15)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
           onTap: onTap,
@@ -385,8 +387,9 @@ class _SideNavItem extends StatelessWidget {
                   child: Text(
                     label,
                     style: TextStyle(
-                      fontWeight: isSelected ? FontWeight.w800 : FontWeight
-                          .w600,
+                      fontWeight: isSelected
+                          ? FontWeight.w800
+                          : FontWeight.w600,
                       color: isSelected ? primary : theme.colorScheme.onSurface,
                       fontSize: 14,
                     ),

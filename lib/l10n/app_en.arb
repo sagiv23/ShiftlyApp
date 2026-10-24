@@ -556,5 +556,9 @@
         "type": "Object"
       }
     }
-  }
+  },
+  "common_show_password": "Show password",
+  "common_hide_password": "Hide password",
+  "accessibility_statement": "Accessibility Statement",
+  "settings_accessibility_sub": "Accessibility info and contact details"
 }

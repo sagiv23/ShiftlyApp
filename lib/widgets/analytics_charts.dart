@@ -87,44 +87,59 @@ class EarningsBarChartWidget extends StatelessWidget {
     // Round up maxVal for nice Y-axis steps
     final maxY = _calculateNiceMax(maxVal);
 
-    return SizedBox(
-      height: height,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final width = constraints.maxWidth;
-          return GestureDetector(
-            onTapDown: (details) {
-              final x = details.localPosition.dx;
-              const leftPadding = 48.0;
-              const rightPadding = 16.0;
-              final chartWidth = width - leftPadding - rightPadding;
-              if (x >= leftPadding && x <= width - rightPadding) {
-                final barWidth = chartWidth / data.length;
-                final index = ((x - leftPadding) / barWidth).floor().clamp(
-                  0,
-                  data.length - 1,
-                );
-                onSelected(index == selectedIndex ? null : index);
-              } else {
-                onSelected(null);
-              }
-            },
-            child: CustomPaint(
-              size: Size(width, height),
-              painter: _BarChartPainter(
-                data: data,
-                selectedIndex: selectedIndex,
-                maxY: maxY,
-                isDark: isDark,
-                primaryColor: primaryColor,
-                tipsColor: tipsColor,
-                textColor: textColor,
-                gridColor: gridColor,
-                currencySymbol: currencySymbol,
+    final l = AppLocalizations.of(context)!;
+    final totalChartEarnings = data.fold<double>(
+      0,
+      (sum, dp) => sum + dp.totalNet,
+    );
+    final chartSemanticSummary =
+        '${l.nav_analytics}: ${data.length} ${l.common_shifts_count}, ${l.common_net}: ${totalChartEarnings.toStringAsFixed(0)} $currencySymbol';
+
+    return Semantics(
+      container: true,
+      label: chartSemanticSummary,
+      value: selectedIndex != null && selectedIndex! < data.length
+          ? '${data[selectedIndex!].label}: ${data[selectedIndex!].totalNet.toStringAsFixed(0)} $currencySymbol'
+          : null,
+      child: SizedBox(
+        height: height,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth;
+            return GestureDetector(
+              onTapDown: (details) {
+                final x = details.localPosition.dx;
+                const leftPadding = 48.0;
+                const rightPadding = 16.0;
+                final chartWidth = width - leftPadding - rightPadding;
+                if (x >= leftPadding && x <= width - rightPadding) {
+                  final barWidth = chartWidth / data.length;
+                  final index = ((x - leftPadding) / barWidth).floor().clamp(
+                    0,
+                    data.length - 1,
+                  );
+                  onSelected(index == selectedIndex ? null : index);
+                } else {
+                  onSelected(null);
+                }
+              },
+              child: CustomPaint(
+                size: Size(width, height),
+                painter: _BarChartPainter(
+                  data: data,
+                  selectedIndex: selectedIndex,
+                  maxY: maxY,
+                  isDark: isDark,
+                  primaryColor: primaryColor,
+                  tipsColor: tipsColor,
+                  textColor: textColor,
+                  gridColor: gridColor,
+                  currencySymbol: currencySymbol,
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

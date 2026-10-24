@@ -537,6 +537,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             },
                           ),
                         ),
+                        const Divider(height: 1, indent: 56),
+                        ListTile(
+                          title: Text(l.accessibility_statement),
+                          subtitle: Text(l.settings_accessibility_sub),
+                          leading: const Icon(
+                            Icons.accessibility_new_rounded,
+                            color: AppTheme.primaryDark,
+                          ),
+                          trailing: const Icon(Icons.chevron_right_rounded),
+                          onTap: () {
+                            LegalUtils.showAccessibilityStatement(context);
+                          },
+                        ),
                       ],
                     ),
                   ),

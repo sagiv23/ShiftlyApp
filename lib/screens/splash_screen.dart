@@ -227,21 +227,14 @@ class _SplashScreenState extends State<SplashScreen>
     final disabledAnimations = MediaQuery.of(context).disableAnimations;
 
     final bgColors = isDark
-        ? [
-      AppTheme.darkCard,
-      AppTheme.darkBackground,
-            const Color(0xFF04060C),
-          ]
+        ? [AppTheme.darkCard, AppTheme.darkBackground, const Color(0xFF04060C)]
         : [
-      AppTheme.lightBackground,
+            AppTheme.lightBackground,
             const Color(0xFFEEF2F6),
-      AppTheme.lightBorder,
+            AppTheme.lightBorder,
           ];
 
-    final titleColor = Theme
-        .of(context)
-        .colorScheme
-        .onSurface;
+    final titleColor = Theme.of(context).colorScheme.onSurface;
     final cardBg = isDark
         ? AppTheme.darkCard.withValues(alpha: 0.65)
         : AppTheme.lightCard.withValues(alpha: 0.85);

@@ -1,34 +1,37 @@
 /* ==========================================================================
-   SHIFTLY - Core Application & Motion Engine
-   Provides: Canvas Particles, Cursor Spotlight, Navbar & Drawer Logic,
-   FAQ Accordions, Scroll-triggered Animations
+   SHIFTLY - Core Application, Accessibility & Motion Engine
+   Provides: Accessible Canvas Particles, Cursor Spotlight, Navbar & Drawer
+   Focus Trap, FAQ Accordion ARIA, Scroll-triggered Animations
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Respect system reduced motion settings for animations (WCAG 2.3.3)
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   // Initialize Canvas Particle Starfield Background
-  initStarfieldCanvas();
+  initStarfieldCanvas(prefersReducedMotion);
 
   // Initialize Interactive Cursor Follower Spotlight
-  initCursorSpotlight();
+  initCursorSpotlight(prefersReducedMotion);
 
   // Sticky Navbar Scroll State
   initNavbarScroll();
 
-  // Mobile Navigation Drawer
+  // Mobile Navigation Drawer (Focus Trap & ARIA)
   initMobileDrawer();
 
-  // FAQ Accordion
+  // FAQ Accordion (ARIA state sync)
   initFaqAccordion();
 
   // Back To Top Button
   initBackToTop();
 
-  // Scroll Entrance Animations (GSAP or Intersection Observer)
+  // Scroll Entrance Animations
   initScrollAnimations();
 });
 
 /* --- Starfield Canvas Animation --- */
-function initStarfieldCanvas() {
+function initStarfieldCanvas(prefersReducedMotion) {
   const canvas = document.getElementById('bgCanvas');
   if (!canvas) return;
 
@@ -103,16 +106,23 @@ function initStarfieldCanvas() {
     }
 
     ctx.globalAlpha = 1;
-    requestAnimationFrame(draw);
+    if (!prefersReducedMotion) {
+      requestAnimationFrame(draw);
+    }
   }
 
-  requestAnimationFrame(draw);
+  if (prefersReducedMotion) {
+    // Single static render for reduced motion
+    draw();
+  } else {
+    requestAnimationFrame(draw);
+  }
 }
 
 /* --- Interactive Cursor Spotlight --- */
-function initCursorSpotlight() {
+function initCursorSpotlight(prefersReducedMotion) {
   const spotlight = document.querySelector('.cursor-spotlight');
-  if (!spotlight || window.innerWidth < 1024) return;
+  if (!spotlight || window.innerWidth < 1024 || prefersReducedMotion) return;
 
   let mouseX = window.innerWidth / 2;
   let mouseY = window.innerHeight / 2;
@@ -125,7 +135,6 @@ function initCursorSpotlight() {
   });
 
   function renderSpotlight() {
-    // Smooth interpolation (lerp)
     posX += (mouseX - posX) * 0.1;
     posY += (mouseY - posY) * 0.1;
 
@@ -150,7 +159,7 @@ function initNavbarScroll() {
   });
 }
 
-/* --- Mobile Drawer --- */
+/* --- Mobile Navigation Drawer (Accessibility Focus Trap & ARIA) --- */
 function initMobileDrawer() {
   const mobileToggle = document.getElementById('mobileToggle');
   const mobileDrawer = document.getElementById('mobileDrawer');
@@ -159,16 +168,70 @@ function initMobileDrawer() {
 
   if (!mobileToggle || !mobileDrawer) return;
 
+  let previousActiveElement = null;
+
   function openDrawer() {
+    previousActiveElement = document.activeElement;
     mobileDrawer.classList.add('active');
     if (drawerOverlay) drawerOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
+
+    mobileToggle.setAttribute('aria-expanded', 'true');
+
+    // Focus close button or first interactive element inside drawer
+    setTimeout(() => {
+      if (drawerClose) {
+        drawerClose.focus();
+      } else {
+        mobileDrawer.focus();
+      }
+    }, 50);
+
+    document.addEventListener('keydown', handleDrawerKeydown);
   }
 
   function closeDrawer() {
     mobileDrawer.classList.remove('active');
     if (drawerOverlay) drawerOverlay.classList.remove('active');
     document.body.style.overflow = '';
+
+    mobileToggle.setAttribute('aria-expanded', 'false');
+
+    document.removeEventListener('keydown', handleDrawerKeydown);
+
+    // Restore focus to mobile toggle button
+    if (previousActiveElement && typeof previousActiveElement.focus === 'function') {
+      previousActiveElement.focus();
+    } else {
+      mobileToggle.focus();
+    }
+  }
+
+  function handleDrawerKeydown(e) {
+    if (e.key === 'Escape') {
+      closeDrawer();
+      return;
+    }
+
+    if (e.key === 'Tab') {
+      const focusables = mobileDrawer.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex="0"]');
+      if (!focusables.length) return;
+
+      const firstEl = focusables[0];
+      const lastEl = focusables[focusables.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstEl) {
+          e.preventDefault();
+          lastEl.focus();
+        }
+      } else {
+        if (document.activeElement === lastEl) {
+          e.preventDefault();
+          firstEl.focus();
+        }
+      }
+    }
   }
 
   mobileToggle.addEventListener('click', openDrawer);
@@ -181,7 +244,7 @@ function initMobileDrawer() {
   });
 }
 
-/* --- FAQ Accordion --- */
+/* --- FAQ Accordion (ARIA State Sync) --- */
 function initFaqAccordion() {
   const faqItems = document.querySelectorAll('.faq-item');
   if (!faqItems.length) return;
@@ -197,11 +260,17 @@ function initFaqAccordion() {
       faqItems.forEach(otherItem => {
         if (otherItem !== item) {
           otherItem.classList.remove('active');
+          const otherBtn = otherItem.querySelector('.faq-question');
+          if (otherBtn) {
+            otherBtn.setAttribute('aria-expanded', 'false');
+          }
         }
       });
 
       // Toggle current
-      item.classList.toggle('active', !isActive);
+      const newActiveState = !isActive;
+      item.classList.toggle('active', newActiveState);
+      questionBtn.setAttribute('aria-expanded', newActiveState ? 'true' : 'false');
     });
   });
 }

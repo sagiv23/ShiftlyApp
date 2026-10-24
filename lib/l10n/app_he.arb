@@ -556,5 +556,9 @@
         "type": "Object"
       }
     }
-  }
+  },
+  "common_show_password": "הצג סיסמה",
+  "common_hide_password": "הסתר סיסמה",
+  "accessibility_statement": "הצהרת נגישות",
+  "settings_accessibility_sub": "מידע על נגישות האפליקציה ודרכי פנייה"
 }

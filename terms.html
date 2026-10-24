@@ -27,18 +27,21 @@
 </head>
 <body>
 
+<!-- Accessibility Skip Link (WCAG 2.4.1) -->
+<a class="skip-link" href="#main-content">דילוג לתוכן המרכזי</a>
+
 <!-- Ambient Dynamic Background & Canvas -->
-<div class="ambient-canvas-container">
+<div aria-hidden="true" class="ambient-canvas-container">
     <canvas id="bgCanvas"></canvas>
     <div class="gradient-orb orb-1"></div>
     <div class="gradient-orb orb-2"></div>
 </div>
 
-<div class="cursor-spotlight"></div>
+<div aria-hidden="true" class="cursor-spotlight"></div>
 
 <div class="page-wrapper">
 
-    <!-- Navbar -->
+    <!-- Navigation Bar -->
     <nav class="navbar">
         <a class="logo-container" href="index.html">
             <div class="logo-badge">
@@ -46,34 +49,109 @@
             </div>
             <div class="logo-text-wrapper">
                 <span class="logo-text">Shiftly</span>
-                <span class="logo-subtext">LEGAL &amp; TERMS</span>
+                <span class="logo-subtext">WAGE & SHIFT ENGINE</span>
             </div>
         </a>
 
+        <ul class="nav-menu">
+            <li><a class="nav-link" href="index.html#calculator">מחשבון לייב</a></li>
+            <li><a class="nav-link" href="index.html#features">תכונות מתקדמות</a></li>
+            <li><a class="nav-link" href="index.html#architecture">אבטחה &amp; BYOS</a></li>
+            <li><a class="nav-link" href="index.html#comparison">השוואת מנוע</a></li>
+            <li><a class="nav-link" href="index.html#faq">שאלות נפוצות</a></li>
+        </ul>
+
         <div class="nav-actions">
             <a class="btn btn-primary" href="https://shiftly-ujfd.onrender.com/" target="_blank">
-                <i class="fa-solid fa-globe"></i> כניסה ל-Shiftly Web
+                <i aria-hidden="true" class="fa-solid fa-globe"></i> כניסה ל-Shiftly Web
             </a>
-            <a class="btn btn-glass" href="index.html">
-                <i class="fa-solid fa-arrow-right"></i> חזרה לדף הבית
+            <a class="btn btn-glass" href="https://github.com/sagiv23/Shiftly/releases"
+               target="_blank">
+                <i aria-hidden="true" class="fa-solid fa-download"></i> הורדות
             </a>
+            <button aria-controls="mobileDrawer" aria-expanded="false" aria-label="תפריט נייד"
+                    class="mobile-toggle" id="mobileToggle">
+                <i aria-hidden="true" class="fa-solid fa-bars"></i>
+            </button>
         </div>
     </nav>
 
+    <!-- Mobile Drawer Overlay & Menu -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <div aria-label="תפריט נייד" aria-modal="true" class="mobile-drawer" id="mobileDrawer"
+         role="dialog" tabindex="-1">
+        <div class="drawer-header">
+            <a class="logo-container" href="index.html">
+                <img alt="Shiftly Icon" class="logo-img" src="assets/icon/app_icon.png"
+                     style="width:36px; height:36px;"/>
+                <span class="logo-text" style="font-size:20px;">Shiftly</span>
+            </a>
+            <button aria-label="סגור תפריט" class="drawer-close" id="drawerClose">
+                <i aria-hidden="true" class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <ul class="drawer-links">
+            <li><a class="drawer-link" href="index.html#calculator"><i aria-hidden="true"
+                                                                       class="fa-solid fa-calculator"
+                                                                       style="color: var(--primary);"></i>
+                מחשבון משמרות לייב</a></li>
+            <li><a class="drawer-link" href="index.html#features"><i aria-hidden="true"
+                                                                     class="fa-solid fa-layer-group"
+                                                                     style="color: var(--primary);"></i>
+                תכונות האפליקציה</a></li>
+            <li><a class="drawer-link" href="index.html#architecture"><i aria-hidden="true"
+                                                                         class="fa-solid fa-shield-halved"
+                                                                         style="color: var(--profit);"></i>
+                אבטחה וגיבוי פרטי</a></li>
+            <li><a class="drawer-link" href="index.html#comparison"><i aria-hidden="true"
+                                                                       class="fa-solid fa-table-list"
+                                                                       style="color: var(--secondary);"></i>
+                טבלת השוואה</a></li>
+            <li><a class="drawer-link" href="index.html#faq"><i aria-hidden="true"
+                                                                class="fa-solid fa-circle-question"
+                                                                style="color: var(--tertiary);"></i>
+                שאלות
+                נפוצות</a></li>
+            <li><a class="drawer-link" href="privacy.html"><i aria-hidden="true"
+                                                              class="fa-solid fa-lock"></i> מדיניות
+                פרטיות</a></li>
+            <li><a class="drawer-link" href="terms.html"><i aria-hidden="true"
+                                                            class="fa-solid fa-gavel"></i> תנאי
+                שימוש</a></li>
+            <li><a class="drawer-link" href="accessibility.html"><i aria-hidden="true"
+                                                                    class="fa-solid fa-universal-access"></i>
+                הצהרת
+                נגישות</a></li>
+        </ul>
+        <div style="margin-top: auto; display: flex; flex-direction: column; gap: 12px;">
+            <a class="btn btn-primary" href="https://shiftly-ujfd.onrender.com/"
+               style="width: 100%;" target="_blank">
+                <i aria-hidden="true" class="fa-solid fa-globe"></i> כניסה ל-Shiftly Web
+            </a>
+            <a class="btn btn-outline" href="https://github.com/sagiv23/Shiftly/releases"
+               style="width: 100%;" target="_blank">
+                <i aria-hidden="true" class="fa-solid fa-download"></i> הורדה ל-Android &amp; iOS
+            </a>
+        </div>
+    </div>
+
     <!-- Main Terms Content Card -->
-    <main class="document-container">
+    <main class="document-container" id="main-content">
         <article class="document-card">
             <header class="doc-header">
                 <h1 class="doc-title">⚖️ תנאי שימוש | Terms of Service</h1>
-                <div class="doc-subtitle"><i class="fa-solid fa-calendar-check"></i> תאריך עדכון
+                <div class="doc-subtitle"><i aria-hidden="true"
+                                             class="fa-solid fa-calendar-check"></i> תאריך עדכון
                     אחרון: 23 באוקטובר 2026
                 </div>
             </header>
 
             <!-- Disclaimer Alert Card -->
             <section class="disclaimer-alert-card">
-                <h3><i class="fa-solid fa-triangle-exclamation"></i> הבהרה משפטית קריטית בנושא
-                    חישובי שכר ותלושי שכר</h3>
+                <h2 style="font-size: 18px; font-weight: 700; color: var(--warning); margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                    <i aria-hidden="true" class="fa-solid fa-triangle-exclamation"></i> הבהרה משפטית
+                    קריטית בנושא חישובי שכר ותלושי שכר
+                </h2>
                 <p>1. <strong>אינו תלוש שכר רשמי:</strong> Shiftly הינה אפליקציית מעקב, ניהול וחישוב
                     אישי בלבד. החישובים והדוחות המופקים באפליקציה אינם מהווים תלוש שכר רשמי, ייעוץ
                     מס, ייעוץ משפטי או חשבונאי.</p>
@@ -118,22 +196,74 @@
 
             <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
                 <a class="btn btn-glass" href="privacy.html">
-                    <i class="fa-solid fa-shield-halved"></i> מעבר למדיניות הפרטיות
+                    <i aria-hidden="true" class="fa-solid fa-shield-halved"></i> מעבר למדיניות
+                    הפרטיות
+                </a>
+                <a class="btn btn-glass" href="accessibility.html">
+                    <i aria-hidden="true" class="fa-solid fa-universal-access"></i> הצהרת נגישות
                 </a>
                 <a class="btn btn-outline" href="index.html">
-                    <i class="fa-solid fa-house"></i> חזרה לדף הבית
+                    <i aria-hidden="true" class="fa-solid fa-house"></i> חזרה לדף הבית
                 </a>
             </div>
         </article>
     </main>
 
-    <!-- Footer -->
+    <!-- Agency-Grade Footer -->
     <footer class="footer">
         <div class="footer-inner">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <a class="logo-container" href="index.html">
+                        <img alt="Shiftly Icon" class="logo-img" src="assets/icon/app_icon.png"
+                             style="width:38px; height:38px;"/>
+                        <span class="logo-text" style="font-size:22px;">Shiftly</span>
+                    </a>
+                    <p>מערכת מתקדמת לניהול, מעקב וחישוב משמרות עבודה, שכר והוצאות. מותאמת לחוקי
+                        העבודה בישראל וכוללת גיבוי ענן מוצפן ב-Google Drive.</p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>ניווט מהיר</h4>
+                    <ul>
+                        <li><a href="index.html#calculator">מחשבון שעות לייב</a></li>
+                        <li><a href="index.html#features">תכונות מתקדמות</a></li>
+                        <li><a href="index.html#architecture">אבטחה &amp; BYOS</a></li>
+                        <li><a href="index.html#comparison">השוואת מנוע</a></li>
+                        <li><a href="index.html#faq">שאלות נפוצות</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>פלטפורמות</h4>
+                    <ul>
+                        <li><a href="https://shiftly-ujfd.onrender.com/" target="_blank">Shiftly Web
+                            Live</a></li>
+                        <li><a href="https://github.com/sagiv23/Shiftly/releases" target="_blank">Android
+                            APK Release</a></li>
+                        <li><a href="https://github.com/sagiv23/Shiftly/releases" target="_blank">iOS
+                            &amp; Desktop</a></li>
+                        <li><a href="https://github.com/sagiv23/Shiftly" target="_blank">GitHub
+                            Repository</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>משפטי &amp; פרטיות</h4>
+                    <ul>
+                        <li><a href="privacy.html">מדיניות פרטיות (Privacy Policy)</a></li>
+                        <li><a href="terms.html">תנאי שימוש (Terms of Service)</a></li>
+                        <li><a href="accessibility.html">הצהרת נגישות (Accessibility)</a></li>
+                        <li><a href="PRIVACY.md">מסמך PRIVACY.md</a></li>
+                    </ul>
+                </div>
+            </div>
+
             <div class="footer-bottom">
                 <div>&copy; 2026 Shiftly App. כל הזכויות שמורות.</div>
-                <a class="btn btn-glass" href="index.html"
-                   style="padding: 8px 16px; font-size: 13px;">Shiftly Home</a>
+                <button aria-label="חזרה לראש הדף" class="back-to-top-btn" id="backToTop">
+                    <i aria-hidden="true" class="fa-solid fa-chevron-up"></i>
+                </button>
             </div>
         </div>
     </footer>

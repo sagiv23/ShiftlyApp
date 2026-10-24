@@ -60,7 +60,9 @@ void main() async {
       await indexFile.writeAsString(indexContent);
       print('Successfully updated index.html to $fullVersion');
     } else {
-      print('Warning: No existing version pattern found in index.html to replace.');
+      print(
+        'Warning: No existing version pattern found in index.html to replace.',
+      );
     }
   } catch (e) {
     print('Error updating web version: $e');
