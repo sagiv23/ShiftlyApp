@@ -15,207 +15,125 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
           rel="stylesheet">
 
     <!-- Font Awesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
           rel="stylesheet">
 
-    <style>
-        :root {
-          --bg-color: #0F172A;
-          --card-bg: #1E293B;
-          --card-border: #334155;
-          --primary: #38BDF8;
-          --primary-dark: #0EA5E9;
-          --text-main: #F1F5F9;
-          --text-muted: #94A3B8;
-          --profit: #22C55E;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-          font-family: 'Rubik', system-ui, -apple-system, sans-serif;
-          background-color: var(--bg-color);
-          color: var(--text-main);
-          line-height: 1.7;
-          direction: rtl;
-          padding-bottom: 60px;
-        }
-
-        .navbar {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 16px 8%;
-          background-color: rgba(15, 23, 42, 0.92);
-          backdrop-filter: blur(12px);
-          position: sticky;
-          top: 0;
-          z-index: 100;
-          border-bottom: 1px solid var(--card-border);
-        }
-
-        .logo-container {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          text-decoration: none;
-        }
-
-        .logo-img {
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-          object-fit: cover;
-        }
-
-        .logo-text {
-          font-size: 24px;
-          font-weight: 800;
-          color: var(--text-main);
-        }
-
-        .nav-actions {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .container {
-          max-width: 900px;
-          margin: 40px auto;
-          padding: 0 20px;
-        }
-
-        .card {
-          background-color: var(--card-bg);
-          border: 1px solid var(--card-border);
-          border-radius: 24px;
-          padding: 36px;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        h1 {
-          font-size: 32px;
-          font-weight: 800;
-          margin-bottom: 12px;
-          color: #FFFFFF;
-        }
-
-        .subtitle {
-          color: var(--primary);
-          font-weight: 600;
-          margin-bottom: 30px;
-        }
-
-        h2 {
-          font-size: 20px;
-          font-weight: 700;
-          margin: 28px 0 12px;
-          color: var(--primary);
-          border-bottom: 1px solid var(--card-border);
-          padding-bottom: 8px;
-        }
-
-        p, li {
-          color: var(--text-muted);
-          font-size: 16px;
-          margin-bottom: 12px;
-        }
-
-        ul {
-          padding-right: 24px;
-          margin-bottom: 16px;
-        }
-
-        .btn-back {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          color: var(--primary);
-          text-decoration: none;
-          font-weight: 600;
-        }
-
-        .btn-back:hover {
-          text-decoration: underline;
-        }
-
-        footer {
-          text-align: center;
-          margin-top: 40px;
-          color: var(--text-muted);
-          font-size: 14px;
-        }
-
-        @media (max-width: 768px) {
-          .navbar { padding: 14px 5%; }
-          .card { padding: 24px; }
-          h1 { font-size: 26px; }
-        }
-    </style>
+    <!-- Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
 
-<nav class="navbar">
-    <a class="logo-container" href="index.html">
-        <img alt="Shiftly Icon" class="logo-img" src="assets/icon/app_icon.png"/>
-        <span class="logo-text">Shiftly</span>
-    </a>
-    <div class="nav-actions">
-        <a href="https://shiftly-ujfd.onrender.com/"
-           style="color: var(--primary); text-decoration: none; font-weight: 600;"
-           target="_blank"><i
-                class="fa-solid fa-globe"></i> כניסה ל-Shiftly Web</a>
-        <a class="btn-back" href="index.html"><i class="fa-solid fa-arrow-right"></i> חזרה לדף הבית</a>
-    </div>
-</nav>
-
-<div class="container">
-    <div class="card">
-        <h1>🛡️ מדיניות פרטיות | Privacy Policy</h1>
-        <div class="subtitle">תאריך עדכון אחרון: 23 באוקטובר 2026</div>
-
-        <h2>1. כללי והתחייבות לפרטיות</h2>
-        <p>מסמך זה מפרט את מדיניות הפרטיות של אפליקציית Shiftly ("האפליקציה"). אנו מחויבים להגנה
-            מלאה על הפרטיות ואבטחת הנתונים של המשתמשים שלנו, בהתאם לחוק הגנת הפרטיות ותקנות אבטחת
-            המידע.</p>
-
-        <h2>2. איסוף ושימוש במידע</h2>
-        <ul>
-            <li><strong>פרטי חשבון:</strong> במידה ונרשמת לחשבון Shiftly, נשמרים שם, כתובת דוא"ל
-                ותאריך לידה לצורך זיהוי וניהול החשבון.
-            </li>
-            <li><strong>נתוני משמרות ושכר:</strong> כל הנתונים המוזנים (משמרות, תפקידים, הוצאות
-                ושכר) נשמרים באופן מאובטח.
-            </li>
-            <li><strong>גיבוי פרטי ב-Google Drive (BYOS):</strong> בעת הפעלת גיבוי בענן, האפליקציה
-                משתמשת בהרשאה <code>https://www.googleapis.com/auth/drive.appdata</code> כדי לשמור
-                קובץ גיבוי מוצפן בתיקיית ה-AppData הפרטית שלך ב-Google Drive בלבד. האפליקציה ומפתחיה
-                אינם צופים, אוספים או משתפים את קובצי ה-Google Drive שלך.
-            </li>
-        </ul>
-
-        <h2>3. אבטחת מידע</h2>
-        <p>הנתונים נשמרים בעזרת הצפנה מתקדמת. איננו מוכרים, משכירים או מעבירים נתונים אישיים לצדדים
-            שלישיים או לרשתות פרסום.</p>
-
-        <h2>4. זכויות המשתמש ומחיקת מידע</h2>
-        <p>באפשרותך לעיין בנתוניך, לייצא אותם, או למחוק את חשבונך והנתונים הנלווים אליו לצמיתות
-            ישירות ממסך הפרופיל באפליקציה.</p>
-
-        <h2>5. יצירת קשר</h2>
-        <p>לכל שאלה או פנייה בנושא פרטיות ניתן ליצור קשר בכתובת: <code>shiftlyapp23@gmail.com</code>
-        </p>
-    </div>
-
-    <footer>
-        &copy; 2026 Shiftly App. כל הזכויות שמורות.
-    </footer>
+<!-- Ambient Dynamic Background & Canvas -->
+<div class="ambient-canvas-container">
+    <canvas id="bgCanvas"></canvas>
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
 </div>
+
+<div class="cursor-spotlight"></div>
+
+<div class="page-wrapper">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a class="logo-container" href="index.html">
+            <div class="logo-badge">
+                <img alt="Shiftly Icon" class="logo-img" src="assets/icon/app_icon.png"/>
+            </div>
+            <div class="logo-text-wrapper">
+                <span class="logo-text">Shiftly</span>
+                <span class="logo-subtext">PRIVACY &amp; SECURITY</span>
+            </div>
+        </a>
+
+        <div class="nav-actions">
+            <a class="btn btn-primary" href="https://shiftly-ujfd.onrender.com/" target="_blank">
+                <i class="fa-solid fa-globe"></i> כניסה ל-Shiftly Web
+            </a>
+            <a class="btn btn-glass" href="index.html">
+                <i class="fa-solid fa-arrow-right"></i> חזרה לדף הבית
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Privacy Content Card -->
+    <main class="document-container">
+        <article class="document-card">
+            <header class="doc-header">
+                <h1 class="doc-title">🛡️ מדיניות פרטיות | Privacy Policy</h1>
+                <div class="doc-subtitle"><i class="fa-solid fa-calendar-check"></i> תאריך עדכון
+                    אחרון: 23 באוקטובר 2026
+                </div>
+            </header>
+
+            <h2 class="doc-section-title">1. כללי והתחייבות מלאה לפרטיות</h2>
+            <p>מסמך זה מפרט את מדיניות הפרטיות של אפליקציית Shiftly ("האפליקציה"). אנו מחויבים להגנה
+                מלאה ובלתי מתפשרת על הפרטיות ואבטחת הנתונים האישיים והפיננסיים של משתמשינו, בהתאם
+                לחוק הגנת הפרטיות, תקנות אבטחת המידע ודרישות אבטחה בינלאומיות (GDPR).</p>
+
+            <h2 class="doc-section-title">2. איסוף ושימוש במידע</h2>
+            <ul>
+                <li><strong>פרטי חשבון ואימות:</strong> בעת הרשמה או התחברות ל-Shiftly Cloud, נשמרים
+                    שמך, כתובת הדואר האלקטרוני ותאריך הלידה לצורך זיהוי חד-ערכי, אבטחת החשבון ושחזור
+                    סיסמה.
+                </li>
+                <li><strong>נתוני משמרות, שכר ותפקידים:</strong> כל הנתונים המוזנים על ידך (משמרות
+                    עבודה, תעריפי שכר, טיפים, הוצאות נלוות והגדרות מעסיק) נשמרים בצורה מוצפנת בבסיס
+                    הנתונים המקומי (Hive NoSQL) ובשרתי הענן המאובטחים.
+                </li>
+                <li><strong>גיבוי פרטי ב-Google Drive (BYOS):</strong> בעת הפעלת מנגנון הגיבוי
+                    הפרטי, האפליקציה משתמשת בהרשאה הייעודית והמצומצמת <code>https://www.googleapis.com/auth/drive.appdata</code>
+                    כדי לשמור קובץ גיבוי מוצפן בתיקיית ה-AppData הפרטית שלך ב-Google Drive בלבד.
+                    האפליקציה ומפתחיה אינם צופים, אוספים, מעבירים או משתפים קבצים מתוך חשבון
+                    ה-Google Drive שלך.
+                </li>
+            </ul>
+
+            <h2 class="doc-section-title">3. אבטחת מידע והעדר שיתוף עם צדדים שלישיים</h2>
+            <p>כל הנתונים המועברים בין האפליקציה לשרת מוצפנים בעזרת פרוטוקולי תקשורת מאובטחים
+                (SSL/TLS) וטכנולוגיות הצפנה מתקדמות. איננו מוכרים, משכירים, מעבירים או חושפים את
+                הנתונים האישיים שלך לצדדים שלישיים, לרשתות פרסום או לגורמים מסחריים כלשהם.</p>
+
+            <h2 class="doc-section-title">4. זכויות המשתמש ומחיקת מידע לצמיתות</h2>
+            <p>למשתמש עומדת הזכות המלאה לעיין בנתוניו, לייצא אותם לקבצי דוח (PDF, CSV, Excel), או
+                לבצע מחיקה מלאה ולצמיתות של החשבון וכל הנתונים הנלווים אליו ישירות ממסך הפרופיל
+                וההגדרות באפליקציה.</p>
+
+            <h2 class="doc-section-title">5. יצירת קשר בנושאי פרטיות</h2>
+            <p>לכל שאלה, פנייה, בקשת עריכה או בקשת מחיקת מידע בנושא פרטיות ואבטחה, ניתן ליצור קשר
+                ישיר עם צוות הפיתוח בכתובת הדוא"ל: <code
+                        style="background: var(--bg-surface); padding: 4px 10px; border-radius: 6px; color: var(--primary);">shiftlyapp23@gmail.com</code>
+            </p>
+
+            <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                <a class="btn btn-glass" href="terms.html">
+                    <i class="fa-solid fa-gavel"></i> מעבר לתנאי השימוש
+                </a>
+                <a class="btn btn-outline" href="index.html">
+                    <i class="fa-solid fa-house"></i> חזרה לדף הבית
+                </a>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-bottom">
+                <div>&copy; 2026 Shiftly App. כל הזכויות שמורות.</div>
+                <a class="btn btn-glass" href="index.html"
+                   style="padding: 8px 16px; font-size: 13px;">Shiftly Home</a>
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+<script src="js/app.js"></script>
 
 </body>
 </html>

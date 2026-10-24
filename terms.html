@@ -15,219 +15,132 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
           rel="stylesheet">
 
     <!-- Font Awesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
           rel="stylesheet">
 
-    <style>
-        :root {
-          --bg-color: #0F172A;
-          --card-bg: #1E293B;
-          --card-border: #334155;
-          --primary: #38BDF8;
-          --primary-dark: #0EA5E9;
-          --text-main: #F1F5F9;
-          --text-muted: #94A3B8;
-          --warning: #FBBF24;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-          font-family: 'Rubik', system-ui, -apple-system, sans-serif;
-          background-color: var(--bg-color);
-          color: var(--text-main);
-          line-height: 1.7;
-          direction: rtl;
-          padding-bottom: 60px;
-        }
-
-        .navbar {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 16px 8%;
-          background-color: rgba(15, 23, 42, 0.92);
-          backdrop-filter: blur(12px);
-          position: sticky;
-          top: 0;
-          z-index: 100;
-          border-bottom: 1px solid var(--card-border);
-        }
-
-        .logo-container {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          text-decoration: none;
-        }
-
-        .logo-img {
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-          object-fit: cover;
-        }
-
-        .logo-text {
-          font-size: 24px;
-          font-weight: 800;
-          color: var(--text-main);
-        }
-
-        .nav-actions {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .container {
-          max-width: 900px;
-          margin: 40px auto;
-          padding: 0 20px;
-        }
-
-        .card {
-          background-color: var(--card-bg);
-          border: 1px solid var(--card-border);
-          border-radius: 24px;
-          padding: 36px;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        h1 {
-          font-size: 32px;
-          font-weight: 800;
-          margin-bottom: 12px;
-          color: #FFFFFF;
-        }
-
-        .subtitle {
-          color: var(--primary);
-          font-weight: 600;
-          margin-bottom: 30px;
-        }
-
-        .disclaimer-box {
-          background-color: rgba(251, 191, 36, 0.1);
-          border: 1px solid var(--warning);
-          border-radius: 16px;
-          padding: 20px;
-          margin-bottom: 24px;
-        }
-
-        .disclaimer-box h3 {
-          color: var(--warning);
-          font-size: 18px;
-          font-weight: 700;
-          margin-bottom: 8px;
-        }
-
-        h2 {
-          font-size: 20px;
-          font-weight: 700;
-          margin: 28px 0 12px;
-          color: var(--primary);
-          border-bottom: 1px solid var(--card-border);
-          padding-bottom: 8px;
-        }
-
-        p, li {
-          color: var(--text-muted);
-          font-size: 16px;
-          margin-bottom: 12px;
-        }
-
-        ul {
-          padding-right: 24px;
-          margin-bottom: 16px;
-        }
-
-        .btn-back {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          color: var(--primary);
-          text-decoration: none;
-          font-weight: 600;
-        }
-
-        .btn-back:hover {
-          text-decoration: underline;
-        }
-
-        footer {
-          text-align: center;
-          margin-top: 40px;
-          color: var(--text-muted);
-          font-size: 14px;
-        }
-
-        @media (max-width: 768px) {
-          .navbar { padding: 14px 5%; }
-          .card { padding: 24px; }
-          h1 { font-size: 26px; }
-        }
-    </style>
+    <!-- Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
 
-<nav class="navbar">
-    <a class="logo-container" href="index.html">
-        <img alt="Shiftly Icon" class="logo-img" src="assets/icon/app_icon.png"/>
-        <span class="logo-text">Shiftly</span>
-    </a>
-    <div class="nav-actions">
-        <a href="https://shiftly-ujfd.onrender.com/"
-           style="color: var(--primary); text-decoration: none; font-weight: 600;"
-           target="_blank"><i
-                class="fa-solid fa-globe"></i> כניסה ל-Shiftly Web</a>
-        <a class="btn-back" href="index.html"><i class="fa-solid fa-arrow-right"></i> חזרה לדף הבית</a>
-    </div>
-</nav>
-
-<div class="container">
-    <div class="card">
-        <h1>⚖️ תנאי שימוש | Terms of Service</h1>
-        <div class="subtitle">תאריך עדכון אחרון: 23 באוקטובר 2026</div>
-
-        <div class="disclaimer-box">
-            <h3>⚠️ הבהרה משפטית קריטית בנושא חישובי שכר</h3>
-            <p>1. <strong>אינו תלוש שכר רשמי:</strong> Shiftly הינה אפליקציית מעקב וניהול אישי בלבד.
-                החישובים באפליקציה אינם מהווים תלוש שכר רשמי, ייעוץ מס או ייעוץ משפטי.</p>
-            <p>2. <strong>תלות בנתוני המשתמש:</strong> החישובים מתבססים באופן מלא על הנתונים והגדרות
-                השכר שהוזנו על ידי המשתמש.</p>
-            <p>3. <strong>קביעות המעסיק:</strong> תלוש השכר הרשמי המונפק ע"י המעסיק הינו המסמך
-                המשפטי המחייב היחיד.</p>
-        </div>
-
-        <h2>1. הסכמה לתנאים</h2>
-        <p>השימוש באפליקציית Shiftly מהווה הסכמה מלאה ובלתי מסוייגת לתנאים אלו.</p>
-
-        <h2>2. שימושים מותרים</h2>
-        <ul>
-            <li>האפליקציה מיועדת לשימוש אישי בלבד.</li>
-            <li>חל איסור לבצע הנדסה לאחור (Reverse Engineering) או לפגוע בתקינות השרתים
-                והאפליקציה.
-            </li>
-        </ul>
-
-        <h2>3. הגבלת אחריות</h2>
-        <p>השירות מוענק כפי שהוא (AS IS). המפעיל לא ישא באחריות לנזקים ישירים או עקיפים, טעויות
-            בחישוב או הפסדי השתכרות.</p>
-
-        <h2>4. הדין החל וסמכות שיפוט</h2>
-        <p>על תנאים אלו יחולו דיני מדינת ישראל בלבד, וסמכות השיפוט נתונה לבתי המשפט במחוז תל
-            אביב-יפו.</p>
-    </div>
-
-    <footer>
-        &copy; 2026 Shiftly App. כל הזכויות שמורות.
-    </footer>
+<!-- Ambient Dynamic Background & Canvas -->
+<div class="ambient-canvas-container">
+    <canvas id="bgCanvas"></canvas>
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
 </div>
+
+<div class="cursor-spotlight"></div>
+
+<div class="page-wrapper">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a class="logo-container" href="index.html">
+            <div class="logo-badge">
+                <img alt="Shiftly Icon" class="logo-img" src="assets/icon/app_icon.png"/>
+            </div>
+            <div class="logo-text-wrapper">
+                <span class="logo-text">Shiftly</span>
+                <span class="logo-subtext">LEGAL &amp; TERMS</span>
+            </div>
+        </a>
+
+        <div class="nav-actions">
+            <a class="btn btn-primary" href="https://shiftly-ujfd.onrender.com/" target="_blank">
+                <i class="fa-solid fa-globe"></i> כניסה ל-Shiftly Web
+            </a>
+            <a class="btn btn-glass" href="index.html">
+                <i class="fa-solid fa-arrow-right"></i> חזרה לדף הבית
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Terms Content Card -->
+    <main class="document-container">
+        <article class="document-card">
+            <header class="doc-header">
+                <h1 class="doc-title">⚖️ תנאי שימוש | Terms of Service</h1>
+                <div class="doc-subtitle"><i class="fa-solid fa-calendar-check"></i> תאריך עדכון
+                    אחרון: 23 באוקטובר 2026
+                </div>
+            </header>
+
+            <!-- Disclaimer Alert Card -->
+            <section class="disclaimer-alert-card">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> הבהרה משפטית קריטית בנושא
+                    חישובי שכר ותלושי שכר</h3>
+                <p>1. <strong>אינו תלוש שכר רשמי:</strong> Shiftly הינה אפליקציית מעקב, ניהול וחישוב
+                    אישי בלבד. החישובים והדוחות המופקים באפליקציה אינם מהווים תלוש שכר רשמי, ייעוץ
+                    מס, ייעוץ משפטי או חשבונאי.</p>
+                <p>2. <strong>תלות מלאה בנתוני המשתמש:</strong> חישובי השכר, השעות הנוספות ותעריפי
+                    השבת מתבססים באופן מלא על הנתונים, התאריכים והגדרות השכר שהוזנו ידנית על ידי
+                    המשתמש.</p>
+                <p>3. <strong>קביעות המעסיק:</strong> תלוש השכר הרשמי המונפק על ידי המעסיק או חשב
+                    השכר הינו המסמך המשפטי המחייב היחיד לפי חוקי העבודה בישראל.</p>
+            </section>
+
+            <h2 class="doc-section-title">1. הסכמה לתנאי השימוש</h2>
+            <p>עצם ההורדה, ההתקנה, הגישה או השימוש באפליקציית Shiftly (לרבות גרסת ה-Web, המובייל
+                והדסקטופ) מהווים הסכמה מלאה, מפורשת ובלתי מסויגת לכל התנאים המפורטים במסמך זה. אם
+                אינך מסכים לתנאי מתנאים אלו, עליך לחדול מיידית מכל שימוש באפליקציה.</p>
+
+            <h2 class="doc-section-title">2. שימושים מותרים והגבלות</h2>
+            <ul>
+                <li>האפליקציה מיועדת לשימוש אישי וניהולי של המשתמש בלבד.</li>
+                <li>חל איסור מוחלט לבצע הנדסה לאחור (Reverse Engineering), פירוק, שינוי קוד, או כל
+                    פעולה שיש בה כדי לפגוע בתקינות השרתים, בסיסי הנתונים או אבטחת האפליקציה.
+                </li>
+                <li>חל איסור להשתמש באפליקציה לצורך שילוב וירוסים, רוגלות או ניסיונות גישה לא מורשים
+                    לחשבונות של משתמשים אחרים.
+                </li>
+            </ul>
+
+            <h2 class="doc-section-title">3. אבטחת מידע וגיבוי ב-Google Drive (BYOS)</h2>
+            <p>Shiftly מציעה אפשרות לגיבוי ושחזור נתונים מוצפן ישירות בחשבון ה-Google Drive האישי של
+                המשתמש בתיקיית <code>appDataFolder</code>. המשתמש נושא באחריות המלאה לשמירה על אבטחת
+                חשבון ה-Google שלו, סיסמאותיו ואימוץ אימות דו-שלבי.</p>
+
+            <h2 class="doc-section-title">4. הגבלת אחריות</h2>
+            <p>השירות והאפליקציה מוענקים כפי שהם ("AS IS") וכפי שיהיו זמינים ("AS AVAILABLE").
+                המפעיל, המפתחים ובעלי הזכויות לא ישאו באחריות לכל נזק ישיר, עקיף, מקרי, תוצאתי או
+                מיוחד, לרבות הפסדי השתכרות, טעויות בחישוב שעות, אובדן נתונים או שיבושים בפעילות
+                העסקית.</p>
+
+            <h2 class="doc-section-title">5. סמכות שיפוט והדין החל</h2>
+            <p>על תנאים אלו ועל כל נובע מהם או הקשור אליהם יחולו אך ורק דיני מדינת ישראל. סמכות
+                השיפוט הבלעדית והייחודית בכל מחלוקת או עניין משפטי תהיה נתונה לבתי המשפט המוסמכים
+                במחוז תל אביב-יפו.</p>
+
+            <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                <a class="btn btn-glass" href="privacy.html">
+                    <i class="fa-solid fa-shield-halved"></i> מעבר למדיניות הפרטיות
+                </a>
+                <a class="btn btn-outline" href="index.html">
+                    <i class="fa-solid fa-house"></i> חזרה לדף הבית
+                </a>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-bottom">
+                <div>&copy; 2026 Shiftly App. כל הזכויות שמורות.</div>
+                <a class="btn btn-glass" href="index.html"
+                   style="padding: 8px 16px; font-size: 13px;">Shiftly Home</a>
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+<script src="js/app.js"></script>
 
 </body>
 </html>

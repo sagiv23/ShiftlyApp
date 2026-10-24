@@ -117,12 +117,15 @@ class GrandTotalCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: AppTheme.spaceXs),
-                  Text(
-                    UIUtils.formatCurrency(net, symbol: symbol),
-                    style: AppTheme.monoNumber.copyWith(
-                      color: net < 0 ? const Color(0xFFFECACA) : Colors.white,
-                      fontSize: 42,
-                      height: 1.1,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      UIUtils.formatCurrency(net, symbol: symbol),
+                      style: AppTheme.monoNumber.copyWith(
+                        color: net < 0 ? const Color(0xFFFECACA) : Colors.white,
+                        fontSize: 38,
+                        height: 1.1,
+                      ),
                     ),
                   ),
                   const SizedBox(height: AppTheme.spaceSm),

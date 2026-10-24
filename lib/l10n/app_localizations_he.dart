@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -43,7 +42,22 @@ class AppLocalizationsHe extends AppLocalizations {
   String get common_edit => 'עריכה';
 
   @override
-  String get common_tagline => 'מעקב שעות עבודה חכם';
+  String get common_tagline => 'מנוע שכר ומשמרות מתקדם';
+
+  @override
+  String get nav_calendar => 'לוח';
+
+  @override
+  String get nav_analytics => 'אנליטיקה';
+
+  @override
+  String get nav_home => 'בית';
+
+  @override
+  String get nav_expenses => 'הוצאות';
+
+  @override
+  String get nav_summaries => 'סיכומים';
 
   @override
   String get common_hours_suffix => 'שעות';

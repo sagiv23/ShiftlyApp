@@ -167,8 +167,38 @@ abstract class AppLocalizations {
   /// No description provided for @common_tagline.
   ///
   /// In he, this message translates to:
-  /// **'מעקב שעות עבודה חכם'**
+  /// **'מנוע שכר ומשמרות מתקדם'**
   String get common_tagline;
+
+  /// No description provided for @nav_calendar.
+  ///
+  /// In he, this message translates to:
+  /// **'לוח'**
+  String get nav_calendar;
+
+  /// No description provided for @nav_analytics.
+  ///
+  /// In he, this message translates to:
+  /// **'אנליטיקה'**
+  String get nav_analytics;
+
+  /// No description provided for @nav_home.
+  ///
+  /// In he, this message translates to:
+  /// **'בית'**
+  String get nav_home;
+
+  /// No description provided for @nav_expenses.
+  ///
+  /// In he, this message translates to:
+  /// **'הוצאות'**
+  String get nav_expenses;
+
+  /// No description provided for @nav_summaries.
+  ///
+  /// In he, this message translates to:
+  /// **'סיכומים'**
+  String get nav_summaries;
 
   /// No description provided for @common_hours_suffix.
   ///
