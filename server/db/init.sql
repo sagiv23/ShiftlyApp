@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS shifts (
     automatic_incomes JSONB,
     description TEXT,
     total_pay DECIMAL(10, 2),
+    wage_segments JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

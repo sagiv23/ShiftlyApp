@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -958,66 +959,71 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         symbol: symbol,
                       ),
                     ),
-                  const SizedBox(height: AppTheme.spaceLg),
-                  _buildSectionHeader(context, l.settings_update_section),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  Card(
-                    child: ListTile(
-                      leading: const Icon(
-                        Icons.system_update_rounded,
-                        color: AppTheme.primaryDark,
-                      ),
-                      title: Text(l.settings_update_check_button),
-                      subtitle: Text(
-                        l.settings_update_current_version(_currentVersion),
-                      ),
-                      trailing: _isCheckingUpdates
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.refresh_rounded),
-                      onTap: _isCheckingUpdates
-                          ? null
-                          : () async {
-                              final checkingMsg =
-                                  l.settings_update_checking_toast;
-                              final errorMsg = l.settings_update_error_toast;
-                              final latestMsg = l.settings_update_latest_toast;
+                  if (!kIsWeb) ...[
+                    const SizedBox(height: AppTheme.spaceLg),
+                    _buildSectionHeader(context, l.settings_update_section),
+                    const SizedBox(height: AppTheme.spaceXs),
+                    Card(
+                      child: ListTile(
+                        leading: const Icon(
+                          Icons.system_update_rounded,
+                          color: AppTheme.primaryDark,
+                        ),
+                        title: Text(l.settings_update_check_button),
+                        subtitle: Text(
+                          l.settings_update_current_version(_currentVersion),
+                        ),
+                        trailing: _isCheckingUpdates
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.refresh_rounded),
+                        onTap: _isCheckingUpdates
+                            ? null
+                            : () async {
+                                final checkingMsg =
+                                    l.settings_update_checking_toast;
+                                final errorMsg = l.settings_update_error_toast;
+                                final latestMsg =
+                                    l.settings_update_latest_toast;
 
-                              setState(() {
-                                _isCheckingUpdates = true;
-                              });
-                              UIUtils.showSnackBar(context, checkingMsg);
-                              final updateInfo =
-                                  await UpdateService.checkForUpdates();
-                              if (!context.mounted) return;
-                              setState(() {
-                                _isCheckingUpdates = false;
-                              });
+                                setState(() {
+                            _isCheckingUpdates = true;
+                          });
+                          UIUtils.showSnackBar(context, checkingMsg);
+                          final updateInfo =
+                          await UpdateService.checkForUpdates();
+                          if (!context.mounted) return;
+                          setState(() {
+                            _isCheckingUpdates = false;
+                          });
 
-                              if (updateInfo == null) {
-                                UIUtils.showSnackBar(
-                                  context,
-                                  errorMsg,
-                                  isError: true,
-                                );
-                              } else if (!updateInfo.isNewer) {
-                                UIUtils.showSnackBar(
-                                  context,
-                                  latestMsg(updateInfo.currentVersion),
-                                );
-                              } else {
-                                UpdateDialog.show(
-                                  context,
-                                  updateInfo,
-                                  isForceUpdate: true,
-                                );
-                              }
-                            },
+                                if (updateInfo == null) {
+                                  UIUtils.showSnackBar(
+                                    context,
+                                    errorMsg,
+                                    isError: true,
+                                  );
+                                } else if (!updateInfo.isNewer) {
+                                  UIUtils.showSnackBar(
+                                    context,
+                                    latestMsg(updateInfo.currentVersion),
+                                  );
+                                } else {
+                                  UpdateDialog.show(
+                                    context,
+                                    updateInfo,
+                                    isForceUpdate: true,
+                                  );
+                                }
+                              },
+                      ),
                     ),
-                  ),
+                  ],
                   const SizedBox(height: AppTheme.spaceLg),
                   _buildSectionHeader(context, l.legal_cookie_title),
                   const SizedBox(height: AppTheme.spaceXs),

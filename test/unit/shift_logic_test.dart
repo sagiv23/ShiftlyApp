@@ -309,5 +309,34 @@ void main() {
       // Expected: 320 + 240 = 560 (instead of (8 + 4) * 40 = 480)
       expect(totalBaseSalary, 560.0);
     });
+
+    test('deserialize wage_segments from snake_case server JSON', () {
+      final json = {
+        'id': 's_server',
+        'date': '2026-10-03T00:00:00.000',
+        'startTime': '2026-10-03T18:00:00.000',
+        'endTime': '2026-10-04T02:00:00.000',
+        'job_type_id': 'j1',
+        'hourly_rate': 40.0,
+        'wage_segments': [
+          {
+            'start_time': '2026-10-03T18:00:00.000',
+            'end_time': '2026-10-03T20:30:00.000',
+            'percentage': 150.0,
+          },
+          {
+            'start_time': '2026-10-03T20:30:00.000',
+            'end_time': '2026-10-04T02:00:00.000',
+            'percentage': 100.0,
+          },
+        ],
+      };
+
+      final shift = Shift.fromJson(json);
+      expect(shift.wageSegments, isNotNull);
+      expect(shift.wageSegments!.length, 2);
+      expect(shift.wageSegments![0].percentage, 150.0);
+      expect(shift.calculateBaseSalary(40.0), 370.0);
+    });
   });
 }

@@ -118,6 +118,30 @@ class Shift extends HiveObject {
     }
   }
 
+  static List<ShiftWageSegment>? _parseWageSegments(dynamic raw) {
+    if (raw == null) return null;
+    try {
+      List list;
+      if (raw is String) {
+        list = jsonDecode(raw) as List;
+      } else if (raw is List) {
+        list = raw;
+      } else {
+        return null;
+      }
+      return list
+          .map(
+            (e) =>
+            ShiftWageSegment.fromJson(
+              Map<String, dynamic>.from(e as Map),
+            ),
+      )
+          .toList();
+    } catch (_) {
+      return null;
+    }
+  }
+
   factory Shift.fromJson(Map<String, dynamic> json) => Shift(
     id: json['id'],
     date: DateTime.parse(json['date']),
@@ -151,11 +175,9 @@ class Shift extends HiveObject {
       json['automaticIncomes'] ?? json['automatic_incomes'],
     ),
     description: json['description'],
-    wageSegments: (json['wageSegments'] as List?)
-        ?.map(
-          (e) => ShiftWageSegment.fromJson(Map<String, dynamic>.from(e as Map)),
-        )
-        .toList(),
+    wageSegments: _parseWageSegments(
+      json['wageSegments'] ?? json['wage_segments'],
+    ),
   );
 
   double get totalAutomaticExpenses {

@@ -285,29 +285,7 @@ class ShiftProvider with ChangeNotifier {
         await _apiService.batchUpsertExpenses(token, allFinancialItems);
       }
 
-      final shiftItems = shifts.map((shift) {
-        final job = getJobTypeById(shift.jobTypeId);
-        final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 0.0;
-        return {
-          'id': shift.id,
-          'job_type_id': shift.jobTypeId,
-          'date': shift.date.toIso8601String().split('T')[0],
-          'start_time': shift.startTime.toIso8601String(),
-          'end_time': shift.endTime.toIso8601String(),
-          'tips': shift.tips,
-          'break_type': shift.breakType?.toString().split('.').last,
-          'unpaid_break_minutes': shift.unpaidBreakMinutes,
-          'hourly_rate': rate,
-          'automatic_expenses': shift.automaticExpenses
-              ?.map((e) => {'description': e.description, 'amount': e.amount})
-              .toList(),
-          'automatic_incomes': shift.automaticIncomes
-              ?.map((e) => {'description': e.description, 'amount': e.amount})
-              .toList(),
-          'description': shift.description,
-          'total_pay': _calculateShiftTotalPay(shift, rate),
-        };
-      }).toList();
+      final shiftItems = shifts.map((shift) => _shiftToApiMap(shift)).toList();
       if (shiftItems.isNotEmpty) {
         await _apiService.batchUpsertShifts(token, shiftItems);
       }
@@ -536,30 +514,9 @@ class ShiftProvider with ChangeNotifier {
         ];
         await _apiService.batchUpsertExpenses(_authToken!, allFinancialItems);
 
-        final shiftItems = shifts.map((shift) {
-          final job = getJobTypeById(shift.jobTypeId);
-          final rate =
-              shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 0.0;
-          return {
-            'id': shift.id,
-            'job_type_id': shift.jobTypeId,
-            'date': shift.date.toIso8601String().split('T')[0],
-            'start_time': shift.startTime.toIso8601String(),
-            'end_time': shift.endTime.toIso8601String(),
-            'tips': shift.tips,
-            'break_type': shift.breakType?.toString().split('.').last,
-            'unpaid_break_minutes': shift.unpaidBreakMinutes,
-            'hourly_rate': rate,
-            'automatic_expenses': shift.automaticExpenses
-                ?.map((e) => {'description': e.description, 'amount': e.amount})
-                .toList(),
-            'automatic_incomes': shift.automaticIncomes
-                ?.map((e) => {'description': e.description, 'amount': e.amount})
-                .toList(),
-            'description': shift.description,
-            'total_pay': _calculateShiftTotalPay(shift, rate),
-          };
-        }).toList();
+        final shiftItems = shifts
+            .map((shift) => _shiftToApiMap(shift))
+            .toList();
         await _apiService.batchUpsertShifts(_authToken!, shiftItems);
       }
 
@@ -616,12 +573,10 @@ class ShiftProvider with ChangeNotifier {
     });
   }
 
-  Future<void> _syncShiftToServer(Shift shift) async {
-    if (_authToken == null) return;
+  Map<String, dynamic> _shiftToApiMap(Shift shift) {
     final job = getJobTypeById(shift.jobTypeId);
     final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 0.0;
-
-    await _apiService.upsertShift(_authToken!, {
+    return {
       'id': shift.id,
       'job_type_id': shift.jobTypeId,
       'date': shift.date.toIso8601String().split('T')[0],
@@ -639,7 +594,13 @@ class ShiftProvider with ChangeNotifier {
           .toList(),
       'description': shift.description,
       'total_pay': _calculateShiftTotalPay(shift, rate),
-    });
+      'wage_segments': shift.wageSegments?.map((e) => e.toJson()).toList(),
+    };
+  }
+
+  Future<void> _syncShiftToServer(Shift shift) async {
+    if (_authToken == null) return;
+    await _apiService.upsertShift(_authToken!, _shiftToApiMap(shift));
   }
 
   ShiftFilter? _activeFilter;

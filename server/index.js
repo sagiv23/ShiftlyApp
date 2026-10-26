@@ -79,9 +79,12 @@ const ensureSchema = async () => {
           automatic_incomes JSONB,
           description TEXT,
           total_pay DECIMAL(10, 2),
+          wage_segments JSONB,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    await pool.query('ALTER TABLE shifts ADD COLUMN IF NOT EXISTS wage_segments JSONB');
 
     // 5. Create Financial Transactions table
     await pool.query(`
@@ -351,14 +354,18 @@ app.post('/api/shifts', authenticateToken, async (req, res) => {
   const {
     id, job_type_id, date, start_time, end_time, tips,
     break_type, unpaid_break_minutes, hourly_rate,
-    automatic_expenses, automatic_incomes, description, total_pay
+    automatic_expenses, automatic_incomes, description, total_pay,
+    wage_segments, wageSegments
   } = req.body;
   try {
     const autoExpJson = automatic_expenses && automatic_expenses.length > 0 ? JSON.stringify(automatic_expenses) : null;
     const autoIncJson = automatic_incomes && automatic_incomes.length > 0 ? JSON.stringify(automatic_incomes) : null;
+    const segments = wage_segments || wageSegments;
+    const wageSegJson = segments && segments.length > 0 ? JSON.stringify(segments) : null;
+
     const result = await pool.query(
-      `INSERT INTO shifts (id, user_id, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, automatic_expenses, automatic_incomes, description, total_pay)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::jsonb, $12::jsonb, $13, $14)
+      `INSERT INTO shifts (id, user_id, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, automatic_expenses, automatic_incomes, description, total_pay, wage_segments)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::jsonb, $12::jsonb, $13, $14, $15::jsonb)
        ON CONFLICT (id) DO UPDATE SET
        job_type_id = EXCLUDED.job_type_id,
        date = EXCLUDED.date,
@@ -371,9 +378,10 @@ app.post('/api/shifts', authenticateToken, async (req, res) => {
        automatic_expenses = EXCLUDED.automatic_expenses,
        automatic_incomes = EXCLUDED.automatic_incomes,
        description = EXCLUDED.description,
-       total_pay = EXCLUDED.total_pay
+       total_pay = EXCLUDED.total_pay,
+       wage_segments = EXCLUDED.wage_segments
        RETURNING *`,
-      [id, req.user.userId, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, autoExpJson, autoIncJson, description, total_pay]
+      [id, req.user.userId, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, autoExpJson, autoIncJson, description, total_pay, wageSegJson]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -394,9 +402,12 @@ app.post('/api/shifts/batch', authenticateToken, async (req, res) => {
     for (const item of items) {
       const autoExpJson = item.automatic_expenses && item.automatic_expenses.length > 0 ? JSON.stringify(item.automatic_expenses) : null;
       const autoIncJson = item.automatic_incomes && item.automatic_incomes.length > 0 ? JSON.stringify(item.automatic_incomes) : null;
+      const segments = item.wage_segments || item.wageSegments;
+      const wageSegJson = segments && segments.length > 0 ? JSON.stringify(segments) : null;
+
       await client.query(
-        `INSERT INTO shifts (id, user_id, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, automatic_expenses, automatic_incomes, description, total_pay)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::jsonb, $12::jsonb, $13, $14)
+        `INSERT INTO shifts (id, user_id, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, automatic_expenses, automatic_incomes, description, total_pay, wage_segments)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::jsonb, $12::jsonb, $13, $14, $15::jsonb)
          ON CONFLICT (id) DO UPDATE SET
          job_type_id = EXCLUDED.job_type_id,
          date = EXCLUDED.date,
@@ -409,12 +420,13 @@ app.post('/api/shifts/batch', authenticateToken, async (req, res) => {
          automatic_expenses = EXCLUDED.automatic_expenses,
          automatic_incomes = EXCLUDED.automatic_incomes,
          description = EXCLUDED.description,
-         total_pay = EXCLUDED.total_pay`,
+         total_pay = EXCLUDED.total_pay,
+         wage_segments = EXCLUDED.wage_segments`,
         [
           item.id, req.user.userId, item.job_type_id, item.date,
           item.start_time, item.end_time, item.tips || 0,
           item.break_type, item.unpaid_break_minutes || 0,
-          item.hourly_rate || 0, autoExpJson, autoIncJson, item.description, item.total_pay || 0
+          item.hourly_rate || 0, autoExpJson, autoIncJson, item.description, item.total_pay || 0, wageSegJson
         ]
       );
     }
