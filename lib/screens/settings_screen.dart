@@ -1162,9 +1162,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (authProvider.isLoggedIn) {
       await authProvider.logout(navigate: false);
     }
+    /*
     if (authProvider.isByosConnected) {
       await authProvider.disconnectBYOS();
     }
+    */
 
     if (!context.mounted) return;
 

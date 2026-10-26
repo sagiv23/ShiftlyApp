@@ -17,13 +17,14 @@ class AuthProvider with ChangeNotifier {
 
   bool _isLoggedIn = false;
   bool _isGuest = false;
-  bool _isByosConnected = false;
+  final bool _isByosConnected = false;
   bool _isInitializing = true;
   final Completer<void> _initCompleter = Completer<void>();
 
   String? _userName;
   String? _userEmail;
-  String? _byosEmail;
+
+  // String? _byosEmail;
   String? _token;
   String? _userCreatedAt;
   String? _userBirthDate;
@@ -40,7 +41,7 @@ class AuthProvider with ChangeNotifier {
 
   bool get isGuest => _isGuest;
 
-  bool get isByosConnected => _isByosConnected;
+  bool get isByosConnected => false; // _isByosConnected
 
   bool get isInitializing => _isInitializing;
 
@@ -50,7 +51,7 @@ class AuthProvider with ChangeNotifier {
 
   String? get userEmail => _userEmail;
 
-  String? get byosEmail => _byosEmail;
+  String? get byosEmail => null; // _byosEmail
 
   String? get token => _token;
 
@@ -83,10 +84,10 @@ class AuthProvider with ChangeNotifier {
       final box = _persistence.settingsBox;
       _isLoggedIn = box.get('isLoggedIn', defaultValue: false);
       _isGuest = box.get('isGuest', defaultValue: false);
-      _isByosConnected = box.get('isByosConnected', defaultValue: false);
+      // _isByosConnected = box.get('isByosConnected', defaultValue: false);
       _userName = box.get('userName');
       _userEmail = box.get('userEmail');
-      _byosEmail = box.get('byosEmail');
+      // _byosEmail = box.get('byosEmail');
       _userCreatedAt = box.get('userCreatedAt');
       _userBirthDate = box.get('userBirthDate');
       _token = await SecureStorageHelper.getToken();
@@ -239,6 +240,7 @@ class AuthProvider with ChangeNotifier {
     await syncProfileAndDrive();
   }
 
+  /*
   Future<void> connectBYOS() async {
     try {
       final email = await _driveService.signIn();
@@ -273,6 +275,7 @@ class AuthProvider with ChangeNotifier {
     await box.delete('byosEmail');
     notifyListeners();
   }
+  */
 
   Future<Map<String, dynamic>> authenticateOnly(
     String email,

@@ -3,10 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/providers/auth_provider.dart';
-import 'package:shiftly/providers/settings_provider.dart';
+// import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/auth_screen.dart';
-import 'package:shiftly/services/google_drive_service.dart';
+// import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
@@ -24,8 +24,9 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _isLoading = true;
-  bool _isRestoring = false;
-  bool _isBackingUp = false;
+
+  // bool _isRestoring = false;
+  // bool _isBackingUp = false;
 
   @override
   void initState() {
@@ -49,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
     final auth = context.watch<AuthProvider>();
-    final settings = context.watch<SettingsProvider>();
+    // final settings = context.watch<SettingsProvider>();
     final shiftProvider = context.watch<ShiftProvider>();
 
     final shiftsCount = shiftProvider.shifts.length;
@@ -342,6 +343,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
             const SizedBox(height: AppTheme.spaceLg),
+            /*
             // BYOS Section
             PageEntranceAnimation(
               delayFraction: 0.15,
@@ -644,6 +646,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
+            */
             if (auth.isLoggedIn) ...[
               const SizedBox(height: AppTheme.spaceLg),
               PageEntranceAnimation(
@@ -711,6 +714,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  /*
   Future<void> _handleDeleteBYOS(BuildContext context) async {
     final l = AppLocalizations.of(context)!;
     // Step 1: First Confirmation
@@ -781,6 +785,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     UIUtils.showSnackBar(context, l.settings_byos_delete_success);
   }
+  */
 
   Future<void> _handleDeleteAccount(BuildContext context) async {
     final l = AppLocalizations.of(context)!;

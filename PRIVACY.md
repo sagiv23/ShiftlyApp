@@ -11,7 +11,7 @@
   <p style="text-align: center;">
     <img src="https://img.shields.io/badge/Privacy_Policy-Protected-38BDF8?style=for-the-badge&logoColor=0F172A" alt="Privacy Policy" />
     <img src="https://img.shields.io/badge/GDPR-Compliant-22C55E?style=for-the-badge" alt="GDPR Compliant" />
-    <img src="https://img.shields.io/badge/Google_Drive_BYOS-Encrypted-0EA5E9?style=for-the-badge" alt="Google Drive BYOS" />
+    <!-- <img src="https://img.shields.io/badge/Google_Drive_BYOS-Encrypted-0EA5E9?style=for-the-badge" alt="Google Drive BYOS" /> -->
   </p>
 
 </div>
@@ -38,10 +38,8 @@
   קבועות.
 * **נתונים טכניים ויומני שגיאות:** מזהי מכשיר אנונימיים ויומני קריסות (via Firebase Crashlytics)
   לשיפור יציבות האפליקציה.
-* **גיבוי פרטי ב-Google Drive (BYOS - Bring Your Own Storage):** בעת הפעלת גיבוי בענן, האפליקציה
-  משתמשת בהרשאה המוגבלת `https://www.googleapis.com/auth/drive.appdata` כדי לשמור קובץ גיבוי מוצפן *
-  *בתיקיית האפליקציה הפרטית שלך ב-Google Drive בלבד (`appDataFolder`)**. האפליקציה ומפתחיה אינם
-  צופים, אוספים או משתפים את נתוני ה-Google Drive שלך.
+* **גיבוי פרטי ב-Google Drive (BYOS - Bring Your Own Storage):
+  ** <!-- בעת הפעלת גיבוי בענן, האפליקציה משתמשת בהרשאה המוגבלת `https://www.googleapis.com/auth/drive.appdata` כדי לשמור קובץ גיבוי מוצפן בתיקיית האפליקציה הפרטית שלך ב-Google Drive בלבד (`appDataFolder`). האפליקציה ומפתחיה אינם צופים, אוספים או משתפים את נתוני ה-Google Drive שלך. -->
 
 ### 3. מטרות השימוש במידע
 
@@ -86,10 +84,8 @@ privacy laws and GDPR guidelines.
   verification 12+).
 * **Shift & Wage Data**: Shift hours, wage rates, breaks, tips, expenses, and employer settings.
 * **Technical Logs**: Anonymous crash reports via Firebase Crashlytics for app diagnostics.
-* **Google Drive BYOS Backup**: If enabled, Shiftly utilizes the restricted
-  `https://www.googleapis.com/auth/drive.appdata` scope to store encrypted backups **exclusively in
-  your personal Google Drive AppData folder (`appDataFolder`)**. Developers do not view or access
-  your Google Drive files.
+* **Google Drive BYOS Backup
+  **: <!-- If enabled, Shiftly utilizes the restricted `https://www.googleapis.com/auth/drive.appdata` scope to store encrypted backups exclusively in your personal Google Drive AppData folder (`appDataFolder`). Developers do not view or access your Google Drive files. -->
 
 ### 3. Data Security & Third Parties
 

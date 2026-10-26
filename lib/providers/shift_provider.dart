@@ -55,15 +55,17 @@ class ShiftProvider with ChangeNotifier {
   }
 
   ShiftProvider(this._persistence) {
-    _loadStoredLastBackupTime();
+    // _loadStoredLastBackupTime();
   }
 
+  /*
   void _loadStoredLastBackupTime() {
     final raw = _persistence.settingsBox.get('byos_last_backup_time');
     if (raw != null && raw is String) {
       _lastBackupTime = DateTime.tryParse(raw);
     }
   }
+  */
 
   bool _hasSyncedOnStartup = false;
   SettingsProvider? _settingsProvider;
@@ -76,7 +78,7 @@ class ShiftProvider with ChangeNotifier {
   }) {
     final bool tokenChanged = _authToken != token;
     _authToken = token;
-    _isBYOS = isBYOS;
+    _isBYOS = false; // isBYOS;
     _autoSyncEnabled = autoSyncEnabled;
     _settingsProvider = settingsProvider;
     _settingsProvider?.updateAuthToken(token);
@@ -224,90 +226,13 @@ class ShiftProvider with ChangeNotifier {
     return false;
   }
 
+  /*
   Future<Map<String, int>> restoreFromBYOS() async {
-    if (!_isBYOS) {
-      debugPrint('Restore: Not in BYOS mode.');
-      return {'shifts': 0, 'jobs': 0, 'expenses': 0};
-    }
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
-
-    int shiftCount = 0;
-    int jobCount = 0;
-    int expCount = 0;
-
-    try {
-      final data = await _driveService.downloadBackup().timeout(
-        const Duration(seconds: 15),
-        onTimeout: () => throw TimeoutException('BYOS download timed out'),
-      );
-      if (data == null) {
-        debugPrint('Restore: No backup data found on Drive.');
-        return {'shifts': 0, 'jobs': 0, 'expenses': 0};
-      }
-
-      debugPrint('Restore: Data found. Parsing...');
-
-      if (data['settings'] != null && data['settings'] is Map) {
-        await _settingsProvider?.updateSettingsFromProfile(
-          Map<String, dynamic>.from(data['settings'] as Map),
-        );
-      }
-
-      if (data['jobTypes'] != null && data['jobTypes'] is List) {
-        for (var jobData in data['jobTypes']) {
-          try {
-            final map = Map<String, dynamic>.from(jobData as Map);
-            final job = JobType.fromJson(map);
-            await _persistence.jobTypesBox.put(job.id, job);
-            jobCount++;
-          } catch (e) {
-            debugPrint('Restore: Failed to parse job: $e');
-          }
-        }
-      }
-
-      if (data['expenses'] != null && data['expenses'] is List) {
-        for (var expData in data['expenses']) {
-          try {
-            final map = Map<String, dynamic>.from(expData as Map);
-            final exp = Expense.fromJson(map);
-            await _persistence.expensesBox.put(exp.id, exp);
-            expCount++;
-          } catch (e) {
-            debugPrint('Restore: Failed to parse expense: $e');
-          }
-        }
-      }
-
-      if (data['shifts'] != null && data['shifts'] is List) {
-        final shiftsList = data['shifts'] as List;
-        debugPrint('Restore: Found ${shiftsList.length} shifts in backup.');
-        for (var shiftData in shiftsList) {
-          try {
-            final map = Map<String, dynamic>.from(shiftData as Map);
-            final shift = Shift.fromJson(map);
-            await _persistence.shiftsBox.put(shift.id, shift);
-            shiftCount++;
-          } catch (e) {
-            debugPrint('Restore: Failed to parse shift: $e. Data: $shiftData');
-          }
-        }
-      }
-
-      debugPrint('Restore complete. Shifts: $shiftCount, Jobs: $jobCount');
-      await fetchLastBackupTimeFromDrive();
-      _invalidateCache();
-      return {'shifts': shiftCount, 'jobs': jobCount, 'expenses': expCount};
-    } catch (e) {
-      debugPrint('Restore from BYOS failed with major error: $e');
-      _errorMessage = e.toString();
-      return {'shifts': 0, 'jobs': 0, 'expenses': 0};
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+    ...
+  }
+  */
+  Future<Map<String, int>> restoreFromBYOS() async {
+    return {'shifts': 0, 'jobs': 0, 'expenses': 0};
   }
 
   /// Migrates existing local guest data to the server for a newly created account.

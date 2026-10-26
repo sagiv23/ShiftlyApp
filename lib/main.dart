@@ -69,7 +69,7 @@ void main() async {
             update: (_, auth, settings, shift) => shift!
               ..updateAuthStatus(
                 auth.token,
-                auth.isByosConnected,
+                false, // auth.isByosConnected,
                 settings.autoSyncEnabled,
                 settingsProvider: settings,
               ),

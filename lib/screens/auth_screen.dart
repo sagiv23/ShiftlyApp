@@ -223,7 +223,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
 
       shiftProvider.updateAuthStatus(
         authProvider.token,
-        authProvider.isByosConnected,
+        false, // authProvider.isByosConnected,
         settingsProvider.autoSyncEnabled,
       );
 

@@ -52,9 +52,12 @@
   תעריף מוגדל (למשל 125%, 150%).
 * **✡️ חישוב שבתות וחגים אוטומטי:** זיהוי מדויק של כניסת ויציאת שבת וחגים לפי לוח עברי ולמיקום
   המשתמש, וחישוב תעריפי שכר מיוחדים (150%, 200%).
-* **☁️ ארכיטקטורת סנכרון כפולה (BYOS & Cloud):**
+* <!-- **☁️ ארכיטקטורת סנכרון כפולה (BYOS & Cloud):**
     * **BYOS (Bring Your Own Storage):** גיבוי ושחזור מוצפן ישירות לחשבון ה-Google Drive הפרטי של
       המשתמש (`appDataFolder`).
+    * **Shiftly Cloud:** סנכרון בזמן אמת בין מספר מכשירים מול שרת REST API ב-Node.js + PostgreSQL.
+    * **Offline-First:** כל הפעולות נשמרות מקומית ב-Hive NoSQL ועובדות ללא צורך בחיבור לרשת. -->
+* **☁️ סנכרון ענן (Cloud):**
     * **Shiftly Cloud:** סנכרון בזמן אמת בין מספר מכשירים מול שרת REST API ב-Node.js + PostgreSQL.
     * **Offline-First:** כל הפעולות נשמרות מקומית ב-Hive NoSQL ועובדות ללא צורך בחיבור לרשת.
 * **💼 ניהול תפקידים והיסטוריית שכר (Wage Rates):** תמיכה בהיסטוריית שכר שעתי לפי תאריכי תחולה, כך
@@ -94,12 +97,11 @@ Shiftly נבנתה בעיצוב **Material 3** מודרני המתאים לכל 
                        │   (Android, iOS, Web, Windows, Mac, Linux)│
                        └─────────────────────┬────────────────────┘
                                              │
-                  ┌──────────────────────────┴──────────────────────────┐
-                  ▼                                                     ▼
-┌──────────────────────────────────┐                 ┌──────────────────────────────────┐
-│ BYOS (Bring Your Own Storage)    │                 │ Shiftly Cloud Backend            │
-│ Google Drive AppData Folder      │                 │ Node.js (Express) + PostgreSQL   │
-└──────────────────────────────────┘                 └──────────────────────────────────┘
+                                             ▼
+                       ┌──────────────────────────────────────────┐
+                       │          Shiftly Cloud Backend           │
+                       │     Node.js (Express) + PostgreSQL       │
+                       └──────────────────────────────────────────┘
 ```
 
 ---
@@ -146,7 +148,8 @@ flutter run
   ```
   כדי להתקין עדכונים מעל אפליקציה קיימת, כל גרסאות ה-APK חייבות להשתמש באותו `applicationId`
   ובאותו מפתח חתימה. לבניית גרסאות דרך GitHub Actions יש להגדיר את הסודות
-  `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` ו-`ANDROID_KEY_PASSWORD`
+  `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` ו-
+  `ANDROID_KEY_PASSWORD`
   עם מפתח החתימה הקבוע של האפליקציה.
   ה-IPA של iOS נבנה ללא חתימה; הפצה והתקנה במכשירי iPhone דורשות חתימת Apple והגדרת הפצה מתאימה.
 * **iOS IPA:**
@@ -181,8 +184,7 @@ bonuses, and multi-device sync.
 - **Overtime Engine:** Automated daily and weekly overtime calculations based on configurable rules.
 - **Shabbat & Holiday Engine:** Location and Hebrew-calendar aware Shabbat and Jewish holiday
   detection with special wage multipliers.
-- **Dual-Sync Architecture:** BYOS (Private Google Drive AppData folder backup) & Shiftly Cloud (
-  real-time Node.js/PostgreSQL sync).
+- **Cloud Sync:** Real-time synchronization across multiple devices via Node.js/PostgreSQL REST API.
 - **GitHub Releases Downloads:** Selects the Android APK, Windows/macOS ZIP, or iOS IPA for the
   current platform. The current iOS IPA is unsigned and requires appropriate Apple signing and
   distribution before it can be installed.
