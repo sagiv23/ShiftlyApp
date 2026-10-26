@@ -64,14 +64,20 @@ jobs:
         run: flutter pub run build_runner build --delete-conflicting-outputs
       - name: Build Windows
         run: flutter build windows --release --build-name="$($env:GITHUB_REF_NAME.TrimStart('v'))" --build-number="$env:GITHUB_RUN_NUMBER"
-      - name: Archive Windows
+      - name: Build Windows Setup Installer (.exe)
         shell: pwsh
-        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath windows-release.zip
+        run: |
+          if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) {
+            choco install innosetup -y
+            $env:Path += ";C:\Program Files (x86)\Inno Setup 6"
+          }
+          $VERSION = $env:GITHUB_REF_NAME.TrimStart('v')
+          iscc /DAppVersion="$VERSION" windows/installer.iss
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-assets
-          path: windows-release.zip
+          path: build/windows/Shiftly_Windows_Setup.exe
 
   build-macos:
     name: Build macOS
@@ -88,15 +94,20 @@ jobs:
         run: flutter pub run build_runner build --delete-conflicting-outputs
       - name: Build macOS
         run: flutter build macos --release --build-name="${GITHUB_REF_NAME#v}" --build-number="$GITHUB_RUN_NUMBER"
-      - name: Archive macOS
+      - name: Create macOS DMG & ZIP
         run: |
           cd build/macos/Build/Products/Release
-          zip -r ../../../../macos-release.zip Shiftly.app
+          hdiutil create -volname "Shiftly" -srcfolder Shiftly.app -ov -format UDZO Shiftly_macOS.dmg
+          zip -r Shiftly_macOS.zip Shiftly.app
+          mv Shiftly_macOS.dmg ../../../../../Shiftly_macOS.dmg
+          mv Shiftly_macOS.zip ../../../../../Shiftly_macOS.zip
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: macos-assets
-          path: macos-release.zip
+          path: |
+            Shiftly_macOS.dmg
+            Shiftly_macOS.zip
 
   build-ios:
     name: Build iOS
@@ -141,15 +152,16 @@ jobs:
           body: |
             # Shiftly Release
             <div dir="rtl">
+            * **Windows Setup (.exe)** - קובץ התקנה ישיר למחשבי Windows.
+            * **macOS DMG / ZIP** - קובץ התקנה (DMG) ו-ZIP למחשבי Mac.
             * **Android APK** - התקנה ישירה למכשירי אנדרואיד.
-            * **Windows** - קובץ ZIP למחשבי Windows.
-            * **macOS** - קובץ ZIP למחשבי Mac.
-            * **iOS** - קובץ IPA לא חתום; נדרשת חתימה עם חשבון Apple Developer כדי להתקין.
+            * **iOS IPA** - קובץ IPA לא חתום; נדרשת חתימה עם חשבון Apple Developer כדי להתקין.
             </div>
           files: |
             release-assets/*.apk
-            release-assets/windows-release.zip
-            release-assets/macos-release.zip
+            release-assets/Shiftly_Windows_Setup.exe
+            release-assets/Shiftly_macOS.dmg
+            release-assets/Shiftly_macOS.zip
             release-assets/ios-release.ipa
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
