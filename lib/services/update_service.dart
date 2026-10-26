@@ -121,24 +121,25 @@ class UpdateService {
   static String? _downloadUrlForCurrentPlatform(dynamic assets) {
     if (kIsWeb || assets is! List) return null;
 
-    final (extension, platformName) = switch (defaultTargetPlatform) {
-      TargetPlatform.android => ('.apk', null),
-      TargetPlatform.windows => ('.zip', 'windows'),
-      TargetPlatform.macOS => ('.zip', 'macos'),
-      TargetPlatform.iOS => ('.ipa', null),
-      _ => (null, null),
+    final (extensions, platformName) = switch (defaultTargetPlatform) {
+      TargetPlatform.android => (['.apk'], null),
+      TargetPlatform.windows => (['.exe', '.zip'], 'windows'),
+      TargetPlatform.macOS => (['.dmg', '.zip'], 'macos'),
+      TargetPlatform.iOS => (['.ipa'], null),
+      _ => (<String>[], null),
     };
-    if (extension == null) return null;
+    if (extensions.isEmpty) return null;
 
-    for (final asset in assets) {
-      if (asset is! Map) continue;
-      final String name = (asset['name'] ?? '').toString().toLowerCase();
-      if (!name.endsWith(extension) ||
-          (platformName != null && !name.contains(platformName))) {
-        continue;
+    for (final ext in extensions) {
+      for (final asset in assets) {
+        if (asset is! Map) continue;
+        final String name = (asset['name'] ?? '').toString().toLowerCase();
+        if (!name.endsWith(ext)) continue;
+        if (platformName != null && !name.contains(platformName)) continue;
+
+        final String url = (asset['browser_download_url'] ?? '').toString();
+        if (url.isNotEmpty) return url;
       }
-      final String url = (asset['browser_download_url'] ?? '').toString();
-      if (url.isNotEmpty) return url;
     }
     return null;
   }
