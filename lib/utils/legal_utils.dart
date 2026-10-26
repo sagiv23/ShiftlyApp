@@ -8,7 +8,8 @@ class LegalUtils {
 
   /// Opens the Privacy Policy web page.
   static Future<void> showPrivacyPolicy(BuildContext context) async {
-    final Uri url = Uri.parse('https://sagiv23.github.io/Shiftly/privacy.html');
+    final Uri url = Uri.parse(
+        'https://sagiv23.github.io/ShiftlyApp/privacy.html');
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     }
@@ -16,7 +17,8 @@ class LegalUtils {
 
   /// Opens the Terms of Service web page.
   static Future<void> showTermsOfService(BuildContext context) async {
-    final Uri url = Uri.parse('https://sagiv23.github.io/Shiftly/terms.html');
+    final Uri url = Uri.parse(
+        'https://sagiv23.github.io/ShiftlyApp/terms.html');
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     }
@@ -25,7 +27,7 @@ class LegalUtils {
   /// Opens the Accessibility Statement web page.
   static Future<void> showAccessibilityStatement(BuildContext context) async {
     final Uri url = Uri.parse(
-      'https://sagiv23.github.io/Shiftly/accessibility.html',
+      'https://sagiv23.github.io/ShiftlyApp/accessibility.html',
     );
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);

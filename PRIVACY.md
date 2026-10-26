@@ -62,7 +62,7 @@
 
 לכל שאלה או פנייה בנושא פרטיות, ניתן ליצור קשר בכתובת:
 📧 `shiftlyapp23@gmail.com` או לצפות
-ב[תצוגת האינטרנט של מדיניות הפרטיות](https://sagiv23.github.io/Shiftly/privacy.html).
+ב[תצוגת האינטרנט של מדיניות הפרטיות](https://sagiv23.github.io/ShiftlyApp/privacy.html).
 
 </div>
 

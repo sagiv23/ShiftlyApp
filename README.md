@@ -31,10 +31,10 @@
 > **Shiftly** מחויבת לשמירה מלאה על פרטיות המשתמשים ואבטחת הנתונים האישיים והפיננסיים, בהתאם לחוק
 > הגנת הפרטיות, תקנות אבטחת המידע ודרישות ה-GDPR.
 
-| מסמך משפטי                              | תיאור                                                                                   |       קישור לקובץ        |                   קישור אינטרנטי ציבורי                    |
-|:----------------------------------------|:----------------------------------------------------------------------------------------|:------------------------:|:----------------------------------------------------------:|
-| **🛡️ מדיניות פרטיות (Privacy Policy)** | מפרטת את אופן איסוף הנתונים, אבטחת מידע, גיבוי פרטי ב-Google Drive (BYOS) ומחיקת חשבון. | [PRIVACY.md](PRIVACY.md) | [תצוגת אינטרנט](https://sagiv23.github.io/Shiftly/PRIVACY) |
-| **⚖️ תנאי שימוש (Terms of Service)**    | תנאי השימוש באפליקציה, דיסקליימר משפטי קריטי לגבי חישובי שכר ותלושי שכר.                |   [TERMS.md](TERMS.md)   |  [תצוגת אינטרנט](https://sagiv23.github.io/Shiftly/TERMS)  |
+| מסמך משפטי                              | תיאור                                                                                   |       קישור לקובץ        |                     קישור אינטרנטי ציבורי                     |
+|:----------------------------------------|:----------------------------------------------------------------------------------------|:------------------------:|:-------------------------------------------------------------:|
+| **🛡️ מדיניות פרטיות (Privacy Policy)** | מפרטת את אופן איסוף הנתונים, אבטחת מידע, גיבוי פרטי ב-Google Drive (BYOS) ומחיקת חשבון. | [PRIVACY.md](PRIVACY.md) | [תצוגת אינטרנט](https://sagiv23.github.io/ShiftlyApp/PRIVACY) |
+| **⚖️ תנאי שימוש (Terms of Service)**    | תנאי השימוש באפליקציה, דיסקליימר משפטי קריטי לגבי חישובי שכר ותלושי שכר.                |   [TERMS.md](TERMS.md)   |  [תצוגת אינטרנט](https://sagiv23.github.io/ShiftlyApp/TERMS)  |
 
 ---
 
@@ -165,10 +165,10 @@ flutter run
 
 ## 📜 Legal & Privacy Documents
 
-| Document                | Description                                                                            |        Local File        |                    Public Web URL                     |
-|:------------------------|:---------------------------------------------------------------------------------------|:------------------------:|:-----------------------------------------------------:|
-| **🛡️ Privacy Policy**  | Explains data collection, security, Google Drive BYOS backup, and user privacy rights. | [PRIVACY.md](PRIVACY.md) | [Web View](https://sagiv23.github.io/Shiftly/PRIVACY) |
-| **⚖️ Terms of Service** | Terms of use, legal disclaimers regarding salary calculations and official payslips.   |   [TERMS.md](TERMS.md)   |  [Web View](https://sagiv23.github.io/Shiftly/TERMS)  |
+| Document                | Description                                                                            |        Local File        |                      Public Web URL                      |
+|:------------------------|:---------------------------------------------------------------------------------------|:------------------------:|:--------------------------------------------------------:|
+| **🛡️ Privacy Policy**  | Explains data collection, security, Google Drive BYOS backup, and user privacy rights. | [PRIVACY.md](PRIVACY.md) | [Web View](https://sagiv23.github.io/ShiftlyApp/PRIVACY) |
+| **⚖️ Terms of Service** | Terms of use, legal disclaimers regarding salary calculations and official payslips.   |   [TERMS.md](TERMS.md)   |  [Web View](https://sagiv23.github.io/ShiftlyApp/TERMS)  |
 
 ---
 
