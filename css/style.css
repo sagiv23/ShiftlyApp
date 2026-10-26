@@ -966,7 +966,7 @@ input:checked + .toggle-slider:before {
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
   background: var(--bg-glass-card);
   border: 1px solid var(--border-glass);
