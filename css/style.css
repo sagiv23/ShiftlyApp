@@ -2238,9 +2238,19 @@ input:checked + .toggle-slider:before {
     -webkit-tap-highlight-color: rgba(56, 232, 255, 0.15);
   }
 
-  /* Financial Reports Mobile Viewport Improvements */
-  .showcase-panels-container .showcase-content-panel {
-    padding: 4px;
+  /* Showcase Panels & Preview Cards Mobile Padding */
+  .showcase-content-panel {
+    padding: 20px 16px !important;
+    gap: 20px !important;
+  }
+  .showcase-preview-card {
+    padding: 20px 16px !important;
+  }
+  .showcase-panel-info h3 {
+    font-size: 22px !important;
+  }
+  .showcase-panel-info p {
+    font-size: 15px !important;
   }
 }
 
