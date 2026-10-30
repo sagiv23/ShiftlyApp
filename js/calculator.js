@@ -18,6 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const extraEarningsVal = document.getElementById('resExtraEarnings');
   const totalAmountVal = document.getElementById('resTotalAmount');
 
+  // Visual Wage Breakdown Segments
+  const segReg = document.getElementById('segReg');
+  const segOt1 = document.getElementById('segOt1');
+  const segOt2 = document.getElementById('segOt2');
+  const segTips = document.getElementById('segTips');
+
+  // Preset Buttons
+  const presetBtns = document.querySelectorAll('.preset-btn');
+
   if (!hourlyRateInput || !totalAmountVal) return;
 
   let currentAnimatedTotal = 0;
@@ -78,6 +87,14 @@ document.addEventListener('DOMContentLoaded', () => {
       extraEarningsVal.textContent = `₪${tipsAndExpenses.toFixed(0)}`;
     }
 
+    // Update Visual Wage Breakdown Segments Progress Percentages
+    if (totalGross > 0) {
+      if (segReg) segReg.style.width = `${(regPay / totalGross) * 100}%`;
+      if (segOt1) segOt1.style.width = `${(ot1Pay / totalGross) * 100}%`;
+      if (segOt2) segOt2.style.width = `${(ot2Pay / totalGross) * 100}%`;
+      if (segTips) segTips.style.width = `${(tipsAndExpenses / totalGross) * 100}%`;
+    }
+
     // Smooth Number Count Animation for Total Amount
     animateTotalAmount(totalGross);
   }
@@ -104,6 +121,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     requestAnimationFrame(updateStep);
+  }
+
+  // Preset Buttons Logic
+  if (presetBtns.length > 0) {
+    presetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const hours = btn.getAttribute('data-hours');
+        const shabbat = btn.getAttribute('data-shabbat');
+
+        if (hours && shiftHoursInput) {
+          shiftHoursInput.value = hours;
+        }
+        if (shabbat !== null && shabbatToggle) {
+          shabbatToggle.checked = shabbat === 'true';
+        }
+
+        calculateShift();
+      });
+    });
   }
 
   // Attach Event Listeners to Inputs
