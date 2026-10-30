@@ -343,7 +343,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         Text(
           l.onboarding_welcome_subtitle,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 18, color: Colors.grey),
+          style: const TextStyle(
+            fontSize: 18,
+            color: AppTheme.electricCyan,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 40),
         Text(
@@ -361,7 +365,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(Icons.more_time_rounded, size: 64, color: Colors.blue),
+        const Icon(
+          Icons.more_time_rounded,
+          size: 64,
+          color: AppTheme.electricCyan,
+        ),
         const SizedBox(height: 24),
         Text(
           l.settings_section_overtime,
@@ -387,6 +395,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               );
             });
           },
+          activeThumbColor: const Color(0xFF040711),
+          activeTrackColor: AppTheme.electricCyan,
         ),
         if (_onboardingOvertimeRules.enabled) ...[
           const SizedBox(height: 16),
@@ -452,7 +462,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(Icons.star_rounded, size: 64, color: Colors.amber),
+        const Icon(Icons.star_rounded, size: 64, color: AppTheme.warmAmber),
         const SizedBox(height: 24),
         Text(
           l.onboarding_shabbat_title,
@@ -478,8 +488,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               );
             });
           },
-          activeThumbColor: AppTheme.primaryDark,
-          activeTrackColor: AppTheme.primary.withValues(alpha: 0.35),
+          activeThumbColor: const Color(0xFF040711),
+          activeTrackColor: AppTheme.electricCyan,
         ),
         if (_onboardingShabbatRules.enabled) ...[
           const SizedBox(height: 24),
@@ -519,7 +529,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(Icons.language_rounded, size: 64, color: Colors.blue),
+        const Icon(
+          Icons.language_rounded,
+          size: 64,
+          color: AppTheme.electricCyan,
+        ),
         const SizedBox(height: 24),
         Text(
           l.onboarding_language_title,
@@ -546,7 +560,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             if (val != null) {
               final newLocale = Locale(val);
               setState(() => _locale = newLocale);
-              // Update settings immediately for instant translation
               context.read<SettingsProvider>().setLocale(newLocale);
             }
           },
@@ -568,7 +581,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(Icons.payments_outlined, size: 64, color: Colors.blue),
+        const Icon(
+          Icons.payments_outlined,
+          size: 64,
+          color: AppTheme.electricCyan,
+        ),
         const SizedBox(height: 24),
         Text(
           l.onboarding_currency_title,
@@ -610,7 +627,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(Icons.timer_outlined, size: 64, color: Colors.blue),
+        const Icon(
+          Icons.timer_outlined,
+          size: 64,
+          color: AppTheme.electricCyan,
+        ),
         const SizedBox(height: 24),
         Text(
           l.onboarding_breaks_title,
@@ -630,8 +651,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           value: _breaksEnabled,
           onChanged: (val) => setState(() => _breaksEnabled = val),
-          activeThumbColor: AppTheme.primaryDark,
-          activeTrackColor: AppTheme.primary.withValues(alpha: 0.35),
+          activeThumbColor: const Color(0xFF040711),
+          activeTrackColor: AppTheme.electricCyan,
         ),
         if (_breaksEnabled) ...[
           const SizedBox(height: 32),
@@ -657,7 +678,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(Icons.auto_fix_high_rounded, size: 64, color: Colors.blue),
+        const Icon(
+          Icons.auto_fix_high_rounded,
+          size: 64,
+          color: AppTheme.electricCyan,
+        ),
         const SizedBox(height: 24),
         Text(
           l.onboarding_auto_expenses_title,
@@ -677,8 +702,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           value: _autoExpenseEnabled,
           onChanged: (val) => setState(() => _autoExpenseEnabled = val),
-          activeThumbColor: AppTheme.primaryDark,
-          activeTrackColor: AppTheme.primary.withValues(alpha: 0.35),
+          activeThumbColor: const Color(0xFF040711),
+          activeTrackColor: AppTheme.electricCyan,
         ),
         if (_autoExpenseEnabled) ...[
           const SizedBox(height: 24),
@@ -726,7 +751,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           if (_autoAmountControllers.length > 1)
             IconButton(
-              icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
+              icon: const Icon(
+                Icons.remove_circle_outline,
+                color: AppTheme.softCoral,
+              ),
               onPressed: () => setState(() {
                 final amountC = _autoAmountControllers.removeAt(index);
                 final descC = _autoDescControllers.removeAt(index);
@@ -748,7 +776,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         const Icon(
           Icons.account_balance_wallet_rounded,
           size: 64,
-          color: AppTheme.profitSoft,
+          color: AppTheme.mintGreen,
         ),
         const SizedBox(height: 24),
         Text(
@@ -769,8 +797,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           value: _autoIncomeEnabled,
           onChanged: (val) => setState(() => _autoIncomeEnabled = val),
-          activeThumbColor: AppTheme.profit,
-          activeTrackColor: AppTheme.profit.withValues(alpha: 0.35),
+          activeThumbColor: const Color(0xFF040711),
+          activeTrackColor: AppTheme.mintGreen,
         ),
         if (_autoIncomeEnabled) ...[
           const SizedBox(height: 24),
@@ -785,6 +813,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             }),
             icon: const Icon(Icons.add_circle_outline_rounded),
             label: Text(l.onboarding_auto_incomes_add_button),
+            style: TextButton.styleFrom(foregroundColor: AppTheme.mintGreen),
           ),
         ],
       ],
@@ -818,7 +847,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           if (_autoIncomeAmountControllers.length > 1)
             IconButton(
-              icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
+              icon: const Icon(
+                Icons.remove_circle_outline,
+                color: AppTheme.softCoral,
+              ),
               onPressed: () => setState(() {
                 final amountC = _autoIncomeAmountControllers.removeAt(index);
                 final descC = _autoIncomeDescControllers.removeAt(index);
@@ -856,7 +888,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ' ',
               ),
               style: const TextStyle(
-                color: Colors.blue,
+                color: AppTheme.electricCyan,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -867,6 +899,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           min: min,
           max: max,
           divisions: divisions,
+          activeColor: AppTheme.electricCyan,
           onChanged: onChanged,
         ),
       ],
@@ -887,7 +920,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.work_outline, size: 64, color: Colors.blue),
+              const Icon(
+                Icons.work_outline,
+                size: 64,
+                color: AppTheme.electricCyan,
+              ),
               const SizedBox(height: 24),
               Text(
                 l.onboarding_job_types_title,
@@ -917,6 +954,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       onPressed: _addNewJobType,
                       icon: const Icon(Icons.add),
                       label: Text(l.onboarding_job_types_add_button),
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppTheme.electricCyan,
+                      ),
                     ),
                   ),
                 );
@@ -931,18 +971,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                   subtitle: Text(
                     '${UIUtils.formatCurrency(job.getRateForDate(DateTime.now()), symbol: symbol)} ${l.onboarding_job_types_rate_suffix}',
+                    style: const TextStyle(
+                      color: AppTheme.electricCyan,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.edit_outlined),
+                        icon: const Icon(
+                          Icons.edit_outlined,
+                          color: AppTheme.electricCyan,
+                        ),
                         onPressed: () => _editJobType(job),
                       ),
                       IconButton(
                         icon: const Icon(
                           Icons.delete_outline,
-                          color: Colors.red,
+                          color: AppTheme.softCoral,
                         ),
                         onPressed: () async {
                           final provider = context.read<ShiftProvider>();
@@ -1005,7 +1052,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ListTile(
                 title: Text(l.common_back),
                 subtitle: Text(AppConstants.formatDate(effectiveDate)),
-                trailing: const Icon(Icons.calendar_today_rounded),
+                trailing: const Icon(
+                  Icons.calendar_today_rounded,
+                  color: AppTheme.electricCyan,
+                ),
                 onTap: () async {
                   final picked = await AppDatePicker.showSingleDatePicker(
                     context: context,
@@ -1111,6 +1161,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildFooter() {
     final l = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
       child: Row(
@@ -1142,13 +1194,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 9,
                 (index) => Container(
                   margin: const EdgeInsets.symmetric(horizontal: 3),
-                  width: _currentPage == index ? 10 : 8,
-                  height: _currentPage == index ? 10 : 8,
+                  width: _currentPage == index ? 12 : 8,
+                  height: _currentPage == index ? 12 : 8,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: _currentPage == index
-                        ? Colors.blue
-                        : Colors.grey.shade300,
+                        ? AppTheme.electricCyan
+                        : (isDark ? AppTheme.darkBorder : Colors.grey.shade300),
+                    boxShadow: _currentPage == index
+                        ? [
+                            BoxShadow(
+                              color: AppTheme.electricCyan.withValues(
+                                alpha: 0.4,
+                              ),
+                              blurRadius: 6,
+                            ),
+                          ]
+                        : null,
                   ),
                 ),
               ),
@@ -1161,10 +1223,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: ElevatedButton(
                 onPressed: _nextPage,
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.electricCyan,
+                  foregroundColor: const Color(0xFF040711),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                 ),
                 child: Text(
                   _currentPage == 8 ? l.common_start : l.common_continue,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

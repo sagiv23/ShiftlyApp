@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
+import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/screens/profile_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_page_route.dart';
@@ -63,27 +65,88 @@ class AdaptiveScaffold extends StatelessWidget {
     final navItems = [
       BottomNavigationBarItem(
         icon: const Icon(Icons.calendar_month_rounded, size: 22),
-        activeIcon: const Icon(Icons.calendar_month_rounded, size: 24),
+        activeIcon: Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: AppTheme.electricCyan.withValues(alpha: 0.18),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.calendar_month_rounded,
+            size: 22,
+            color: AppTheme.electricCyan,
+          ),
+        ),
         label: l.nav_calendar,
       ),
       BottomNavigationBarItem(
         icon: const Icon(Icons.bar_chart_rounded, size: 22),
-        activeIcon: const Icon(Icons.bar_chart_rounded, size: 24),
+        activeIcon: Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: AppTheme.electricCyan.withValues(alpha: 0.18),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.bar_chart_rounded,
+            size: 22,
+            color: AppTheme.electricCyan,
+          ),
+        ),
         label: l.nav_analytics,
       ),
       BottomNavigationBarItem(
         icon: const Icon(Icons.home_rounded, size: 24),
-        activeIcon: const Icon(Icons.home_rounded, size: 26),
+        activeIcon: Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: AppTheme.electricCyan.withValues(alpha: 0.2),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.electricCyan.withValues(alpha: 0.3),
+                blurRadius: 10,
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.home_rounded,
+            size: 24,
+            color: AppTheme.electricCyan,
+          ),
+        ),
         label: l.nav_home,
       ),
       BottomNavigationBarItem(
         icon: const Icon(Icons.receipt_long_rounded, size: 22),
-        activeIcon: const Icon(Icons.receipt_long_rounded, size: 24),
+        activeIcon: Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: AppTheme.electricCyan.withValues(alpha: 0.18),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.receipt_long_rounded,
+            size: 22,
+            color: AppTheme.electricCyan,
+          ),
+        ),
         label: l.nav_expenses,
       ),
       BottomNavigationBarItem(
         icon: const Icon(Icons.note_alt_rounded, size: 22),
-        activeIcon: const Icon(Icons.note_alt_rounded, size: 24),
+        activeIcon: Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: AppTheme.electricCyan.withValues(alpha: 0.18),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.note_alt_rounded,
+            size: 22,
+            color: AppTheme.electricCyan,
+          ),
+        ),
         label: l.nav_summaries,
       ),
     ];
@@ -102,8 +165,13 @@ class AdaptiveScaffold extends StatelessWidget {
           bottom: bottom,
           actions: actions,
         ),
+        // In Hebrew RTL mode, standard drawer opens from the RIGHT side
         drawer: Drawer(
-          backgroundColor: Theme.of(context).cardTheme.color,
+          backgroundColor: isDark
+              ? AppTheme.darkSecondaryBackground
+              : Theme.of(context).cardTheme.color,
+          shadowColor: AppTheme.electricCyan.withValues(alpha: 0.2),
+          elevation: 16,
           child: SafeArea(
             child: SideMenuContent(
               currentIndex: activeIndex,
@@ -121,7 +189,9 @@ class AdaptiveScaffold extends StatelessWidget {
         body: body,
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
-            color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+            color: isDark
+                ? AppTheme.darkSecondaryBackground
+                : AppTheme.lightCard,
             border: Border(
               top: BorderSide(
                 color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
@@ -130,8 +200,8 @@ class AdaptiveScaffold extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
-                blurRadius: 16,
+                color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.08),
+                blurRadius: 20,
                 offset: const Offset(0, -4),
               ),
             ],
@@ -144,10 +214,12 @@ class AdaptiveScaffold extends StatelessWidget {
             elevation: 0,
             selectedFontSize: 12,
             unselectedFontSize: 11,
-            selectedItemColor: AppTheme.primary,
-            unselectedItemColor: Theme.of(
-              context,
-            ).colorScheme.onSurface.withValues(alpha: 0.55),
+            selectedItemColor: AppTheme.electricCyan,
+            unselectedItemColor: isDark
+                ? AppTheme.secondaryText
+                : Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.55),
             selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
             unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
             items: navItems,
@@ -198,6 +270,8 @@ class SideMenuContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    final auth = context.watch<AuthProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
@@ -206,10 +280,9 @@ class SideMenuContent extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 4),
-            // App Logo & Brand Title
+            // Top Bar with Logo, Tagline & Close Button
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
               child: Row(
                 children: [
                   Container(
@@ -217,8 +290,8 @@ class SideMenuContent extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.primary.withValues(alpha: 0.3),
-                          blurRadius: 12,
+                          color: AppTheme.electricCyan.withValues(alpha: 0.35),
+                          blurRadius: 14,
                           offset: const Offset(0, 4),
                         ),
                       ],
@@ -227,62 +300,190 @@ class SideMenuContent extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                       child: Image.asset(
                         'assets/icon/app_icon.png',
-                        width: 38,
-                        height: 38,
+                        width: 40,
+                        height: 40,
                         fit: BoxFit.cover,
                         errorBuilder: (_, _, _) => const Icon(
                           Icons.access_time_filled_rounded,
-                          size: 38,
+                          size: 40,
+                          color: AppTheme.electricCyan,
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 14),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l.common_app_name,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l.common_app_name,
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: -0.5,
+                                color: isDark ? AppTheme.primaryText : null,
+                              ),
                         ),
-                      ),
-                      Text(
-                        l.common_tagline,
-                        style: const TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w800,
-                          color: AppTheme.primary,
-                          letterSpacing: 1.2,
+                        Text(
+                          l.common_tagline,
+                          style: const TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: AppTheme.electricCyan,
+                            letterSpacing: 1.2,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  if (Navigator.of(context).canPop())
+                    IconButton(
+                      icon: const Icon(
+                        Icons.close_rounded,
+                        color: AppTheme.secondaryText,
+                      ),
+                      tooltip: l.common_cancel,
+                      onPressed: () => Navigator.pop(context),
+                    ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-            const Divider(height: 1),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
 
-            // New Shift Action Item
+            // User Account Badge (If logged in or guest)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ElevatedButton.icon(
-                onPressed: onAddShift,
-                icon: const Icon(Icons.add_rounded, size: 20),
-                label: Text(l.home_action_new_shift),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 48),
+              child: ScalePress(
+                onTap: () {
+                  final nav = Navigator.of(context);
+                  if (nav.canPop()) nav.pop();
+                  nav.push(AppPageRoute.sharedAxis(const ProfileScreen()));
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    border: Border.all(
+                      color: isDark
+                          ? AppTheme.darkBorder
+                          : AppTheme.lightBorder,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 18,
+                        backgroundColor: AppTheme.neonViolet,
+                        child: Text(
+                          auth.isLoggedIn
+                              ? (auth.userName?.isNotEmpty == true
+                                        ? auth.userName![0]
+                                        : (auth.userEmail?.isNotEmpty == true
+                                              ? auth.userEmail![0]
+                                              : 'U'))
+                                    .toUpperCase()
+                              : 'G',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              auth.isLoggedIn
+                                  ? (auth.userName ?? l.side_menu_profile)
+                                  : l.auth_guest_mode_title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              auth.isLoggedIn
+                                  ? (auth.userEmail ?? '')
+                                  : l.side_menu_profile,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: isDark
+                                    ? AppTheme.secondaryText
+                                    : Colors.grey.shade600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.chevron_right_rounded,
+                        size: 18,
+                        color: AppTheme.secondaryText,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
+
+            const SizedBox(height: 16),
+            const Divider(height: 1),
             const SizedBox(height: 12),
+
+            // New Shift Action Button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  gradient: AppTheme.cyanGradient,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.electricCyan.withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton.icon(
+                  onPressed: onAddShift,
+                  icon: const Icon(
+                    Icons.add_rounded,
+                    size: 22,
+                    color: Color(0xFF040711),
+                  ),
+                  label: Text(
+                    l.home_action_new_shift,
+                    style: const TextStyle(
+                      color: Color(0xFF040711),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
             const Divider(height: 1, indent: 16, endIndent: 16),
             const SizedBox(height: 8),
 
-            // Nav Items
+            // Navigation Destinations
             _SideNavItem(
               icon: Icons.home_rounded,
               label: l.common_app_name,
@@ -325,6 +526,7 @@ class SideMenuContent extends StatelessWidget {
                 nav.push(AppPageRoute.sharedAxis(const ProfileScreen()));
               },
             ),
+
             const SizedBox(height: 16),
             const Divider(height: 1),
             const SizedBox(height: 8),
@@ -358,21 +560,27 @@ class _SideNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final primary = AppTheme.primary;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = AppTheme.electricCyan;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
       child: Material(
         color: isSelected
-            ? primary.withValues(alpha: 0.15)
+            ? primary.withValues(alpha: isDark ? 0.18 : 0.12)
             : Colors.transparent,
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(14),
-          child: Padding(
+          child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: isSelected
+                ? BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: primary.withValues(alpha: 0.35)),
+                  )
+                : null,
             child: Row(
               children: [
                 Icon(
@@ -380,7 +588,11 @@ class _SideNavItem extends StatelessWidget {
                   size: 22,
                   color: isSelected
                       ? primary
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      : (isDark
+                            ? AppTheme.secondaryText
+                            : Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.7)),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -390,11 +602,22 @@ class _SideNavItem extends StatelessWidget {
                       fontWeight: isSelected
                           ? FontWeight.w800
                           : FontWeight.w600,
-                      color: isSelected ? primary : theme.colorScheme.onSurface,
+                      color: isSelected
+                          ? primary
+                          : Theme.of(context).colorScheme.onSurface,
                       fontSize: 14,
                     ),
                   ),
                 ),
+                if (isSelected)
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: AppTheme.neonViolet,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
               ],
             ),
           ),

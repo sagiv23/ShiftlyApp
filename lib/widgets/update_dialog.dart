@@ -103,7 +103,13 @@ class _UpdateDialogState extends State<UpdateDialog> {
     return PopScope(
       canPop: !widget.isForceUpdate,
       child: Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(
+            color: isDark ? AppTheme.darkBorder : Colors.transparent,
+          ),
+        ),
+        backgroundColor: isDark ? AppTheme.darkCard : Colors.white,
         child: Container(
           constraints: const BoxConstraints(maxWidth: 450),
           padding: const EdgeInsets.all(24),
@@ -118,15 +124,15 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: widget.isForceUpdate
-                          ? AppTheme.expense.withValues(alpha: 0.15)
-                          : AppTheme.primary.withValues(alpha: 0.15),
+                          ? AppTheme.softCoral.withValues(alpha: 0.15)
+                          : AppTheme.electricCyan.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.system_update_rounded,
                       color: widget.isForceUpdate
-                          ? AppTheme.expense
-                          : AppTheme.primaryDark,
+                          ? AppTheme.softCoral
+                          : AppTheme.electricCyan,
                       size: 28,
                     ),
                   ),
@@ -147,7 +153,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
                             widget.updateInfo.tagName,
                           ),
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                            color: isDark
+                                ? AppTheme.secondaryText
+                                : Colors.grey[600],
                           ),
                         ),
                       ],
@@ -165,17 +173,17 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     vertical: 10,
                   ),
                   decoration: BoxDecoration(
-                    color: AppTheme.expense.withValues(alpha: 0.12),
+                    color: AppTheme.softCoral.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: AppTheme.expense.withValues(alpha: 0.3),
+                      color: AppTheme.softCoral.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
                     children: [
                       const Icon(
                         Icons.error_outline_rounded,
-                        color: AppTheme.expense,
+                        color: AppTheme.softCoral,
                         size: 20,
                       ),
                       const SizedBox(width: 8),
@@ -183,7 +191,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                         child: Text(
                           l.update_dialog_mandatory_notice,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: AppTheme.expense,
+                            color: AppTheme.softCoral,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -201,7 +209,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: isDark ? AppTheme.darkCard : AppTheme.lightBackground,
+                  color: isDark
+                      ? AppTheme.darkSecondaryBackground
+                      : AppTheme.lightBackground,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isDark
@@ -217,7 +227,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
                         widget.updateInfo.currentVersion,
                       ),
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: isDark ? Colors.grey[400] : Colors.grey[700],
+                        color: isDark
+                            ? AppTheme.secondaryText
+                            : Colors.grey[700],
                       ),
                     ),
                     Container(
@@ -226,7 +238,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.profit.withValues(alpha: 0.15),
+                        color: AppTheme.mintGreen.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -234,7 +246,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                           widget.updateInfo.versionName,
                         ),
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: AppTheme.profit,
+                          color: AppTheme.mintGreen,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -257,7 +269,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.black26 : Colors.grey.shade100,
+                  color: isDark
+                      ? AppTheme.darkSecondaryBackground
+                      : Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: SingleChildScrollView(
@@ -301,6 +315,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     LinearProgressIndicator(
                       value: _downloadProgress > 0 ? _downloadProgress : null,
                       borderRadius: BorderRadius.circular(8),
+                      color: AppTheme.electricCyan,
                     ),
                   ],
                 ),
@@ -350,9 +365,11 @@ class _UpdateDialogState extends State<UpdateDialog> {
                         ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: widget.isForceUpdate
-                                ? AppTheme.expense
-                                : AppTheme.primaryDark,
-                            foregroundColor: Colors.white,
+                                ? AppTheme.softCoral
+                                : AppTheme.electricCyan,
+                            foregroundColor: widget.isForceUpdate
+                                ? Colors.white
+                                : const Color(0xFF040711),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),

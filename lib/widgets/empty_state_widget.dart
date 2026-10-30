@@ -18,6 +18,8 @@ class EmptyStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Center(
       child: SingleChildScrollView(
         child: Padding(
@@ -28,26 +30,41 @@ class EmptyStateWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AppTheme.spaceMd),
                 decoration: BoxDecoration(
-                  color: AppTheme.primary.withValues(alpha: 0.1),
+                  color: AppTheme.electricCyan.withValues(
+                    alpha: isDark ? 0.14 : 0.1,
+                  ),
                   shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppTheme.electricCyan.withValues(alpha: 0.25),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.electricCyan.withValues(
+                        alpha: isDark ? 0.15 : 0.05,
+                      ),
+                      blurRadius: 20,
+                    ),
+                  ],
                 ),
-                child: Icon(
-                  icon,
-                  size: 56,
-                  color: AppTheme.primary.withValues(alpha: 0.7),
-                ),
+                child: Icon(icon, size: 56, color: AppTheme.electricCyan),
               ),
               const SizedBox(height: AppTheme.spaceSm),
               Text(
                 title,
-                style: Theme.of(context).textTheme.titleMedium,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               if (subtitle != null) ...[
                 const SizedBox(height: AppTheme.spaceXs),
                 Text(
                   subtitle!,
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: isDark
+                        ? AppTheme.secondaryText
+                        : Colors.grey.shade600,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],

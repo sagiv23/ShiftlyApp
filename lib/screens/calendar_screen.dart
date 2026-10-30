@@ -112,6 +112,7 @@ class _CalendarScreenState extends State<CalendarScreen>
       _selectedDay ?? _focusedDay,
       allShifts,
     );
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AdaptiveScaffold(
       currentIndex: 0,
@@ -131,20 +132,22 @@ class _CalendarScreenState extends State<CalendarScreen>
                             padding: const EdgeInsets.all(AppTheme.spaceSm),
                             child: Container(
                               decoration: BoxDecoration(
-                                color: Theme.of(context).cardTheme.color,
+                                color: isDark
+                                    ? AppTheme.darkCard
+                                    : Theme.of(context).cardTheme.color,
                                 borderRadius: BorderRadius.circular(
                                   AppTheme.radiusLg,
                                 ),
                                 border: Border.all(
-                                  color:
-                                      Theme.of(context).brightness ==
-                                          Brightness.dark
+                                  color: isDark
                                       ? AppTheme.darkBorder
                                       : AppTheme.lightBorder,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.04),
+                                    color: Colors.black.withValues(
+                                      alpha: isDark ? 0.3 : 0.04,
+                                    ),
                                     blurRadius: 12,
                                     offset: const Offset(0, 4),
                                   ),
@@ -166,74 +169,65 @@ class _CalendarScreenState extends State<CalendarScreen>
                                   titleTextStyle: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
+                                    color: AppTheme.electricCyan,
                                   ),
-                                  leftChevronIcon: Icon(
+                                  leftChevronIcon: const Icon(
                                     Icons.chevron_left,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
+                                    color: AppTheme.electricCyan,
                                   ),
-                                  rightChevronIcon: Icon(
+                                  rightChevronIcon: const Icon(
                                     Icons.chevron_right,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
+                                    color: AppTheme.electricCyan,
                                   ),
                                 ),
                                 daysOfWeekStyle: DaysOfWeekStyle(
                                   weekdayStyle: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.6),
+                                    color: isDark
+                                        ? AppTheme.secondaryText
+                                        : const Color(0xFF475569),
                                     fontSize: 13,
                                   ),
-                                  weekendStyle: TextStyle(
+                                  weekendStyle: const TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
+                                    color: AppTheme.electricCyan,
                                     fontSize: 13,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context).colorScheme.primary
-                                        .withValues(alpha: 0.05),
+                                    color: AppTheme.electricCyan.withValues(
+                                      alpha: isDark ? 0.08 : 0.05,
+                                    ),
                                   ),
                                 ),
                                 calendarStyle: CalendarStyle(
                                   outsideDaysVisible: false,
-                                  weekendTextStyle: TextStyle(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
+                                  weekendTextStyle: const TextStyle(
+                                    color: AppTheme.electricCyan,
                                     fontWeight: FontWeight.bold,
                                   ),
-                                  selectedDecoration: BoxDecoration(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
+                                  selectedDecoration: const BoxDecoration(
+                                    color: AppTheme.electricCyan,
                                     shape: BoxShape.circle,
+                                  ),
+                                  selectedTextStyle: const TextStyle(
+                                    color: Color(0xFF040711),
+                                    fontWeight: FontWeight.bold,
                                   ),
                                   todayDecoration: BoxDecoration(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primaryContainer,
+                                    color: AppTheme.neonViolet.withValues(
+                                      alpha: 0.35,
+                                    ),
                                     shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: AppTheme.neonViolet,
+                                    ),
                                   ),
-                                  todayTextStyle: TextStyle(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onPrimaryContainer,
+                                  todayTextStyle: const TextStyle(
+                                    color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                   ),
-                                  markerDecoration: BoxDecoration(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.secondary,
+                                  markerDecoration: const BoxDecoration(
+                                    color: AppTheme.mintGreen,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
@@ -274,11 +268,8 @@ class _CalendarScreenState extends State<CalendarScreen>
                                       final holidayName = matchingBoundary.name;
                                       final isHoliday =
                                           matchingBoundary.type == 'holiday';
-                                      final isDark =
-                                          Theme.of(context).brightness ==
-                                          Brightness.dark;
                                       final textColor = isDark
-                                          ? Colors.white
+                                          ? AppTheme.primaryText
                                           : Theme.of(
                                               context,
                                             ).colorScheme.onSurface;
@@ -303,9 +294,8 @@ class _CalendarScreenState extends State<CalendarScreen>
                                             padding: const EdgeInsets.all(3),
                                             decoration: BoxDecoration(
                                               color: hasShift
-                                                  ? Theme.of(context)
-                                                        .colorScheme
-                                                        .primaryContainer
+                                                  ? AppTheme.electricCyan
+                                                        .withValues(alpha: 0.25)
                                                   : textColor.withValues(
                                                       alpha: 0.12,
                                                     ),
@@ -314,10 +304,8 @@ class _CalendarScreenState extends State<CalendarScreen>
                                             child: MagenDavidIcon(
                                               size: 13,
                                               color: hasShift
-                                                  ? Theme.of(context)
-                                                        .colorScheme
-                                                        .onPrimaryContainer
-                                                  : textColor,
+                                                  ? AppTheme.electricCyan
+                                                  : AppTheme.warmAmber,
                                             ),
                                           ),
                                         ),
@@ -369,17 +357,19 @@ class _CalendarScreenState extends State<CalendarScreen>
                               const Icon(
                                 Icons.list_alt_rounded,
                                 size: 20,
-                                color: Colors.grey,
+                                color: AppTheme.electricCyan,
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 _selectedDay == null
                                     ? l.home_shift_list_select_day
                                     : '${l.home_shift_list_shifts_on}${DateFormat('dd/MM').format(_selectedDay!)}',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
-                                  color: Colors.grey,
+                                  color: isDark
+                                      ? AppTheme.secondaryText
+                                      : Colors.grey.shade700,
                                 ),
                               ),
                             ],
@@ -419,10 +409,15 @@ class _CalendarScreenState extends State<CalendarScreen>
                 child: FadeTransition(
                   opacity: _bannerAnimation!,
                   child: Material(
-                    elevation: 8,
+                    elevation: 12,
                     borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                    color: AppTheme.primaryDark,
-                    child: Padding(
+                    color: AppTheme.darkCard,
+                    shadowColor: AppTheme.electricCyan.withValues(alpha: 0.3),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        border: Border.all(color: AppTheme.electricCyan),
+                      ),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,
@@ -431,13 +426,16 @@ class _CalendarScreenState extends State<CalendarScreen>
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const MagenDavidIcon(color: Colors.white, size: 20),
+                          const MagenDavidIcon(
+                            color: AppTheme.warmAmber,
+                            size: 20,
+                          ),
                           const SizedBox(width: 10),
                           Flexible(
                             child: Text(
                               _activeBannerMessage!,
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: AppTheme.primaryText,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
                                 height: 1.3,

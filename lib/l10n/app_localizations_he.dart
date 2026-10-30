@@ -1036,22 +1036,22 @@ class AppLocalizationsHe extends AppLocalizations {
   String get analytics_chart_tod_subtitle => 'השוואת שעות עבודה לפי פלחי היממה';
 
   @override
-  String get analytics_chart_tod_dawn => 'לפנות בוקר (04:00-06:00)';
+  String get analytics_chart_tod_dawn => 'לפנות בוקר';
 
   @override
-  String get analytics_chart_tod_morning => 'בוקר (06:00-12:00)';
+  String get analytics_chart_tod_morning => 'בוקר';
 
   @override
-  String get analytics_chart_tod_noon => 'צהריים (12:00-16:00)';
+  String get analytics_chart_tod_noon => 'צהריים';
 
   @override
-  String get analytics_chart_tod_afternoon => 'אחר הצהריים (16:00-18:00)';
+  String get analytics_chart_tod_afternoon => 'אחר הצהריים';
 
   @override
-  String get analytics_chart_tod_evening => 'ערב (18:00-22:00)';
+  String get analytics_chart_tod_evening => 'ערב';
 
   @override
-  String get analytics_chart_tod_night => 'לילה (22:00-06:00)';
+  String get analytics_chart_tod_night => 'לילה';
 
   @override
   String get analytics_chart_duration_title => 'התפלגות אורך משמרות ועומס';

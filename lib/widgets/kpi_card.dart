@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 
-/// Reusable KPI / Stats Card widget with gradient icon badge.
+/// Reusable KPI / Stats Card widget with gradient icon badge and dark glass container.
 class KpiCard extends StatelessWidget {
   final String title;
   final String value;
@@ -26,17 +26,19 @@ class KpiCard extends StatelessWidget {
     final mainColor = gradientColors.first;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color,
+        color: isDark ? AppTheme.darkCard : Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         border: Border.all(
-          color: mainColor.withValues(alpha: isDark ? 0.35 : 0.25),
+          color: isDark
+              ? AppTheme.darkBorder
+              : mainColor.withValues(alpha: 0.25),
         ),
         boxShadow: [
           BoxShadow(
-            color: mainColor.withValues(alpha: 0.1),
-            blurRadius: 12,
+            color: mainColor.withValues(alpha: isDark ? 0.15 : 0.08),
+            blurRadius: 14,
             offset: const Offset(0, 4),
           ),
         ],
@@ -54,9 +56,9 @@ class KpiCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.75),
+                    color: isDark
+                        ? AppTheme.secondaryText
+                        : Colors.grey.shade700,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -64,7 +66,7 @@ class KpiCard extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Container(
-                padding: const EdgeInsets.all(5),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: gradientColors,
@@ -72,8 +74,14 @@ class KpiCard extends StatelessWidget {
                     end: Alignment.bottomRight,
                   ),
                   shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: mainColor.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                    ),
+                  ],
                 ),
-                child: Icon(icon, size: 15, color: Colors.white),
+                child: Icon(icon, size: 15, color: const Color(0xFF040711)),
               ),
             ],
           ),
@@ -85,7 +93,7 @@ class KpiCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: mainColor,
+                color: isDark ? AppTheme.primaryText : mainColor,
                 fontFeatures: const [FontFeature.tabularFigures()],
               ),
             ),
@@ -94,9 +102,8 @@ class KpiCard extends StatelessWidget {
             subtitle,
             style: TextStyle(
               fontSize: 10,
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.55),
+              fontWeight: FontWeight.w500,
+              color: isDark ? AppTheme.mutedText : Colors.grey.shade600,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,

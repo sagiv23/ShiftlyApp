@@ -89,7 +89,7 @@ class HomeScreen extends StatelessWidget {
           Text(
             l.common_app_name,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w900,
               letterSpacing: -0.5,
             ),
           ),
@@ -97,7 +97,7 @@ class HomeScreen extends StatelessWidget {
             Text(
               l.home_welcome_back.replaceFirst('[[name]]', auth.userName!),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppTheme.primary,
+                color: AppTheme.electricCyan,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -121,7 +121,7 @@ class HomeScreen extends StatelessWidget {
                 ? Icons.filter_alt_rounded
                 : Icons.filter_alt_outlined,
             color: shiftProvider.activeFilter?.isActive == true
-                ? AppTheme.primary
+                ? AppTheme.electricCyan
                 : null,
           ),
           tooltip: l.filter_title,
@@ -241,7 +241,7 @@ class _ActiveTimerBanner extends StatelessWidget {
         "${d.inHours}:${twoDigits(d.inMinutes.remainder(60))}:${twoDigits(d.inSeconds.remainder(60))}";
 
     final isBreak = timer.isOnBreak;
-    final accent = isBreak ? AppTheme.warningSoft : AppTheme.primary;
+    final accent = isBreak ? AppTheme.warmAmber : AppTheme.electricCyan;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return ScalePress(
@@ -258,16 +258,19 @@ class _ActiveTimerBanner extends StatelessWidget {
         ),
         padding: const EdgeInsets.symmetric(
           horizontal: AppTheme.spaceSm,
-          vertical: 12,
+          vertical: 14,
         ),
         decoration: BoxDecoration(
-          color: accent.withValues(alpha: isDark ? 0.18 : 0.12),
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          border: Border.all(color: accent.withValues(alpha: 0.35)),
+          color: accent.withValues(alpha: isDark ? 0.16 : 0.12),
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          border: Border.all(
+            color: accent.withValues(alpha: isDark ? 0.4 : 0.3),
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
-              color: accent.withValues(alpha: 0.12),
-              blurRadius: 12,
+              color: accent.withValues(alpha: isDark ? 0.2 : 0.1),
+              blurRadius: 16,
               offset: const Offset(0, 4),
             ),
           ],
@@ -275,10 +278,16 @@ class _ActiveTimerBanner extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: accent.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: accent.withValues(alpha: 0.3),
+                    blurRadius: 10,
+                  ),
+                ],
               ),
               child: Icon(
                 isBreak
@@ -288,7 +297,7 @@ class _ActiveTimerBanner extends StatelessWidget {
                 size: 28,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,26 +307,28 @@ class _ActiveTimerBanner extends StatelessWidget {
                         ? l.home_active_timer_break
                         : '${l.home_active_timer_active} ${job?.name ?? ""}',
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? accent : accent.withValues(alpha: 0.9),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15,
+                      color: isDark ? AppTheme.primaryText : accent,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 4),
                   Text(
                     '${l.home_active_timer_time} $timeStr  ·  ${UIUtils.formatCurrency(pay, symbol: symbol)}',
                     style: TextStyle(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.7),
+                      color: isDark
+                          ? AppTheme.secondaryText
+                          : Colors.grey.shade700,
                       fontSize: 13,
                       fontFamily: 'monospace',
+                      fontWeight: FontWeight.bold,
                       fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.arrow_forward_ios_rounded, size: 14, color: accent),
+            Icon(Icons.arrow_forward_ios_rounded, size: 16, color: accent),
           ],
         ),
       ),
@@ -406,16 +417,16 @@ class _MonthExpansionSection extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: AppTheme.spaceSm),
         decoration: BoxDecoration(
-          color: Theme.of(context).cardTheme.color,
+          color: isDark ? AppTheme.darkCard : Theme.of(context).cardTheme.color,
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
           border: Border.all(
             color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -434,9 +445,9 @@ class _MonthExpansionSection extends StatelessWidget {
           childrenPadding: const EdgeInsets.only(bottom: AppTheme.spaceXs),
           title: Text(
             "$monthName $year",
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppTheme.primaryDark,
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              color: AppTheme.electricCyan,
               fontSize: 18,
             ),
           ),
@@ -446,15 +457,18 @@ class _MonthExpansionSection extends StatelessWidget {
               "$monthShiftCount ${l.common_shifts_count}  · ${l.home_shift_list_net_total}: ${UIUtils.formatCurrency(net, symbol: symbol)} ·  ${totalNetHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
               style: TextStyle(
                 fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.75),
+                fontWeight: FontWeight.w600,
+                color: isDark ? AppTheme.secondaryText : Colors.grey.shade700,
               ),
             ),
           ),
           children: [
-            const Divider(height: 1, indent: 20, endIndent: 20),
+            Divider(
+              height: 1,
+              indent: 20,
+              endIndent: 20,
+              color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+            ),
             Padding(
               padding: const EdgeInsets.all(AppTheme.spaceSm),
               child: Column(
@@ -471,12 +485,16 @@ class _MonthExpansionSection extends StatelessWidget {
                             symbol: symbol,
                           ),
                           amount: totalBaseSalary,
+                          isDark: isDark,
                         ),
                         if (totalTips > 0) ...[
-                          const VerticalDivider(
+                          VerticalDivider(
                             width: 1,
                             indent: 4,
                             endIndent: 4,
+                            color: isDark
+                                ? AppTheme.darkBorder
+                                : AppTheme.lightBorder,
                           ),
                           _SummaryItem(
                             label: l.home_total_card_tips,
@@ -485,14 +503,18 @@ class _MonthExpansionSection extends StatelessWidget {
                               symbol: symbol,
                             ),
                             amount: totalTips,
-                            accent: AppTheme.profit,
+                            accent: AppTheme.mintGreen,
+                            isDark: isDark,
                           ),
                         ],
                         if (totalMonthIncomes > 0) ...[
-                          const VerticalDivider(
+                          VerticalDivider(
                             width: 1,
                             indent: 4,
                             endIndent: 4,
+                            color: isDark
+                                ? AppTheme.darkBorder
+                                : AppTheme.lightBorder,
                           ),
                           _SummaryItem(
                             label: l.expenses_tab_incomes,
@@ -501,14 +523,20 @@ class _MonthExpansionSection extends StatelessWidget {
                               symbol: symbol,
                             ),
                             amount: totalMonthIncomes,
-                            accent: AppTheme.profit,
+                            accent: AppTheme.mintGreen,
+                            isDark: isDark,
                           ),
                         ],
                       ],
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Divider(height: 1, indent: 10, endIndent: 10),
+                  Divider(
+                    height: 1,
+                    indent: 10,
+                    endIndent: 10,
+                    color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+                  ),
                   const SizedBox(height: 8),
                   IntrinsicHeight(
                     child: Row(
@@ -522,11 +550,15 @@ class _MonthExpansionSection extends StatelessWidget {
                               symbol: symbol,
                             ),
                             amount: -totalMonthExpenses,
+                            isDark: isDark,
                           ),
-                          const VerticalDivider(
+                          VerticalDivider(
                             width: 1,
                             indent: 4,
                             endIndent: 4,
+                            color: isDark
+                                ? AppTheme.darkBorder
+                                : AppTheme.lightBorder,
                           ),
                         ],
                         _SummaryItem(
@@ -534,6 +566,7 @@ class _MonthExpansionSection extends StatelessWidget {
                           value: UIUtils.formatCurrency(net, symbol: symbol),
                           isBold: true,
                           amount: net,
+                          isDark: isDark,
                         ),
                       ],
                     ),
@@ -555,6 +588,7 @@ class _SummaryItem extends StatelessWidget {
   final bool isBold;
   final double? amount;
   final Color? accent;
+  final bool isDark;
 
   const _SummaryItem({
     required this.label,
@@ -562,17 +596,20 @@ class _SummaryItem extends StatelessWidget {
     this.isBold = false,
     this.amount,
     this.accent,
+    required this.isDark,
   });
 
   @override
   Widget build(BuildContext context) {
     Color? textColor;
     if ((amount ?? 0) < 0) {
-      textColor = AppTheme.expense;
+      textColor = AppTheme.softCoral;
     } else if (isBold) {
-      textColor = AppTheme.primaryDark;
+      textColor = AppTheme.electricCyan;
     } else if (accent != null) {
       textColor = accent;
+    } else {
+      textColor = isDark ? AppTheme.primaryText : Colors.black87;
     }
 
     return Expanded(
@@ -585,10 +622,10 @@ class _SummaryItem extends StatelessWidget {
               fit: BoxFit.scaleDown,
               child: Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? AppTheme.secondaryText : Colors.grey.shade600,
                 ),
               ),
             ),
@@ -791,8 +828,8 @@ class _ActiveFilterChip extends StatelessWidget {
         deleteIcon: const Icon(Icons.close_rounded, size: 14),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         visualDensity: VisualDensity.compact,
-        backgroundColor: AppTheme.primary.withValues(alpha: 0.1),
-        side: BorderSide(color: AppTheme.primary.withValues(alpha: 0.2)),
+        backgroundColor: AppTheme.electricCyan.withValues(alpha: 0.12),
+        side: BorderSide(color: AppTheme.electricCyan.withValues(alpha: 0.25)),
       ),
     );
   }
@@ -1046,8 +1083,8 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
-                backgroundColor: AppTheme.primary,
-                foregroundColor: Colors.white,
+                backgroundColor: AppTheme.electricCyan,
+                foregroundColor: const Color(0xFF040711),
               ),
               child: Text(l.filter_apply),
             ),
@@ -1153,8 +1190,8 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
             Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
             Text(
               "${labelBuilder(values.start)} - ${labelBuilder(values.end)}",
-              style: TextStyle(
-                color: AppTheme.primary,
+              style: const TextStyle(
+                color: AppTheme.electricCyan,
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
               ),
@@ -1166,7 +1203,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
           min: min,
           max: max,
           divisions: max > min ? (max - min).toInt().clamp(1, 10000) : 1,
-          activeColor: AppTheme.primary,
+          activeColor: AppTheme.electricCyan,
           onChanged: onChanged,
         ),
       ],

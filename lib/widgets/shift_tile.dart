@@ -94,40 +94,48 @@ class ShiftTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Date badge
+          // Date badge with electric cyan glow
           Container(
-            width: 48,
-            height: 48,
+            width: 50,
+            height: 50,
             decoration: BoxDecoration(
-              color: AppTheme.primary.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
+              color: AppTheme.electricCyan.withValues(
+                alpha: isDark ? 0.16 : 0.12,
+              ),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: AppTheme.electricCyan.withValues(
+                  alpha: isDark ? 0.35 : 0.2,
+                ),
+              ),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   DateFormat.d().format(shift.date),
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w900,
                     fontSize: 18,
-                    color: AppTheme.primaryDark,
+                    color: AppTheme.electricCyan,
                     height: 1,
                   ),
                 ),
+                const SizedBox(height: 2),
                 Text(
                   DateFormat.E(l.localeName).format(shift.date),
                   style: TextStyle(
                     fontSize: 10,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.5),
-                    fontWeight: FontWeight.w500,
+                    color: isDark
+                        ? AppTheme.secondaryText
+                        : Colors.grey.shade600,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,15 +145,16 @@ class ShiftTile extends StatelessWidget {
                     Icon(
                       AppTheme.iconForJobName(job?.name),
                       size: 16,
-                      color: AppTheme.primaryDark,
+                      color: AppTheme.electricCyan,
                     ),
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
                         job?.name ?? l.common_error,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
                           fontSize: 15,
+                          color: isDark ? AppTheme.primaryText : null,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -155,7 +164,12 @@ class ShiftTile extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   "${DateFormat.Hm().format(shift.startTime)} - ${DateFormat.Hm().format(shift.endTime)}  ·  ${shift.netHours.toStringAsFixed(2)} ${l.common_hours_suffix}",
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark
+                        ? AppTheme.secondaryText
+                        : Colors.grey.shade600,
+                  ),
                 ),
                 if (shift.tips > 0 ||
                     shift.totalAutomaticIncomes > 0 ||
@@ -173,7 +187,7 @@ class ShiftTile extends StatelessWidget {
                         ShiftTag(
                           label: l.overtime_tag_label,
                           icon: Icons.more_time_rounded,
-                          color: AppTheme.primaryDark,
+                          color: AppTheme.electricCyan,
                         ),
                       if (breakdown.hasShabbat)
                         ShiftTag(
@@ -181,9 +195,9 @@ class ShiftTile extends StatelessWidget {
                               '${l.shabbat_tag_label} (${breakdown.shabbatHours.toStringAsFixed(1)} ${l.common_hours_suffix})',
                           customIcon: const MagenDavidIcon(
                             size: 12,
-                            color: Colors.amber,
+                            color: AppTheme.warmAmber,
                           ),
-                          color: Colors.amber.shade800,
+                          color: AppTheme.warmAmber,
                         ),
                       if (breakdown.hasHoliday)
                         ShiftTag(
@@ -191,44 +205,44 @@ class ShiftTile extends StatelessWidget {
                               '${breakdown.holidayName ?? l.holiday_tag_label} (${breakdown.holidayHours.toStringAsFixed(1)} ${l.common_hours_suffix})',
                           customIcon: const MagenDavidIcon(
                             size: 12,
-                            color: Colors.purple,
+                            color: AppTheme.neonViolet,
                           ),
-                          color: Colors.purple.shade700,
+                          color: AppTheme.softLavender,
                         ),
                       if (shift.tips > 0)
                         ShiftTag(
                           label:
                               '+${UIUtils.formatCurrency(shift.tips, symbol: settings.currencySymbol)}',
                           icon: Icons.payments_outlined,
-                          color: AppTheme.profit,
+                          color: AppTheme.mintGreen,
                         ),
                       if (shift.totalAutomaticIncomes > 0)
                         ShiftTag(
                           label:
                               '+${UIUtils.formatCurrency(shift.totalAutomaticIncomes, symbol: settings.currencySymbol)}',
                           icon: Icons.account_balance_wallet_rounded,
-                          color: AppTheme.profit,
+                          color: AppTheme.mintGreen,
                         ),
                       if (breakType == BreakType.paid)
                         ShiftTag(
                           label:
                               "${settings.paidBreakDurationMinutes.toStringAsFixed(0)} ${l.common_min_suffix} ${l.add_shift_manual_paid_break}",
                           icon: Icons.timer_outlined,
-                          color: AppTheme.primary,
+                          color: AppTheme.electricCyan,
                         ),
                       if (breakType == BreakType.unpaid)
                         ShiftTag(
                           label:
                               "${(shift.unpaidBreakMinutes ?? settings.unpaidBreakDurationMinutes).toStringAsFixed(0)} ${l.common_min_suffix} ${l.add_shift_manual_unpaid_break}",
                           icon: Icons.coffee_outlined,
-                          color: AppTheme.warningSoft,
+                          color: AppTheme.warmAmber,
                         ),
                       if (shift.totalAutomaticExpenses > 0)
                         ShiftTag(
                           label:
                               '-${UIUtils.formatCurrency(shift.totalAutomaticExpenses, symbol: settings.currencySymbol)}',
                           icon: Icons.money_off_rounded,
-                          color: AppTheme.expense,
+                          color: AppTheme.softCoral,
                         ),
                     ],
                   ),
@@ -242,15 +256,11 @@ class ShiftTile extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: Text(
               UIUtils.formatCurrency(pay, symbol: settings.currencySymbol),
-              style: UIUtils.getCurrencyStyle(
-                context,
-                pay,
-                positiveColor: AppTheme.primaryDark,
-                baseStyle: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  fontFeatures: [FontFeature.tabularFigures()],
-                ),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: isDark ? AppTheme.electricCyan : AppTheme.primaryDark,
+                fontFeatures: const [FontFeature.tabularFigures()],
               ),
             ),
           ),
@@ -265,7 +275,7 @@ class ShiftTile extends StatelessWidget {
               icon: const Icon(
                 Icons.delete_outline_rounded,
                 size: 20,
-                color: AppTheme.expenseSoft,
+                color: AppTheme.softCoral,
               ),
               tooltip: l.common_delete,
               onPressed: () => _deleteShift(context),
@@ -283,16 +293,16 @@ class ShiftTile extends StatelessWidget {
       tileContent = Container(
         margin: margin ?? const EdgeInsets.only(bottom: AppTheme.spaceSm),
         decoration: BoxDecoration(
-          color: Theme.of(context).cardTheme.color,
+          color: isDark ? AppTheme.darkCard : Theme.of(context).cardTheme.color,
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
           border: Border.all(
             color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -351,7 +361,7 @@ class ShiftTile extends StatelessWidget {
                 vertical: AppTheme.spaceXs / 2,
               ),
         decoration: BoxDecoration(
-          color: AppTheme.expense.withValues(alpha: isDark ? 0.2 : 0.15),
+          color: AppTheme.softCoral.withValues(alpha: isDark ? 0.25 : 0.15),
           borderRadius: BorderRadius.circular(
             useCardDecoration ? AppTheme.radiusLg : AppTheme.radiusMd,
           ),
@@ -360,7 +370,7 @@ class ShiftTile extends StatelessWidget {
         padding: const EdgeInsets.only(right: AppTheme.spaceMd),
         child: const Icon(
           Icons.delete_sweep_rounded,
-          color: AppTheme.expenseSoft,
+          color: AppTheme.softCoral,
         ),
       ),
       confirmDismiss: (direction) async {
@@ -396,10 +406,11 @@ class ShiftTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(6),
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 200),
@@ -410,13 +421,13 @@ class ShiftTag extends StatelessWidget {
               customIcon!
             else if (icon != null)
               Icon(icon, size: 12, color: color),
-            const SizedBox(width: 3),
+            const SizedBox(width: 4),
             Flexible(
               child: Text(
                 label,
                 style: TextStyle(
                   fontSize: 11,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
                   color: color,
                   fontFeatures: const [FontFeature.tabularFigures()],
                 ),

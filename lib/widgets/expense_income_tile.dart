@@ -133,19 +133,21 @@ class ExpenseTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isWide = screenWidth >= 768;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final badgeColor = isIncome ? AppTheme.mintGreen : AppTheme.softCoral;
 
     Widget cardWidget = Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         onTap: onTap,
         leading: Container(
-          width: 40,
-          height: 40,
+          width: 42,
+          height: 42,
           decoration: BoxDecoration(
-            color: (isIncome ? AppTheme.profit : AppTheme.expense).withValues(
-              alpha: 0.12,
-            ),
-            borderRadius: BorderRadius.circular(10),
+            color: badgeColor.withValues(alpha: isDark ? 0.16 : 0.12),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: badgeColor.withValues(alpha: 0.25)),
           ),
           child: Icon(
             record.shift != null
@@ -153,7 +155,7 @@ class ExpenseTile extends StatelessWidget {
                 : (isIncome
                       ? Icons.account_balance_wallet_rounded
                       : Icons.money_off_rounded),
-            color: isIncome ? AppTheme.profitSoft : AppTheme.expenseSoft,
+            color: badgeColor,
             size: 20,
           ),
         ),
@@ -169,21 +171,30 @@ class ExpenseTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: AppTheme.primary.withValues(alpha: 0.12),
+                  color: AppTheme.electricCyan.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: AppTheme.electricCyan.withValues(alpha: 0.25),
+                  ),
                 ),
                 child: Text(
                   record.shiftInfo!,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryDark,
+                    color: AppTheme.electricCyan,
                   ),
                 ),
               ),
           ],
         ),
-        subtitle: Text(DateFormat('dd/MM/yyyy').format(record.date)),
+        subtitle: Text(
+          DateFormat('dd/MM/yyyy').format(record.date),
+          style: TextStyle(
+            fontSize: 12,
+            color: isDark ? AppTheme.secondaryText : Colors.grey.shade600,
+          ),
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -192,7 +203,7 @@ class ExpenseTile extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                color: isIncome ? AppTheme.profitSoft : AppTheme.expenseSoft,
+                color: badgeColor,
                 fontFeatures: const [FontFeature.tabularFigures()],
               ),
             ),
@@ -207,7 +218,7 @@ class ExpenseTile extends StatelessWidget {
                 icon: const Icon(
                   Icons.delete_outline_rounded,
                   size: 20,
-                  color: AppTheme.expenseSoft,
+                  color: AppTheme.softCoral,
                 ),
                 tooltip: AppLocalizations.of(context)!.common_delete,
                 onPressed: () => _deleteRecord(context),
@@ -236,17 +247,12 @@ class ExpenseTile extends StatelessWidget {
       background: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
         decoration: BoxDecoration(
-          color: (isIncome ? AppTheme.profit : AppTheme.expense).withValues(
-            alpha: 0.18,
-          ),
+          color: badgeColor.withValues(alpha: 0.18),
           borderRadius: BorderRadius.circular(AppTheme.radiusSm),
         ),
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: AppTheme.spaceMd),
-        child: Icon(
-          Icons.delete_sweep_rounded,
-          color: isIncome ? AppTheme.profitSoft : AppTheme.expenseSoft,
-        ),
+        child: Icon(Icons.delete_sweep_rounded, color: badgeColor),
       ),
       confirmDismiss: (direction) async => await UIUtils.showConfirmDialog(
         context: context,

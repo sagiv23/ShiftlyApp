@@ -21,8 +21,8 @@ class ExportBottomSheet extends StatefulWidget {
 }
 
 class _ExportBottomSheetState extends State<ExportBottomSheet> {
-  String _format = 'csv'; // 'csv' or 'txt'
-  String _rangeType = 'all'; // 'all', 'month', 'custom'
+  String _format = 'csv';
+  String _rangeType = 'all';
   String? _selectedMonthKey;
   DateTime _startDate = DateTime.now().subtract(const Duration(days: 30));
   DateTime _endDate = DateTime.now();
@@ -34,6 +34,7 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
     final l = AppLocalizations.of(context)!;
     final groupedShifts = shiftProvider.shiftsGroupedByMonth;
     final monthKeys = groupedShifts.keys.toList();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (_selectedMonthKey == null && monthKeys.isNotEmpty) {
       _selectedMonthKey = monthKeys.first;
@@ -47,9 +48,14 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
         MediaQuery.of(context).viewInsets.bottom + AppTheme.spaceMd,
       ),
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: isDark
+            ? AppTheme.darkCard
+            : Theme.of(context).scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(
           top: Radius.circular(AppTheme.radiusXl),
+        ),
+        border: Border.all(
+          color: isDark ? AppTheme.darkBorder : Colors.transparent,
         ),
       ),
       child: SafeArea(
@@ -166,10 +172,17 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                         child: ListTile(
                           title: Text(l.export_start_date),
                           subtitle: Text(AppConstants.formatDate(_startDate)),
-                          trailing: const Icon(Icons.calendar_today_rounded),
+                          trailing: const Icon(
+                            Icons.calendar_today_rounded,
+                            color: AppTheme.electricCyan,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(color: Colors.grey.shade400),
+                            side: BorderSide(
+                              color: isDark
+                                  ? AppTheme.darkBorder
+                                  : Colors.grey.shade400,
+                            ),
                           ),
                           onTap: () async {
                             final picked =
@@ -191,10 +204,17 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                         child: ListTile(
                           title: Text(l.export_end_date),
                           subtitle: Text(AppConstants.formatDate(_endDate)),
-                          trailing: const Icon(Icons.calendar_today_rounded),
+                          trailing: const Icon(
+                            Icons.calendar_today_rounded,
+                            color: AppTheme.electricCyan,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(color: Colors.grey.shade400),
+                            side: BorderSide(
+                              color: isDark
+                                  ? AppTheme.darkBorder
+                                  : Colors.grey.shade400,
+                            ),
                           ),
                           onTap: () async {
                             final picked =
@@ -254,7 +274,7 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
 
                     if (!context.mounted) return;
 
-                    Navigator.pop(context); // Close bottom sheet
+                    Navigator.pop(context);
                     if (filePath != null && filePath.isNotEmpty) {
                       if (filePath != 'saved') {
                         await OpenFilex.open(filePath);
@@ -266,9 +286,19 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                       );
                     }
                   },
-                  icon: const Icon(Icons.download_rounded),
-                  label: Text(l.export_button),
+                  icon: const Icon(
+                    Icons.download_rounded,
+                    color: Color(0xFF040711),
+                  ),
+                  label: Text(
+                    l.export_button,
+                    style: const TextStyle(
+                      color: Color(0xFF040711),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.electricCyan,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),

@@ -132,10 +132,8 @@ class Shift extends HiveObject {
       return list
           .map(
             (e) =>
-            ShiftWageSegment.fromJson(
-              Map<String, dynamic>.from(e as Map),
-            ),
-      )
+                ShiftWageSegment.fromJson(Map<String, dynamic>.from(e as Map)),
+          )
           .toList();
     } catch (_) {
       return null;

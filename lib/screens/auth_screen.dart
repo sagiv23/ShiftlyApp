@@ -125,7 +125,6 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       final l = AppLocalizations.of(context)!;
 
       if (_authMode == AuthMode.login) {
-        // Section 3.A: Confirm before replacing local guest data
         final hasGuestData =
             authProvider.isGuest ||
             shiftProvider.shifts.isNotEmpty ||
@@ -147,7 +146,6 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
           }
         }
 
-        // Authenticate on server
         final authData = await authProvider.authenticateOnly(
           _emailController.text.trim(),
           _passwordController.text.trim(),
@@ -158,7 +156,6 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
           throw Exception('No token returned');
         }
 
-        // Retrieve and validate account data from server before overwriting local guest data
         final apiService = ApiService();
         final remoteJobTypes = await apiService.getJobTypes(token);
         final remoteExpenses = await apiService.getExpenses(token);
@@ -176,7 +173,6 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
 
         await authProvider.applyLoginSession(authData);
       } else {
-        // Section 3.B: Registering a new account from guest mode
         if (_selectedBirthDate == null) {
           UIUtils.showSnackBar(
             context,
@@ -208,14 +204,11 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
           birthDate: _selectedBirthDate,
         );
 
-        // Migrate local guest data to newly created account
         final migrated = await shiftProvider.migrateGuestDataToServer(
           authProvider.token!,
         );
         if (!migrated) {
-          debugPrint(
-            'Guest data migration failed, local data preserved for retry.',
-          );
+          debugPrint('Guest data migration failed, local data preserved.');
         }
       }
 
@@ -223,7 +216,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
 
       shiftProvider.updateAuthStatus(
         authProvider.token,
-        false, // authProvider.isByosConnected,
+        false,
         settingsProvider.autoSyncEnabled,
       );
 
@@ -302,14 +295,22 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final bgColors = isDark
-        ? [AppTheme.darkCard, AppTheme.darkBackground]
+        ? [
+            AppTheme.darkCard,
+            AppTheme.darkSecondaryBackground,
+            AppTheme.darkBackground,
+          ]
         : [AppTheme.lightBackground, AppTheme.lightBorder];
 
     final textColor = Theme.of(context).colorScheme.onSurface;
-    final subtextColor = textColor.withValues(alpha: isDark ? 0.7 : 0.65);
-    final mutedTextColor = textColor.withValues(alpha: isDark ? 0.38 : 0.45);
+    final subtextColor = isDark
+        ? AppTheme.secondaryText
+        : textColor.withValues(alpha: 0.65);
+    final mutedTextColor = isDark
+        ? AppTheme.mutedText
+        : textColor.withValues(alpha: 0.45);
     final inputFill = isDark
-        ? AppTheme.darkCard.withValues(alpha: 0.7)
+        ? AppTheme.darkSecondaryBackground
         : AppTheme.lightCard;
     final inputBorderColor = isDark
         ? AppTheme.darkBorder
@@ -355,8 +356,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                         animation: _glowController,
                         builder: (context, child) {
                           final glow =
-                              0.3 +
-                              (0.2 * math.sin(_glowController.value * math.pi));
+                              0.35 +
+                              (0.25 *
+                                  math.sin(_glowController.value * math.pi));
                           return Stack(
                             alignment: Alignment.center,
                             children: [
@@ -367,7 +369,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: AppTheme.primary.withValues(
+                                      color: AppTheme.electricCyan.withValues(
                                         alpha: isDark ? glow : glow * 0.5,
                                       ),
                                       blurRadius: 36,
@@ -388,7 +390,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                       ),
                       const SizedBox(height: 24),
 
-                      // Animated Switcher for Title
+                      // Title
                       AnimatedSwitcher(
                         duration: const Duration(milliseconds: 300),
                         transitionBuilder: (child, anim) {
@@ -409,13 +411,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                           style: TextStyle(
                             color: textColor,
                             fontSize: 28,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w900,
                           ),
                         ),
                       ),
                       const SizedBox(height: 32),
 
-                      // Animated Expansion for Full Name & Date of Birth Fields
+                      // Expansion for Register Fields
                       AnimatedSize(
                         duration: const Duration(milliseconds: 320),
                         curve: Curves.easeInOutCubic,
@@ -466,9 +468,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                                             subtextColor: subtextColor,
                                             mutedTextColor: mutedTextColor,
                                           ).copyWith(
-                                            suffixIcon: Icon(
+                                            suffixIcon: const Icon(
                                               Icons.calendar_today_rounded,
-                                              color: subtextColor,
+                                              color: AppTheme.electricCyan,
                                             ),
                                           ),
                                       child: Text(
@@ -561,8 +563,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _submit,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.primary,
-                              foregroundColor: const Color(0xFF0F172A),
+                              backgroundColor: AppTheme.electricCyan,
+                              foregroundColor: const Color(0xFF040711),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
                               ),
@@ -572,7 +574,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                                     width: 24,
                                     height: 24,
                                     child: CircularProgressIndicator(
-                                      color: Color(0xFF0F172A),
+                                      color: Color(0xFF040711),
                                       strokeWidth: 2.5,
                                     ),
                                   )
@@ -582,7 +584,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                                         : l.auth_register_button,
                                     style: const TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w800,
                                     ),
                                   ),
                           ),
@@ -599,10 +601,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                                 ? l.auth_no_account_link
                                 : l.auth_has_account_link,
                             key: ValueKey(isLogin),
-                            style: TextStyle(
-                              color: isDark
-                                  ? AppTheme.primary
-                                  : AppTheme.primaryDark,
+                            style: const TextStyle(
+                              color: AppTheme.electricCyan,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -644,7 +644,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                           l.legal_disclaimer_notice,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: textColor.withValues(alpha: 0.6),
+                            color: isDark
+                                ? AppTheme.mutedText
+                                : textColor.withValues(alpha: 0.6),
                             fontSize: 12,
                           ),
                         ),
@@ -657,10 +659,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                             onTap: () => LegalUtils.showTermsOfService(context),
                             child: Text(
                               l.legal_terms_of_service,
-                              style: TextStyle(
-                                color: isDark
-                                    ? AppTheme.primary
-                                    : AppTheme.primaryDark,
+                              style: const TextStyle(
+                                color: AppTheme.electricCyan,
                                 fontSize: 12,
                                 decoration: TextDecoration.underline,
                               ),
@@ -669,7 +669,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                           Text(
                             '  •  ',
                             style: TextStyle(
-                              color: textColor.withValues(alpha: 0.38),
+                              color: isDark
+                                  ? AppTheme.mutedText
+                                  : textColor.withValues(alpha: 0.38),
                               fontSize: 12,
                             ),
                           ),
@@ -677,10 +679,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                             onTap: () => LegalUtils.showPrivacyPolicy(context),
                             child: Text(
                               l.legal_privacy_policy,
-                              style: TextStyle(
-                                color: isDark
-                                    ? AppTheme.primary
-                                    : AppTheme.primaryDark,
+                              style: const TextStyle(
+                                color: AppTheme.electricCyan,
                                 fontSize: 12,
                                 decoration: TextDecoration.underline,
                               ),
@@ -717,7 +717,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       hintText: hint ?? label,
       hintStyle: TextStyle(color: mutedTextColor),
       labelStyle: TextStyle(color: subtextColor),
-      prefixIcon: Icon(icon, color: subtextColor),
+      prefixIcon: Icon(icon, color: AppTheme.electricCyan),
       suffixIcon: suffixIcon,
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -725,18 +725,15 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(
-          color: isDark ? AppTheme.primary : AppTheme.primaryDark,
-          width: 1.5,
-        ),
+        borderSide: const BorderSide(color: AppTheme.electricCyan, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.redAccent),
+        borderSide: const BorderSide(color: AppTheme.softCoral),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
+        borderSide: const BorderSide(color: AppTheme.softCoral, width: 1.5),
       ),
     );
   }

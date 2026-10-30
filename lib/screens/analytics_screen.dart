@@ -1692,7 +1692,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           nCount = 0;
       while (current.isBefore(end)) {
         final hour = current.hour;
-        if (hour >= 4 && hour < 6) {
+        if (hour >= 22 || hour < 4) {
+          nCount++;
+        } else if (hour >= 4 && hour < 6) {
           dawnCount++;
         } else if (hour >= 6 && hour < 12) {
           mCount++;
@@ -1700,10 +1702,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           noonCount++;
         } else if (hour >= 16 && hour < 18) {
           aftCount++;
-        } else if (hour >= 18 && hour < 22) {
-          eCount++;
         } else {
-          nCount++;
+          eCount++;
         }
         current = current.add(const Duration(minutes: 1));
       }
@@ -1761,7 +1761,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       ),
       TimeOfDaySegment(
         name: l.analytics_chart_tod_night,
-        timeRange: '22:00-06:00',
+        timeRange: '22:00-04:00',
         hours: nightHours,
         color: const Color(0xFF6366F1),
         icon: Icons.nightlight_round,

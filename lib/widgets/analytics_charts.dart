@@ -64,19 +64,23 @@ class EarningsBarChartWidget extends StatelessWidget {
         child: Center(
           child: Text(
             l.analytics_no_data,
-            style: const TextStyle(color: Colors.grey),
+            style: TextStyle(
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
+            ),
           ),
         ),
       );
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = Theme.of(context).colorScheme.primary;
-    final tipsColor = AppTheme.profit;
-    final textColor = Theme.of(
-      context,
-    ).colorScheme.onSurface.withValues(alpha: 0.7);
-    final gridColor = Theme.of(context).dividerColor.withValues(alpha: 0.15);
+    final primaryColor = AppTheme.electricCyan;
+    final tipsColor = AppTheme.mintGreen;
+    final textColor = isDark ? AppTheme.secondaryText : Colors.grey.shade700;
+    final gridColor = isDark
+        ? AppTheme.darkBorder
+        : Theme.of(context).dividerColor.withValues(alpha: 0.15);
 
     double maxVal = 0;
     for (var dp in data) {
@@ -84,7 +88,6 @@ class EarningsBarChartWidget extends StatelessWidget {
     }
     if (maxVal <= 0) maxVal = 100;
 
-    // Round up maxVal for nice Y-axis steps
     final maxY = _calculateNiceMax(maxVal);
 
     final l = AppLocalizations.of(context)!;
@@ -201,7 +204,6 @@ class _BarChartPainter extends CustomPainter {
       final yPos = topPadding + chartHeight * (1 - yRatio);
       final val = maxY * yRatio;
 
-      // Dotted Grid Line
       final linePaint = Paint()
         ..color = gridColor
         ..strokeWidth = 1
@@ -214,7 +216,6 @@ class _BarChartPainter extends CustomPainter {
         linePaint,
       );
 
-      // Y Label
       final labelStr = '${val.round()}';
       textPainter.text = TextSpan(
         text: labelStr,
@@ -263,7 +264,6 @@ class _BarChartPainter extends CustomPainter {
       final groundY = topPadding + chartHeight;
       final barTopY = groundY - totalBarHeight;
 
-      // Selection Glow Background
       if (isSelected) {
         final glowRect = Rect.fromLTRB(
           centerX - barSlotWidth / 2 + 1,
@@ -272,7 +272,7 @@ class _BarChartPainter extends CustomPainter {
           groundY,
         );
         final glowPaint = Paint()
-          ..color = primaryColor.withValues(alpha: isDark ? 0.2 : 0.12)
+          ..color = primaryColor.withValues(alpha: isDark ? 0.22 : 0.12)
           ..style = PaintingStyle.fill;
         canvas.drawRRect(
           RRect.fromRectAndRadius(glowRect, const Radius.circular(8)),
@@ -281,7 +281,6 @@ class _BarChartPainter extends CustomPainter {
       }
 
       if (netVal > 0) {
-        // Base Pay Bar
         final baseRect = Rect.fromLTRB(
           barLeft,
           groundY - baseBarHeight,
@@ -291,12 +290,11 @@ class _BarChartPainter extends CustomPainter {
         final baseGradient = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [primaryColor, primaryColor.withValues(alpha: 0.7)],
+          colors: [primaryColor, AppTheme.brightCyan],
         );
 
         final basePaint = Paint()..shader = baseGradient.createShader(baseRect);
 
-        // Tips Bar
         final tipsRect = Rect.fromLTRB(
           barLeft,
           barTopY,
@@ -306,7 +304,7 @@ class _BarChartPainter extends CustomPainter {
         final tipsGradient = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [tipsColor, tipsColor.withValues(alpha: 0.75)],
+          colors: [tipsColor, AppTheme.profitSoft],
         );
         final tipsPaint = Paint()..shader = tipsGradient.createShader(tipsRect);
 
@@ -316,7 +314,6 @@ class _BarChartPainter extends CustomPainter {
           topRight: const Radius.circular(5),
         );
 
-        // Clip to rounded top
         canvas.save();
         canvas.clipRRect(totalRRect);
         canvas.drawRect(baseRect, basePaint);
@@ -325,17 +322,15 @@ class _BarChartPainter extends CustomPainter {
         }
         canvas.restore();
 
-        // Selected Border Highlight
         if (isSelected) {
           final borderPaint = Paint()
-            ..color = isDark ? Colors.white : Colors.black87
+            ..color = AppTheme.electricCyan
             ..strokeWidth = 2
             ..style = PaintingStyle.stroke;
           canvas.drawRRect(totalRRect, borderPaint);
         }
       }
 
-      // X Label
       if (numBars <= 12 || i % (numBars > 20 ? 3 : 2) == 0 || isSelected) {
         textPainter.text = TextSpan(
           text: dp.label,
@@ -421,7 +416,11 @@ class JobDonutChartWidget extends StatelessWidget {
         child: Center(
           child: Text(
             l.analytics_no_job_data,
-            style: const TextStyle(color: Colors.grey),
+            style: TextStyle(
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
+            ),
           ),
         ),
       );
@@ -456,9 +455,9 @@ class JobDonutChartWidget extends StatelessWidget {
                   centerSubtitle,
                   style: TextStyle(
                     fontSize: 11,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: isDark
+                        ? AppTheme.secondaryText
+                        : Colors.grey.shade600,
                   ),
                 ),
               ],
@@ -483,7 +482,7 @@ class _DonutPainter extends CustomPainter {
     const strokeWidth = 24.0;
     final drawRadius = radius - strokeWidth / 2;
 
-    double startAngle = -math.pi / 2; // Start from top 12 o'clock
+    double startAngle = -math.pi / 2;
 
     for (var seg in segments) {
       final sweepAngle = (seg.percentage / 100.0) * 2 * math.pi;
@@ -498,7 +497,7 @@ class _DonutPainter extends CustomPainter {
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: drawRadius),
         startAngle,
-        sweepAngle - 0.03, // Small gap
+        sweepAngle - 0.03,
         false,
         paint,
       );
@@ -513,395 +512,7 @@ class _DonutPainter extends CustomPainter {
   }
 }
 
-/// Data for Effective Hourly Wage Trend Line Chart
-class HourlyWageTrendData {
-  final DateTime date;
-  final String label;
-  final double effectiveRate;
-  final double baseRate;
-
-  const HourlyWageTrendData({
-    required this.date,
-    required this.label,
-    required this.effectiveRate,
-    required this.baseRate,
-  });
-
-  double get boost => effectiveRate - baseRate;
-}
-
-/// Refined Hourly Wage Trend Line Chart Widget with Fixed Y-Axis Scale & Scrollable Canvas
-class HourlyWageLineChartWidget extends StatefulWidget {
-  final List<HourlyWageTrendData> data;
-  final String currencySymbol;
-  final double height;
-
-  const HourlyWageLineChartWidget({
-    super.key,
-    required this.data,
-    required this.currencySymbol,
-    this.height = 225,
-  });
-
-  @override
-  State<HourlyWageLineChartWidget> createState() =>
-      _HourlyWageLineChartWidgetState();
-}
-
-class _HourlyWageLineChartWidgetState extends State<HourlyWageLineChartWidget> {
-  final ScrollController _scrollController = ScrollController();
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.data.length < 2) {
-      final l = AppLocalizations.of(context)!;
-      return SizedBox(
-        height: widget.height,
-        child: Center(
-          child: Text(
-            l.analytics_min_shifts_hourly,
-            style: const TextStyle(color: Colors.grey),
-          ),
-        ),
-      );
-    }
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = Theme.of(context).colorScheme.primary;
-    const baseLineColor = AppTheme.warningSoft;
-    final textColor = Theme.of(
-      context,
-    ).colorScheme.onSurface.withValues(alpha: 0.7);
-
-    double maxVal = 0;
-    double minVal = double.infinity;
-    double avgBase = 0;
-
-    for (var d in widget.data) {
-      if (d.effectiveRate > maxVal) maxVal = d.effectiveRate;
-      if (d.baseRate > maxVal) maxVal = d.baseRate;
-      if (d.effectiveRate < minVal) minVal = d.effectiveRate;
-      if (d.baseRate < minVal) minVal = d.baseRate;
-      avgBase += d.baseRate;
-    }
-    avgBase /= widget.data.length;
-
-    minVal = (minVal - 5).clamp(0.0, double.infinity);
-    maxVal = maxVal + 12;
-    final range = maxVal - minVal > 0 ? (maxVal - minVal) : 10.0;
-
-    return SizedBox(
-      height: widget.height,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          const yAxisWidth = 46.0;
-          final availableChartWidth = constraints.maxWidth - yAxisWidth;
-          const pointSpacing = 64.0;
-          final contentWidth = math.max(
-            availableChartWidth,
-            widget.data.length * pointSpacing,
-          );
-
-          return Row(
-            children: [
-              // Fixed Y-Axis Scale
-              SizedBox(
-                width: yAxisWidth,
-                height: widget.height,
-                child: CustomPaint(
-                  painter: _WageYAxisScalePainter(
-                    minVal: minVal,
-                    maxVal: maxVal,
-                    avgBase: avgBase,
-                    textColor: textColor,
-                    baseLineColor: baseLineColor,
-                  ),
-                ),
-              ),
-
-              // Horizontal Scrollable Curve Canvas
-              Expanded(
-                child: Scrollbar(
-                  controller: _scrollController,
-                  thumbVisibility: true,
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    child: SizedBox(
-                      width: contentWidth,
-                      height: widget.height,
-                      child: CustomPaint(
-                        size: Size(contentWidth, widget.height),
-                        painter: _WageTrendPainter(
-                          data: widget.data,
-                          minVal: minVal,
-                          maxVal: maxVal,
-                          range: range,
-                          avgBase: avgBase,
-                          isDark: isDark,
-                          primaryColor: primaryColor,
-                          baseLineColor: baseLineColor,
-                          textColor: textColor,
-                          currencySymbol: widget.currencySymbol,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _WageYAxisScalePainter extends CustomPainter {
-  final double minVal;
-  final double maxVal;
-  final double avgBase;
-  final Color textColor;
-  final Color baseLineColor;
-
-  _WageYAxisScalePainter({
-    required this.minVal,
-    required this.maxVal,
-    required this.avgBase,
-    required this.textColor,
-    required this.baseLineColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    const topPadding = 24.0;
-    const bottomPadding = 38.0;
-    final chartHeight = size.height - topPadding - bottomPadding;
-    final range = maxVal - minVal > 0 ? (maxVal - minVal) : 10.0;
-
-    final tp = TextPainter(textDirection: TextDirection.rtl);
-
-    // Max Y Label
-    tp.text = TextSpan(
-      text: '${maxVal.round()}',
-      style: TextStyle(
-        color: textColor,
-        fontSize: 10,
-        fontWeight: FontWeight.bold,
-        fontFeatures: const [FontFeature.tabularFigures()],
-      ),
-    );
-    tp.layout();
-    tp.paint(
-      canvas,
-      Offset(size.width - tp.width - 4, topPadding - tp.height / 2),
-    );
-
-    // Base Y Label
-    final baseLineY =
-        topPadding + chartHeight * (1 - (avgBase - minVal) / range);
-    tp.text = TextSpan(
-      text: '${avgBase.round()}',
-      style: TextStyle(
-        color: baseLineColor,
-        fontSize: 10,
-        fontWeight: FontWeight.bold,
-        fontFeatures: const [FontFeature.tabularFigures()],
-      ),
-    );
-    tp.layout();
-    tp.paint(
-      canvas,
-      Offset(size.width - tp.width - 4, baseLineY - tp.height / 2),
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _WageYAxisScalePainter oldDelegate) => false;
-}
-
-class _WageTrendPainter extends CustomPainter {
-  final List<HourlyWageTrendData> data;
-  final double minVal;
-  final double maxVal;
-  final double range;
-  final double avgBase;
-  final bool isDark;
-  final Color primaryColor;
-  final Color baseLineColor;
-  final Color textColor;
-  final String currencySymbol;
-
-  _WageTrendPainter({
-    required this.data,
-    required this.minVal,
-    required this.maxVal,
-    required this.range,
-    required this.avgBase,
-    required this.isDark,
-    required this.primaryColor,
-    required this.baseLineColor,
-    required this.textColor,
-    required this.currencySymbol,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    const leftPadding = 20.0;
-    const rightPadding = 20.0;
-    const topPadding = 24.0;
-    const bottomPadding = 38.0;
-
-    final chartWidth = size.width - leftPadding - rightPadding;
-    final chartHeight = size.height - topPadding - bottomPadding;
-
-    if (chartWidth <= 0 || chartHeight <= 0) return;
-
-    // 1. Draw Dashed Base Line
-    final baseLineY =
-        topPadding + chartHeight * (1 - (avgBase - minVal) / range);
-    final baseLinePaint = Paint()
-      ..color = baseLineColor.withValues(alpha: 0.8)
-      ..strokeWidth = 1.5
-      ..style = PaintingStyle.stroke;
-
-    _drawDashedLine(
-      canvas,
-      Offset(leftPadding, baseLineY),
-      Offset(size.width - rightPadding, baseLineY),
-      baseLinePaint,
-    );
-
-    // 2. Points
-    final points = <Offset>[];
-    final stepX = chartWidth / (data.length - 1);
-
-    for (int i = 0; i < data.length; i++) {
-      final x = leftPadding + i * stepX;
-      final y =
-          topPadding +
-          chartHeight * (1 - (data[i].effectiveRate - minVal) / range);
-      points.add(Offset(x, y));
-    }
-
-    // 3. Smooth Curve
-    final path = Path();
-    path.moveTo(points.first.dx, points.first.dy);
-
-    for (int i = 0; i < points.length - 1; i++) {
-      final p1 = points[i];
-      final p2 = points[i + 1];
-      final c1 = Offset(p1.dx + (p2.dx - p1.dx) / 2, p1.dy);
-      final c2 = Offset(p1.dx + (p2.dx - p1.dx) / 2, p2.dy);
-      path.cubicTo(c1.dx, c1.dy, c2.dx, c2.dy, p2.dx, p2.dy);
-    }
-
-    // Gradient Fill
-    final fillPath = Path.from(path)
-      ..lineTo(points.last.dx, topPadding + chartHeight)
-      ..lineTo(points.first.dx, topPadding + chartHeight)
-      ..close();
-
-    final fillGradient = LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [
-        primaryColor.withValues(alpha: 0.25),
-        primaryColor.withValues(alpha: 0.0),
-      ],
-    );
-
-    canvas.drawPath(
-      fillPath,
-      Paint()
-        ..shader = fillGradient.createShader(
-          Rect.fromLTRB(
-            leftPadding,
-            topPadding,
-            size.width - rightPadding,
-            topPadding + chartHeight,
-          ),
-        ),
-    );
-
-    // Line Path
-    final linePaint = Paint()
-      ..color = primaryColor
-      ..strokeWidth = 3.0
-      ..style = PaintingStyle.stroke;
-    canvas.drawPath(path, linePaint);
-
-    // Nodes & Number Labels
-    final textPainter = TextPainter(textDirection: TextDirection.rtl);
-
-    for (int i = 0; i < data.length; i++) {
-      final p = points[i];
-      final item = data[i];
-
-      canvas.drawCircle(p, 5, Paint()..color = Colors.white);
-      canvas.drawCircle(p, 3.5, Paint()..color = primaryColor);
-
-      // Effective Rate Label above node
-      textPainter.text = TextSpan(
-        text: UIUtils.formatCurrency(
-          item.effectiveRate,
-          symbol: currencySymbol,
-          decimals: 1,
-        ),
-        style: TextStyle(
-          color: primaryColor,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-          fontFeatures: const [FontFeature.tabularFigures()],
-        ),
-      );
-      textPainter.layout();
-      textPainter.paint(
-        canvas,
-        Offset(p.dx - textPainter.width / 2, p.dy - 16),
-      );
-
-      // Date Label below chart
-      textPainter.text = TextSpan(
-        text: item.label,
-        style: TextStyle(color: textColor, fontSize: 10),
-      );
-      textPainter.layout();
-      textPainter.paint(
-        canvas,
-        Offset(p.dx - textPainter.width / 2, topPadding + chartHeight + 6),
-      );
-    }
-  }
-
-  void _drawDashedLine(Canvas canvas, Offset p1, Offset p2, Paint paint) {
-    const dashWidth = 5.0;
-    const dashSpace = 4.0;
-    double startX = p1.dx;
-    while (startX < p2.dx) {
-      canvas.drawLine(
-        Offset(startX, p1.dy),
-        Offset(math.min(startX + dashWidth, p2.dx), p1.dy),
-        paint,
-      );
-      startX += dashWidth + dashSpace;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _WageTrendPainter oldDelegate) {
-    return oldDelegate.data != data || oldDelegate.isDark != isDark;
-  }
-}
-
-/// Data point for Cumulative Growth Line Chart
+/// Data for Cumulative Growth Line Chart
 class CumulativeGrowthData {
   final DateTime date;
   final String label;
@@ -916,7 +527,7 @@ class CumulativeGrowthData {
   });
 }
 
-/// Cumulative Growth Line Chart Widget with Numbered Points & Horizontal Scroll
+/// Cumulative Growth Line Chart Widget
 class CumulativeEarningsLineChartWidget extends StatefulWidget {
   final List<CumulativeGrowthData> data;
   final String currencySymbol;
@@ -953,18 +564,20 @@ class _CumulativeEarningsLineChartWidgetState
         child: Center(
           child: Text(
             l.analytics_min_shifts_growth,
-            style: const TextStyle(color: Colors.grey),
+            style: TextStyle(
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
+            ),
           ),
         ),
       );
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const grossColor = Color(0xFF6366F1); // Indigo
-    const netColor = Color(0xFF10B981); // Emerald Green
-    final textColor = Theme.of(
-      context,
-    ).colorScheme.onSurface.withValues(alpha: 0.7);
+    const grossColor = AppTheme.neonViolet;
+    const netColor = AppTheme.electricCyan;
+    final textColor = isDark ? AppTheme.secondaryText : Colors.grey.shade700;
 
     double maxVal = 0;
     for (var d in widget.data) {
@@ -988,7 +601,6 @@ class _CumulativeEarningsLineChartWidgetState
 
           return Row(
             children: [
-              // Fixed Y-Axis Scale
               SizedBox(
                 width: yAxisWidth,
                 height: widget.height,
@@ -999,8 +611,6 @@ class _CumulativeEarningsLineChartWidgetState
                   ),
                 ),
               ),
-
-              // Horizontal Scrollable Curve Canvas
               Expanded(
                 child: Scrollbar(
                   controller: _scrollController,
@@ -1097,7 +707,7 @@ class _CumulativeLineChartPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     const leftPadding = 20.0;
     const rightPadding = 20.0;
-    const topPadding = 32.0; // Space for numbers above nodes
+    const topPadding = 32.0;
     const bottomPadding = 38.0;
 
     final chartWidth = size.width - leftPadding - rightPadding;
@@ -1105,10 +715,11 @@ class _CumulativeLineChartPainter extends CustomPainter {
 
     if (chartWidth <= 0 || chartHeight <= 0) return;
 
-    // Draw Gridlines
     const steps = 3;
     final gridPaint = Paint()
-      ..color = Colors.grey.withValues(alpha: 0.15)
+      ..color = isDark
+          ? AppTheme.darkBorder
+          : Colors.grey.withValues(alpha: 0.15)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
@@ -1126,7 +737,6 @@ class _CumulativeLineChartPainter extends CustomPainter {
 
     final stepX = chartWidth / (data.length - 1);
 
-    // Points for Gross Line & Net Line
     final grossPoints = <Offset>[];
     final netPoints = <Offset>[];
 
@@ -1141,7 +751,6 @@ class _CumulativeLineChartPainter extends CustomPainter {
       netPoints.add(Offset(x, netY));
     }
 
-    // Draw Net Fill Gradient & Line
     _drawCurvedLineAndFill(
       canvas,
       netPoints,
@@ -1153,7 +762,6 @@ class _CumulativeLineChartPainter extends CustomPainter {
       0.25,
     );
 
-    // Draw Gross Line
     _drawCurvedLineAndFill(
       canvas,
       grossPoints,
@@ -1165,14 +773,12 @@ class _CumulativeLineChartPainter extends CustomPainter {
       0.12,
     );
 
-    // Number Labels on Nodes
     final textPainter = TextPainter(textDirection: TextDirection.rtl);
 
     for (int i = 0; i < data.length; i++) {
       final pNet = netPoints[i];
       final netVal = data[i].cumulativeNet;
 
-      // Draw Number Label above Net point
       textPainter.text = TextSpan(
         text: UIUtils.formatCurrency(
           netVal,
@@ -1192,7 +798,6 @@ class _CumulativeLineChartPainter extends CustomPainter {
         Offset(pNet.dx - textPainter.width / 2, pNet.dy - 16),
       );
 
-      // Draw X Label (Date/Day)
       textPainter.text = TextSpan(
         text: data[i].label,
         style: TextStyle(color: textColor, fontSize: 10),
@@ -1228,7 +833,6 @@ class _CumulativeLineChartPainter extends CustomPainter {
       path.cubicTo(c1.dx, c1.dy, c2.dx, c2.dy, p2.dx, p2.dy);
     }
 
-    // Gradient Fill
     final fillPath = Path.from(path)
       ..lineTo(points.last.dx, topPadding + chartHeight)
       ..lineTo(points.first.dx, topPadding + chartHeight)
@@ -1256,14 +860,12 @@ class _CumulativeLineChartPainter extends CustomPainter {
         ),
     );
 
-    // Line Path
     final linePaint = Paint()
       ..color = color
       ..strokeWidth = 2.5
       ..style = PaintingStyle.stroke;
     canvas.drawPath(path, linePaint);
 
-    // Node Dots
     for (var p in points) {
       canvas.drawCircle(p, 4, Paint()..color = Colors.white);
       canvas.drawCircle(p, 2.5, Paint()..color = color);
@@ -1290,271 +892,6 @@ class _CumulativeLineChartPainter extends CustomPainter {
   }
 }
 
-/// Data for Net Retention Trend Line Chart
-class NetRetentionData {
-  final DateTime date;
-  final String label;
-  final double retentionPct;
-
-  const NetRetentionData({
-    required this.date,
-    required this.label,
-    required this.retentionPct,
-  });
-}
-
-/// Net Retention Trend Line Chart Widget
-class NetRetentionLineChartWidget extends StatelessWidget {
-  final List<NetRetentionData> data;
-  final double height;
-
-  const NetRetentionLineChartWidget({
-    super.key,
-    required this.data,
-    this.height = 180,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (data.length < 2) {
-      final l = AppLocalizations.of(context)!;
-      return SizedBox(
-        height: height,
-        child: Center(
-          child: Text(
-            l.analytics_min_shifts_retention,
-            style: const TextStyle(color: Colors.grey),
-          ),
-        ),
-      );
-    }
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    const lineColor = Color(0xFF0EA5E9); // Sky Blue
-    final textColor = Theme.of(
-      context,
-    ).colorScheme.onSurface.withValues(alpha: 0.7);
-
-    return SizedBox(
-      height: height,
-      child: CustomPaint(
-        size: Size(double.infinity, height),
-        painter: _NetRetentionPainter(
-          data: data,
-          isDark: isDark,
-          lineColor: lineColor,
-          textColor: textColor,
-        ),
-      ),
-    );
-  }
-}
-
-class _NetRetentionPainter extends CustomPainter {
-  final List<NetRetentionData> data;
-  final bool isDark;
-  final Color lineColor;
-  final Color textColor;
-
-  _NetRetentionPainter({
-    required this.data,
-    required this.isDark,
-    required this.lineColor,
-    required this.textColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    const leftPadding = 44.0;
-    const rightPadding = 16.0;
-    const topPadding = 16.0;
-    const bottomPadding = 28.0;
-
-    final chartWidth = size.width - leftPadding - rightPadding;
-    final chartHeight = size.height - topPadding - bottomPadding;
-
-    if (chartWidth <= 0 || chartHeight <= 0) return;
-
-    const minVal = 0.0;
-    const range = 100.0;
-
-    // Reference Line at 90%
-    final refY = topPadding + chartHeight * (1 - (90.0 - minVal) / range);
-    final refPaint = Paint()
-      ..color = const Color(0xFF10B981).withValues(alpha: 0.8)
-      ..strokeWidth = 1.5
-      ..style = PaintingStyle.stroke;
-
-    _drawDashedLine(
-      canvas,
-      Offset(leftPadding, refY),
-      Offset(size.width - rightPadding, refY),
-      refPaint,
-    );
-
-    // Curve points
-    final stepX = chartWidth / (data.length - 1);
-    final points = <Offset>[];
-
-    for (int i = 0; i < data.length; i++) {
-      final x = leftPadding + i * stepX;
-      final y =
-          topPadding +
-          chartHeight *
-              (1 - (data[i].retentionPct.clamp(0.0, 100.0) - minVal) / range);
-      points.add(Offset(x, y));
-    }
-
-    if (points.length >= 2) {
-      final path = Path();
-      path.moveTo(points.first.dx, points.first.dy);
-
-      for (int i = 0; i < points.length - 1; i++) {
-        final p1 = points[i];
-        final p2 = points[i + 1];
-        final c1 = Offset(p1.dx + (p2.dx - p1.dx) / 2, p1.dy);
-        final c2 = Offset(p1.dx + (p2.dx - p1.dx) / 2, p2.dy);
-        path.cubicTo(c1.dx, c1.dy, c2.dx, c2.dy, p2.dx, p2.dy);
-      }
-
-      final fillPath = Path.from(path);
-      fillPath.lineTo(points.last.dx, topPadding + chartHeight);
-      fillPath.lineTo(points.first.dx, topPadding + chartHeight);
-      fillPath.close();
-
-      final fillGradient = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          lineColor.withValues(alpha: 0.25),
-          lineColor.withValues(alpha: 0.0),
-        ],
-      );
-
-      canvas.drawPath(
-        fillPath,
-        Paint()
-          ..shader = fillGradient.createShader(
-            Rect.fromLTRB(
-              leftPadding,
-              topPadding,
-              size.width - rightPadding,
-              topPadding + chartHeight,
-            ),
-          ),
-      );
-
-      final linePaint = Paint()
-        ..color = lineColor
-        ..strokeWidth = 2.5
-        ..style = PaintingStyle.stroke;
-      canvas.drawPath(path, linePaint);
-    }
-
-    // Nodes & Labels
-    final textPainter = TextPainter(textDirection: TextDirection.rtl);
-
-    for (int i = 0; i < points.length; i++) {
-      final p = points[i];
-      final pct = data[i].retentionPct;
-
-      canvas.drawCircle(p, 4.5, Paint()..color = Colors.white);
-      canvas.drawCircle(p, 3.0, Paint()..color = lineColor);
-
-      textPainter.text = TextSpan(
-        text: '${pct.round()}%',
-        style: TextStyle(
-          color: lineColor,
-          fontSize: 9,
-          fontWeight: FontWeight.bold,
-          fontFeatures: const [FontFeature.tabularFigures()],
-        ),
-      );
-      textPainter.layout();
-      textPainter.paint(
-        canvas,
-        Offset(p.dx - textPainter.width / 2, p.dy - 16),
-      );
-
-      textPainter.text = TextSpan(
-        text: data[i].label,
-        style: TextStyle(color: textColor, fontSize: 9),
-      );
-      textPainter.layout();
-      textPainter.paint(
-        canvas,
-        Offset(p.dx - textPainter.width / 2, topPadding + chartHeight + 6),
-      );
-    }
-
-    // Y Axis Labels
-    _drawYLabel(
-      canvas,
-      textPainter,
-      '100%',
-      topPadding,
-      textColor,
-      leftPadding,
-    );
-    _drawYLabel(
-      canvas,
-      textPainter,
-      '90%',
-      refY,
-      const Color(0xFF10B981),
-      leftPadding,
-    );
-    _drawYLabel(
-      canvas,
-      textPainter,
-      '0%',
-      topPadding + chartHeight,
-      textColor,
-      leftPadding,
-    );
-  }
-
-  void _drawYLabel(
-    Canvas canvas,
-    TextPainter tp,
-    String text,
-    double y,
-    Color color,
-    double leftPadding,
-  ) {
-    tp.text = TextSpan(
-      text: text,
-      style: TextStyle(
-        color: color,
-        fontSize: 10,
-        fontWeight: FontWeight.bold,
-        fontFeatures: const [FontFeature.tabularFigures()],
-      ),
-    );
-    tp.layout();
-    tp.paint(canvas, Offset(leftPadding - tp.width - 6, y - tp.height / 2));
-  }
-
-  void _drawDashedLine(Canvas canvas, Offset p1, Offset p2, Paint paint) {
-    const dashWidth = 5.0;
-    const dashSpace = 4.0;
-    double startX = p1.dx;
-    while (startX < p2.dx) {
-      canvas.drawLine(
-        Offset(startX, p1.dy),
-        Offset(math.min(startX + dashWidth, p2.dx), p1.dy),
-        paint,
-      );
-      startX += dashWidth + dashSpace;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _NetRetentionPainter oldDelegate) {
-    return oldDelegate.data != data || oldDelegate.isDark != isDark;
-  }
-}
-
 /// Data for Time of Day Segment
 class TimeOfDaySegment {
   final String name;
@@ -1572,7 +909,7 @@ class TimeOfDaySegment {
   });
 }
 
-/// Time of Day Breakdown Widget (Hours Worked Only)
+/// Time of Day Breakdown Widget
 class TimeOfDayChartWidget extends StatelessWidget {
   final List<TimeOfDaySegment> segments;
   final String currencySymbol;
@@ -1586,6 +923,7 @@ class TimeOfDayChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     double totalHours = 0;
     for (var s in segments) {
       totalHours += s.hours;
@@ -1597,7 +935,11 @@ class TimeOfDayChartWidget extends StatelessWidget {
         child: Center(
           child: Text(
             l.analytics_no_shift_data_period,
-            style: const TextStyle(color: Colors.grey),
+            style: TextStyle(
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
+            ),
           ),
         ),
       );
@@ -1605,7 +947,6 @@ class TimeOfDayChartWidget extends StatelessWidget {
 
     return Column(
       children: [
-        // Multi-segment progress bar
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: SizedBox(
@@ -1623,8 +964,6 @@ class TimeOfDayChartWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-
-        // Detail Rows
         Column(
           children: segments.map((seg) {
             final pct = totalHours > 0 ? (seg.hours / totalHours * 100) : 0.0;
@@ -1633,9 +972,9 @@ class TimeOfDayChartWidget extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: seg.color.withValues(alpha: 0.08),
+                  color: seg.color.withValues(alpha: isDark ? 0.12 : 0.08),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: seg.color.withValues(alpha: 0.2)),
+                  border: Border.all(color: seg.color.withValues(alpha: 0.25)),
                 ),
                 child: Row(
                   children: [
@@ -1664,7 +1003,9 @@ class TimeOfDayChartWidget extends StatelessWidget {
                             seg.timeRange,
                             style: TextStyle(
                               fontSize: 11,
-                              color: Colors.grey.shade600,
+                              color: isDark
+                                  ? AppTheme.secondaryText
+                                  : Colors.grey.shade600,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -1688,10 +1029,12 @@ class TimeOfDayChartWidget extends StatelessWidget {
                           l.analytics_utilization_format(
                             pct.toStringAsFixed(0),
                           ),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey,
+                            color: isDark
+                                ? AppTheme.secondaryText
+                                : Colors.grey,
                           ),
                         ),
                       ],
@@ -1742,6 +1085,7 @@ class ShiftDurationDistributionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     int totalCount = 0;
     for (var c in categories) {
       totalCount += c.count;
@@ -1753,7 +1097,11 @@ class ShiftDurationDistributionWidget extends StatelessWidget {
         child: Center(
           child: Text(
             l.analytics_no_shift_data_period,
-            style: const TextStyle(color: Colors.grey),
+            style: TextStyle(
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
+            ),
           ),
         ),
       );
@@ -1767,7 +1115,9 @@ class ShiftDurationDistributionWidget extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: Theme.of(context).cardTheme.color,
+              color: isDark
+                  ? AppTheme.darkCard
+                  : Theme.of(context).cardTheme.color,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: cat.color.withValues(alpha: 0.3)),
             ),
@@ -1803,7 +1153,9 @@ class ShiftDurationDistributionWidget extends StatelessWidget {
                             '(${cat.durationRange})',
                             style: TextStyle(
                               fontSize: 10,
-                              color: Colors.grey.shade600,
+                              color: isDark
+                                  ? AppTheme.secondaryText
+                                  : Colors.grey.shade600,
                             ),
                           ),
                         ],
@@ -1836,7 +1188,10 @@ class ShiftDurationDistributionWidget extends StatelessWidget {
                     ),
                     Text(
                       '${pct.toStringAsFixed(0)}%',
-                      style: const TextStyle(fontSize: 11, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isDark ? AppTheme.secondaryText : Colors.grey,
+                      ),
                     ),
                   ],
                 ),

@@ -172,7 +172,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: const TextStyle(fontSize: 14),
                   ),
                   subtitle: Text(AppConstants.formatDate(effectiveDate)),
-                  trailing: const Icon(Icons.calendar_today_rounded, size: 20),
+                  trailing: const Icon(
+                    Icons.calendar_today_rounded,
+                    size: 20,
+                    color: AppTheme.electricCyan,
+                  ),
                   onTap: () async {
                     final picked = await AppDatePicker.showSingleDatePicker(
                       context: context,
@@ -222,7 +226,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (name.isEmpty) {
                   UIUtils.showSnackBar(
                     context,
-                    l.settings_dialog_error_enter_desc, // Better key?
+                    l.settings_dialog_error_enter_desc,
                     isError: true,
                   );
                   return;
@@ -373,7 +377,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Card(
                     child: ListTile(
                       leading: CircleAvatar(
-                        backgroundColor: AppTheme.primary,
+                        backgroundColor: AppTheme.neonViolet,
                         child: auth.isLoggedIn
                             ? Text(
                                 (auth.userName?.isNotEmpty == true
@@ -433,7 +437,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 children: [
                                   const Icon(
                                     Icons.palette_outlined,
-                                    color: AppTheme.primaryDark,
+                                    color: AppTheme.electricCyan,
                                   ),
                                   const SizedBox(width: 16),
                                   Text(
@@ -482,7 +486,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           title: Text(l.settings_field_language),
                           leading: const Icon(
                             Icons.language_rounded,
-                            color: AppTheme.primaryDark,
+                            color: AppTheme.electricCyan,
                           ),
                           trailing: DropdownButton<String>(
                             value: settings.locale.languageCode,
@@ -510,7 +514,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           subtitle: Text(l.settings_field_currency_sub),
                           leading: const Icon(
                             Icons.payments_outlined,
-                            color: AppTheme.primaryDark,
+                            color: AppTheme.electricCyan,
                           ),
                           trailing: DropdownButton<String>(
                             value: settings.currencySymbol,
@@ -544,7 +548,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           subtitle: Text(l.settings_accessibility_sub),
                           leading: const Icon(
                             Icons.accessibility_new_rounded,
-                            color: AppTheme.primaryDark,
+                            color: AppTheme.electricCyan,
                           ),
                           trailing: const Icon(Icons.chevron_right_rounded),
                           onTap: () {
@@ -574,14 +578,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             subtitle: Text(l.settings_field_breaks_enabled_sub),
                             secondary: const Icon(
                               Icons.timer_off_outlined,
-                              color: AppTheme.primaryDark,
+                              color: AppTheme.electricCyan,
                             ),
                             value: settings.breaksEnabled,
                             onChanged: (val) => settings.setBreaksEnabled(val),
-                            activeThumbColor: AppTheme.primaryDark,
-                            activeTrackColor: AppTheme.primary.withValues(
-                              alpha: 0.35,
-                            ),
+                            activeThumbColor: const Color(0xFF040711),
+                            activeTrackColor: AppTheme.electricCyan,
                           ),
                           if (settings.breaksEnabled) ...[
                             const Divider(height: 16),
@@ -660,7 +662,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             subtitle: Text(l.settings_overtime_enable_sub),
                             secondary: const Icon(
                               Icons.more_time_rounded,
-                              color: AppTheme.primaryDark,
+                              color: AppTheme.electricCyan,
                             ),
                             value: settings.overtimeRules.enabled,
                             onChanged: (val) {
@@ -669,10 +671,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               );
                               settings.setOvertimeRules(updated);
                             },
-                            activeThumbColor: AppTheme.primaryDark,
-                            activeTrackColor: AppTheme.primary.withValues(
-                              alpha: 0.35,
-                            ),
+                            activeThumbColor: const Color(0xFF040711),
+                            activeTrackColor: AppTheme.electricCyan,
                           ),
                           if (settings.overtimeRules.enabled) ...[
                             const Divider(height: 16),
@@ -802,7 +802,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             subtitle: Text(l.settings_shabbat_enable_sub),
                             secondary: const Icon(
                               Icons.star_rounded,
-                              color: AppTheme.primaryDark,
+                              color: AppTheme.warmAmber,
                             ),
                             value: settings.shabbatHolidayRules.enabled,
                             onChanged: (val) {
@@ -810,10 +810,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   .copyWith(enabled: val);
                               settings.setShabbatHolidayRules(updated);
                             },
-                            activeThumbColor: AppTheme.primaryDark,
-                            activeTrackColor: AppTheme.primary.withValues(
-                              alpha: 0.35,
-                            ),
+                            activeThumbColor: const Color(0xFF040711),
+                            activeTrackColor: AppTheme.electricCyan,
                           ),
                           if (settings.shabbatHolidayRules.enabled) ...[
                             const Divider(height: 16),
@@ -934,7 +932,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         icon: const Icon(Icons.add_rounded),
                         label: Text(l.common_confirm),
                         style: TextButton.styleFrom(
-                          foregroundColor: AppTheme.primaryDark,
+                          foregroundColor: AppTheme.electricCyan,
                         ),
                       ),
                     ],
@@ -967,7 +965,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: ListTile(
                         leading: const Icon(
                           Icons.system_update_rounded,
-                          color: AppTheme.primaryDark,
+                          color: AppTheme.electricCyan,
                         ),
                         title: Text(l.settings_update_check_button),
                         subtitle: Text(
@@ -992,15 +990,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     l.settings_update_latest_toast;
 
                                 setState(() {
-                            _isCheckingUpdates = true;
-                          });
-                          UIUtils.showSnackBar(context, checkingMsg);
-                          final updateInfo =
-                          await UpdateService.checkForUpdates();
-                          if (!context.mounted) return;
-                          setState(() {
-                            _isCheckingUpdates = false;
-                          });
+                                  _isCheckingUpdates = true;
+                                });
+                                UIUtils.showSnackBar(context, checkingMsg);
+                                final updateInfo =
+                                    await UpdateService.checkForUpdates();
+                                if (!context.mounted) return;
+                                setState(() {
+                                  _isCheckingUpdates = false;
+                                });
 
                                 if (updateInfo == null) {
                                   UIUtils.showSnackBar(
@@ -1033,7 +1031,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ListTile(
                           leading: const Icon(
                             Icons.cookie_outlined,
-                            color: AppTheme.primaryDark,
+                            color: AppTheme.electricCyan,
                           ),
                           title: Text(l.legal_cookie_title),
                           subtitle: Text(
@@ -1050,7 +1048,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ListTile(
                           leading: const Icon(
                             Icons.privacy_tip_outlined,
-                            color: AppTheme.primaryDark,
+                            color: AppTheme.electricCyan,
                           ),
                           title: Text(l.legal_privacy_policy),
                           trailing: const Icon(Icons.chevron_right_rounded),
@@ -1060,7 +1058,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ListTile(
                           leading: const Icon(
                             Icons.gavel_outlined,
-                            color: AppTheme.primaryDark,
+                            color: AppTheme.electricCyan,
                           ),
                           title: Text(l.legal_terms_of_service),
                           trailing: const Icon(Icons.chevron_right_rounded),
@@ -1077,14 +1075,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       title: Text(
                         l.settings_action_factory_reset,
                         style: const TextStyle(
-                          color: AppTheme.expense,
+                          color: AppTheme.softCoral,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       subtitle: Text(l.settings_action_factory_reset_sub),
                       trailing: const Icon(
                         Icons.delete_forever_rounded,
-                        color: AppTheme.expense,
+                        color: AppTheme.softCoral,
                       ),
                       onTap: () => _handleFactoryReset(context),
                     ),
@@ -1100,7 +1098,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _handleFactoryReset(BuildContext context) async {
     final l = AppLocalizations.of(context)!;
-    // Step 1: First Confirmation
     final confirmed = await UIUtils.showConfirmDialog(
       context: context,
       title: l.settings_dialog_factory_reset_title,
@@ -1112,13 +1109,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (confirmed != true) return;
     if (!context.mounted) return;
 
-    // Step 2: Second Confirmation (Manual Input or special warning)
     final finalConfirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            const Icon(Icons.warning_amber_rounded, color: AppTheme.expense),
+            const Icon(Icons.warning_amber_rounded, color: AppTheme.softCoral),
             const SizedBox(width: 8),
             Text(l.settings_dialog_final_confirm_title),
           ],
@@ -1146,7 +1142,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.expense,
+              backgroundColor: AppTheme.softCoral,
               foregroundColor: Colors.white,
             ),
             child: Text(l.settings_dialog_final_confirm_button),
@@ -1158,7 +1154,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (finalConfirm != true) return;
     if (!context.mounted) return;
 
-    // Perform Reset
     final shiftProvider = context.read<ShiftProvider>();
     final settingsProvider = context.read<SettingsProvider>();
     final authProvider = context.read<AuthProvider>();
@@ -1168,26 +1163,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (authProvider.isLoggedIn) {
       await authProvider.logout(navigate: false);
     }
-    /*
-    if (authProvider.isByosConnected) {
-      await authProvider.disconnectBYOS();
-    }
-    */
 
     if (!context.mounted) return;
 
     UIUtils.showSnackBar(context, l.common_success);
 
-    // Navigate to Splash or Onboarding
     Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
   }
 
   Widget _buildSectionHeader(BuildContext context, String title) {
     return Text(
       title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.bold,
-        letterSpacing: 0.2,
+      style: const TextStyle(
+        fontWeight: FontWeight.w900,
+        fontSize: 16,
+        color: AppTheme.electricCyan,
+        letterSpacing: 0.3,
       ),
     );
   }
@@ -1227,12 +1218,15 @@ class _JobCard extends StatelessWidget {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: AppTheme.primary.withValues(alpha: 0.12),
+                      color: AppTheme.electricCyan.withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: AppTheme.electricCyan.withValues(alpha: 0.25),
+                      ),
                     ),
                     child: Icon(
                       AppTheme.iconForJobName(job.name),
-                      color: AppTheme.primaryDark,
+                      color: AppTheme.electricCyan,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -1250,9 +1244,9 @@ class _JobCard extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           '${UIUtils.formatCurrency(currentRate, symbol: symbol)} ${l.onboarding_job_types_rate_suffix}',
-                          style: TextStyle(
-                            color: AppTheme.primaryDark,
-                            fontWeight: FontWeight.w600,
+                          style: const TextStyle(
+                            color: AppTheme.electricCyan,
+                            fontWeight: FontWeight.bold,
                             fontSize: 13,
                           ),
                         ),
@@ -1263,7 +1257,7 @@ class _JobCard extends StatelessWidget {
                     tooltip: l.common_save,
                     icon: const Icon(
                       Icons.edit_note_rounded,
-                      color: AppTheme.primaryDark,
+                      color: AppTheme.electricCyan,
                     ),
                     onPressed: onEdit,
                   ),
@@ -1271,7 +1265,7 @@ class _JobCard extends StatelessWidget {
                     tooltip: l.common_delete,
                     icon: const Icon(
                       Icons.delete_outline_rounded,
-                      color: AppTheme.expense,
+                      color: AppTheme.softCoral,
                     ),
                     onPressed: onDelete,
                   ),
@@ -1283,11 +1277,7 @@ class _JobCard extends StatelessWidget {
                 const SizedBox(height: AppTheme.spaceSm),
                 Text(
                   l.settings_wage_history_title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.65),
-                  ),
+                  style: Theme.of(context).textTheme.titleSmall,
                 ),
                 const SizedBox(height: 12),
                 _WageTimeline(entries: history, symbol: symbol),
@@ -1346,8 +1336,8 @@ class _WageTimeline extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isFirst
-                            ? AppTheme.primary
-                            : AppTheme.primary.withValues(alpha: 0.45),
+                            ? AppTheme.electricCyan
+                            : AppTheme.electricCyan.withValues(alpha: 0.45),
                         border: Border.all(
                           color:
                               Theme.of(context).cardTheme.color ??
@@ -1357,7 +1347,7 @@ class _WageTimeline extends StatelessWidget {
                         boxShadow: isFirst
                             ? [
                                 BoxShadow(
-                                  color: AppTheme.primary.withValues(
+                                  color: AppTheme.electricCyan.withValues(
                                     alpha: 0.4,
                                   ),
                                   blurRadius: 6,
@@ -1373,7 +1363,9 @@ class _WageTimeline extends StatelessWidget {
                           margin: const EdgeInsets.symmetric(vertical: 2),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(1),
-                            color: AppTheme.primary.withValues(alpha: 0.25),
+                            color: AppTheme.electricCyan.withValues(
+                              alpha: 0.25,
+                            ),
                           ),
                         ),
                       ),
@@ -1397,9 +1389,9 @@ class _WageTimeline extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: compact ? 12 : 13,
                                 fontWeight: FontWeight.w500,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withValues(alpha: 0.6),
+                                color: isDark
+                                    ? AppTheme.secondaryText
+                                    : Colors.grey.shade600,
                               ),
                             ),
                             if (isFirst && !compact)
@@ -1407,8 +1399,8 @@ class _WageTimeline extends StatelessWidget {
                                 l.settings_current_rate,
                                 style: const TextStyle(
                                   fontSize: 11,
-                                  color: AppTheme.primaryDark,
-                                  fontWeight: FontWeight.w600,
+                                  color: AppTheme.electricCyan,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                           ],
@@ -1423,7 +1415,7 @@ class _WageTimeline extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           fontSize: compact ? 13 : 15,
                           color: isFirst
-                              ? AppTheme.primaryDark
+                              ? AppTheme.electricCyan
                               : Theme.of(context).colorScheme.onSurface,
                           fontFeatures: const [FontFeature.tabularFigures()],
                         ),
@@ -1437,8 +1429,10 @@ class _WageTimeline extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color:
-                                (delta > 0 ? AppTheme.profit : AppTheme.expense)
-                                    .withValues(alpha: 0.12),
+                                (delta > 0
+                                        ? AppTheme.mintGreen
+                                        : AppTheme.softCoral)
+                                    .withValues(alpha: 0.14),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -1449,8 +1443,8 @@ class _WageTimeline extends StatelessWidget {
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: delta > 0
-                                  ? AppTheme.profitSoft
-                                  : AppTheme.expenseSoft,
+                                  ? AppTheme.mintGreen
+                                  : AppTheme.softCoral,
                             ),
                           ),
                         ),

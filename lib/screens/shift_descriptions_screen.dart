@@ -42,6 +42,8 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     final shiftProvider = context.watch<ShiftProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     if (_isLoading) {
       return AdaptiveScaffold(
         currentIndex: 4,
@@ -66,7 +68,7 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
     // Sort by date descending
     shiftsWithDesc.sort((a, b) => b.date.compareTo(a.date));
 
-    // Group by date (formatted as string or year-month-day)
+    // Group by date
     final groupedShifts = groupBy(
       shiftsWithDesc,
       (s) => DateFormat('yyyy-MM-dd').format(s.date),
@@ -108,10 +110,10 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                   vertical: AppTheme.spaceXs,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.primary.withValues(alpha: 0.1),
+                  color: AppTheme.electricCyan.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                   border: Border.all(
-                    color: AppTheme.primary.withValues(alpha: 0.3),
+                    color: AppTheme.electricCyan.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -141,13 +143,19 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(
-                                      Icons.note_alt_outlined,
-                                      size: 64,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface
-                                          .withValues(alpha: 0.3),
+                                    Container(
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.electricCyan.withValues(
+                                          alpha: 0.12,
+                                        ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.note_alt_outlined,
+                                        size: 56,
+                                        color: AppTheme.electricCyan,
+                                      ),
                                     ),
                                     const SizedBox(height: 16),
                                     Text(
@@ -156,10 +164,10 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                                           .textTheme
                                           .bodyLarge
                                           ?.copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface
-                                                .withValues(alpha: 0.6),
+                                            color: isDark
+                                                ? AppTheme.secondaryText
+                                                : Colors.grey.shade700,
+                                            fontWeight: FontWeight.w600,
                                           ),
                                       textAlign: TextAlign.center,
                                     ),
@@ -192,13 +200,11 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                                       ),
                                       child: Text(
                                         formattedDate,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: AppTheme.primaryDark,
-                                            ),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: AppTheme.electricCyan,
+                                          fontSize: 16,
+                                        ),
                                       ),
                                     ),
                                     ...dateShifts.map((shift) {
@@ -229,14 +235,18 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                                             width: 40,
                                             height: 40,
                                             decoration: BoxDecoration(
-                                              color: AppTheme.primary
-                                                  .withValues(alpha: 0.12),
+                                              color: AppTheme.electricCyan
+                                                  .withValues(alpha: 0.14),
                                               borderRadius:
                                                   BorderRadius.circular(10),
+                                              border: Border.all(
+                                                color: AppTheme.electricCyan
+                                                    .withValues(alpha: 0.25),
+                                              ),
                                             ),
                                             child: Icon(
                                               AppTheme.iconForJobName(jobName),
-                                              color: AppTheme.primaryDark,
+                                              color: AppTheme.electricCyan,
                                               size: 20,
                                             ),
                                           ),
@@ -254,10 +264,10 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                                                 timeStr,
                                                 style: TextStyle(
                                                   fontSize: 12,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onSurface
-                                                      .withValues(alpha: 0.6),
+                                                  fontWeight: FontWeight.w600,
+                                                  color: isDark
+                                                      ? AppTheme.secondaryText
+                                                      : Colors.grey.shade600,
                                                 ),
                                               ),
                                             ],

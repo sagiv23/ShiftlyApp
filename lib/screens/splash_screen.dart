@@ -227,7 +227,11 @@ class _SplashScreenState extends State<SplashScreen>
     final disabledAnimations = MediaQuery.of(context).disableAnimations;
 
     final bgColors = isDark
-        ? [AppTheme.darkCard, AppTheme.darkBackground, const Color(0xFF04060C)]
+        ? [
+            AppTheme.darkCard,
+            AppTheme.darkSecondaryBackground,
+            AppTheme.darkBackground,
+          ]
         : [
             AppTheme.lightBackground,
             const Color(0xFFEEF2F6),
@@ -236,17 +240,17 @@ class _SplashScreenState extends State<SplashScreen>
 
     final titleColor = Theme.of(context).colorScheme.onSurface;
     final cardBg = isDark
-        ? AppTheme.darkCard.withValues(alpha: 0.65)
+        ? AppTheme.darkCard.withValues(alpha: 0.75)
         : AppTheme.lightCard.withValues(alpha: 0.85);
     final cardBorder = isDark
-        ? AppTheme.darkBorder.withValues(alpha: 0.8)
-        : AppTheme.primary.withValues(alpha: 0.18);
+        ? AppTheme.darkBorder
+        : AppTheme.electricCyan.withValues(alpha: 0.2);
 
     return Scaffold(
       body: RepaintBoundary(
         child: Stack(
           children: [
-            // 1. Preloaded Target Screen (MainScreen or AuthScreen) in Background Stack
+            // 1. Preloaded Target Screen in Background Stack
             if (_targetScreen != null)
               Positioned.fill(
                 child: AnimatedBuilder(
@@ -285,7 +289,7 @@ class _SplashScreenState extends State<SplashScreen>
               },
               child: Stack(
                 children: [
-                  // Immersive Radial Gradient Background
+                  // Radial Gradient Background
                   Positioned.fill(
                     child: AnimatedBuilder(
                       animation: _floatController,
@@ -313,7 +317,7 @@ class _SplashScreenState extends State<SplashScreen>
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          // Floating / Moving Icon with Glow
+                          // Floating Icon with Electric Cyan Glow
                           AnimatedBuilder(
                             animation: Listenable.merge([
                               _floatController,
@@ -344,7 +348,7 @@ class _SplashScreenState extends State<SplashScreen>
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
-                                      // Ambient Glow
+                                      // Ambient Electric Cyan Glow
                                       Container(
                                         width: 190 * currentGlowScale,
                                         height: 190 * currentGlowScale,
@@ -352,9 +356,9 @@ class _SplashScreenState extends State<SplashScreen>
                                           shape: BoxShape.circle,
                                           boxShadow: [
                                             BoxShadow(
-                                              color: AppTheme.primary
+                                              color: AppTheme.electricCyan
                                                   .withValues(
-                                                    alpha: isDark ? 0.35 : 0.22,
+                                                    alpha: isDark ? 0.4 : 0.25,
                                                   ),
                                               blurRadius: 60 * currentGlowScale,
                                               spreadRadius:
@@ -396,7 +400,6 @@ class _SplashScreenState extends State<SplashScreen>
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                // App Name (Larger prominent typography)
                                 Text(
                                       l.common_app_name,
                                       style: TextStyle(
@@ -416,14 +419,13 @@ class _SplashScreenState extends State<SplashScreen>
                                     ),
                                 const SizedBox(height: 10),
 
-                                // Tagline (Larger font)
                                 Text(
                                       l.common_tagline,
                                       textAlign: TextAlign.center,
                                       style: const TextStyle(
-                                        color: AppTheme.primary,
+                                        color: AppTheme.electricCyan,
                                         fontSize: 20,
-                                        fontWeight: FontWeight.w700,
+                                        fontWeight: FontWeight.w800,
                                         letterSpacing: 0.9,
                                       ),
                                     )
@@ -437,7 +439,6 @@ class _SplashScreenState extends State<SplashScreen>
                                     ),
                                 const SizedBox(height: 48),
 
-                                // Clean Minimalist Loading Circle
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(50),
                                   child: BackdropFilter(
@@ -456,9 +457,10 @@ class _SplashScreenState extends State<SplashScreen>
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: AppTheme.primary.withValues(
-                                              alpha: isDark ? 0.25 : 0.12,
-                                            ),
+                                            color: AppTheme.electricCyan
+                                                .withValues(
+                                                  alpha: isDark ? 0.25 : 0.12,
+                                                ),
                                             blurRadius: 28,
                                             offset: const Offset(0, 8),
                                           ),
@@ -471,7 +473,7 @@ class _SplashScreenState extends State<SplashScreen>
                                           strokeWidth: 3.0,
                                           valueColor:
                                               AlwaysStoppedAnimation<Color>(
-                                                AppTheme.primary,
+                                                AppTheme.electricCyan,
                                               ),
                                         ),
                                       ),

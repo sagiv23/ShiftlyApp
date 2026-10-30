@@ -2,35 +2,83 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 
-/// Design tokens and Material 3 themes for Shiftly.
+/// Design tokens and Material 3 themes for Shiftly Premium Dark Fintech.
 class AppTheme {
   AppTheme._();
 
-  // ── Brand & Surfaces ──────────────────────────────────────────────
-  static const Color primary = Color(0xFF38BDF8);
-  static const Color primaryDark = Color(0xFF0EA5E9);
-  static const Color primaryGlow = Color(0x5538BDF8);
-
-  static const Color secondary = Color(0xFF818CF8);
-  static const Color tertiary = Color(0xFFC084FC);
+  // ── Shiftly Brand Palette ──────────────────────────────────────────
+  // Backgrounds
+  static const Color darkBackground = Color(0xFF070B18); // Primary Background
+  static const Color darkSecondaryBackground = Color(
+    0xFF0B1224,
+  ); // Secondary Background
+  static const Color darkCard = Color(0xFF111C32); // Elevated Surface
+  static const Color darkSurfaceElevated = Color(
+    0xFF15233D,
+  ); // Alternative Surface
 
   static const Color lightBackground = Color(0xFFF2F5F9);
   static const Color lightCard = Color(0xFFFFFFFF);
   static const Color lightSurfaceElevated = Color(0xFFE9EEF4);
   static const Color lightBorder = Color(0xFFD6DFEB);
 
-  static const Color darkBackground = Color(0xFF0C111B);
-  static const Color darkCard = Color(0xFF131C2E);
-  static const Color darkSurfaceElevated = Color(0xFF1D2A44);
-  static const Color darkBorder = Color(0xFF273856);
+  // Primary Accents
+  static const Color electricCyan = Color(0xFF38E8FF); // Electric Cyan
+  static const Color brightCyan = Color(0xFF00C8F0); // Bright Cyan
+  static const Color primary = electricCyan;
+  static const Color primaryDark = brightCyan;
+  static const Color primaryGlow = Color(0x4D38E8FF);
 
-  // ── Semantic Colors ───────────────────────────────────────────────
-  static const Color profit = Color(0xFF34D399);
-  static const Color profitSoft = Color(0xFF10B981);
-  static const Color expense = Color(0xFFF87171);
-  static const Color expenseSoft = Color(0xFFEF4444);
-  static const Color warning = Color(0xFFFBBF24);
+  // Secondary Accents
+  static const Color neonViolet = Color(0xFF8B5CF6); // Neon Violet
+  static const Color softLavender = Color(0xFFA78BFA); // Soft Lavender
+  static const Color secondary = neonViolet;
+  static const Color tertiary = softLavender;
+
+  // Additional Accents
+  static const Color mintGreen = Color(0xFF45E0B1); // Mint Green
+  static const Color warmAmber = Color(0xFFFFBF69); // Warm Amber
+  static const Color softCoral = Color(0xFFFF718A); // Soft Coral
+
+  // Semantic mappings
+  static const Color profit = mintGreen;
+  static const Color profitSoft = Color(0xFF34D399);
+  static const Color expense = softCoral;
+  static const Color expenseSoft = Color(0xFFF87171);
+  static const Color warning = warmAmber;
   static const Color warningSoft = Color(0xFFF59E0B);
+
+  // Typography Colors
+  static const Color primaryText = Color(0xFFF4F7FF);
+  static const Color secondaryText = Color(0xFFA8B5CC);
+  static const Color mutedText = Color(0xFF78869F);
+
+  // Borders
+  static const Color darkBorder = Color(
+    0x2194B4E6,
+  ); // Subtle Border: rgba(148, 180, 230, 0.13)
+  static const Color highlightBorder = Color(
+    0x4D38E8FF,
+  ); // Highlight Border: rgba(56, 232, 255, 0.3)
+
+  // Gradients
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: [electricCyan, neonViolet],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient cyanGradient = LinearGradient(
+    colors: [electricCyan, brightCyan],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient glassCardGradient = LinearGradient(
+    colors: [Color(0x26111C32), Color(0x1A0B1224)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
 
   // ── Spacing Scale ─────────────────────────────────────────────────
   static const double spaceXs = 8;
@@ -68,19 +116,19 @@ class AppTheme {
       brightness: brightness,
       primary: primary,
       surface: isDark ? darkBackground : lightBackground,
-      onSurface: isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A),
+      onSurface: isDark ? primaryText : const Color(0xFF0F172A),
       surfaceContainerHighest: isDark
           ? darkSurfaceElevated
           : lightSurfaceElevated,
       outline: isDark ? darkBorder : lightBorder,
-      outlineVariant: isDark ? darkBorder.withValues(alpha: 0.6) : lightBorder,
+      outlineVariant: isDark ? highlightBorder : lightBorder,
       error: expenseSoft,
-    ).copyWith(secondary: primaryDark, tertiary: profit);
+    ).copyWith(secondary: secondary, tertiary: profit);
 
     final cardColor = isDark ? darkCard : lightCard;
     final borderColor = isDark ? darkBorder : lightBorder;
     final inputFill = isDark
-        ? darkCard.withValues(alpha: 0.8)
+        ? darkSecondaryBackground
         : const Color(0xFFF1F5F9);
 
     final baseText = Typography.material2021(platform: TargetPlatform.android)
@@ -112,41 +160,55 @@ class AppTheme {
         displayLarge: baseText.displayLarge?.copyWith(
           fontWeight: FontWeight.w900,
           letterSpacing: -1,
+          color: colorScheme.onSurface,
         ),
         displayMedium: baseText.displayMedium?.copyWith(
           fontWeight: FontWeight.w800,
           letterSpacing: -0.5,
+          color: colorScheme.onSurface,
         ),
         headlineLarge: baseText.headlineLarge?.copyWith(
           fontWeight: FontWeight.w800,
           fontSize: 32,
+          color: colorScheme.onSurface,
         ),
         headlineMedium: baseText.headlineMedium?.copyWith(
           fontWeight: FontWeight.w800,
           fontSize: 26,
+          color: colorScheme.onSurface,
         ),
         titleLarge: baseText.titleLarge?.copyWith(
           fontSize: 22,
           fontWeight: FontWeight.bold,
+          color: colorScheme.onSurface,
         ),
         titleMedium: baseText.titleMedium?.copyWith(
           fontSize: 17,
           fontWeight: FontWeight.w700,
+          color: colorScheme.onSurface,
         ),
         titleSmall: baseText.titleSmall?.copyWith(
           fontSize: 14,
           fontWeight: FontWeight.w600,
+          color: isDark ? secondaryText : const Color(0xFF475569),
         ),
-        bodyLarge: baseText.bodyLarge?.copyWith(fontSize: 16),
-        bodyMedium: baseText.bodyMedium?.copyWith(fontSize: 14),
+        bodyLarge: baseText.bodyLarge?.copyWith(
+          fontSize: 16,
+          color: colorScheme.onSurface,
+        ),
+        bodyMedium: baseText.bodyMedium?.copyWith(
+          fontSize: 14,
+          color: colorScheme.onSurface,
+        ),
         bodySmall: baseText.bodySmall?.copyWith(
           fontSize: 12,
           fontWeight: FontWeight.w500,
-          color: colorScheme.onSurface.withValues(alpha: 0.65),
+          color: isDark ? mutedText : const Color(0xFF64748B),
         ),
         labelLarge: baseText.labelLarge?.copyWith(
           fontWeight: FontWeight.w700,
           fontSize: 14,
+          color: colorScheme.onSurface,
         ),
       ),
       appBarTheme: AppBarTheme(
@@ -202,19 +264,19 @@ class AppTheme {
           borderSide: const BorderSide(color: expenseSoft, width: 1.5),
         ),
         labelStyle: TextStyle(
-          color: colorScheme.onSurface.withValues(alpha: 0.75),
+          color: isDark ? secondaryText : const Color(0xFF475569),
           fontWeight: FontWeight.w600,
         ),
         hintStyle: TextStyle(
-          color: colorScheme.onSurface.withValues(alpha: 0.60),
+          color: isDark ? mutedText : const Color(0xFF94A3B8),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          elevation: 2,
+          elevation: 4,
           shadowColor: primaryGlow,
           backgroundColor: primary,
-          foregroundColor: const Color(0xFF07090E),
+          foregroundColor: const Color(0xFF040711),
           minimumSize: const Size(64, 52),
           padding: const EdgeInsets.symmetric(horizontal: spaceMd),
           shape: RoundedRectangleBorder(
@@ -227,7 +289,8 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           minimumSize: const Size(64, 52),
           padding: const EdgeInsets.symmetric(horizontal: spaceMd),
-          side: BorderSide(color: borderColor),
+          side: BorderSide(color: isDark ? highlightBorder : borderColor),
+          foregroundColor: colorScheme.onSurface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusMd),
           ),
@@ -238,6 +301,8 @@ class AppTheme {
         style: FilledButton.styleFrom(
           elevation: 0,
           minimumSize: const Size(64, 52),
+          backgroundColor: isDark ? darkSurfaceElevated : lightSurfaceElevated,
+          foregroundColor: colorScheme.onSurface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusMd),
           ),
@@ -246,9 +311,9 @@ class AppTheme {
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: primary,
-        foregroundColor: const Color(0xFF07090E),
-        elevation: 6,
-        highlightElevation: 10,
+        foregroundColor: const Color(0xFF040711),
+        elevation: 8,
+        highlightElevation: 12,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusLg),
         ),
@@ -261,6 +326,18 @@ class AppTheme {
               borderRadius: BorderRadius.circular(radiusSm),
             ),
           ),
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return primary.withValues(alpha: isDark ? 0.25 : 0.15);
+            }
+            return isDark ? darkSecondaryBackground : lightSurfaceElevated;
+          }),
+          foregroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return primary;
+            }
+            return isDark ? secondaryText : const Color(0xFF475569);
+          }),
         ),
       ),
       chipTheme: ChipThemeData(
@@ -268,25 +345,33 @@ class AppTheme {
         side: BorderSide.none,
         labelPadding: const EdgeInsets.symmetric(horizontal: 8),
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        backgroundColor: isDark ? darkSurfaceElevated : lightSurfaceElevated,
       ),
       dividerTheme: DividerThemeData(
-        color: borderColor.withValues(alpha: 0.6),
+        color: borderColor,
         space: 1,
         thickness: 1,
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
+        backgroundColor: isDark ? darkCard : const Color(0xFF1E293B),
+        contentTextStyle: const TextStyle(
+          color: primaryText,
+          fontWeight: FontWeight.w600,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusSm),
+          side: BorderSide(color: borderColor),
         ),
-        elevation: 6,
+        elevation: 8,
       ),
       dialogTheme: DialogThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusXl),
+          side: BorderSide(color: borderColor),
         ),
         backgroundColor: cardColor,
-        elevation: 12,
+        elevation: 16,
       ),
       listTileTheme: ListTileThemeData(
         shape: RoundedRectangleBorder(
@@ -312,22 +397,24 @@ class AppTheme {
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) return Colors.white;
+          if (states.contains(WidgetState.selected)) {
+            return const Color(0xFF040711);
+          }
           if (states.contains(WidgetState.disabled)) {
             return isDark ? Colors.white24 : Colors.black12;
           }
-          return isDark ? const Color(0xFFCBD5E1) : const Color(0xFF475569);
+          return isDark ? secondaryText : const Color(0xFF475569);
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) return primaryDark;
+          if (states.contains(WidgetState.selected)) return primary;
           if (states.contains(WidgetState.disabled)) {
             return isDark ? Colors.white10 : Colors.black12;
           }
-          return isDark ? const Color(0xFF1E293B) : const Color(0xFFCBD5E1);
+          return isDark ? darkSecondaryBackground : const Color(0xFFCBD5E1);
         }),
         trackOutlineColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) return primaryDark;
-          return isDark ? const Color(0xFF334155) : const Color(0xFF94A3B8);
+          if (states.contains(WidgetState.selected)) return primary;
+          return isDark ? darkBorder : const Color(0xFF94A3B8);
         }),
         trackOutlineWidth: const WidgetStatePropertyAll(1.5),
       ),
@@ -338,7 +425,7 @@ class AppTheme {
       ),
       tabBarTheme: TabBarThemeData(
         labelColor: primary,
-        unselectedLabelColor: colorScheme.onSurface.withValues(alpha: 0.5),
+        unselectedLabelColor: isDark ? secondaryText : const Color(0xFF64748B),
         indicatorColor: primary,
         indicatorSize: TabBarIndicatorSize.label,
         dividerColor: Colors.transparent,
@@ -356,7 +443,7 @@ class AppTheme {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return BoxDecoration(
       color: isDark
-          ? darkCard.withValues(alpha: 0.75)
+          ? darkCard.withValues(alpha: 0.85)
           : Colors.white.withValues(alpha: 0.85),
       borderRadius: BorderRadius.circular(radiusLg),
       border: Border.all(color: isDark ? darkBorder : lightBorder, width: 1),
@@ -373,7 +460,7 @@ class AppTheme {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final defaultBorder = isDark ? darkBorder : lightBorder;
     final defaultFill = isDark
-        ? darkCard.withValues(alpha: 0.75)
+        ? darkCard.withValues(alpha: 0.8)
         : Colors.white.withValues(alpha: 0.85);
 
     return BoxDecoration(
@@ -382,9 +469,9 @@ class AppTheme {
       border: Border.all(color: borderColor ?? defaultBorder, width: 1),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
-          blurRadius: 16,
-          offset: const Offset(0, 6),
+          color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.05),
+          blurRadius: 20,
+          offset: const Offset(0, 8),
         ),
       ],
     );

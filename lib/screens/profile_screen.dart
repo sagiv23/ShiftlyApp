@@ -3,10 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/providers/auth_provider.dart';
-// import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/screens/auth_screen.dart';
-// import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
@@ -25,9 +23,6 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _isLoading = true;
 
-  // bool _isRestoring = false;
-  // bool _isBackingUp = false;
-
   @override
   void initState() {
     super.initState();
@@ -43,14 +38,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(title: Text(l.profile_title)),
         body: const ProfileScreenSkeleton(),
       );
     }
+
     final auth = context.watch<AuthProvider>();
-    // final settings = context.watch<SettingsProvider>();
     final shiftProvider = context.watch<ShiftProvider>();
 
     final shiftsCount = shiftProvider.shifts.length;
@@ -68,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: Icons.access_time_filled_rounded,
           label: l.profile_shifts_count,
           value: shiftsCount.toString(),
-          color: AppTheme.primary,
+          color: AppTheme.electricCyan,
         ),
       );
     }
@@ -78,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: Icons.badge_rounded,
           label: l.profile_jobs_count,
           value: jobsCount.toString(),
-          color: Colors.orange,
+          color: AppTheme.warmAmber,
         ),
       );
     }
@@ -88,7 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: Icons.receipt_long_rounded,
           label: l.profile_expenses_count,
           value: expensesCount.toString(),
-          color: AppTheme.expense,
+          color: AppTheme.softCoral,
         ),
       );
     }
@@ -98,7 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: Icons.account_balance_wallet_rounded,
           label: l.profile_incomes_count,
           value: incomesCount.toString(),
-          color: AppTheme.profit,
+          color: AppTheme.mintGreen,
         ),
       );
     }
@@ -108,7 +105,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: Icons.note_alt_rounded,
           label: l.shift_descriptions_title,
           value: descriptionsCount.toString(),
-          color: Colors.purple,
+          color: AppTheme.neonViolet,
         ),
       );
     }
@@ -128,36 +125,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         padding: const EdgeInsets.all(AppTheme.spaceMd),
                         child: Column(
                           children: [
-                            CircleAvatar(
-                              radius: 36,
-                              backgroundColor: AppTheme.primary,
-                              child: Text(
-                                (auth.userName?.isNotEmpty == true
-                                        ? auth.userName![0]
-                                        : (auth.userEmail?.isNotEmpty == true
-                                              ? auth.userEmail![0]
-                                              : 'U'))
-                                    .toUpperCase(),
-                                style: const TextStyle(
-                                  fontSize: 28,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppTheme.electricCyan.withValues(
+                                      alpha: 0.35,
+                                    ),
+                                    blurRadius: 20,
+                                  ),
+                                ],
+                              ),
+                              child: CircleAvatar(
+                                radius: 38,
+                                backgroundColor: AppTheme.electricCyan,
+                                child: Text(
+                                  (auth.userName?.isNotEmpty == true
+                                          ? auth.userName![0]
+                                          : (auth.userEmail?.isNotEmpty == true
+                                                ? auth.userEmail![0]
+                                                : 'U'))
+                                      .toUpperCase(),
+                                  style: const TextStyle(
+                                    fontSize: 30,
+                                    color: Color(0xFF040711),
+                                    fontWeight: FontWeight.w900,
+                                  ),
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 14),
                             Text(
                               auth.userName ?? l.settings_user_name,
                               style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.bold),
+                                  ?.copyWith(fontWeight: FontWeight.w900),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               auth.userEmail ?? '',
                               style: TextStyle(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withValues(alpha: 0.7),
+                                color: isDark
+                                    ? AppTheme.secondaryText
+                                    : Colors.grey.shade700,
                               ),
                             ),
                             if (auth.userCreatedAt != null) ...[
@@ -172,8 +182,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: Theme.of(context).colorScheme.onSurface
-                                      .withValues(alpha: 0.6),
+                                  color: isDark
+                                      ? AppTheme.mutedText
+                                      : Colors.grey.shade600,
                                 ),
                               ),
                             ],
@@ -196,12 +207,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: Theme.of(context).colorScheme.onSurface
-                                      .withValues(alpha: 0.6),
+                                  color: isDark
+                                      ? AppTheme.mutedText
+                                      : Colors.grey.shade600,
                                 ),
                               ),
                             ],
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 18),
                             Wrap(
                               alignment: WrapAlignment.center,
                               spacing: 12,
@@ -213,8 +225,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   icon: const Icon(
                                     Icons.edit_outlined,
                                     size: 18,
+                                    color: AppTheme.electricCyan,
                                   ),
-                                  label: Text(l.settings_user_edit_title),
+                                  label: Text(
+                                    l.settings_user_edit_title,
+                                    style: const TextStyle(
+                                      color: AppTheme.electricCyan,
+                                    ),
+                                  ),
+                                  style: OutlinedButton.styleFrom(
+                                    side: const BorderSide(
+                                      color: AppTheme.electricCyan,
+                                    ),
+                                  ),
                                 ),
                                 OutlinedButton.icon(
                                   onPressed: () => _handleLogout(context),
@@ -224,7 +247,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   label: Text(l.settings_logout_title),
                                   style: OutlinedButton.styleFrom(
-                                    foregroundColor: AppTheme.primaryDark,
+                                    foregroundColor: AppTheme.softCoral,
+                                    side: BorderSide(
+                                      color: AppTheme.softCoral.withValues(
+                                        alpha: 0.5,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -242,20 +270,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Row(
                               children: [
                                 Container(
-                                  padding: const EdgeInsets.all(8),
+                                  padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: AppTheme.primary.withValues(
-                                      alpha: 0.12,
+                                    color: AppTheme.electricCyan.withValues(
+                                      alpha: 0.14,
                                     ),
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
                                     Icons.person_outline_rounded,
-                                    color: AppTheme.primary,
+                                    color: AppTheme.electricCyan,
                                     size: 28,
                                   ),
                                 ),
-                                const SizedBox(width: 12),
+                                const SizedBox(width: 14),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -275,10 +303,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         l.auth_guest_mode_subtitle,
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface
-                                              .withValues(alpha: 0.7),
+                                          color: isDark
+                                              ? AppTheme.secondaryText
+                                              : Colors.grey.shade600,
                                         ),
                                       ),
                                     ],
@@ -297,11 +324,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 icon: const Icon(
                                   Icons.person_add_rounded,
                                   size: 18,
+                                  color: Color(0xFF040711),
                                 ),
-                                label: Text(l.auth_register_guest_transfer),
+                                label: Text(
+                                  l.auth_register_guest_transfer,
+                                  style: const TextStyle(
+                                    color: Color(0xFF040711),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppTheme.primary,
-                                  foregroundColor: const Color(0xFF0F172A),
+                                  backgroundColor: AppTheme.electricCyan,
                                 ),
                               ),
                             ),
@@ -320,8 +353,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Text(
                       l.profile_stats_title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 16,
+                        color: AppTheme.electricCyan,
                       ),
                     ),
                     const SizedBox(height: AppTheme.spaceXs),
@@ -342,311 +377,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ],
-            const SizedBox(height: AppTheme.spaceLg),
-            /*
-            // BYOS Section
-            PageEntranceAnimation(
-              delayFraction: 0.15,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionHeader(context, l.settings_byos_title),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppTheme.spaceSm),
-                      child: Column(
-                        children: [
-                          if (auth.isByosConnected) ...[
-                            ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: const Icon(
-                                Icons.cloud_done_rounded,
-                                color: Colors.green,
-                              ),
-                              title: Text(l.settings_byos_connected),
-                              subtitle: Text(auth.byosEmail ?? ''),
-                              trailing: TextButton(
-                                onPressed: () => context
-                                    .read<AuthProvider>()
-                                    .disconnectBYOS(),
-                                child: Text(l.settings_byos_disconnect),
-                              ),
-                            ),
-                            SwitchListTile(
-                              contentPadding: EdgeInsets.zero,
-                              title: Text(
-                                l.settings_byos_auto_sync,
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              subtitle: Text(
-                                l.settings_byos_auto_sync_sub,
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                              value: settings.autoSyncEnabled,
-                              onChanged: (val) =>
-                                  settings.setAutoSyncEnabled(val),
-                            ),
-                            if (shiftProvider.lastBackupTime != null)
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 8,
-                                      height: 8,
-                                      decoration: const BoxDecoration(
-                                        color: Colors.green,
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      l.settings_byos_last_backup.replaceFirst(
-                                        '[[time]]',
-                                        DateFormat(
-                                          'dd/MM/yyyy HH:mm:ss',
-                                        ).format(shiftProvider.lastBackupTime!),
-                                      ),
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            Row(
-                              children: [
-                                TextButton.icon(
-                                  onPressed: _isBackingUp
-                                      ? null
-                                      : () async {
-                                          setState(() => _isBackingUp = true);
-                                          try {
-                                            final success = await shiftProvider
-                                                .manualBackup();
-                                            if (context.mounted) {
-                                              if (success) {
-                                                UIUtils.showSnackBar(
-                                                  context,
-                                                  l.common_success,
-                                                );
-                                              } else {
-                                                UIUtils.showSnackBar(
-                                                  context,
-                                                  l.common_error,
-                                                  isError: true,
-                                                );
-                                              }
-                                            }
-                                          } finally {
-                                            if (context.mounted) {
-                                              setState(
-                                                () => _isBackingUp = false,
-                                              );
-                                            }
-                                          }
-                                        },
-                                  icon: _isBackingUp
-                                      ? const SizedBox(
-                                          width: 16,
-                                          height: 16,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : const Icon(
-                                          Icons.cloud_upload_outlined,
-                                          size: 16,
-                                        ),
-                                  label: Text(
-                                    l.settings_byos_backup_now,
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                TextButton.icon(
-                                  onPressed: _isRestoring
-                                      ? null
-                                      : () async {
-                                          final confirmed = await UIUtils.showConfirmDialog(
-                                            context: context,
-                                            title: l
-                                                .settings_byos_restore_dialog_title,
-                                            content: l
-                                                .settings_byos_restore_dialog_content,
-                                            confirmLabel:
-                                                l.settings_byos_restore_confirm,
-                                            cancelLabel:
-                                                l.settings_byos_restore_cancel,
-                                          );
-                                          if (confirmed == true &&
-                                              context.mounted) {
-                                            setState(() => _isRestoring = true);
-                                            try {
-                                              final results =
-                                                  await shiftProvider
-                                                      .restoreFromBYOS();
-                                              if (context.mounted) {
-                                                if (results['shifts']! > 0 ||
-                                                    results['jobs']! > 0 ||
-                                                    results['expenses']! > 0) {
-                                                  UIUtils.showSnackBar(
-                                                    context,
-                                                    l.settings_restore_success
-                                                        .replaceFirst(
-                                                          '[[shifts]]',
-                                                          results['shifts']
-                                                              .toString(),
-                                                        )
-                                                        .replaceFirst(
-                                                          '[[jobs]]',
-                                                          results['jobs']
-                                                              .toString(),
-                                                        ),
-                                                  );
-                                                } else {
-                                                  UIUtils.showSnackBar(
-                                                    context,
-                                                    l.settings_restore_no_data,
-                                                    isError: true,
-                                                  );
-                                                }
-                                              }
-                                            } finally {
-                                              if (context.mounted) {
-                                                setState(
-                                                  () => _isRestoring = false,
-                                                );
-                                              }
-                                            }
-                                          }
-                                        },
-                                  icon: _isRestoring
-                                      ? const SizedBox(
-                                          width: 16,
-                                          height: 16,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : const Icon(
-                                          Icons.cloud_download_outlined,
-                                          size: 16,
-                                        ),
-                                  label: Text(
-                                    l.settings_byos_restore_confirm,
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Divider(height: 24),
-                            ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: const Icon(
-                                Icons.delete_outline_rounded,
-                                color: AppTheme.expense,
-                              ),
-                              title: Text(
-                                l.settings_byos_delete_title,
-                                style: const TextStyle(
-                                  color: AppTheme.expense,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              subtitle: Text(
-                                l.settings_byos_delete_sub,
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                              onTap: () => _handleDeleteBYOS(context),
-                            ),
-                          ] else ...[
-                            ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: const Icon(
-                                Icons.storage_rounded,
-                                color: Colors.orange,
-                              ),
-                              title: Text(l.settings_byos_method_title),
-                              subtitle: Text(l.settings_byos_method_sub),
-                              trailing: ElevatedButton(
-                                onPressed: () async {
-                                  try {
-                                    await auth.connectBYOS();
-                                    if (context.mounted &&
-                                        auth.isByosConnected) {
-                                      final confirmed = await UIUtils.showConfirmDialog(
-                                        context: context,
-                                        title: l
-                                            .settings_byos_restore_dialog_title,
-                                        content: l
-                                            .settings_byos_restore_dialog_content,
-                                        confirmLabel:
-                                            l.settings_byos_restore_confirm,
-                                        cancelLabel:
-                                            l.settings_byos_restore_cancel,
-                                      );
-                                      if (confirmed == true &&
-                                          context.mounted) {
-                                        final results = await shiftProvider
-                                            .restoreFromBYOS();
-                                        if (context.mounted) {
-                                          if (results['shifts']! > 0 ||
-                                              results['jobs']! > 0 ||
-                                              results['expenses']! > 0) {
-                                            UIUtils.showSnackBar(
-                                              context,
-                                              l.settings_restore_success
-                                                  .replaceFirst(
-                                                    '[[shifts]]',
-                                                    results['shifts']
-                                                        .toString(),
-                                                  )
-                                                  .replaceFirst(
-                                                    '[[jobs]]',
-                                                    results['jobs'].toString(),
-                                                  ),
-                                            );
-                                          } else {
-                                            UIUtils.showSnackBar(
-                                              context,
-                                              l.settings_restore_no_data,
-                                              isError: true,
-                                            );
-                                          }
-                                        }
-                                      }
-                                    }
-                                  } catch (e) {
-                                    if (context.mounted) {
-                                      UIUtils.showSnackBar(
-                                        context,
-                                        '${l.settings_byos_title}: ${e.toString().replaceAll('Exception: ', '')}',
-                                        isError: true,
-                                      );
-                                    }
-                                  }
-                                },
-                                child: Text(
-                                  l.settings_byos_disconnect.replaceFirst(
-                                    'נתק',
-                                    'חבר',
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            */
             if (auth.isLoggedIn) ...[
               const SizedBox(height: AppTheme.spaceLg),
               PageEntranceAnimation(
@@ -654,7 +384,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSectionHeader(context, l.settings_section_danger),
+                    Text(
+                      l.settings_section_danger,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 16,
+                        color: AppTheme.softCoral,
+                      ),
+                    ),
                     const SizedBox(height: AppTheme.spaceXs),
                     Card(
                       child: ScalePress(
@@ -663,14 +400,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           title: Text(
                             l.profile_delete_account,
                             style: const TextStyle(
-                              color: AppTheme.expense,
+                              color: AppTheme.softCoral,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           subtitle: Text(l.profile_delete_account_sub),
                           leading: const Icon(
                             Icons.delete_forever_rounded,
-                            color: AppTheme.expense,
+                            color: AppTheme.softCoral,
                           ),
                           onTap: () => _handleDeleteAccount(context),
                         ),
@@ -682,16 +419,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(BuildContext context, String title) {
-    return Text(
-      title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.bold,
-        letterSpacing: 0.2,
       ),
     );
   }
@@ -714,79 +441,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  /*
-  Future<void> _handleDeleteBYOS(BuildContext context) async {
-    final l = AppLocalizations.of(context)!;
-    // Step 1: First Confirmation
-    final confirmed = await UIUtils.showConfirmDialog(
-      context: context,
-      title: l.settings_byos_delete_dialog_title,
-      content: l.settings_byos_delete_dialog_content,
-      confirmLabel: l.common_continue,
-      isDestructive: true,
-    );
-
-    if (confirmed != true) return;
-    if (!context.mounted) return;
-
-    // Step 2: Second Confirmation (Final Warning)
-    final finalConfirm = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Row(
-          children: [
-            const Icon(Icons.warning_amber_rounded, color: AppTheme.expense),
-            const SizedBox(width: 8),
-            Expanded(child: Text(l.settings_byos_delete_final_title)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(l.settings_byos_delete_final_content_1),
-            const SizedBox(height: 16),
-            Text(
-              l.settings_byos_delete_final_content_2,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(
-              l.common_cancel,
-              style: const TextStyle(color: Colors.grey),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.expense,
-              foregroundColor: Colors.white,
-            ),
-            child: Text(l.common_delete),
-          ),
-        ],
-      ),
-    );
-
-    if (finalConfirm != true) return;
-    if (!context.mounted) return;
-
-    final driveService = GoogleDriveService();
-    await driveService.deleteBackup();
-    if (context.mounted && context.read<AuthProvider>().isByosConnected) {
-      await context.read<AuthProvider>().disconnectBYOS();
-    }
-
-    if (!context.mounted) return;
-
-    UIUtils.showSnackBar(context, l.settings_byos_delete_success);
-  }
-  */
-
   Future<void> _handleDeleteAccount(BuildContext context) async {
     final l = AppLocalizations.of(context)!;
     final confirmed = await UIUtils.showConfirmDialog(
@@ -805,7 +459,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            const Icon(Icons.warning_amber_rounded, color: AppTheme.expense),
+            const Icon(Icons.warning_amber_rounded, color: AppTheme.softCoral),
             const SizedBox(width: 8),
             Expanded(child: Text(l.profile_delete_final_title)),
           ],
@@ -833,7 +487,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.expense,
+              backgroundColor: AppTheme.softCoral,
               foregroundColor: Colors.white,
             ),
             child: Text(l.common_delete),
@@ -913,6 +567,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       suffixIcon: const Icon(
                         Icons.calendar_today_rounded,
                         size: 18,
+                        color: AppTheme.electricCyan,
                       ),
                     ),
                     child: Text(
@@ -1061,11 +716,12 @@ class _StatRow extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 38,
-          height: 38,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(10),
+            color: color.withValues(alpha: 0.14),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: color.withValues(alpha: 0.25)),
           ),
           child: Icon(icon, color: color, size: 20),
         ),
@@ -1073,14 +729,14 @@ class _StatRow extends StatelessWidget {
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
         Text(
           value,
           style: TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w900,
             color: color,
             fontFeatures: const [FontFeature.tabularFigures()],
           ),

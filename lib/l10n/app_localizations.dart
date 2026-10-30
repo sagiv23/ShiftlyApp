@@ -2069,37 +2069,37 @@ abstract class AppLocalizations {
   /// No description provided for @analytics_chart_tod_dawn.
   ///
   /// In he, this message translates to:
-  /// **'לפנות בוקר (04:00-06:00)'**
+  /// **'לפנות בוקר'**
   String get analytics_chart_tod_dawn;
 
   /// No description provided for @analytics_chart_tod_morning.
   ///
   /// In he, this message translates to:
-  /// **'בוקר (06:00-12:00)'**
+  /// **'בוקר'**
   String get analytics_chart_tod_morning;
 
   /// No description provided for @analytics_chart_tod_noon.
   ///
   /// In he, this message translates to:
-  /// **'צהריים (12:00-16:00)'**
+  /// **'צהריים'**
   String get analytics_chart_tod_noon;
 
   /// No description provided for @analytics_chart_tod_afternoon.
   ///
   /// In he, this message translates to:
-  /// **'אחר הצהריים (16:00-18:00)'**
+  /// **'אחר הצהריים'**
   String get analytics_chart_tod_afternoon;
 
   /// No description provided for @analytics_chart_tod_evening.
   ///
   /// In he, this message translates to:
-  /// **'ערב (18:00-22:00)'**
+  /// **'ערב'**
   String get analytics_chart_tod_evening;
 
   /// No description provided for @analytics_chart_tod_night.
   ///
   /// In he, this message translates to:
-  /// **'לילה (22:00-06:00)'**
+  /// **'לילה'**
   String get analytics_chart_tod_night;
 
   /// No description provided for @analytics_chart_duration_title.
