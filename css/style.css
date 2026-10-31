@@ -327,8 +327,9 @@ body {
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 24px;
   list-style: none;
+  margin: 0 40px;
 }
 
 .nav-link {
