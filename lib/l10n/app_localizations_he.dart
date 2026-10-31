@@ -553,7 +553,7 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get add_shift_paste_format_info =>
-      'פורמט: DD.MM.YYYY - HH:mm - HH:mm [הפסקה] [+ tips]\nהפסקות: ללא / 20 דקות / 45 דקות';
+      'פורמט: DD.MM (או DD.MM.YYYY) - HH:mm - HH:mm [הפסקה] [+ tips]\n(אם לא תצוין שנה, תושב אוטומטית השנה הנוכחית)';
 
   @override
   String get add_shift_paste_hint =>
@@ -1602,4 +1602,7 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String get settings_accessibility_sub =>
       'מידע על נגישות האפליקציה ודרכי פנייה';
+
+  @override
+  String get all_shifts_title => 'כל המשמרות';
 }

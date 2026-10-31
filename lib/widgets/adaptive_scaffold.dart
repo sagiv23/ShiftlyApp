@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
@@ -154,17 +156,7 @@ class AdaptiveScaffold extends StatelessWidget {
     Widget mainScaffold;
     if (!isDesktopOrWide) {
       mainScaffold = Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Semantics(
-            header: true,
-            child:
-                titleWidget ??
-                (title != null ? Text(title!) : Text(l.common_app_name)),
-          ),
-          bottom: bottom,
-          actions: actions,
-        ),
+        appBar: _buildAppBar(context, l),
         // In Hebrew RTL mode, standard drawer opens from the RIGHT side
         drawer: Drawer(
           backgroundColor: isDark
@@ -186,43 +178,36 @@ class AdaptiveScaffold extends StatelessWidget {
             ),
           ),
         ),
-        body: body,
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            color: isDark
-                ? AppTheme.darkSecondaryBackground
-                : AppTheme.lightCard,
-            border: Border(
-              top: BorderSide(
-                color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
-                width: 1,
+        body: ResponsivePageBody(child: body),
+        bottomNavigationBar: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+            child: _FrostedSurface(
+              borderRadius: BorderRadius.circular(26),
+              child: BottomNavigationBar(
+                currentIndex: activeIndex,
+                onTap: (index) => scope?.onTabSelected(index),
+                type: BottomNavigationBarType.fixed,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                selectedFontSize: 12,
+                unselectedFontSize: 11,
+                selectedItemColor: AppTheme.electricCyan,
+                unselectedItemColor: isDark
+                    ? AppTheme.secondaryText
+                    : Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.55),
+                selectedLabelStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+                unselectedLabelStyle: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
+                items: navItems,
               ),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.08),
-                blurRadius: 20,
-                offset: const Offset(0, -4),
-              ),
-            ],
-          ),
-          child: BottomNavigationBar(
-            currentIndex: activeIndex,
-            onTap: (index) => scope?.onTabSelected(index),
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            selectedFontSize: 12,
-            unselectedFontSize: 11,
-            selectedItemColor: AppTheme.electricCyan,
-            unselectedItemColor: isDark
-                ? AppTheme.secondaryText
-                : Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.55),
-            selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-            unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
-            items: navItems,
           ),
         ),
         floatingActionButton: floatingActionButton,
@@ -230,18 +215,8 @@ class AdaptiveScaffold extends StatelessWidget {
       );
     } else {
       mainScaffold = Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Semantics(
-            header: true,
-            child:
-                titleWidget ??
-                (title != null ? Text(title!) : Text(l.common_app_name)),
-          ),
-          bottom: bottom,
-          actions: actions,
-        ),
-        body: body,
+        appBar: _buildAppBar(context, l),
+        body: ResponsivePageBody(child: body),
         floatingActionButton: floatingActionButton,
         floatingActionButtonLocation: floatingActionButtonLocation,
       );
@@ -252,6 +227,106 @@ class AdaptiveScaffold extends StatelessWidget {
     }
 
     return Stack(children: [mainScaffold, const CookieConsentBanner()]);
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context, AppLocalizations l) {
+    return AppBar(
+      centerTitle: true,
+      title: Semantics(
+        header: true,
+        child:
+            titleWidget ??
+            (title != null ? Text(title!) : Text(l.common_app_name)),
+      ),
+      bottom: bottom,
+      actions: actions,
+      flexibleSpace: const _AppBarMaterial(),
+    );
+  }
+}
+
+/// Shared translucent chrome. It creates depth without hiding the content
+/// hierarchy, and automatically becomes more solid in high contrast modes.
+class _FrostedSurface extends StatelessWidget {
+  final Widget child;
+  final BorderRadius borderRadius;
+
+  const _FrostedSurface({required this.child, required this.borderRadius});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final highContrast = MediaQuery.of(context).highContrast;
+    final opacity = highContrast ? 0.98 : (isDark ? 0.84 : 0.88);
+    final color =
+        (isDark ? AppTheme.darkSecondaryBackground : AppTheme.lightCard)
+            .withValues(alpha: opacity);
+    return ClipRRect(
+      borderRadius: borderRadius,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: highContrast ? 0 : 18,
+          sigmaY: highContrast ? 0 : 18,
+        ),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: color,
+            border: Border(
+              top: BorderSide(
+                color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+              ),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.28 : 0.07),
+                blurRadius: 22,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+class _AppBarMaterial extends StatelessWidget {
+  const _AppBarMaterial();
+
+  @override
+  Widget build(BuildContext context) => const _FrostedSurface(
+    borderRadius: BorderRadius.zero,
+    child: SizedBox.expand(),
+  );
+}
+
+/// Keeps reading, forms and financial data comfortably scannable on desktop
+/// while preserving the full-width, edge-to-edge mobile experience.
+class ResponsivePageBody extends StatelessWidget {
+  final Widget child;
+  final double maxWidth;
+
+  const ResponsivePageBody({
+    super.key,
+    required this.child,
+    this.maxWidth = 1180,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 900) return child;
+        return Align(
+          alignment: Alignment.topCenter,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            child: child,
+          ),
+        );
+      },
+    );
   }
 }
 

@@ -313,180 +313,199 @@ class _SplashScreenState extends State<SplashScreen>
 
                   // Content Layout
                   SafeArea(
-                    child: Center(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          // Floating Icon with Electric Cyan Glow
-                          AnimatedBuilder(
-                            animation: Listenable.merge([
-                              _floatController,
-                              _exitController,
-                            ]),
-                            builder: (context, child) {
-                              final floatY =
-                                  (disabledAnimations ||
-                                      _exitController.isAnimating ||
-                                      _exitController.isCompleted)
-                                  ? 0.0
-                                  : math.sin(
-                                          _floatController.value * 2 * math.pi,
-                                        ) *
-                                        6.0;
-
-                              final currentOffset =
-                                  _iconOffsetAnimation.value +
-                                  Offset(0, floatY);
-                              final currentScale = _iconScaleAnimation.value;
-                              final currentGlowScale =
-                                  _glowScaleAnimation.value;
-
-                              return Transform.translate(
-                                offset: currentOffset,
-                                child: Transform.scale(
-                                  scale: currentScale,
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      // Ambient Electric Cyan Glow
-                                      Container(
-                                        width: 190 * currentGlowScale,
-                                        height: 190 * currentGlowScale,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: AppTheme.electricCyan
-                                                  .withValues(
-                                                    alpha: isDark ? 0.4 : 0.25,
-                                                  ),
-                                              blurRadius: 60 * currentGlowScale,
-                                              spreadRadius:
-                                                  15 * currentGlowScale,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      EssentialWorkIcon(
-                                        size: 135,
-                                        symbol: currencySymbol,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
+                    child: LayoutBuilder(
+                      builder: (context, constraints) => Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: constraints.maxWidth < 600
+                                ? constraints.maxWidth
+                                : 560,
                           ),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Floating Icon with Electric Cyan Glow
+                              AnimatedBuilder(
+                                animation: Listenable.merge([
+                                  _floatController,
+                                  _exitController,
+                                ]),
+                                builder: (context, child) {
+                                  final floatY =
+                                      (disabledAnimations ||
+                                          _exitController.isAnimating ||
+                                          _exitController.isCompleted)
+                                      ? 0.0
+                                      : math.sin(
+                                              _floatController.value *
+                                                  2 *
+                                                  math.pi,
+                                            ) *
+                                            6.0;
 
-                          // Text & Loading Circle Column
-                          AnimatedBuilder(
-                            animation: _exitController,
-                            builder: (context, child) {
-                              final textOpacity = _textOpacityAnimation.value
-                                  .clamp(0.0, 1.0);
-                              if (textOpacity <= 0.0) {
-                                return const SizedBox.shrink();
-                              }
-                              return Transform.translate(
-                                offset:
-                                    const Offset(0, 110) +
-                                    _textSlideAnimation.value * 100,
-                                child: Opacity(
-                                  opacity: textOpacity,
-                                  child: child,
-                                ),
-                              );
-                            },
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                      l.common_app_name,
-                                      style: TextStyle(
-                                        color: titleColor,
-                                        fontSize: 52,
-                                        fontWeight: FontWeight.w900,
-                                        letterSpacing: 2.0,
-                                      ),
-                                    )
-                                    .animate()
-                                    .fadeIn(duration: 400.ms)
-                                    .slideY(
-                                      begin: 0.2,
-                                      end: 0,
-                                      duration: 400.ms,
-                                      curve: Curves.easeOutCubic,
-                                    ),
-                                const SizedBox(height: 10),
+                                  final currentOffset =
+                                          _iconOffsetAnimation.value +
+                                              Offset(0, floatY);
+                                      final currentScale =
+                                          _iconScaleAnimation.value;
+                                      final currentGlowScale =
+                                          _glowScaleAnimation.value;
 
-                                Text(
-                                      l.common_tagline,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: AppTheme.electricCyan,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w800,
-                                        letterSpacing: 0.9,
-                                      ),
-                                    )
-                                    .animate()
-                                    .fadeIn(delay: 100.ms, duration: 400.ms)
-                                    .slideY(
-                                      begin: 0.2,
-                                      end: 0,
-                                      duration: 400.ms,
-                                      curve: Curves.easeOutCubic,
-                                    ),
-                                const SizedBox(height: 48),
-
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(50),
-                                  child: BackdropFilter(
-                                    filter: ui.ImageFilter.blur(
-                                      sigmaX: 16,
-                                      sigmaY: 16,
-                                    ),
-                                    child: Container(
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        color: cardBg,
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: cardBorder,
-                                          width: 1.5,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: AppTheme.electricCyan
-                                                .withValues(
-                                                  alpha: isDark ? 0.25 : 0.12,
+                                  return Transform.translate(
+                                    offset: currentOffset,
+                                    child: Transform.scale(
+                                      scale: currentScale,
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          // Ambient Electric Cyan Glow
+                                          Container(
+                                            width: 190 * currentGlowScale,
+                                            height: 190 * currentGlowScale,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: AppTheme.electricCyan
+                                                      .withValues(
+                                                        alpha: isDark
+                                                            ? 0.4
+                                                            : 0.25,
+                                                      ),
+                                                  blurRadius:
+                                                      60 * currentGlowScale,
+                                                  spreadRadius:
+                                                      15 * currentGlowScale,
                                                 ),
-                                            blurRadius: 28,
-                                            offset: const Offset(0, 8),
+                                              ],
+                                            ),
+                                          ),
+                                          EssentialWorkIcon(
+                                            size: 135,
+                                            symbol: currencySymbol,
                                           ),
                                         ],
                                       ),
-                                      child: const SizedBox(
-                                        width: 28,
-                                        height: 28,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 3.0,
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                AppTheme.electricCyan,
-                                              ),
+                                    ),
+                                  );
+                                },
+                              ),
+
+                              // Text & Loading Circle Column
+                                  AnimatedBuilder(
+                                    animation: _exitController,
+                                    builder: (context, child) {
+                                      final textOpacity = _textOpacityAnimation
+                                          .value
+                                          .clamp(0.0, 1.0);
+                                      if (textOpacity <= 0.0) {
+                                        return const SizedBox.shrink();
+                                      }
+                                      return Transform.translate(
+                                        offset:
+                                        const Offset(0, 110) +
+                                            _textSlideAnimation.value * 100,
+                                        child: Opacity(
+                                          opacity: textOpacity,
+                                          child: child,
                                         ),
-                                      ),
+                                      );
+                                    },
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          l.common_app_name,
+                                          style: TextStyle(
+                                            color: titleColor,
+                                            fontSize: 52,
+                                            fontWeight: FontWeight.w900,
+                                            letterSpacing: 2.0,
+                                          ),
+                                        )
+                                            .animate()
+                                            .fadeIn(duration: 400.ms)
+                                            .slideY(
+                                          begin: 0.2,
+                                          end: 0,
+                                          duration: 400.ms,
+                                          curve: Curves.easeOutCubic,
+                                        ),
+                                        const SizedBox(height: 10),
+
+                                    Text(
+                                          l.common_tagline,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            color: AppTheme.electricCyan,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w800,
+                                            letterSpacing: 0.9,
+                                          ),
+                                        )
+                                        .animate()
+                                        .fadeIn(delay: 100.ms, duration: 400.ms)
+                                        .slideY(
+                                          begin: 0.2,
+                                          end: 0,
+                                          duration: 400.ms,
+                                          curve: Curves.easeOutCubic,
+                                        ),
+                                    const SizedBox(height: 48),
+
+                                    ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                              50),
+                                          child: BackdropFilter(
+                                            filter: ui.ImageFilter.blur(
+                                              sigmaX: 16,
+                                              sigmaY: 16,
+                                            ),
+                                            child: Container(
+                                              padding: const EdgeInsets.all(16),
+                                              decoration: BoxDecoration(
+                                                color: cardBg,
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: cardBorder,
+                                                  width: 1.5,
+                                                ),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: AppTheme.electricCyan
+                                                        .withValues(
+                                                      alpha: isDark
+                                                          ? 0.25
+                                                          : 0.12,
+                                                    ),
+                                                    blurRadius: 28,
+                                                    offset: const Offset(0, 8),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: const SizedBox(
+                                                width: 28,
+                                                height: 28,
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 3.0,
+                                                  valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                    AppTheme.electricCyan,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ).animate().fadeIn(
+                                          delay: 200.ms,
+                                          duration: 400.ms,
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ).animate().fadeIn(
-                                  delay: 200.ms,
-                                  duration: 400.ms,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
                       ),
                     ),
                   ),

@@ -340,355 +340,363 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
           ),
         ),
         child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(32),
-            child: SlideTransition(
-              position: _slideAnimation,
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Animated Glowing Icon
-                      AnimatedBuilder(
-                        animation: _glowController,
-                        builder: (context, child) {
-                          final glow =
-                              0.35 +
-                              (0.25 *
-                                  math.sin(_glowController.value * math.pi));
-                          return Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Container(
-                                width: 110,
-                                height: 110,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppTheme.electricCyan.withValues(
-                                        alpha: isDark ? glow : glow * 0.5,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 460),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(32),
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Animated Glowing Icon
+                        AnimatedBuilder(
+                          animation: _glowController,
+                          builder: (context, child) {
+                            final glow =
+                                0.35 +
+                                (0.25 *
+                                    math.sin(_glowController.value * math.pi));
+                            return Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  width: 110,
+                                  height: 110,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppTheme.electricCyan.withValues(
+                                          alpha: isDark ? glow : glow * 0.5,
+                                        ),
+                                        blurRadius: 36,
+                                        spreadRadius: 8,
                                       ),
-                                      blurRadius: 36,
-                                      spreadRadius: 8,
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              EssentialWorkIcon(
-                                size: 80,
-                                symbol: context
-                                    .watch<SettingsProvider>()
-                                    .currencySymbol,
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 24),
+                                EssentialWorkIcon(
+                                  size: 80,
+                                  symbol: context
+                                      .watch<SettingsProvider>()
+                                      .currencySymbol,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 24),
 
-                      // Title
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        transitionBuilder: (child, anim) {
-                          return FadeTransition(
-                            opacity: anim,
-                            child: SlideTransition(
-                              position: Tween<Offset>(
-                                begin: const Offset(0, 0.2),
-                                end: Offset.zero,
-                              ).animate(anim),
-                              child: child,
+                        // Title
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          transitionBuilder: (child, anim) {
+                            return FadeTransition(
+                              opacity: anim,
+                              child: SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(0, 0.2),
+                                  end: Offset.zero,
+                                ).animate(anim),
+                                child: child,
+                              ),
+                            );
+                          },
+                          child: Text(
+                            isLogin
+                                ? l.auth_login_title
+                                : l.auth_register_title,
+                            key: ValueKey(isLogin),
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: 28,
+                              fontWeight: FontWeight.w900,
                             ),
-                          );
-                        },
-                        child: Text(
-                          isLogin ? l.auth_login_title : l.auth_register_title,
-                          key: ValueKey(isLogin),
-                          style: TextStyle(
-                            color: textColor,
-                            fontSize: 28,
-                            fontWeight: FontWeight.w900,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 32),
+                        const SizedBox(height: 32),
 
-                      // Expansion for Register Fields
-                      AnimatedSize(
-                        duration: const Duration(milliseconds: 320),
-                        curve: Curves.easeInOutCubic,
-                        child: !isLogin
-                            ? Column(
-                                children: [
-                                  TextFormField(
-                                    controller: _nameController,
-                                    style: TextStyle(color: textColor),
-                                    decoration: _buildInputDecoration(
-                                      label: l.auth_full_name_label,
-                                      hint: l.auth_full_name_label,
-                                      icon: Icons.person_outline,
-                                      isDark: isDark,
-                                      inputFill: inputFill,
-                                      inputBorderColor: inputBorderColor,
-                                      subtextColor: subtextColor,
-                                      mutedTextColor: mutedTextColor,
+                        // Expansion for Register Fields
+                        AnimatedSize(
+                          duration: const Duration(milliseconds: 320),
+                          curve: Curves.easeInOutCubic,
+                          child: !isLogin
+                              ? Column(
+                                  children: [
+                                    TextFormField(
+                                      controller: _nameController,
+                                      style: TextStyle(color: textColor),
+                                      decoration: _buildInputDecoration(
+                                        label: l.auth_full_name_label,
+                                        hint: l.auth_full_name_label,
+                                        icon: Icons.person_outline,
+                                        isDark: isDark,
+                                        inputFill: inputFill,
+                                        inputBorderColor: inputBorderColor,
+                                        subtextColor: subtextColor,
+                                        mutedTextColor: mutedTextColor,
+                                      ),
+                                      validator: (value) =>
+                                          value == null || value.isEmpty
+                                          ? l.auth_error_name_empty
+                                          : null,
                                     ),
-                                    validator: (value) =>
-                                        value == null || value.isEmpty
-                                        ? l.auth_error_name_empty
-                                        : null,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  InkWell(
-                                    onTap: () async {
-                                      final picked =
-                                          await AppDatePicker.showBirthDatePicker(
-                                            context: context,
-                                            initialDate: _selectedBirthDate,
-                                          );
-                                      if (picked != null) {
-                                        setState(() {
-                                          _selectedBirthDate = picked;
-                                        });
-                                      }
-                                    },
-                                    child: InputDecorator(
-                                      decoration:
-                                          _buildInputDecoration(
-                                            label: l.auth_birth_date_label,
-                                            hint: l.auth_birth_date_label,
-                                            icon: Icons.cake_outlined,
-                                            isDark: isDark,
-                                            inputFill: inputFill,
-                                            inputBorderColor: inputBorderColor,
-                                            subtextColor: subtextColor,
-                                            mutedTextColor: mutedTextColor,
-                                          ).copyWith(
-                                            suffixIcon: const Icon(
-                                              Icons.calendar_today_rounded,
-                                              color: AppTheme.electricCyan,
-                                            ),
-                                          ),
-                                      child: Text(
-                                        _selectedBirthDate == null
-                                            ? l.auth_birth_date_label
-                                            : AppConstants.formatDate(
-                                                _selectedBirthDate,
+                                    const SizedBox(height: 16),
+                                    InkWell(
+                                      onTap: () async {
+                                        final picked =
+                                            await AppDatePicker.showBirthDatePicker(
+                                              context: context,
+                                              initialDate: _selectedBirthDate,
+                                            );
+                                        if (picked != null) {
+                                          setState(() {
+                                            _selectedBirthDate = picked;
+                                          });
+                                        }
+                                      },
+                                      child: InputDecorator(
+                                        decoration:
+                                            _buildInputDecoration(
+                                              label: l.auth_birth_date_label,
+                                              hint: l.auth_birth_date_label,
+                                              icon: Icons.cake_outlined,
+                                              isDark: isDark,
+                                              inputFill: inputFill,
+                                              inputBorderColor:
+                                                  inputBorderColor,
+                                              subtextColor: subtextColor,
+                                              mutedTextColor: mutedTextColor,
+                                            ).copyWith(
+                                              suffixIcon: const Icon(
+                                                Icons.calendar_today_rounded,
+                                                color: AppTheme.electricCyan,
                                               ),
-                                        style: TextStyle(
-                                          color: _selectedBirthDate == null
-                                              ? mutedTextColor
-                                              : textColor,
+                                            ),
+                                        child: Text(
+                                          _selectedBirthDate == null
+                                              ? l.auth_birth_date_label
+                                              : AppConstants.formatDate(
+                                                  _selectedBirthDate,
+                                                ),
+                                          style: TextStyle(
+                                            color: _selectedBirthDate == null
+                                                ? mutedTextColor
+                                                : textColor,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                ],
-                              )
-                            : const SizedBox.shrink(),
-                      ),
-
-                      TextFormField(
-                        controller: _emailController,
-                        style: TextStyle(color: textColor),
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: _buildInputDecoration(
-                          label: l.auth_email_label,
-                          hint: 'name@example.com',
-                          icon: Icons.email_outlined,
-                          isDark: isDark,
-                          inputFill: inputFill,
-                          inputBorderColor: inputBorderColor,
-                          subtextColor: subtextColor,
-                          mutedTextColor: mutedTextColor,
+                                    const SizedBox(height: 16),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
                         ),
-                        validator: (value) {
-                          if (value == null || !value.contains('@')) {
-                            return l.auth_error_email_invalid;
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
 
-                      TextFormField(
-                        controller: _passwordController,
-                        style: TextStyle(color: textColor),
-                        obscureText: _obscurePassword,
-                        decoration: _buildInputDecoration(
-                          label: l.auth_password_label,
-                          hint: '••••••••',
-                          icon: Icons.lock_outline,
-                          isDark: isDark,
-                          inputFill: inputFill,
-                          inputBorderColor: inputBorderColor,
-                          subtextColor: subtextColor,
-                          mutedTextColor: mutedTextColor,
-                          suffixIcon: IconButton(
-                            tooltip: _obscurePassword
-                                ? l.common_show_password
-                                : l.common_hide_password,
-                            icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility_outlined
-                                  : Icons.visibility_off_outlined,
-                              color: subtextColor,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _obscurePassword = !_obscurePassword;
-                              });
-                            },
+                        TextFormField(
+                          controller: _emailController,
+                          style: TextStyle(color: textColor),
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: _buildInputDecoration(
+                            label: l.auth_email_label,
+                            hint: 'name@example.com',
+                            icon: Icons.email_outlined,
+                            isDark: isDark,
+                            inputFill: inputFill,
+                            inputBorderColor: inputBorderColor,
+                            subtextColor: subtextColor,
+                            mutedTextColor: mutedTextColor,
                           ),
+                          validator: (value) {
+                            if (value == null || !value.contains('@')) {
+                              return l.auth_error_email_invalid;
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (value) {
-                          if (value == null || value.length < 6) {
-                            return l.auth_error_password_length;
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 32),
+                        const SizedBox(height: 16),
 
-                      SizedBox(
-                        width: double.infinity,
-                        height: 52,
-                        child: ScalePress(
-                          onTap: _isLoading ? null : _submit,
-                          child: ElevatedButton(
-                            onPressed: _isLoading ? null : _submit,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.electricCyan,
-                              foregroundColor: const Color(0xFF040711),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
+                        TextFormField(
+                          controller: _passwordController,
+                          style: TextStyle(color: textColor),
+                          obscureText: _obscurePassword,
+                          decoration: _buildInputDecoration(
+                            label: l.auth_password_label,
+                            hint: '••••••••',
+                            icon: Icons.lock_outline,
+                            isDark: isDark,
+                            inputFill: inputFill,
+                            inputBorderColor: inputBorderColor,
+                            subtextColor: subtextColor,
+                            mutedTextColor: mutedTextColor,
+                            suffixIcon: IconButton(
+                              tooltip: _obscurePassword
+                                  ? l.common_show_password
+                                  : l.common_hide_password,
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_outlined
+                                    : Icons.visibility_off_outlined,
+                                color: subtextColor,
                               ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
                             ),
-                            child: _isLoading
-                                ? const SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                      color: Color(0xFF040711),
-                                      strokeWidth: 2.5,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.length < 6) {
+                              return l.auth_error_password_length;
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 32),
+
+                        SizedBox(
+                          width: double.infinity,
+                          height: 52,
+                          child: ScalePress(
+                            onTap: _isLoading ? null : _submit,
+                            child: ElevatedButton(
+                              onPressed: _isLoading ? null : _submit,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.electricCyan,
+                                foregroundColor: const Color(0xFF040711),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: _isLoading
+                                  ? const SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        color: Color(0xFF040711),
+                                        strokeWidth: 2.5,
+                                      ),
+                                    )
+                                  : Text(
+                                      isLogin
+                                          ? l.auth_login_button
+                                          : l.auth_register_button,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w800,
+                                      ),
                                     ),
-                                  )
-                                : Text(
-                                    isLogin
-                                        ? l.auth_login_button
-                                        : l.auth_register_button,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      TextButton(
-                        onPressed: _isLoading ? null : _switchAuthMode,
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 250),
-                          child: Text(
-                            isLogin
-                                ? l.auth_no_account_link
-                                : l.auth_has_account_link,
-                            key: ValueKey(isLogin),
-                            style: const TextStyle(
-                              color: AppTheme.electricCyan,
-                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
+                        const SizedBox(height: 16),
 
-                      SizedBox(
-                        width: double.infinity,
-                        height: 48,
-                        child: OutlinedButton.icon(
-                          onPressed: _isLoading ? null : _continueAsGuest,
-                          icon: Icon(
-                            Icons.person_outline_rounded,
-                            color: subtextColor,
-                          ),
-                          label: Text(
-                            l.auth_continue_as_guest,
-                            style: TextStyle(
-                              color: textColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: inputBorderColor),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Legal Disclaimer & Links
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          l.legal_disclaimer_notice,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: isDark
-                                ? AppTheme.mutedText
-                                : textColor.withValues(alpha: 0.6),
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () => LegalUtils.showTermsOfService(context),
+                        TextButton(
+                          onPressed: _isLoading ? null : _switchAuthMode,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 250),
                             child: Text(
-                              l.legal_terms_of_service,
+                              isLogin
+                                  ? l.auth_no_account_link
+                                  : l.auth_has_account_link,
+                              key: ValueKey(isLogin),
                               style: const TextStyle(
                                 color: AppTheme.electricCyan,
-                                fontSize: 12,
-                                decoration: TextDecoration.underline,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                          Text(
-                            '  •  ',
+                        ),
+                        const SizedBox(height: 12),
+
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: OutlinedButton.icon(
+                            onPressed: _isLoading ? null : _continueAsGuest,
+                            icon: Icon(
+                              Icons.person_outline_rounded,
+                              color: subtextColor,
+                            ),
+                            label: Text(
+                              l.auth_continue_as_guest,
+                              style: TextStyle(
+                                color: textColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: inputBorderColor),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Legal Disclaimer & Links
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            l.legal_disclaimer_notice,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               color: isDark
                                   ? AppTheme.mutedText
-                                  : textColor.withValues(alpha: 0.38),
+                                  : textColor.withValues(alpha: 0.6),
                               fontSize: 12,
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () => LegalUtils.showPrivacyPolicy(context),
-                            child: Text(
-                              l.legal_privacy_policy,
-                              style: const TextStyle(
-                                color: AppTheme.electricCyan,
-                                fontSize: 12,
-                                decoration: TextDecoration.underline,
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () =>
+                                  LegalUtils.showTermsOfService(context),
+                              child: Text(
+                                l.legal_terms_of_service,
+                                style: const TextStyle(
+                                  color: AppTheme.electricCyan,
+                                  fontSize: 12,
+                                  decoration: TextDecoration.underline,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                            Text(
+                              '  •  ',
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppTheme.mutedText
+                                    : textColor.withValues(alpha: 0.38),
+                                fontSize: 12,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () =>
+                                  LegalUtils.showPrivacyPolicy(context),
+                              child: Text(
+                                l.legal_privacy_policy,
+                                style: const TextStyle(
+                                  color: AppTheme.electricCyan,
+                                  fontSize: 12,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

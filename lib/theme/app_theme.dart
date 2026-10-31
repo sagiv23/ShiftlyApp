@@ -145,6 +145,11 @@ class AppTheme {
       colorScheme: colorScheme,
       fontFamily: fontFamily,
       scaffoldBackgroundColor: colorScheme.surface,
+      canvasColor: colorScheme.surface,
+      splashColor: primary.withValues(alpha: 0.10),
+      highlightColor: primary.withValues(alpha: 0.06),
+      hoverColor: primary.withValues(alpha: 0.05),
+      focusColor: primary.withValues(alpha: 0.13),
       splashFactory: InkSparkle.splashFactory,
       visualDensity: VisualDensity.standard,
       pageTransitionsTheme: const PageTransitionsTheme(
@@ -159,32 +164,41 @@ class AppTheme {
       textTheme: baseText.copyWith(
         displayLarge: baseText.displayLarge?.copyWith(
           fontWeight: FontWeight.w900,
-          letterSpacing: -1,
+          letterSpacing: -1.25,
+          height: 1.04,
           color: colorScheme.onSurface,
         ),
         displayMedium: baseText.displayMedium?.copyWith(
           fontWeight: FontWeight.w800,
-          letterSpacing: -0.5,
+          letterSpacing: -0.7,
+          height: 1.08,
           color: colorScheme.onSurface,
         ),
         headlineLarge: baseText.headlineLarge?.copyWith(
           fontWeight: FontWeight.w800,
           fontSize: 32,
+          letterSpacing: -0.7,
+          height: 1.1,
           color: colorScheme.onSurface,
         ),
         headlineMedium: baseText.headlineMedium?.copyWith(
           fontWeight: FontWeight.w800,
           fontSize: 26,
+          letterSpacing: -0.5,
+          height: 1.13,
           color: colorScheme.onSurface,
         ),
         titleLarge: baseText.titleLarge?.copyWith(
           fontSize: 22,
           fontWeight: FontWeight.bold,
+          letterSpacing: -0.25,
+          height: 1.18,
           color: colorScheme.onSurface,
         ),
         titleMedium: baseText.titleMedium?.copyWith(
           fontSize: 17,
           fontWeight: FontWeight.w700,
+          height: 1.25,
           color: colorScheme.onSurface,
         ),
         titleSmall: baseText.titleSmall?.copyWith(
@@ -194,10 +208,12 @@ class AppTheme {
         ),
         bodyLarge: baseText.bodyLarge?.copyWith(
           fontSize: 16,
+          height: 1.45,
           color: colorScheme.onSurface,
         ),
         bodyMedium: baseText.bodyMedium?.copyWith(
           fontSize: 14,
+          height: 1.45,
           color: colorScheme.onSurface,
         ),
         bodySmall: baseText.bodySmall?.copyWith(
@@ -214,8 +230,10 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         centerTitle: true,
         backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
+        toolbarHeight: 64,
         foregroundColor: colorScheme.onSurface,
         systemOverlayStyle: isDark
             ? SystemUiOverlayStyle.light
@@ -228,6 +246,7 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
         color: cardColor,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
@@ -318,6 +337,19 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radiusLg),
         ),
       ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: cardColor,
+        surfaceTintColor: Colors.transparent,
+        modalBackgroundColor: cardColor,
+        modalBarrierColor: Colors.black.withValues(alpha: isDark ? 0.56 : 0.30),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(radiusXl)),
+        ),
+        showDragHandle: true,
+        dragHandleColor: isDark
+            ? secondaryText.withValues(alpha: 0.5)
+            : const Color(0xFF94A3B8),
+      ),
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: ButtonStyle(
           visualDensity: VisualDensity.comfortable,
@@ -372,6 +404,7 @@ class AppTheme {
         ),
         backgroundColor: cardColor,
         elevation: 16,
+        surfaceTintColor: Colors.transparent,
       ),
       listTileTheme: ListTileThemeData(
         shape: RoundedRectangleBorder(

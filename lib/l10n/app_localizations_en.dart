@@ -555,7 +555,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get add_shift_paste_format_info =>
-      'Format: DD.MM.YYYY - HH:mm - HH:mm [break] [+ tips]\nBreaks: none / 20 minutes / 45 minutes';
+      'Format: DD.MM (or DD.MM.YYYY) - HH:mm - HH:mm [break] [+ tips]\n(If year is omitted, current year is inferred)';
 
   @override
   String get add_shift_paste_hint =>
@@ -1619,4 +1619,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settings_accessibility_sub =>
       'Accessibility info and contact details';
+
+  @override
+  String get all_shifts_title => 'All Shifts';
 }

@@ -1139,7 +1139,7 @@ abstract class AppLocalizations {
   /// No description provided for @add_shift_paste_format_info.
   ///
   /// In he, this message translates to:
-  /// **'פורמט: DD.MM.YYYY - HH:mm - HH:mm [הפסקה] [+ tips]\nהפסקות: ללא / 20 דקות / 45 דקות'**
+  /// **'פורמט: DD.MM (או DD.MM.YYYY) - HH:mm - HH:mm [הפסקה] [+ tips]\n(אם לא תצוין שנה, תושב אוטומטית השנה הנוכחית)'**
   String get add_shift_paste_format_info;
 
   /// No description provided for @add_shift_paste_hint.
@@ -3067,6 +3067,12 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'מידע על נגישות האפליקציה ודרכי פנייה'**
   String get settings_accessibility_sub;
+
+  /// No description provided for @all_shifts_title.
+  ///
+  /// In he, this message translates to:
+  /// **'כל המשמרות'**
+  String get all_shifts_title;
 }
 
 class _AppLocalizationsDelegate

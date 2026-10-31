@@ -31,11 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Interactive Smart Parser Demo
   initSmartParserDemo();
 
-  // 3D Tilt Micro-Interactions on Showcase & Bento Cards
-  initCard3DTilt(prefersReducedMotion);
-
-  // Magnetic Buttons Micro-Interactions
-  initMagneticButtons(prefersReducedMotion);
+  // Deliberately restrained: direct press feedback is more useful here than
+  // decorative card tilt or magnetic cursor motion in a financial product.
 
   // Animated Counter Metrics
   initMetricsCounters();
@@ -177,7 +174,7 @@ function initNavbarScroll() {
     } else {
       navbar.classList.remove('scrolled');
     }
-  });
+  }, { passive: true });
 }
 
 /* --- Mobile Navigation Drawer --- */

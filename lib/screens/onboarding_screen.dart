@@ -319,9 +319,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return PageEntranceAnimation(
       key: ValueKey(pageIndex),
       child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
-          child: child,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 620),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 32.0,
+              vertical: 24.0,
+            ),
+            child: child,
+          ),
         ),
       ),
     );

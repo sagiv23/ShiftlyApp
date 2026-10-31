@@ -136,3 +136,7 @@ class UIUtils {
     return result ?? false;
   }
 }
+
+class AnimationCache {
+  static final Set<String> animatedMonthKeys = {};
+}

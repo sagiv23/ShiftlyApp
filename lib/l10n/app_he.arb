@@ -173,7 +173,7 @@
   "add_shift_manual_job_type_label": "סוג עבודה",
   "add_shift_paste_title": "הדבקה חופשית",
   "add_shift_paste_default_job_label": "סוג עבודה ברירת מחדל",
-  "add_shift_paste_format_info": "פורמט: DD.MM.YYYY - HH:mm - HH:mm [הפסקה] [+ tips]\nהפסקות: ללא / 20 דקות / 45 דקות",
+  "add_shift_paste_format_info": "פורמט: DD.MM (או DD.MM.YYYY) - HH:mm - HH:mm [הפסקה] [+ tips]\n(אם לא תצוין שנה, תושב אוטומטית השנה הנוכחית)",
   "add_shift_paste_hint": "הדבק משמרות כאן...\nלדוגמה:\n24.6.2026 - 17:30 - 23:00 45 דקות + 50",
   "add_shift_paste_parse_button": "פענח ושמור הכל",
   "add_shift_paste_parse_dialog_title": "פענוח משמרות",
@@ -560,5 +560,6 @@
   "common_show_password": "הצג סיסמה",
   "common_hide_password": "הסתר סיסמה",
   "accessibility_statement": "הצהרת נגישות",
-  "settings_accessibility_sub": "מידע על נגישות האפליקציה ודרכי פנייה"
+  "settings_accessibility_sub": "מידע על נגישות האפליקציה ודרכי פנייה",
+  "all_shifts_title": "כל המשמרות"
 }

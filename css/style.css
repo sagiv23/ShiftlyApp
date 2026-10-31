@@ -2288,3 +2288,136 @@ input:checked + .toggle-slider:before {
   font-size: 18px;
 }
 
+/* ========================================================================
+   2026 PRODUCT REFINEMENT
+   A quieter hierarchy shared with the native Shiftly application. The
+   existing palette remains intact; surface, type and motion do the work.
+   ======================================================================== */
+:root {
+  --nav-height: 72px;
+  --content-measure: 72rem;
+  --material-heavy: rgba(9, 15, 31, .78);
+  --material-light: rgba(17, 28, 50, .66);
+  --shadow-material: 0 18px 48px rgba(0, 0, 0, .30);
+  --ease-product: cubic-bezier(.2, .8, .2, 1);
+}
+
+html { scroll-padding-top: 6.5rem; }
+body {
+  background-image: radial-gradient(ellipse 85% 44% at 82% -8%, rgba(56,232,255,.10), transparent 65%),
+    radial-gradient(ellipse 65% 38% at 8% 32%, rgba(139,92,246,.09), transparent 68%);
+  letter-spacing: .002em;
+}
+
+/* Floating chrome has a clear weight and an edge that catches light. */
+.navbar {
+  top: max(12px, env(safe-area-inset-top));
+  min-height: var(--nav-height);
+  height: auto;
+  border: 1px solid rgba(181, 211, 255, .15);
+  border-top-color: rgba(255, 255, 255, .25);
+  background: var(--material-heavy);
+  box-shadow: var(--shadow-material);
+  transition: transform 360ms var(--ease-product), background 240ms ease, box-shadow 240ms ease;
+}
+.navbar.scrolled { background: rgba(7, 11, 24, .90); box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+.nav-link { color: var(--text-muted); font-size: .875rem; font-weight: 650; transition: color 160ms ease; }
+.nav-link:hover, .nav-link:focus-visible { color: var(--primary); }
+.logo-subtext { letter-spacing: .14em; }
+
+/* Display text is deliberately compact; reading text gets room to breathe. */
+.hero-section { max-width: var(--content-measure); padding-top: clamp(5rem, 11vw, 9.5rem); }
+.hero-title, .section-title {
+  letter-spacing: -.035em;
+  line-height: 1.06;
+  text-wrap: balance;
+}
+.hero-description, .section-subtitle { line-height: 1.72; text-wrap: pretty; }
+.section-wrapper { max-width: var(--container-max); }
+
+/* One material vocabulary for previews, cards and interactive panels. */
+.showcase-window, .showcase-content-panel, .bento-card, .feature-card,
+.calculator-container, .comparison-table-wrapper, .faq-item, .release-card {
+  background: linear-gradient(145deg, rgba(21,35,61,.78), rgba(11,18,36,.72));
+  border-color: rgba(181, 211, 255, .14);
+  box-shadow: 0 16px 42px rgba(0,0,0,.24);
+}
+.showcase-window { border-radius: 28px; overflow: clip; }
+.showcase-content-panel, .bento-card, .feature-card, .faq-item { border-radius: 20px; }
+.window-header-bar { background: rgba(7,11,24,.42); border-bottom-color: rgba(181,211,255,.12); }
+.showcase-tab-btn {
+  border-radius: 999px;
+  transition: background 180ms ease, color 180ms ease, transform 180ms var(--ease-product), border-color 180ms ease;
+}
+.showcase-tab-btn:active, .btn:active { transform: scale(.975); }
+.showcase-tab-btn.active { box-shadow: inset 0 1px rgba(255,255,255,.18), 0 6px 18px rgba(56,232,255,.12); }
+
+.btn {
+  min-height: 46px;
+  border-radius: 14px;
+  font-weight: 750;
+  transition: transform 180ms var(--ease-product), box-shadow 180ms ease, background 180ms ease;
+}
+.btn-primary { box-shadow: 0 9px 22px rgba(56,232,255,.18); }
+.btn-primary:hover { box-shadow: 0 12px 28px rgba(56,232,255,.28); transform: translateY(-1px); }
+.btn-glass, .btn-outline { border-color: rgba(181,211,255,.20); background: rgba(255,255,255,.055); }
+
+/* Sheets retain their source-side path and read as a separate material. */
+.mobile-drawer {
+  background: rgba(9,15,31,.94);
+  backdrop-filter: blur(30px) saturate(150%);
+  -webkit-backdrop-filter: blur(30px) saturate(150%);
+  border-inline-start: 1px solid rgba(255,255,255,.16);
+  box-shadow: -20px 0 56px rgba(0,0,0,.40);
+}
+.drawer-overlay { background: rgba(0,0,0,.48); backdrop-filter: blur(3px); }
+
+@media (max-width: 768px) {
+  .navbar { width: calc(100% - 20px); padding-inline: 16px; }
+  .hero-section { padding-inline: 20px; padding-top: 5.5rem; }
+  .hero-title { font-size: clamp(2.35rem, 11vw, 3.55rem); }
+  .hero-cta-group { gap: 10px; }
+  .hero-cta-group .btn { width: 100%; justify-content: center; }
+  .showcase-window { border-radius: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .12ms !important; }
+  .ambient-canvas-container, .cursor-spotlight { display: none; }
+  .navbar, .btn, .showcase-tab-btn { transform: none !important; }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .navbar, .mobile-drawer, .showcase-window, .showcase-content-panel, .bento-card, .feature-card { background: var(--bg-base); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+@media (prefers-contrast: more) {
+  .navbar, .showcase-window, .showcase-content-panel, .bento-card, .feature-card, .faq-item { border-color: var(--text-muted); }
+  .nav-link { color: var(--text-main); }
+}
+
+/* Legal pages use the same calm reading hierarchy as the product: a single
+   reading surface, generous measure, and navigation that stays contextual. */
+.document-container {
+  width: min(100% - 32px, 52rem);
+  margin: clamp(4rem, 9vw, 7rem) auto clamp(3rem, 8vw, 6rem);
+}
+.document-card {
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  background: linear-gradient(155deg, rgba(21,35,61,.86), rgba(11,18,36,.80));
+  border: 1px solid rgba(181,211,255,.16);
+  border-top-color: rgba(255,255,255,.22);
+  border-radius: 28px;
+  box-shadow: 0 22px 60px rgba(0,0,0,.30);
+}
+.doc-header { padding-bottom: 1.75rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(181,211,255,.14); }
+.doc-title { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.08; letter-spacing: -.025em; text-wrap: balance; }
+.doc-section-title { margin-top: 2.4rem; font-size: clamp(1.2rem, 2vw, 1.5rem); line-height: 1.25; letter-spacing: -.012em; }
+.document-card p, .document-card li { max-width: 68ch; line-height: 1.85; color: var(--text-muted); }
+.document-card li + li { margin-top: .6rem; }
+
+@media (max-width: 640px) {
+  .document-container { width: min(100% - 20px, 52rem); margin-top: 4rem; }
+  .document-card { border-radius: 22px; padding: 1.25rem; }
+}
+

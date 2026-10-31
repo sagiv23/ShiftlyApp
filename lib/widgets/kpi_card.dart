@@ -6,6 +6,8 @@ import '../theme/app_theme.dart';
 class KpiCard extends StatelessWidget {
   final String title;
   final String value;
+  final double? numericValue;
+  final String Function(double)? formatter;
   final String subtitle;
   final IconData icon;
   final List<Color> gradientColors;
@@ -15,6 +17,8 @@ class KpiCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.value,
+    this.numericValue,
+    this.formatter,
     required this.subtitle,
     required this.icon,
     required this.gradientColors,
@@ -85,19 +89,42 @@ class KpiCard extends StatelessWidget {
               ),
             ],
           ),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerRight,
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isDark ? AppTheme.primaryText : mainColor,
-                fontFeatures: const [FontFeature.tabularFigures()],
-              ),
-            ),
-          ),
+          numericValue != null
+              ? TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: 0.0, end: numericValue!),
+                  duration: const Duration(milliseconds: 600),
+                  curve: Curves.easeOutCubic,
+                  builder: (context, val, child) {
+                    return FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        formatter != null
+                            ? formatter!(val)
+                            : val.toStringAsFixed(2),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? AppTheme.primaryText : mainColor,
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                    );
+                  },
+                )
+              : FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? AppTheme.primaryText : mainColor,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                ),
           Text(
             subtitle,
             style: TextStyle(

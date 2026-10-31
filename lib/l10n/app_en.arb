@@ -173,7 +173,7 @@
   "add_shift_manual_job_type_label": "Job Type",
   "add_shift_paste_title": "Paste Shift Text",
   "add_shift_paste_default_job_label": "Default Job Type",
-  "add_shift_paste_format_info": "Format: DD.MM.YYYY - HH:mm - HH:mm [break] [+ tips]\nBreaks: none / 20 minutes / 45 minutes",
+  "add_shift_paste_format_info": "Format: DD.MM (or DD.MM.YYYY) - HH:mm - HH:mm [break] [+ tips]\n(If year is omitted, current year is inferred)",
   "add_shift_paste_hint": "Paste shifts here...\nExample:\n24.6.2026 - 17:30 - 23:00 45 minutes + 50",
   "add_shift_paste_parse_button": "Parse & Save All",
   "add_shift_paste_parse_dialog_title": "Parse Shifts",
@@ -560,5 +560,6 @@
   "common_show_password": "Show password",
   "common_hide_password": "Hide password",
   "accessibility_statement": "Accessibility Statement",
-  "settings_accessibility_sub": "Accessibility info and contact details"
+  "settings_accessibility_sub": "Accessibility info and contact details",
+  "all_shifts_title": "All Shifts"
 }

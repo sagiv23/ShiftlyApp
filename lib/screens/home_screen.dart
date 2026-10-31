@@ -10,6 +10,7 @@ import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/providers/timer_provider.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
+import 'package:shiftly/screens/shift_history_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
@@ -17,9 +18,9 @@ import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/empty_state_widget.dart';
 import 'package:shiftly/widgets/export_bottom_sheet.dart';
-import 'package:shiftly/widgets/grand_total_card.dart';
 import 'package:shiftly/widgets/shift_tile.dart';
 import 'package:shiftly/widgets/skeleton_loaders.dart';
+import 'package:shiftly/widgets/year_month_tab_layout.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -34,49 +35,58 @@ class HomeScreen extends StatelessWidget {
     final l = AppLocalizations.of(context)!;
     final groupedShifts = shiftProvider.shiftsGroupedByMonth;
 
-    double grandTotalNetHours = 0;
-    double grandTotalBaseSalary = 0;
-    double grandTotalTips = 0;
-    double grandTotalExpenses = 0;
-    double grandTotalIncomes = 0;
-    int grandTotalShifts = shiftProvider.filteredShifts.length;
-
     final settings = context.watch<SettingsProvider>();
+    final now = DateTime.now();
+    final currentMonthKey = DateFormat('yyyy-MM').format(now);
+    final currentMonthShifts = shiftProvider.filteredShifts.where((shift) {
+      return shift.date.year == now.year && shift.date.month == now.month;
+    }).toList();
 
-    for (var shift in shiftProvider.filteredShifts) {
+    double monthHours = 0;
+    double monthGross = 0;
+    double monthTips = 0;
+    double monthExpenses = 0;
+    double monthIncomes = 0;
+
+    for (final shift in currentMonthShifts) {
       final job = shiftProvider.getJobTypeById(shift.jobTypeId);
       final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
-      grandTotalNetHours += shift.netHours;
-      grandTotalBaseSalary += shift.calculateBaseSalary(
+      monthHours += shift.netHours;
+      monthGross += shift.calculateBaseSalary(
         rate,
         rules: settings.overtimeRules,
         shabbatRules: settings.shabbatHolidayRules,
       );
-      grandTotalTips += shift.tips;
-      grandTotalExpenses += shift.totalAutomaticExpenses;
-      grandTotalIncomes += shift.totalAutomaticIncomes;
+      monthTips += shift.tips;
+      monthExpenses += shift.totalAutomaticExpenses;
+      monthIncomes += shift.totalAutomaticIncomes;
     }
 
-    for (var expense in shiftProvider.expenses) {
-      grandTotalExpenses += expense.amount;
+    for (final expense in shiftProvider.expenses) {
+      if (expense.date.year == now.year && expense.date.month == now.month) {
+        monthExpenses += expense.amount;
+      }
     }
 
-    for (var income in shiftProvider.incomes) {
-      grandTotalIncomes += income.amount;
+    for (final income in shiftProvider.incomes) {
+      if (income.date.year == now.year && income.date.month == now.month) {
+        monthIncomes += income.amount;
+      }
     }
 
     if (hasActiveTimer) {
       final timerProvider = context.read<TimerProvider>();
-      grandTotalShifts += 1;
-      final settings = context.read<SettingsProvider>();
-      final job = shiftProvider.getJobTypeById(timerProvider.jobTypeId ?? "");
-      final rate = job?.getRateForDate(timerProvider.startTime!) ?? 40.22;
-      grandTotalNetHours += timerProvider.netMinutes / 60.0;
-      grandTotalBaseSalary += (timerProvider.netMinutes / 60.0) * rate;
-      grandTotalTips += timerProvider.tips;
-      if (settings.automaticExpenseEnabled) {
-        for (var e in settings.defaultAutomaticExpenses) {
-          grandTotalExpenses += e.amount;
+      if (timerProvider.startTime?.year == now.year &&
+          timerProvider.startTime?.month == now.month) {
+        final job = shiftProvider.getJobTypeById(timerProvider.jobTypeId ?? "");
+        final rate = job?.getRateForDate(timerProvider.startTime!) ?? 40.22;
+        monthHours += timerProvider.netMinutes / 60.0;
+        monthGross += (timerProvider.netMinutes / 60.0) * rate;
+        monthTips += timerProvider.tips;
+        if (settings.automaticExpenseEnabled) {
+          for (final expense in settings.defaultAutomaticExpenses) {
+            monthExpenses += expense.amount;
+          }
         }
       }
     }
@@ -104,6 +114,16 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       actions: [
+        IconButton(
+          icon: const Icon(Icons.calendar_view_month_rounded),
+          tooltip: l.export_range_all,
+          onPressed: () {
+            Navigator.push(
+              context,
+              AppPageRoute.slideUp(const ShiftHistoryScreen()),
+            );
+          },
+        ),
         IconButton(
           icon: const Icon(Icons.download_rounded),
           tooltip: l.export_title,
@@ -170,51 +190,692 @@ class HomeScreen extends StatelessWidget {
                             title: l.home_empty_state_title,
                             subtitle: l.home_empty_state_subtitle,
                           ))
-                  : ListView.builder(
+                  : ListView(
                       padding: const EdgeInsets.fromLTRB(
                         AppTheme.spaceSm,
                         AppTheme.spaceXs,
                         AppTheme.spaceSm,
-                        AppTheme.spaceLg,
+                        104,
                       ),
-                      itemCount: groupedShifts.isEmpty
-                          ? 1
-                          : groupedShifts.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index == 0) {
-                          return GrandTotalCard(
-                            totalHours: grandTotalNetHours,
-                            totalBase: grandTotalBaseSalary,
-                            totalTips: grandTotalTips,
-                            totalExpenses: grandTotalExpenses,
-                            totalIncomes: grandTotalIncomes,
-                            totalShifts: grandTotalShifts,
-                          );
-                        }
-                        final monthKey = groupedShifts.keys.elementAt(
-                          index - 1,
-                        );
-                        final shifts = groupedShifts[monthKey]!;
-                        return _MonthExpansionSection(
-                          monthKey: monthKey,
-                          shifts: shifts,
-                          initiallyExpanded: index == 1,
-                        );
-                      },
+                children: [
+                  _MonthlySnapshot(
+                    month: now,
+                    net:
+                    monthGross +
+                        monthTips +
+                        monthIncomes -
+                        monthExpenses,
+                    gross: monthGross,
+                    hours: monthHours,
+                    shiftCount:
+                    currentMonthShifts.length +
+                        (hasActiveTimer ? 1 : 0),
+                    tips: monthTips,
+                    reimbursements: monthIncomes,
+                    expenses: monthExpenses,
+                    onAddShift: () =>
+                        Navigator.push(
+                          context,
+                          AppPageRoute.slideUp(const AddShiftScreen()),
+                        ),
+                    onAnalytics: () =>
+                        MainScreenScope.of(context)?.onTabSelected(1),
+                  ),
+                  const SizedBox(height: AppTheme.spaceMd),
+                  if (groupedShifts.isNotEmpty) ...[
+                    _HistoryEntryPoint(
+                      groupedShifts: groupedShifts,
+                      currentMonthKey: currentMonthKey,
                     ),
+                    const SizedBox(height: AppTheme.spaceLg),
+                  ],
+                  if (currentMonthShifts.isNotEmpty) ...[
+                    _SectionHeading(
+                      title:
+                      '${l.home_shift_list_shifts_on} ${DateFormat.MMMM(l
+                          .localeName).format(now)}',
+                      actionLabel: l.home_action_calendar,
+                      onAction: () =>
+                          MainScreenScope.of(context)?.onTabSelected(0),
+                    ),
+                    const SizedBox(height: AppTheme.spaceXs),
+                    _RecentShiftList(
+                      shifts: currentMonthShifts,
+                    ),
+                    const SizedBox(height: AppTheme.spaceLg),
+                  ],
+                ],
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: 'home_fab',
-        onPressed: () => Navigator.push(
-          context,
-          AppPageRoute.slideUp(const AddShiftScreen()),
+    );
+  }
+}
+
+/// The home screen opens with one answer: what the user has kept this month.
+/// Supporting detail is grouped underneath instead of competing with the total.
+class _MonthlySnapshot extends StatelessWidget {
+  final DateTime month;
+  final double net;
+  final double gross;
+  final double hours;
+  final int shiftCount;
+  final double tips;
+  final double reimbursements;
+  final double expenses;
+  final VoidCallback onAddShift;
+  final VoidCallback onAnalytics;
+
+  const _MonthlySnapshot({
+    required this.month,
+    required this.net,
+    required this.gross,
+    required this.hours,
+    required this.shiftCount,
+    required this.tips,
+    required this.reimbursements,
+    required this.expenses,
+    required this.onAddShift,
+    required this.onAnalytics,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    final symbol = context
+        .watch<SettingsProvider>()
+        .currencySymbol;
+    final isDark = Theme
+        .of(context)
+        .brightness == Brightness.dark;
+    final daysInMonth = DateUtils.getDaysInMonth(month.year, month.month);
+    final elapsed =
+    month.year == DateTime
+        .now()
+        .year && month.month == DateTime
+        .now()
+        .month
+        ? DateTime
+        .now()
+        .day / daysInMonth
+        : 1.0;
+    final monthName = DateFormat.MMMM(l.localeName).format(month);
+
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spaceMd),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
+          colors: isDark
+              ? [const Color(0xFF152B49), AppTheme.darkCard]
+              : [Colors.white, const Color(0xFFE8F8FB)],
         ),
-        label: Text(l.home_action_new_shift),
-        icon: const Icon(Icons.add_rounded),
-        tooltip: l.home_action_new_shift,
+        borderRadius: BorderRadius.circular(AppTheme.radiusXl),
+        border: Border.all(
+          color: AppTheme.electricCyan.withValues(alpha: isDark ? .28 : .22),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.electricCyan.withValues(alpha: isDark ? .12 : .08),
+            blurRadius: 30,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  monthName,
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .titleMedium
+                      ?.copyWith(
+                    color: isDark
+                        ? AppTheme.secondaryText
+                        : const Color(0xFF475569),
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: onAnalytics,
+                tooltip: l.analytics_title,
+                icon: const Icon(
+                  Icons.insights_rounded,
+                  color: AppTheme.electricCyan,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            l.analytics_net_pay,
+            style: Theme
+                .of(context)
+                .textTheme
+                .titleSmall,
+          ),
+          const SizedBox(height: 2),
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0.0, end: net),
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, child) {
+              return FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  UIUtils.formatCurrency(value, symbol: symbol),
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .displayMedium
+                      ?.copyWith(
+                    color: AppTheme.mintGreen,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 4),
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0.0, end: gross),
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, child) {
+              return Text(
+                '${l.home_total_card_base}: ${UIUtils.formatCurrency(
+                    value, symbol: symbol)}',
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .bodySmall,
+              );
+            },
+          ),
+          const SizedBox(height: AppTheme.spaceMd),
+          Row(
+            children: [
+              Expanded(
+                child: _SnapshotMetric(
+                  icon: Icons.schedule_rounded,
+                  value: '${hours.toStringAsFixed(1)} ${l.common_hours_suffix}',
+                  label: l.home_total_card_hours,
+                ),
+              ),
+              const SizedBox(width: AppTheme.spaceSm),
+              Expanded(
+                child: _SnapshotMetric(
+                  icon: Icons.work_history_rounded,
+                  value: '$shiftCount',
+                  label: l.common_shifts_count,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spaceSm),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _AmountPill(
+                label: l.home_total_card_base,
+                amount: gross,
+                color: AppTheme.electricCyan,
+              ),
+              if (tips > 0)
+                _AmountPill(
+                  label: l.home_total_card_tips,
+                  amount: tips,
+                  color: AppTheme.mintGreen,
+                ),
+              if (reimbursements > 0)
+                _AmountPill(
+                  label: l.expenses_tab_incomes,
+                  amount: reimbursements,
+                  color: AppTheme.electricCyan,
+                ),
+              if (expenses > 0)
+                _AmountPill(
+                  label: l.home_total_card_expenses,
+                  amount: -expenses,
+                  color: AppTheme.softCoral,
+                ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spaceMd),
+          Semantics(
+            label: '$monthName ${(elapsed * 100).round()}%',
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(99),
+              child: LinearProgressIndicator(
+                value: elapsed,
+                minHeight: 5,
+                color: AppTheme.electricCyan,
+                backgroundColor: AppTheme.electricCyan.withValues(alpha: .14),
+              ),
+            ),
+          ),
+          const SizedBox(height: AppTheme.spaceMd),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: onAddShift,
+              icon: const Icon(Icons.add_rounded),
+              label: Text(l.home_action_new_shift),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SnapshotMetric extends StatelessWidget {
+  final IconData icon;
+  final String value;
+  final String label;
+
+  const _SnapshotMetric({
+    required this.icon,
+    required this.value,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) =>
+      Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Theme
+              .of(context)
+              .colorScheme
+              .surface
+              .withValues(alpha: .45),
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: AppTheme.electricCyan, size: 19),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    value,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .bodySmall,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+}
+
+class _AmountPill extends StatelessWidget {
+  final String label;
+  final double amount;
+  final Color color;
+
+  const _AmountPill({
+    required this.label,
+    required this.amount,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final symbol = context
+        .watch<SettingsProvider>()
+        .currencySymbol;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: .12),
+        borderRadius: BorderRadius.circular(99),
+      ),
+      child: Text(
+        '$label ${UIUtils.formatCurrency(amount, symbol: symbol)}',
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.w700,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
+}
+
+class _SectionHeading extends StatelessWidget {
+  final String title;
+  final String actionLabel;
+  final VoidCallback onAction;
+
+  const _SectionHeading({
+    required this.title,
+    required this.actionLabel,
+    required this.onAction,
+  });
+
+  @override
+  Widget build(BuildContext context) =>
+      Row(
+        children: [
+          Expanded(
+            child: Text(title, style: Theme
+                .of(context)
+                .textTheme
+                .titleLarge),
+          ),
+          TextButton(onPressed: onAction, child: Text(actionLabel)),
+        ],
+      );
+}
+
+class _RecentShiftList extends StatelessWidget {
+  final List<Shift> shifts;
+
+  const _RecentShiftList({required this.shifts});
+
+  @override
+  Widget build(BuildContext context) =>
+      Container(
+        decoration: AppTheme.sectionDecoration(context),
+        child: Column(
+          children: [
+            for (var i = 0; i < shifts.length; i++) ...[
+              ShiftTile(shift: shifts[i]),
+              if (i < shifts.length - 1)
+                const Divider(height: 1, indent: 16, endIndent: 16),
+            ],
+          ],
+        ),
+      );
+}
+
+/// Keeps the main page focused on the present. Full history is still one tap
+/// away in a native draggable sheet, where vertical browsing has clear intent.
+class _HistoryEntryPoint extends StatelessWidget {
+  final Map<String, List<Shift>> groupedShifts;
+  final String currentMonthKey;
+
+  const _HistoryEntryPoint({
+    required this.groupedShifts,
+    required this.currentMonthKey,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    final isDark = Theme
+        .of(context)
+        .brightness == Brightness.dark;
+
+    return Semantics(
+      button: true,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          onTap: () => _showHistory(context),
+          child: Ink(
+            padding: const EdgeInsets.all(AppTheme.spaceMd),
+            decoration: BoxDecoration(
+              color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+              border: Border.all(
+                color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppTheme.neonViolet.withValues(alpha: .14),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: const Icon(
+                    Icons.history_rounded,
+                    color: AppTheme.neonViolet,
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spaceSm),
+                Expanded(
+                  child: Text(
+                    l.export_range_all,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showHistory(BuildContext context) {
+    Navigator.push(
+      context,
+      AppPageRoute.slideUp(const ShiftHistoryScreen()),
+    );
+  }
+}
+
+class _HistorySheet extends StatefulWidget {
+  final ScrollController scrollController;
+  final Map<String, List<Shift>> groupedShifts;
+  final String currentMonthKey;
+
+  const _HistorySheet({
+    required this.scrollController,
+    required this.groupedShifts,
+    required this.currentMonthKey,
+  });
+
+  @override
+  State<_HistorySheet> createState() => _HistorySheetState();
+}
+
+class _HistorySheetState extends State<_HistorySheet> {
+  bool _useTabView = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    final isDark = Theme
+        .of(context)
+        .brightness == Brightness.dark;
+    final entries = widget.groupedShifts.entries.toList();
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(AppTheme.radiusXl),
+        ),
+        border: Border.all(
+          color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+        ),
+      ),
+      child: Column(
+        children: [
+          // Drag handle and header bar
+          const SizedBox(height: 10),
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.25)
+                    : Colors.black.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(99),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${l.analytics_period_all_time} ${l.common_shifts_count}',
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                // View mode switcher: Tab View vs List View
+                Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => setState(() => _useTabView = true),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _useTabView
+                                ? (isDark
+                                ? AppTheme.electricCyan
+                                .withValues(alpha: 0.25)
+                                : Colors.white)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                            border: _useTabView
+                                ? Border.all(
+                              color: AppTheme.electricCyan
+                                  .withValues(alpha: 0.5),
+                              width: 1,
+                            )
+                                : null,
+                          ),
+                          child: Icon(
+                            Icons.calendar_view_month_rounded,
+                            size: 18,
+                            color: _useTabView
+                                ? AppTheme.electricCyan
+                                : (isDark
+                                ? AppTheme.secondaryText
+                                : Colors.grey.shade600),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => setState(() => _useTabView = false),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: !_useTabView
+                                ? (isDark
+                                ? AppTheme.electricCyan
+                                .withValues(alpha: 0.25)
+                                : Colors.white)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                            border: !_useTabView
+                                ? Border.all(
+                              color: AppTheme.electricCyan
+                                  .withValues(alpha: 0.5),
+                              width: 1,
+                            )
+                                : null,
+                          ),
+                          child: Icon(
+                            Icons.format_list_bulleted_rounded,
+                            size: 18,
+                            color: !_useTabView
+                                ? AppTheme.electricCyan
+                                : (isDark
+                                ? AppTheme.secondaryText
+                                : Colors.grey.shade600),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+
+          // Main body content
+          Expanded(
+            child: _useTabView
+                ? YearMonthTabLayout(
+              scrollController: widget.scrollController,
+              groupedShifts: widget.groupedShifts,
+              currentMonthKey: widget.currentMonthKey,
+            )
+                : ListView.builder(
+              controller: widget.scrollController,
+              padding: const EdgeInsets.fromLTRB(
+                AppTheme.spaceSm,
+                AppTheme.spaceSm,
+                AppTheme.spaceSm,
+                AppTheme.spaceXl,
+              ),
+              itemCount: entries.length,
+              itemBuilder: (context, index) {
+                final entry = entries[index];
+                return _MonthExpansionSection(
+                  monthKey: entry.key,
+                  shifts: entry.value,
+                  initiallyExpanded: entry.key == widget.currentMonthKey,
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
