@@ -2238,6 +2238,16 @@ input:checked + .toggle-slider:before {
     font-size: 12px !important;
     padding: 6px 10px !important;
   }
+  .downloads-modal {
+    width: 98% !important;
+    padding: 16px 12px !important;
+  }
+  .asset-name {
+    font-size: 13px !important;
+  }
+  .asset-meta {
+    font-size: 11.5px !important;
+  }
 }
 
 /* --- Advanced Mobile Touch Targets & Accessibility (WCAG 2.2 AA & Mobile UX) --- */
@@ -2275,6 +2285,50 @@ input:checked + .toggle-slider:before {
   }
   .showcase-panel-info p {
     font-size: 15px !important;
+  }
+
+  .downloads-modal {
+    width: 95% !important;
+    max-width: none !important;
+    padding: 20px 16px !important;
+    max-height: 90vh !important;
+  }
+  .downloads-modal-body {
+    max-height: calc(90vh - 140px) !important;
+  }
+  .asset-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px;
+  }
+  .asset-info {
+    width: 100%;
+    overflow: visible;
+  }
+  .asset-details {
+    width: 100%;
+    overflow: visible;
+  }
+  .asset-name {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    word-break: break-all !important;
+    overflow-wrap: break-word !important;
+    font-size: 13.5px !important;
+    line-height: 1.4 !important;
+  }
+  .asset-meta {
+    flex-wrap: wrap !important;
+    gap: 4px 8px !important;
+    font-size: 12px !important;
+  }
+  .asset-item .btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 10px 16px !important;
+    font-size: 14px !important;
   }
 }
 
