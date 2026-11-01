@@ -2,7 +2,6 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/providers/auth_provider.dart';
@@ -24,9 +23,12 @@ class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
   late AnimationController _floatController;
   late AnimationController _exitController;
+  late AnimationController _entranceController;
 
   late Animation<double> _textOpacityAnimation;
   late Animation<Offset> _textSlideAnimation;
+  late Animation<double> _textEntranceOpacityAnimation;
+  late Animation<Offset> _textEntranceSlideAnimation;
   late Animation<Offset> _iconOffsetAnimation;
   late Animation<double> _iconScaleAnimation;
   late Animation<double> _glowScaleAnimation;
@@ -51,6 +53,11 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1000),
     );
 
+    _entranceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
+
     // 1. Text & loading circle fade out and slide down slightly (0.0 to 0.35)
     _textOpacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
       CurvedAnimation(
@@ -66,6 +73,23 @@ class _SplashScreenState extends State<SplashScreen>
             curve: const Interval(0.0, 0.35, curve: Curves.easeInCubic),
           ),
         );
+
+    _textEntranceOpacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.0, 1.0, curve: Curves.easeOut),
+      ),
+    );
+
+    _textEntranceSlideAnimation = Tween<Offset>(
+      begin: const Offset(0.0, 0.2),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.0, 1.0, curve: Curves.easeOutCubic),
+      ),
+    );
 
     // 2. Icon glides down to center Offset(0, 0) and enlarges (1.0 -> 1.45) (0.08 to 0.72)
     _iconOffsetAnimation =
@@ -118,6 +142,13 @@ class _SplashScreenState extends State<SplashScreen>
         final disabledAnimations = MediaQuery.of(context).disableAnimations;
         if (!disabledAnimations) {
           _floatController.repeat(reverse: true);
+          Future.delayed(const Duration(milliseconds: 350), () {
+            if (mounted) {
+              _entranceController.forward();
+            }
+          });
+        } else {
+          _entranceController.value = 1.0;
         }
         _runInitializationSequence();
       }
@@ -129,6 +160,7 @@ class _SplashScreenState extends State<SplashScreen>
     _floatController.stop();
     _floatController.dispose();
     _exitController.dispose();
+    _entranceController.dispose();
     super.dispose();
   }
 
@@ -392,117 +424,107 @@ class _SplashScreenState extends State<SplashScreen>
                               ),
 
                               // Text & Loading Circle Column
-                                  AnimatedBuilder(
-                                    animation: _exitController,
-                                    builder: (context, child) {
-                                      final textOpacity = _textOpacityAnimation
-                                          .value
-                                          .clamp(0.0, 1.0);
-                                      if (textOpacity <= 0.0) {
-                                        return const SizedBox.shrink();
-                                      }
-                                      return Transform.translate(
-                                        offset:
-                                        const Offset(0, 110) +
-                                            _textSlideAnimation.value * 100,
-                                        child: Opacity(
-                                          opacity: textOpacity,
-                                          child: child,
-                                        ),
-                                      );
-                                    },
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          l.common_app_name,
-                                          style: TextStyle(
-                                            color: titleColor,
-                                            fontSize: 52,
-                                            fontWeight: FontWeight.w900,
-                                            letterSpacing: 2.0,
-                                          ),
-                                        )
-                                            .animate()
-                                            .fadeIn(duration: 400.ms)
-                                            .slideY(
-                                          begin: 0.2,
-                                          end: 0,
-                                          duration: 400.ms,
-                                          curve: Curves.easeOutCubic,
-                                        ),
-                                        const SizedBox(height: 10),
+                              AnimatedBuilder(
+                                animation: Listenable.merge([
+                                  _exitController,
+                                  _entranceController,
+                                ]),
+                                builder: (context, child) {
+                                  final exitOpacity = _textOpacityAnimation
+                                      .value.clamp(0.0, 1.0);
+                                  final entranceOpacity = _textEntranceOpacityAnimation
+                                      .value.clamp(0.0, 1.0);
+                                  final textOpacity = (entranceOpacity *
+                                      exitOpacity).clamp(0.0, 1.0);
 
+                                  if (textOpacity <= 0.0) {
+                                    return const SizedBox.shrink();
+                                  }
+
+                                  final entranceSlide = _textEntranceSlideAnimation
+                                      .value;
+                                  final exitSlide = _textSlideAnimation.value *
+                                      100;
+
+                                  return Transform.translate(
+                                    offset: const Offset(0, 110) +
+                                        (entranceSlide * 50) + exitSlide,
+                                    child: Opacity(
+                                      opacity: textOpacity,
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
                                     Text(
-                                          l.common_tagline,
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            color: AppTheme.electricCyan,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w800,
-                                            letterSpacing: 0.9,
-                                          ),
-                                        )
-                                        .animate()
-                                        .fadeIn(delay: 100.ms, duration: 400.ms)
-                                        .slideY(
-                                          begin: 0.2,
-                                          end: 0,
-                                          duration: 400.ms,
-                                          curve: Curves.easeOutCubic,
-                                        ),
+                                      l.common_app_name,
+                                      style: TextStyle(
+                                        color: titleColor,
+                                        fontSize: 52,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 2.0,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      l.common_tagline,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: AppTheme.electricCyan,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: 0.9,
+                                      ),
+                                    ),
                                     const SizedBox(height: 48),
-
                                     ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                              50),
-                                          child: BackdropFilter(
-                                            filter: ui.ImageFilter.blur(
-                                              sigmaX: 16,
-                                              sigmaY: 16,
+                                      borderRadius: BorderRadius.circular(50),
+                                      child: BackdropFilter(
+                                        filter: ui.ImageFilter.blur(
+                                          sigmaX: 16,
+                                          sigmaY: 16,
+                                        ),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(16),
+                                          decoration: BoxDecoration(
+                                            color: cardBg,
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: cardBorder,
+                                              width: 1.5,
                                             ),
-                                            child: Container(
-                                              padding: const EdgeInsets.all(16),
-                                              decoration: BoxDecoration(
-                                                color: cardBg,
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                  color: cardBorder,
-                                                  width: 1.5,
-                                                ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: AppTheme.electricCyan
-                                                        .withValues(
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: AppTheme.electricCyan
+                                                    .withValues(
                                                       alpha: isDark
                                                           ? 0.25
                                                           : 0.12,
                                                     ),
-                                                    blurRadius: 28,
-                                                    offset: const Offset(0, 8),
-                                                  ),
-                                                ],
+                                                blurRadius: 28,
+                                                offset: const Offset(0, 8),
                                               ),
-                                              child: const SizedBox(
-                                                width: 28,
-                                                height: 28,
-                                                child: CircularProgressIndicator(
-                                                  strokeWidth: 3.0,
-                                                  valueColor:
+                                            ],
+                                          ),
+                                          child: const SizedBox(
+                                            width: 28,
+                                            height: 28,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 3.0,
+                                              valueColor:
                                                   AlwaysStoppedAnimation<Color>(
                                                     AppTheme.electricCyan,
                                                   ),
-                                                ),
-                                              ),
                                             ),
                                           ),
-                                        ).animate().fadeIn(
-                                          delay: 200.ms,
-                                          duration: 400.ms,
                                         ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
+                                  ],
+                                ),
+                              ),
                                 ],
                               ),
                             ),

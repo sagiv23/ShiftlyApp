@@ -65,90 +65,29 @@ class AdaptiveScaffold extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final navItems = [
-      BottomNavigationBarItem(
-        icon: const Icon(Icons.calendar_month_rounded, size: 22),
-        activeIcon: Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: AppTheme.electricCyan.withValues(alpha: 0.18),
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.calendar_month_rounded,
-            size: 22,
-            color: AppTheme.electricCyan,
-          ),
-        ),
+      _NavModel(
+        icon: Icons.calendar_month_outlined,
+        activeIcon: Icons.calendar_month_rounded,
         label: l.nav_calendar,
       ),
-      BottomNavigationBarItem(
-        icon: const Icon(Icons.bar_chart_rounded, size: 22),
-        activeIcon: Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: AppTheme.electricCyan.withValues(alpha: 0.18),
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.bar_chart_rounded,
-            size: 22,
-            color: AppTheme.electricCyan,
-          ),
-        ),
+      _NavModel(
+        icon: Icons.bar_chart_outlined,
+        activeIcon: Icons.bar_chart_rounded,
         label: l.nav_analytics,
       ),
-      BottomNavigationBarItem(
-        icon: const Icon(Icons.home_rounded, size: 24),
-        activeIcon: Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: AppTheme.electricCyan.withValues(alpha: 0.2),
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.electricCyan.withValues(alpha: 0.3),
-                blurRadius: 10,
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.home_rounded,
-            size: 24,
-            color: AppTheme.electricCyan,
-          ),
-        ),
+      _NavModel(
+        icon: Icons.home_outlined,
+        activeIcon: Icons.home_rounded,
         label: l.nav_home,
       ),
-      BottomNavigationBarItem(
-        icon: const Icon(Icons.receipt_long_rounded, size: 22),
-        activeIcon: Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: AppTheme.electricCyan.withValues(alpha: 0.18),
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.receipt_long_rounded,
-            size: 22,
-            color: AppTheme.electricCyan,
-          ),
-        ),
+      _NavModel(
+        icon: Icons.receipt_long_outlined,
+        activeIcon: Icons.receipt_long_rounded,
         label: l.nav_expenses,
       ),
-      BottomNavigationBarItem(
-        icon: const Icon(Icons.note_alt_rounded, size: 22),
-        activeIcon: Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: AppTheme.electricCyan.withValues(alpha: 0.18),
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.note_alt_rounded,
-            size: 22,
-            color: AppTheme.electricCyan,
-          ),
-        ),
+      _NavModel(
+        icon: Icons.note_alt_outlined,
+        activeIcon: Icons.note_alt_rounded,
         label: l.nav_summaries,
       ),
     ];
@@ -157,7 +96,6 @@ class AdaptiveScaffold extends StatelessWidget {
     if (!isDesktopOrWide) {
       mainScaffold = Scaffold(
         appBar: _buildAppBar(context, l),
-        // In Hebrew RTL mode, standard drawer opens from the RIGHT side
         drawer: Drawer(
           backgroundColor: isDark
               ? AppTheme.darkSecondaryBackground
@@ -179,33 +117,35 @@ class AdaptiveScaffold extends StatelessWidget {
           ),
         ),
         body: ResponsivePageBody(child: body),
+        // Mobile Bottom Tab Bar (Apple HIG tab-bars.md: floating glass bar)
         bottomNavigationBar: SafeArea(
           top: false,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
             child: _FrostedSurface(
-              borderRadius: BorderRadius.circular(26),
-              child: BottomNavigationBar(
-                currentIndex: activeIndex,
-                onTap: (index) => scope?.onTabSelected(index),
-                type: BottomNavigationBarType.fixed,
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                selectedFontSize: 12,
-                unselectedFontSize: 11,
-                selectedItemColor: AppTheme.electricCyan,
-                unselectedItemColor: isDark
-                    ? AppTheme.secondaryText
-                    : Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.55),
-                selectedLabelStyle: const TextStyle(
-                  fontWeight: FontWeight.bold,
+              borderRadius: BorderRadius.circular(32),
+              child: Container(
+                height: 64,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(navItems.length, (index) {
+                    final item = navItems[index];
+                    final isSelected = activeIndex == index;
+                    return Expanded(
+                      child: Center(
+                        child: _CupertinoTabItem(
+                          icon: item.icon,
+                          activeIcon: item.activeIcon,
+                          label: item.label,
+                          isSelected: isSelected,
+                          isDark: isDark,
+                          onTap: () => scope?.onTabSelected(index),
+                        ),
+                      ),
+                    );
+                  }),
                 ),
-                unselectedLabelStyle: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                ),
-                items: navItems,
               ),
             ),
           ),
@@ -236,7 +176,15 @@ class AdaptiveScaffold extends StatelessWidget {
         header: true,
         child:
             titleWidget ??
-            (title != null ? Text(title!) : Text(l.common_app_name)),
+            (title != null
+                ? Text(
+                    title!,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  )
+                : Text(
+                    l.common_app_name,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  )),
       ),
       bottom: bottom,
       actions: actions,
@@ -245,8 +193,87 @@ class AdaptiveScaffold extends StatelessWidget {
   }
 }
 
-/// Shared translucent chrome. It creates depth without hiding the content
-/// hierarchy, and automatically becomes more solid in high contrast modes.
+class _NavModel {
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+
+  const _NavModel({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+  });
+}
+
+class _CupertinoTabItem extends StatelessWidget {
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+  final bool isSelected;
+  final bool isDark;
+  final VoidCallback onTap;
+
+  const _CupertinoTabItem({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+    required this.isSelected,
+    required this.isDark,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final activeColor = AppTheme.electricCyan;
+    final inactiveColor = isDark
+        ? AppTheme.secondaryText
+        : const Color(0xFF64748B);
+
+    return ScalePress(
+      onTap: onTap,
+      scale: 0.92,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 240),
+        curve: Curves.easeOutCubic,
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? activeColor.withValues(alpha: isDark ? 0.22 : 0.14)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(18),
+          border: isSelected
+              ? Border.all(color: activeColor.withValues(alpha: 0.4), width: 1)
+              : null,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              isSelected ? activeIcon : icon,
+              size: 21,
+              color: isSelected ? activeColor : inactiveColor,
+            ),
+            const SizedBox(height: 1),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                color: isSelected ? activeColor : inactiveColor,
+                letterSpacing: -0.3,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Shared translucent iOS chrome (`tab-bars.md`, `sidebars.md`).
 class _FrostedSurface extends StatelessWidget {
   final Widget child;
   final BorderRadius borderRadius;
@@ -257,7 +284,7 @@ class _FrostedSurface extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final highContrast = MediaQuery.of(context).highContrast;
-    final opacity = highContrast ? 0.98 : (isDark ? 0.84 : 0.88);
+    final opacity = highContrast ? 0.98 : (isDark ? 0.82 : 0.88);
     final color =
         (isDark ? AppTheme.darkSecondaryBackground : AppTheme.lightCard)
             .withValues(alpha: opacity);
@@ -265,22 +292,21 @@ class _FrostedSurface extends StatelessWidget {
       borderRadius: borderRadius,
       child: BackdropFilter(
         filter: ImageFilter.blur(
-          sigmaX: highContrast ? 0 : 18,
-          sigmaY: highContrast ? 0 : 18,
+          sigmaX: highContrast ? 0 : 20,
+          sigmaY: highContrast ? 0 : 20,
         ),
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: color,
-            border: Border(
-              top: BorderSide(
-                color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
-              ),
+            border: Border.all(
+              color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+              width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.28 : 0.07),
-                blurRadius: 22,
-                offset: const Offset(0, -5),
+                color: Colors.black.withValues(alpha: isDark ? 0.32 : 0.08),
+                blurRadius: 24,
+                offset: const Offset(0, -4),
               ),
             ],
           ),
@@ -301,8 +327,6 @@ class _AppBarMaterial extends StatelessWidget {
   );
 }
 
-/// Keeps reading, forms and financial data comfortably scannable on desktop
-/// while preserving the full-width, edge-to-edge mobile experience.
 class ResponsivePageBody extends StatelessWidget {
   final Widget child;
   final double maxWidth;
@@ -330,6 +354,7 @@ class ResponsivePageBody extends StatelessWidget {
   }
 }
 
+/// Desktop/Web Sidebar Menu (`sidebars.md`).
 class SideMenuContent extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onSelectTab;
@@ -355,32 +380,32 @@ class SideMenuContent extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Top Bar with Logo, Tagline & Close Button
+            // App Branding Header
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
               child: Row(
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
                           color: AppTheme.electricCyan.withValues(alpha: 0.35),
-                          blurRadius: 14,
+                          blurRadius: 16,
                           offset: const Offset(0, 4),
                         ),
                       ],
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
                       child: Image.asset(
                         'assets/icon/app_icon.png',
-                        width: 40,
-                        height: 40,
+                        width: 44,
+                        height: 44,
                         fit: BoxFit.cover,
                         errorBuilder: (_, _, _) => const Icon(
                           Icons.access_time_filled_rounded,
-                          size: 40,
+                          size: 44,
                           color: AppTheme.electricCyan,
                         ),
                       ),
@@ -426,7 +451,7 @@ class SideMenuContent extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // User Account Badge (If logged in or guest)
+            // Profile Account Card
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ScalePress(
@@ -507,12 +532,11 @@ class SideMenuContent extends StatelessWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
             const Divider(height: 1),
             const SizedBox(height: 12),
 
-            // New Shift Action Button
+            // Primary Action Button (New Shift)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
@@ -553,12 +577,11 @@ class SideMenuContent extends StatelessWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
             const Divider(height: 1, indent: 16, endIndent: 16),
             const SizedBox(height: 8),
 
-            // Navigation Destinations
+            // Sidebar Navigation Items (`sidebars.md`)
             _SideNavItem(
               icon: Icons.home_rounded,
               label: l.common_app_name,
@@ -601,12 +624,11 @@ class SideMenuContent extends StatelessWidget {
                 nav.push(AppPageRoute.sharedAxis(const ProfileScreen()));
               },
             ),
-
             const SizedBox(height: 16),
             const Divider(height: 1),
             const SizedBox(height: 8),
 
-            // Settings
+            // Settings Section
             _SideNavItem(
               icon: Icons.settings_outlined,
               label: l.settings_title,

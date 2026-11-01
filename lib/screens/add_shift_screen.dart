@@ -1773,13 +1773,16 @@ class _AddShiftScreenState extends State<AddShiftScreen>
           const SizedBox(height: AppTheme.spaceLg),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _saveManual,
-              icon: const Icon(Icons.check_circle_rounded),
-              label: Text(
-                widget.shiftToEdit != null
-                    ? l.add_shift_shift_edit_dialog_title
-                    : l.add_shift_shift_ended_dialog_title,
+            child: ScalePress(
+              onTap: _saveManual,
+              child: ElevatedButton.icon(
+                onPressed: _saveManual,
+                icon: const Icon(Icons.check_circle_rounded),
+                label: Text(
+                  widget.shiftToEdit != null
+                      ? l.add_shift_shift_edit_dialog_title
+                      : l.add_shift_shift_ended_dialog_title,
+                ),
               ),
             ),
           ),
@@ -1874,13 +1877,16 @@ class _AddShiftScreenState extends State<AddShiftScreen>
           const SizedBox(height: AppTheme.spaceSm),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _saveRaw,
-              icon: const Icon(Icons.bolt_rounded),
-              label: Text(l.add_shift_paste_parse_button),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryDark,
-                foregroundColor: Colors.white,
+            child: ScalePress(
+              onTap: _saveRaw,
+              child: ElevatedButton.icon(
+                onPressed: _saveRaw,
+                icon: const Icon(Icons.bolt_rounded),
+                label: Text(l.add_shift_paste_parse_button),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryDark,
+                  foregroundColor: Colors.white,
+                ),
               ),
             ),
           ),

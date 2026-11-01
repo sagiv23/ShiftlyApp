@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/widgets/export_bottom_sheet.dart';
+import 'package:shiftly/widgets/filter_bottom_sheet.dart';
 import 'package:shiftly/widgets/year_month_tab_layout.dart';
 
 /// Dedicated screen for full shift history browsing with Year & Month TabLayout.
@@ -23,9 +25,9 @@ class _ShiftHistoryScreenState extends State<ShiftHistoryScreen> {
   Widget build(BuildContext context) {
     final shiftProvider = context.watch<ShiftProvider>();
     final l = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final groupedShifts = shiftProvider.shiftsGroupedByMonth;
     final currentMonthKey = DateTime.now().toString().substring(0, 7);
+    final isFilterActive = shiftProvider.activeFilter?.isActive == true;
 
     return Scaffold(
       appBar: AppBar(
@@ -35,113 +37,70 @@ class _ShiftHistoryScreenState extends State<ShiftHistoryScreen> {
             context,
           ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
         ),
-        centerTitle: true,
         actions: [
-          // View Mode Toggle (Tab View vs List View)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.1)
-                      : Colors.black.withValues(alpha: 0.06),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    GestureDetector(
-                      onTap: () => setState(() => _useTabView = true),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _useTabView
-                              ? (isDark
-                                    ? AppTheme.electricCyan.withValues(
-                                        alpha: 0.25,
-                                      )
-                                    : Colors.white)
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(8),
-                          border: _useTabView
-                              ? Border.all(
-                                  color: AppTheme.electricCyan.withValues(
-                                    alpha: 0.5,
-                                  ),
-                                  width: 1,
-                                )
-                              : null,
-                        ),
-                        child: Icon(
-                          Icons.calendar_view_month_rounded,
-                          size: 18,
-                          color: _useTabView
-                              ? AppTheme.electricCyan
-                              : (isDark
-                                    ? AppTheme.secondaryText
-                                    : Colors.grey.shade600),
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => setState(() => _useTabView = false),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: !_useTabView
-                              ? (isDark
-                                    ? AppTheme.electricCyan.withValues(
-                                        alpha: 0.25,
-                                      )
-                                    : Colors.white)
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(8),
-                          border: !_useTabView
-                              ? Border.all(
-                                  color: AppTheme.electricCyan.withValues(
-                                    alpha: 0.5,
-                                  ),
-                                  width: 1,
-                                )
-                              : null,
-                        ),
-                        child: Icon(
-                          Icons.format_list_bulleted_rounded,
-                          size: 18,
-                          color: !_useTabView
-                              ? AppTheme.electricCyan
-                              : (isDark
-                                    ? AppTheme.secondaryText
-                                    : Colors.grey.shade600),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+          IconButton(
+            icon: Icon(
+              isFilterActive
+                  ? Icons.filter_alt_rounded
+                  : Icons.filter_alt_outlined,
+              color: isFilterActive ? AppTheme.electricCyan : null,
+            ),
+            tooltip: l.filter_title,
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                useSafeArea: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) => const FilterBottomSheet(),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.download_rounded),
+            tooltip: l.export_title,
+            onPressed: () => showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              useSafeArea: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) => const ExportBottomSheet(),
             ),
           ),
+          IconButton(
+            icon: Icon(
+              _useTabView
+                  ? Icons.format_list_bulleted_rounded
+                  : Icons.calendar_view_month_rounded,
+            ),
+            tooltip: _useTabView
+                ? l.analytics_period_monthly
+                : l.analytics_period_all_time,
+            onPressed: () {
+              setState(() {
+                _useTabView = !_useTabView;
+              });
+            },
+          ),
+          const SizedBox(width: 4),
         ],
       ),
       body: SafeArea(
-        child: _useTabView
-            ? YearMonthTabLayout(
-                groupedShifts: groupedShifts,
-                currentMonthKey: currentMonthKey,
-                initialYear: _targetYear,
-                initialMonth: _targetMonth,
-              )
-            : _buildListView(context, groupedShifts, l),
+        child: Column(
+          children: [
+            if (isFilterActive) const ActiveFiltersBar(),
+            Expanded(
+              child: _useTabView
+                  ? YearMonthTabLayout(
+                      groupedShifts: groupedShifts,
+                      currentMonthKey: currentMonthKey,
+                      initialYear: _targetYear,
+                      initialMonth: _targetMonth,
+                    )
+                  : _buildListView(context, groupedShifts, l),
+            ),
+          ],
+        ),
       ),
     );
   }

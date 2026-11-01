@@ -96,8 +96,8 @@ class ShiftTile extends StatelessWidget {
         children: [
           // Date badge with electric cyan glow
           Container(
-            width: 50,
-            height: 50,
+            width: 52,
+            height: 52,
             decoration: BoxDecoration(
               color: AppTheme.electricCyan.withValues(
                 alpha: isDark ? 0.16 : 0.12,
@@ -105,9 +105,18 @@ class ShiftTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: AppTheme.electricCyan.withValues(
-                  alpha: isDark ? 0.35 : 0.2,
+                  alpha: isDark ? 0.35 : 0.22,
                 ),
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.electricCyan.withValues(
+                    alpha: isDark ? 0.15 : 0.08,
+                  ),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -725,7 +725,7 @@ abstract class AppLocalizations {
   /// No description provided for @home_shift_list_shifts_on.
   ///
   /// In he, this message translates to:
-  /// **'משמרות ב-'**
+  /// **'משמרות -'**
   String get home_shift_list_shifts_on;
 
   /// No description provided for @home_action_new_shift.

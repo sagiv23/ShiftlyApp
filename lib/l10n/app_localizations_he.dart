@@ -336,7 +336,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get home_shift_list_select_day => 'בחר יום להצגת משמרות';
 
   @override
-  String get home_shift_list_shifts_on => 'משמרות ב-';
+  String get home_shift_list_shifts_on => 'משמרות -';
 
   @override
   String get home_action_new_shift => 'משמרת חדשה';

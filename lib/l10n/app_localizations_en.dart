@@ -338,7 +338,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_shift_list_select_day => 'Select a day to show shifts';
 
   @override
-  String get home_shift_list_shifts_on => 'Shifts on ';
+  String get home_shift_list_shifts_on => 'Shifts on';
 
   @override
   String get home_action_new_shift => 'New Shift';

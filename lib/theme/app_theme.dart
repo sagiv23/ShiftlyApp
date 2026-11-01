@@ -2,45 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 
-/// Design tokens and Material 3 themes for Shiftly Premium Dark Fintech.
+/// Design tokens and Material 3 themes for Shiftly Premium Native iOS Fintech.
 class AppTheme {
   AppTheme._();
 
   // ── Shiftly Brand Palette ──────────────────────────────────────────
-  // Backgrounds
-  static const Color darkBackground = Color(0xFF070B18); // Primary Background
-  static const Color darkSecondaryBackground = Color(
-    0xFF0B1224,
-  ); // Secondary Background
-  static const Color darkCard = Color(0xFF111C32); // Elevated Surface
-  static const Color darkSurfaceElevated = Color(
-    0xFF15233D,
-  ); // Alternative Surface
+  // Backgrounds - Apple Dark (OLED Navy/Slate) & Apple Light (Crisp Neutral)
+  static const Color darkBackground = Color(0xFF070A14);
+  static const Color darkSecondaryBackground = Color(0xFF0E1526);
+  static const Color darkCard = Color(0xFF131D31);
+  static const Color darkSurfaceElevated = Color(0xFF1A2740);
 
-  static const Color lightBackground = Color(0xFFF2F5F9);
+  static const Color lightBackground = Color(0xFFF8FAFC);
   static const Color lightCard = Color(0xFFFFFFFF);
-  static const Color lightSurfaceElevated = Color(0xFFE9EEF4);
-  static const Color lightBorder = Color(0xFFD6DFEB);
+  static const Color lightSurfaceElevated = Color(0xFFF1F5F9);
+  static const Color lightBorder = Color(0xFFE2E8F0);
 
-  // Primary Accents
-  static const Color electricCyan = Color(0xFF38E8FF); // Electric Cyan
-  static const Color brightCyan = Color(0xFF00C8F0); // Bright Cyan
+  // Primary Accents - Vibrant Sky Cyan
+  static const Color electricCyan = Color(0xFF38BDF8); // Sky 400
+  static const Color brightCyan = Color(0xFF0EA5E9); // Sky 500
   static const Color primary = electricCyan;
   static const Color primaryDark = brightCyan;
-  static const Color primaryGlow = Color(0x4D38E8FF);
+  static const Color primaryGlow = Color(0x4D38BDF8);
 
-  // Secondary Accents
-  static const Color neonViolet = Color(0xFF8B5CF6); // Neon Violet
-  static const Color softLavender = Color(0xFFA78BFA); // Soft Lavender
+  // Secondary Accents - Indigo & Purple
+  static const Color neonViolet = Color(0xFF818CF8); // Indigo 400
+  static const Color softLavender = Color(0xFFC084FC); // Purple 400
   static const Color secondary = neonViolet;
   static const Color tertiary = softLavender;
 
-  // Additional Accents
-  static const Color mintGreen = Color(0xFF45E0B1); // Mint Green
-  static const Color warmAmber = Color(0xFFFFBF69); // Warm Amber
-  static const Color softCoral = Color(0xFFFF718A); // Soft Coral
+  // Additional Accents & Semantic Colors
+  static const Color mintGreen = Color(0xFF34D399); // Emerald 400
+  static const Color warmAmber = Color(0xFFF59E0B); // Amber 500
+  static const Color softCoral = Color(0xFFF87171); // Red 400
 
-  // Semantic mappings
   static const Color profit = mintGreen;
   static const Color profitSoft = Color(0xFF34D399);
   static const Color expense = softCoral;
@@ -49,17 +44,15 @@ class AppTheme {
   static const Color warningSoft = Color(0xFFF59E0B);
 
   // Typography Colors
-  static const Color primaryText = Color(0xFFF4F7FF);
-  static const Color secondaryText = Color(0xFFA8B5CC);
-  static const Color mutedText = Color(0xFF78869F);
+  static const Color primaryText = Color(0xFFF8FAFC);
+  static const Color secondaryText = Color(0xFF94A3B8);
+  static const Color mutedText = Color(0xFF64748B);
 
   // Borders
   static const Color darkBorder = Color(
-    0x2194B4E6,
-  ); // Subtle Border: rgba(148, 180, 230, 0.13)
+      0x1F94A3B8); // Subtle rgba(148,163,184,0.12)
   static const Color highlightBorder = Color(
-    0x4D38E8FF,
-  ); // Highlight Border: rgba(56, 232, 255, 0.3)
+      0x4D38BDF8); // rgba(56,189,248,0.3)
 
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
@@ -75,7 +68,7 @@ class AppTheme {
   );
 
   static const LinearGradient glassCardGradient = LinearGradient(
-    colors: [Color(0x26111C32), Color(0x1A0B1224)],
+    colors: [Color(0x26131D31), Color(0x1A0E1526)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
