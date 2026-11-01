@@ -369,52 +369,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             PageEntranceAnimation(
               delayFraction: 0.0,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionHeader(context, l.side_menu_profile),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  Card(
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: AppTheme.neonViolet,
-                        child: auth.isLoggedIn
-                            ? Text(
-                                (auth.userName?.isNotEmpty == true
-                                        ? auth.userName![0]
-                                        : (auth.userEmail?.isNotEmpty == true
-                                              ? auth.userEmail![0]
-                                              : 'U'))
-                                    .toUpperCase(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            : const Icon(
-                                Icons.person_outline_rounded,
+              child: _buildCollapsibleCategory(
+                title: l.side_menu_profile,
+                icon: Icons.person_outline_rounded,
+                child: Card(
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: AppTheme.neonViolet,
+                      child: auth.isLoggedIn
+                          ? Text(
+                              (auth.userName?.isNotEmpty == true
+                                      ? auth.userName![0]
+                                      : (auth.userEmail?.isNotEmpty == true
+                                            ? auth.userEmail![0]
+                                            : 'U'))
+                                  .toUpperCase(),
+                              style: const TextStyle(
                                 color: Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),
-                      ),
-                      title: Text(
-                        auth.isLoggedIn
-                            ? (auth.userName ?? l.settings_user_name)
-                            : l.side_menu_profile,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        auth.isLoggedIn
-                            ? (auth.userEmail ?? '')
-                            : l.settings_byos_login_hint,
-                      ),
-                      trailing: const Icon(Icons.chevron_right_rounded),
-                      onTap: () => Navigator.push(
-                        context,
-                        AppPageRoute.slideHorizontal(const ProfileScreen()),
-                      ),
+                            )
+                          : const Icon(
+                              Icons.person_outline_rounded,
+                              color: Colors.white,
+                            ),
+                    ),
+                    title: Text(
+                      auth.isLoggedIn
+                          ? (auth.userName ?? l.settings_user_name)
+                          : l.side_menu_profile,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      auth.isLoggedIn
+                          ? (auth.userEmail ?? '')
+                          : l.settings_byos_login_hint,
+                    ),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => Navigator.push(
+                      context,
+                      AppPageRoute.slideHorizontal(const ProfileScreen()),
                     ),
                   ),
-                ],
+                ),
               ),
             ),
             const SizedBox(height: AppTheme.spaceLg),
@@ -423,671 +420,739 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSectionHeader(context, l.settings_section_app),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  Card(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.palette_outlined,
-                                    color: AppTheme.electricCyan,
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Text(
-                                    l.settings_field_theme,
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.titleMedium,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              SizedBox(
-                                width: double.infinity,
-                                child: SegmentedButton<ThemeMode>(
-                                  segments: [
-                                    ButtonSegment(
-                                      value: ThemeMode.system,
-                                      label: Text(l.settings_theme_system),
-                                      icon: const Icon(
-                                        Icons.brightness_auto_rounded,
-                                      ),
+                  _buildCollapsibleCategory(
+                    title: l.settings_section_app,
+                    icon: Icons.tune_rounded,
+                    child: Card(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.palette_outlined,
+                                      color: AppTheme.electricCyan,
                                     ),
-                                    ButtonSegment(
-                                      value: ThemeMode.light,
-                                      label: Text(l.settings_theme_light),
-                                      icon: const Icon(
-                                        Icons.light_mode_rounded,
-                                      ),
-                                    ),
-                                    ButtonSegment(
-                                      value: ThemeMode.dark,
-                                      label: Text(l.settings_theme_dark),
-                                      icon: const Icon(Icons.dark_mode_rounded),
+                                    const SizedBox(width: 16),
+                                    Text(
+                                      l.settings_field_theme,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleMedium,
                                     ),
                                   ],
-                                  selected: {settings.themeMode},
-                                  onSelectionChanged: (val) =>
-                                      settings.setThemeMode(val.first),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Divider(height: 1, indent: 56),
-                        ListTile(
-                          title: Text(l.settings_field_language),
-                          leading: const Icon(
-                            Icons.language_rounded,
-                            color: AppTheme.electricCyan,
-                          ),
-                          trailing: DropdownButton<String>(
-                            value: settings.locale.languageCode,
-                            underline: const SizedBox(),
-                            items: [
-                              DropdownMenuItem(
-                                value: 'he',
-                                child: Text(l.settings_language_he),
-                              ),
-                              DropdownMenuItem(
-                                value: 'en',
-                                child: Text(l.settings_language_en),
-                              ),
-                            ],
-                            onChanged: (val) {
-                              if (val != null) {
-                                settings.setLocale(Locale(val));
-                              }
-                            },
-                          ),
-                        ),
-                        const Divider(height: 1, indent: 56),
-                        ListTile(
-                          title: Text(l.settings_field_currency),
-                          subtitle: Text(l.settings_field_currency_sub),
-                          leading: const Icon(
-                            Icons.payments_outlined,
-                            color: AppTheme.electricCyan,
-                          ),
-                          trailing: DropdownButton<String>(
-                            value: settings.currencySymbol,
-                            underline: const SizedBox(),
-                            items: const [
-                              DropdownMenuItem(
-                                value: '₪',
-                                child: Text('₪ ILS'),
-                              ),
-                              DropdownMenuItem(
-                                value: '\$',
-                                child: Text('\$ USD'),
-                              ),
-                              DropdownMenuItem(
-                                value: '€',
-                                child: Text('€ EUR'),
-                              ),
-                              DropdownMenuItem(
-                                value: '£',
-                                child: Text('£ GBP'),
-                              ),
-                            ],
-                            onChanged: (val) {
-                              if (val != null) settings.setCurrencySymbol(val);
-                            },
-                          ),
-                        ),
-                        const Divider(height: 1, indent: 56),
-                        ListTile(
-                          title: Text(l.accessibility_statement),
-                          subtitle: Text(l.settings_accessibility_sub),
-                          leading: const Icon(
-                            Icons.accessibility_new_rounded,
-                            color: AppTheme.electricCyan,
-                          ),
-                          trailing: const Icon(Icons.chevron_right_rounded),
-                          onTap: () {
-                            LegalUtils.showAccessibilityStatement(context);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: AppTheme.spaceLg),
-                  _buildSectionHeader(context, l.settings_section_breaks),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppTheme.spaceSm),
-                      child: Column(
-                        children: [
-                          SwitchListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              l.settings_field_breaks_enabled,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                              ),
+                                const SizedBox(height: 12),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: SegmentedButton<ThemeMode>(
+                                    segments: [
+                                      ButtonSegment(
+                                        value: ThemeMode.system,
+                                        label: Text(l.settings_theme_system),
+                                        icon: const Icon(
+                                          Icons.brightness_auto_rounded,
+                                        ),
+                                      ),
+                                      ButtonSegment(
+                                        value: ThemeMode.light,
+                                        label: Text(l.settings_theme_light),
+                                        icon: const Icon(
+                                          Icons.light_mode_rounded,
+                                        ),
+                                      ),
+                                      ButtonSegment(
+                                        value: ThemeMode.dark,
+                                        label: Text(l.settings_theme_dark),
+                                        icon: const Icon(
+                                          Icons.dark_mode_rounded,
+                                        ),
+                                      ),
+                                    ],
+                                    selected: {settings.themeMode},
+                                    onSelectionChanged: (val) =>
+                                        settings.setThemeMode(val.first),
+                                  ),
+                                ),
+                              ],
                             ),
-                            subtitle: Text(l.settings_field_breaks_enabled_sub),
-                            secondary: const Icon(
-                              Icons.timer_off_outlined,
+                          ),
+                          const Divider(height: 1, indent: 56),
+                          ListTile(
+                            title: Text(l.settings_field_language),
+                            leading: const Icon(
+                              Icons.language_rounded,
                               color: AppTheme.electricCyan,
                             ),
-                            value: settings.breaksEnabled,
-                            onChanged: (val) => settings.setBreaksEnabled(val),
-                            activeThumbColor: const Color(0xFF040711),
-                            activeTrackColor: AppTheme.electricCyan,
-                          ),
-                          if (settings.breaksEnabled) ...[
-                            const Divider(height: 16),
-                            TextField(
-                              controller: _paidController,
-                              decoration: InputDecoration(
-                                labelText: l.settings_field_paid_break,
-                                hintText: '0',
-                                prefixIcon: const Icon(Icons.timer_outlined),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                            const SizedBox(height: AppTheme.spaceSm),
-                            TextField(
-                              controller: _unpaidController,
-                              decoration: InputDecoration(
-                                labelText: l.settings_field_unpaid_break,
-                                hintText: '0',
-                                prefixIcon: const Icon(Icons.coffee_outlined),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                            const SizedBox(height: AppTheme.spaceSm),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  final paid =
-                                      double.tryParse(_paidController.text) ??
-                                      0.0;
-                                  final unpaid =
-                                      double.tryParse(_unpaidController.text) ??
-                                      0.0;
-
-                                  final confirmed = await UIUtils.showConfirmDialog(
-                                    context: context,
-                                    title:
-                                        l.settings_dialog_update_breaks_title,
-                                    content:
-                                        '${l.settings_dialog_update_breaks_title}?',
-                                  );
-
-                                  if (confirmed != true) return;
-                                  if (!context.mounted) return;
-
-                                  settings.setBreakDurations(paid, unpaid);
-                                  UIUtils.showSnackBar(
-                                    context,
-                                    l.common_success,
-                                  );
-                                },
-                                child: Text(l.settings_action_update_breaks),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spaceLg),
-                  _buildSectionHeader(context, l.settings_section_overtime),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppTheme.spaceSm),
-                      child: Column(
-                        children: [
-                          SwitchListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              l.settings_overtime_enable,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            subtitle: Text(l.settings_overtime_enable_sub),
-                            secondary: const Icon(
-                              Icons.more_time_rounded,
-                              color: AppTheme.electricCyan,
-                            ),
-                            value: settings.overtimeRules.enabled,
-                            onChanged: (val) {
-                              final updated = settings.overtimeRules.copyWith(
-                                enabled: val,
-                              );
-                              settings.setOvertimeRules(updated);
-                            },
-                            activeThumbColor: const Color(0xFF040711),
-                            activeTrackColor: AppTheme.electricCyan,
-                          ),
-                          if (settings.overtimeRules.enabled) ...[
-                            const Divider(height: 16),
-                            TextField(
-                              controller: _otThresholdController,
-                              decoration: InputDecoration(
-                                labelText:
-                                    l.settings_overtime_regular_threshold,
-                                hintText: '8.0',
-                                prefixIcon: const Icon(Icons.access_time),
-                              ),
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                    decimal: true,
-                                  ),
-                            ),
-                            const SizedBox(height: AppTheme.spaceSm),
-                            TextField(
-                              controller: _otTier1LimitController,
-                              decoration: InputDecoration(
-                                labelText: l.settings_overtime_tier1_limit,
-                                hintText: '2.0',
-                                prefixIcon: const Icon(Icons.timelapse),
-                              ),
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                    decimal: true,
-                                  ),
-                            ),
-                            const SizedBox(height: AppTheme.spaceSm),
-                            TextField(
-                              controller: _otTier1MultiplierController,
-                              decoration: InputDecoration(
-                                labelText: l.settings_overtime_tier1_rate,
-                                hintText: '125',
-                                prefixIcon: const Icon(Icons.percent),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                            const SizedBox(height: AppTheme.spaceSm),
-                            TextField(
-                              controller: _otTier2MultiplierController,
-                              decoration: InputDecoration(
-                                labelText: l.settings_overtime_tier2_rate,
-                                hintText: '150',
-                                prefixIcon: const Icon(Icons.percent),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                            const SizedBox(height: AppTheme.spaceSm),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  final threshold =
-                                      double.tryParse(
-                                        _otThresholdController.text,
-                                      ) ??
-                                      8.0;
-                                  final tier1Limit =
-                                      double.tryParse(
-                                        _otTier1LimitController.text,
-                                      ) ??
-                                      2.0;
-                                  final tier1Mult =
-                                      (double.tryParse(
-                                            _otTier1MultiplierController.text,
-                                          ) ??
-                                          125.0) /
-                                      100.0;
-                                  final tier2Mult =
-                                      (double.tryParse(
-                                            _otTier2MultiplierController.text,
-                                          ) ??
-                                          150.0) /
-                                      100.0;
-
-                                  final newRules = settings.overtimeRules
-                                      .copyWith(
-                                        regularHoursThreshold: threshold,
-                                        tier1HoursLimit: tier1Limit,
-                                        tier1Multiplier: tier1Mult,
-                                        tier2Multiplier: tier2Mult,
-                                      );
-
-                                  final err = newRules.validate();
-                                  if (err != null) {
-                                    UIUtils.showSnackBar(
-                                      context,
-                                      err,
-                                      isError: true,
-                                    );
-                                    return;
-                                  }
-
-                                  await settings.setOvertimeRules(newRules);
-                                  if (!context.mounted) return;
-                                  UIUtils.showSnackBar(
-                                    context,
-                                    l.settings_overtime_saved,
-                                  );
-                                },
-                                child: Text(l.settings_overtime_update_button),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spaceLg),
-                  _buildSectionHeader(context, l.settings_shabbat_section),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppTheme.spaceSm),
-                      child: Column(
-                        children: [
-                          SwitchListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              l.settings_shabbat_enable,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            subtitle: Text(l.settings_shabbat_enable_sub),
-                            secondary: const Icon(
-                              Icons.star_rounded,
-                              color: AppTheme.warmAmber,
-                            ),
-                            value: settings.shabbatHolidayRules.enabled,
-                            onChanged: (val) {
-                              final updated = settings.shabbatHolidayRules
-                                  .copyWith(enabled: val);
-                              settings.setShabbatHolidayRules(updated);
-                            },
-                            activeThumbColor: const Color(0xFF040711),
-                            activeTrackColor: AppTheme.electricCyan,
-                          ),
-                          if (settings.shabbatHolidayRules.enabled) ...[
-                            const Divider(height: 16),
-                            TextField(
-                              controller: _shabbatMultiplierController,
-                              decoration: InputDecoration(
-                                labelText: l.settings_shabbat_multiplier_label,
-                                hintText: '150',
-                                prefixIcon: const Icon(Icons.percent),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                            const SizedBox(height: AppTheme.spaceSm),
-                            TextField(
-                              controller: _holidayMultiplierController,
-                              decoration: InputDecoration(
-                                labelText: l.settings_holiday_multiplier_label,
-                                hintText: '150',
-                                prefixIcon: const Icon(Icons.percent),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                            const SizedBox(height: AppTheme.spaceSm),
-                            TextField(
-                              controller: _candleLightingController,
-                              decoration: InputDecoration(
-                                labelText: l.settings_candle_lighting_label,
-                                hintText: '20',
-                                prefixIcon: const Icon(Icons.light_mode),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                            const SizedBox(height: AppTheme.spaceSm),
-                            TextField(
-                              controller: _shabbatExitController,
-                              decoration: InputDecoration(
-                                labelText: l.settings_shabbat_exit_label,
-                                hintText: '40',
-                                prefixIcon: const Icon(Icons.dark_mode),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                            const SizedBox(height: AppTheme.spaceSm),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  final shabbatMult =
-                                      (double.tryParse(
-                                            _shabbatMultiplierController.text,
-                                          ) ??
-                                          150.0) /
-                                      100.0;
-                                  final holidayMult =
-                                      (double.tryParse(
-                                            _holidayMultiplierController.text,
-                                          ) ??
-                                          150.0) /
-                                      100.0;
-                                  final candle =
-                                      double.tryParse(
-                                        _candleLightingController.text,
-                                      ) ??
-                                      20.0;
-                                  final exit =
-                                      double.tryParse(
-                                        _shabbatExitController.text,
-                                      ) ??
-                                      40.0;
-
-                                  final newRules = settings.shabbatHolidayRules
-                                      .copyWith(
-                                        shabbatMultiplier: shabbatMult,
-                                        holidayMultiplier: holidayMult,
-                                        candleLightingMinutesBeforeSunset:
-                                            candle,
-                                        shabbatExitMinutesAfterSunset: exit,
-                                      );
-
-                                  final err = newRules.validate();
-                                  if (err != null) {
-                                    UIUtils.showSnackBar(
-                                      context,
-                                      err,
-                                      isError: true,
-                                    );
-                                    return;
-                                  }
-
-                                  await settings.setShabbatHolidayRules(
-                                    newRules,
-                                  );
-                                  if (!context.mounted) return;
-                                  UIUtils.showSnackBar(
-                                    context,
-                                    l.settings_shabbat_saved,
-                                  );
-                                },
-                                child: Text(l.settings_shabbat_save_button),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spaceLg),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildSectionHeader(
-                          context,
-                          l.onboarding_job_types_title,
-                        ),
-                      ),
-                      TextButton.icon(
-                        onPressed: () => _showEditJobDialog(context),
-                        icon: const Icon(Icons.add_rounded),
-                        label: Text(l.common_confirm),
-                        style: TextButton.styleFrom(
-                          foregroundColor: AppTheme.electricCyan,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  if (rawJobs.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.all(AppTheme.spaceMd),
-                      child: Center(
-                        child: Text(
-                          l.common_error,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                    )
-                  else
-                    ...jobs.map(
-                      (job) => _JobCard(
-                        job: job,
-                        onEdit: () => _showEditJobDialog(context, job),
-                        onDelete: () => _deleteJob(context, job),
-                        symbol: symbol,
-                      ),
-                    ),
-                  if (!kIsWeb) ...[
-                    const SizedBox(height: AppTheme.spaceLg),
-                    _buildSectionHeader(context, l.settings_update_section),
-                    const SizedBox(height: AppTheme.spaceXs),
-                    Card(
-                      child: ListTile(
-                        leading: const Icon(
-                          Icons.system_update_rounded,
-                          color: AppTheme.electricCyan,
-                        ),
-                        title: Text(l.settings_update_check_button),
-                        subtitle: Text(
-                          l.settings_update_current_version(_currentVersion),
-                        ),
-                        trailing: _isCheckingUpdates
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                            trailing: DropdownButton<String>(
+                              value: settings.locale.languageCode,
+                              underline: const SizedBox(),
+                              items: [
+                                DropdownMenuItem(
+                                  value: 'he',
+                                  child: Text(l.settings_language_he),
                                 ),
-                              )
-                            : const Icon(Icons.refresh_rounded),
-                        onTap: _isCheckingUpdates
-                            ? null
-                            : () async {
-                                final checkingMsg =
-                                    l.settings_update_checking_toast;
-                                final errorMsg = l.settings_update_error_toast;
-                                final latestMsg =
-                                    l.settings_update_latest_toast;
-
-                                setState(() {
-                                  _isCheckingUpdates = true;
-                                });
-                                UIUtils.showSnackBar(context, checkingMsg);
-                                final updateInfo =
-                                    await UpdateService.checkForUpdates();
-                                if (!context.mounted) return;
-                                setState(() {
-                                  _isCheckingUpdates = false;
-                                });
-
-                                if (updateInfo == null) {
-                                  UIUtils.showSnackBar(
-                                    context,
-                                    errorMsg,
-                                    isError: true,
-                                  );
-                                } else if (!updateInfo.isNewer) {
-                                  UIUtils.showSnackBar(
-                                    context,
-                                    latestMsg(updateInfo.currentVersion),
-                                  );
-                                } else {
-                                  UpdateDialog.show(
-                                    context,
-                                    updateInfo,
-                                    isForceUpdate: true,
-                                  );
+                                DropdownMenuItem(
+                                  value: 'en',
+                                  child: Text(l.settings_language_en),
+                                ),
+                              ],
+                              onChanged: (val) {
+                                if (val != null) {
+                                  settings.setLocale(Locale(val));
                                 }
                               },
+                            ),
+                          ),
+                          const Divider(height: 1, indent: 56),
+                          ListTile(
+                            title: Text(l.settings_field_currency),
+                            subtitle: Text(l.settings_field_currency_sub),
+                            leading: const Icon(
+                              Icons.payments_outlined,
+                              color: AppTheme.electricCyan,
+                            ),
+                            trailing: DropdownButton<String>(
+                              value: settings.currencySymbol,
+                              underline: const SizedBox(),
+                              items: const [
+                                DropdownMenuItem(
+                                  value: '₪',
+                                  child: Text('₪ ILS'),
+                                ),
+                                DropdownMenuItem(
+                                  value: '\$',
+                                  child: Text('\$ USD'),
+                                ),
+                                DropdownMenuItem(
+                                  value: '€',
+                                  child: Text('€ EUR'),
+                                ),
+                                DropdownMenuItem(
+                                  value: '£',
+                                  child: Text('£ GBP'),
+                                ),
+                              ],
+                              onChanged: (val) {
+                                if (val != null) {
+                                  settings.setCurrencySymbol(val);
+                                }
+                              },
+                            ),
+                          ),
+                          const Divider(height: 1, indent: 56),
+                          ListTile(
+                            title: Text(l.accessibility_statement),
+                            subtitle: Text(l.settings_accessibility_sub),
+                            leading: const Icon(
+                              Icons.accessibility_new_rounded,
+                              color: AppTheme.electricCyan,
+                            ),
+                            trailing: const Icon(Icons.chevron_right_rounded),
+                            onTap: () {
+                              LegalUtils.showAccessibilityStatement(context);
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                  const SizedBox(height: AppTheme.spaceLg),
-                  _buildSectionHeader(context, l.legal_cookie_title),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  Card(
+                  ),
+                  _buildCollapsibleCategory(
+                    title: l.settings_section_work_pay,
+                    icon: Icons.payments_outlined,
                     child: Column(
                       children: [
-                        ListTile(
-                          leading: const Icon(
-                            Icons.cookie_outlined,
-                            color: AppTheme.electricCyan,
+                        _buildSettingsSubsection(
+                          title: l.settings_section_breaks,
+                          icon: Icons.coffee_outlined,
+                          child: Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(AppTheme.spaceSm),
+                              child: Column(
+                                children: [
+                                  SwitchListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    title: Text(
+                                      l.settings_field_breaks_enabled,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      l.settings_field_breaks_enabled_sub,
+                                    ),
+                                    secondary: const Icon(
+                                      Icons.timer_off_outlined,
+                                      color: AppTheme.electricCyan,
+                                    ),
+                                    value: settings.breaksEnabled,
+                                    onChanged: (val) =>
+                                        settings.setBreaksEnabled(val),
+                                    activeThumbColor: const Color(0xFF040711),
+                                    activeTrackColor: AppTheme.electricCyan,
+                                  ),
+                                  if (settings.breaksEnabled) ...[
+                                    const Divider(height: 16),
+                                    TextField(
+                                      controller: _paidController,
+                                      decoration: InputDecoration(
+                                        labelText: l.settings_field_paid_break,
+                                        hintText: '0',
+                                        prefixIcon: const Icon(
+                                          Icons.timer_outlined,
+                                        ),
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                    const SizedBox(height: AppTheme.spaceSm),
+                                    TextField(
+                                      controller: _unpaidController,
+                                      decoration: InputDecoration(
+                                        labelText:
+                                            l.settings_field_unpaid_break,
+                                        hintText: '0',
+                                        prefixIcon: const Icon(
+                                          Icons.coffee_outlined,
+                                        ),
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                    const SizedBox(height: AppTheme.spaceSm),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          final paid =
+                                              double.tryParse(
+                                                _paidController.text,
+                                              ) ??
+                                              0.0;
+                                          final unpaid =
+                                              double.tryParse(
+                                                _unpaidController.text,
+                                              ) ??
+                                              0.0;
+
+                                          final confirmed =
+                                              await UIUtils.showConfirmDialog(
+                                                context: context,
+                                                title: l
+                                                    .settings_dialog_update_breaks_title,
+                                                content:
+                                                    '${l.settings_dialog_update_breaks_title}?',
+                                              );
+
+                                          if (confirmed != true) return;
+                                          if (!context.mounted) return;
+
+                                          settings.setBreakDurations(
+                                            paid,
+                                            unpaid,
+                                          );
+                                          UIUtils.showSnackBar(
+                                            context,
+                                            l.common_success,
+                                          );
+                                        },
+                                        child: Text(
+                                          l.settings_action_update_breaks,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
                           ),
-                          title: Text(l.legal_cookie_title),
-                          subtitle: Text(
-                            settings.cookieConsent == 'all'
-                                ? '${l.legal_cookie_accept_all} (${l.legal_cookie_essential} + ${l.legal_cookie_optional})'
-                                : '${l.legal_cookie_necessary_only} (${l.legal_cookie_essential})',
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                          trailing: const Icon(Icons.chevron_right_rounded),
-                          onTap: () =>
-                              LegalUtils.showCookiePreferences(context),
                         ),
-                        const Divider(height: 1, indent: 56),
-                        ListTile(
-                          leading: const Icon(
-                            Icons.privacy_tip_outlined,
-                            color: AppTheme.electricCyan,
+                        _buildSettingsSubsection(
+                          title: l.settings_section_overtime,
+                          icon: Icons.more_time_rounded,
+                          child: Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(AppTheme.spaceSm),
+                              child: Column(
+                                children: [
+                                  SwitchListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    title: Text(
+                                      l.settings_overtime_enable,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      l.settings_overtime_enable_sub,
+                                    ),
+                                    secondary: const Icon(
+                                      Icons.more_time_rounded,
+                                      color: AppTheme.electricCyan,
+                                    ),
+                                    value: settings.overtimeRules.enabled,
+                                    onChanged: (val) {
+                                      final updated = settings.overtimeRules
+                                          .copyWith(enabled: val);
+                                      settings.setOvertimeRules(updated);
+                                    },
+                                    activeThumbColor: const Color(0xFF040711),
+                                    activeTrackColor: AppTheme.electricCyan,
+                                  ),
+                                  if (settings.overtimeRules.enabled) ...[
+                                    const Divider(height: 16),
+                                    TextField(
+                                      controller: _otThresholdController,
+                                      decoration: InputDecoration(
+                                        labelText: l
+                                            .settings_overtime_regular_threshold,
+                                        hintText: '8.0',
+                                        prefixIcon: const Icon(
+                                          Icons.access_time,
+                                        ),
+                                      ),
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                            decimal: true,
+                                          ),
+                                    ),
+                                    const SizedBox(height: AppTheme.spaceSm),
+                                    TextField(
+                                      controller: _otTier1LimitController,
+                                      decoration: InputDecoration(
+                                        labelText:
+                                            l.settings_overtime_tier1_limit,
+                                        hintText: '2.0',
+                                        prefixIcon: const Icon(Icons.timelapse),
+                                      ),
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                            decimal: true,
+                                          ),
+                                    ),
+                                    const SizedBox(height: AppTheme.spaceSm),
+                                    TextField(
+                                      controller: _otTier1MultiplierController,
+                                      decoration: InputDecoration(
+                                        labelText:
+                                            l.settings_overtime_tier1_rate,
+                                        hintText: '125',
+                                        prefixIcon: const Icon(Icons.percent),
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                    const SizedBox(height: AppTheme.spaceSm),
+                                    TextField(
+                                      controller: _otTier2MultiplierController,
+                                      decoration: InputDecoration(
+                                        labelText:
+                                            l.settings_overtime_tier2_rate,
+                                        hintText: '150',
+                                        prefixIcon: const Icon(Icons.percent),
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                    const SizedBox(height: AppTheme.spaceSm),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          final threshold =
+                                              double.tryParse(
+                                                _otThresholdController.text,
+                                              ) ??
+                                              8.0;
+                                          final tier1Limit =
+                                              double.tryParse(
+                                                _otTier1LimitController.text,
+                                              ) ??
+                                              2.0;
+                                          final tier1Mult =
+                                              (double.tryParse(
+                                                    _otTier1MultiplierController
+                                                        .text,
+                                                  ) ??
+                                                  125.0) /
+                                              100.0;
+                                          final tier2Mult =
+                                              (double.tryParse(
+                                                    _otTier2MultiplierController
+                                                        .text,
+                                                  ) ??
+                                                  150.0) /
+                                              100.0;
+
+                                          final newRules = settings
+                                              .overtimeRules
+                                              .copyWith(
+                                                regularHoursThreshold:
+                                                    threshold,
+                                                tier1HoursLimit: tier1Limit,
+                                                tier1Multiplier: tier1Mult,
+                                                tier2Multiplier: tier2Mult,
+                                              );
+
+                                          final err = newRules.validate();
+                                          if (err != null) {
+                                            UIUtils.showSnackBar(
+                                              context,
+                                              err,
+                                              isError: true,
+                                            );
+                                            return;
+                                          }
+
+                                          await settings.setOvertimeRules(
+                                            newRules,
+                                          );
+                                          if (!context.mounted) return;
+                                          UIUtils.showSnackBar(
+                                            context,
+                                            l.settings_overtime_saved,
+                                          );
+                                        },
+                                        child: Text(
+                                          l.settings_overtime_update_button,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
                           ),
-                          title: Text(l.legal_privacy_policy),
-                          trailing: const Icon(Icons.chevron_right_rounded),
-                          onTap: () => LegalUtils.showPrivacyPolicy(context),
                         ),
-                        const Divider(height: 1, indent: 56),
-                        ListTile(
-                          leading: const Icon(
-                            Icons.gavel_outlined,
-                            color: AppTheme.electricCyan,
+                        _buildSettingsSubsection(
+                          title: l.settings_shabbat_section,
+                          icon: Icons.star_rounded,
+                          child: Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(AppTheme.spaceSm),
+                              child: Column(
+                                children: [
+                                  SwitchListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    title: Text(
+                                      l.settings_shabbat_enable,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      l.settings_shabbat_enable_sub,
+                                    ),
+                                    secondary: const Icon(
+                                      Icons.star_rounded,
+                                      color: AppTheme.warmAmber,
+                                    ),
+                                    value: settings.shabbatHolidayRules.enabled,
+                                    onChanged: (val) {
+                                      final updated = settings
+                                          .shabbatHolidayRules
+                                          .copyWith(enabled: val);
+                                      settings.setShabbatHolidayRules(updated);
+                                    },
+                                    activeThumbColor: const Color(0xFF040711),
+                                    activeTrackColor: AppTheme.electricCyan,
+                                  ),
+                                  if (settings.shabbatHolidayRules.enabled) ...[
+                                    const Divider(height: 16),
+                                    TextField(
+                                      controller: _shabbatMultiplierController,
+                                      decoration: InputDecoration(
+                                        labelText:
+                                            l.settings_shabbat_multiplier_label,
+                                        hintText: '150',
+                                        prefixIcon: const Icon(Icons.percent),
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                    const SizedBox(height: AppTheme.spaceSm),
+                                    TextField(
+                                      controller: _holidayMultiplierController,
+                                      decoration: InputDecoration(
+                                        labelText:
+                                            l.settings_holiday_multiplier_label,
+                                        hintText: '150',
+                                        prefixIcon: const Icon(Icons.percent),
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                    const SizedBox(height: AppTheme.spaceSm),
+                                    TextField(
+                                      controller: _candleLightingController,
+                                      decoration: InputDecoration(
+                                        labelText:
+                                            l.settings_candle_lighting_label,
+                                        hintText: '20',
+                                        prefixIcon: const Icon(
+                                          Icons.light_mode,
+                                        ),
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                    const SizedBox(height: AppTheme.spaceSm),
+                                    TextField(
+                                      controller: _shabbatExitController,
+                                      decoration: InputDecoration(
+                                        labelText:
+                                            l.settings_shabbat_exit_label,
+                                        hintText: '40',
+                                        prefixIcon: const Icon(Icons.dark_mode),
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                    const SizedBox(height: AppTheme.spaceSm),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          final shabbatMult =
+                                              (double.tryParse(
+                                                    _shabbatMultiplierController
+                                                        .text,
+                                                  ) ??
+                                                  150.0) /
+                                              100.0;
+                                          final holidayMult =
+                                              (double.tryParse(
+                                                    _holidayMultiplierController
+                                                        .text,
+                                                  ) ??
+                                                  150.0) /
+                                              100.0;
+                                          final candle =
+                                              double.tryParse(
+                                                _candleLightingController.text,
+                                              ) ??
+                                              20.0;
+                                          final exit =
+                                              double.tryParse(
+                                                _shabbatExitController.text,
+                                              ) ??
+                                              40.0;
+
+                                          final newRules = settings
+                                              .shabbatHolidayRules
+                                              .copyWith(
+                                                shabbatMultiplier: shabbatMult,
+                                                holidayMultiplier: holidayMult,
+                                                candleLightingMinutesBeforeSunset:
+                                                    candle,
+                                                shabbatExitMinutesAfterSunset:
+                                                    exit,
+                                              );
+
+                                          final err = newRules.validate();
+                                          if (err != null) {
+                                            UIUtils.showSnackBar(
+                                              context,
+                                              err,
+                                              isError: true,
+                                            );
+                                            return;
+                                          }
+
+                                          await settings.setShabbatHolidayRules(
+                                            newRules,
+                                          );
+                                          if (!context.mounted) return;
+                                          UIUtils.showSnackBar(
+                                            context,
+                                            l.settings_shabbat_saved,
+                                          );
+                                        },
+                                        child: Text(
+                                          l.settings_shabbat_save_button,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
                           ),
-                          title: Text(l.legal_terms_of_service),
-                          trailing: const Icon(Icons.chevron_right_rounded),
-                          onTap: () => LegalUtils.showTermsOfService(context),
+                        ),
+                        _buildSettingsSubsection(
+                          title: l.onboarding_job_types_title,
+                          icon: Icons.work_outline_rounded,
+                          trailing: IconButton(
+                            tooltip: l.onboarding_job_types_add_button,
+                            onPressed: () => _showEditJobDialog(context),
+                            icon: const Icon(Icons.add_rounded),
+                          ),
+                          child: Column(
+                            children: [
+                              if (rawJobs.isEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.all(
+                                    AppTheme.spaceMd,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      l.common_error,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodySmall,
+                                    ),
+                                  ),
+                                )
+                              else
+                                ...jobs.map(
+                                  (job) => _JobCard(
+                                    job: job,
+                                    onEdit: () =>
+                                        _showEditJobDialog(context, job),
+                                    onDelete: () => _deleteJob(context, job),
+                                    symbol: symbol,
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: AppTheme.spaceLg),
-                  _buildSectionHeader(context, l.settings_section_danger),
-                  const SizedBox(height: AppTheme.spaceXs),
-                  Card(
-                    child: ListTile(
-                      title: Text(
-                        l.settings_action_factory_reset,
-                        style: const TextStyle(
-                          color: AppTheme.softCoral,
-                          fontWeight: FontWeight.bold,
+                  if (!kIsWeb)
+                    _buildCollapsibleCategory(
+                      title: l.settings_update_section,
+                      icon: Icons.system_update_rounded,
+                      subtitle: l.settings_update_current_version(
+                        _currentVersion,
+                      ),
+                      child: Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.system_update_rounded,
+                            color: AppTheme.electricCyan,
+                          ),
+                          title: Text(l.settings_update_check_button),
+                          trailing: _isCheckingUpdates
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.refresh_rounded),
+                          onTap: _isCheckingUpdates
+                              ? null
+                              : () async {
+                                  final checkingMsg =
+                                      l.settings_update_checking_toast;
+                                  final errorMsg =
+                                      l.settings_update_error_toast;
+                                  final latestMsg =
+                                      l.settings_update_latest_toast;
+
+                                  setState(() {
+                              _isCheckingUpdates = true;
+                            });
+                            UIUtils.showSnackBar(context, checkingMsg);
+                            final updateInfo =
+                            await UpdateService.checkForUpdates();
+                            if (!context.mounted) return;
+                            setState(() {
+                              _isCheckingUpdates = false;
+                            });
+
+                                  if (updateInfo == null) {
+                                    UIUtils.showSnackBar(
+                                      context,
+                                      errorMsg,
+                                      isError: true,
+                                    );
+                                  } else if (!updateInfo.isNewer) {
+                                    UIUtils.showSnackBar(
+                                      context,
+                                      latestMsg(updateInfo.currentVersion),
+                                    );
+                                  } else {
+                                    UpdateDialog.show(
+                                      context,
+                                      updateInfo,
+                                      isForceUpdate: true,
+                                    );
+                                  }
+                                },
                         ),
                       ),
-                      subtitle: Text(l.settings_action_factory_reset_sub),
-                      trailing: const Icon(
-                        Icons.delete_forever_rounded,
-                        color: AppTheme.softCoral,
+                    ),
+                  _buildCollapsibleCategory(
+                    title: l.legal_cookie_title,
+                    icon: Icons.policy_outlined,
+                    child: Card(
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: const Icon(
+                              Icons.cookie_outlined,
+                              color: AppTheme.electricCyan,
+                            ),
+                            title: Text(l.legal_cookie_title),
+                            subtitle: Text(
+                              settings.cookieConsent == 'all'
+                                  ? '${l.legal_cookie_accept_all} (${l.legal_cookie_essential} + ${l.legal_cookie_optional})'
+                                  : '${l.legal_cookie_necessary_only} (${l.legal_cookie_essential})',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            trailing: const Icon(Icons.chevron_right_rounded),
+                            onTap: () =>
+                                LegalUtils.showCookiePreferences(context),
+                          ),
+                          const Divider(height: 1, indent: 56),
+                          ListTile(
+                            leading: const Icon(
+                              Icons.privacy_tip_outlined,
+                              color: AppTheme.electricCyan,
+                            ),
+                            title: Text(l.legal_privacy_policy),
+                            trailing: const Icon(Icons.chevron_right_rounded),
+                            onTap: () => LegalUtils.showPrivacyPolicy(context),
+                          ),
+                          const Divider(height: 1, indent: 56),
+                          ListTile(
+                            leading: const Icon(
+                              Icons.gavel_outlined,
+                              color: AppTheme.electricCyan,
+                            ),
+                            title: Text(l.legal_terms_of_service),
+                            trailing: const Icon(Icons.chevron_right_rounded),
+                            onTap: () => LegalUtils.showTermsOfService(context),
+                          ),
+                        ],
                       ),
-                      onTap: () => _handleFactoryReset(context),
                     ),
                   ),
                 ],
+              ),
+            ),
+            const SizedBox(height: AppTheme.spaceLg),
+            PageEntranceAnimation(
+              delayFraction: 0.3,
+              child: _buildCollapsibleCategory(
+                title: l.settings_section_danger,
+                icon: Icons.warning_amber_rounded,
+                child: Card(
+                  child: ListTile(
+                    title: Text(
+                      l.settings_action_factory_reset,
+                      style: const TextStyle(
+                        color: AppTheme.softCoral,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Text(l.settings_action_factory_reset_sub),
+                    trailing: const Icon(
+                      Icons.delete_forever_rounded,
+                      color: AppTheme.softCoral,
+                    ),
+                    onTap: () => _handleFactoryReset(context),
+                  ),
+                ),
               ),
             ),
           ],
@@ -1171,14 +1236,68 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
   }
 
-  Widget _buildSectionHeader(BuildContext context, String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontWeight: FontWeight.w900,
-        fontSize: 16,
-        color: AppTheme.electricCyan,
-        letterSpacing: 0.3,
+  Widget _buildCollapsibleCategory({
+    required String title,
+    required IconData icon,
+    required Widget child,
+    String? subtitle,
+    Widget? trailing,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppTheme.spaceXs),
+      child: ExpansionTile(
+        leading: Icon(icon, color: AppTheme.electricCyan),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
+        subtitle: subtitle == null ? null : Text(subtitle),
+        trailing: trailing == null
+            ? null
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [trailing, const Icon(Icons.expand_more_rounded)],
+              ),
+        tilePadding: const EdgeInsets.symmetric(horizontal: AppTheme.spaceSm),
+        childrenPadding: EdgeInsets.zero,
+        children: [child],
+      ),
+    );
+  }
+
+  Widget _buildSettingsSubsection({
+    required String title,
+    required IconData icon,
+    required Widget child,
+    Widget? trailing,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppTheme.spaceSm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppTheme.spaceSm,
+              AppTheme.spaceSm,
+              AppTheme.spaceSm,
+              AppTheme.spaceXs,
+            ),
+            child: Row(
+              children: [
+                Icon(icon, size: 20, color: AppTheme.electricCyan),
+                const SizedBox(width: AppTheme.spaceXs),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                ?trailing,
+              ],
+            ),
+          ),
+          child,
+        ],
       ),
     );
   }

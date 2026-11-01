@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -195,6 +194,9 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get settings_section_app => 'אפליקציה';
+
+  @override
+  String get settings_section_work_pay => 'עבודה ושכר';
 
   @override
   String get settings_section_breaks => 'זמני הפסקות (דקות)';

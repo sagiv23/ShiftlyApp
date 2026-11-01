@@ -60,6 +60,7 @@
   "default_expenses_trips": "נסיעות",
   "settings_title": "הגדרות",
   "settings_section_app": "אפליקציה",
+  "settings_section_work_pay": "עבודה ושכר",
   "settings_section_breaks": "זמני הפסקות (דקות)",
   "settings_section_danger": "אזור מסוכן",
   "settings_field_theme": "ערכת נושא",

@@ -60,6 +60,7 @@
   "default_expenses_trips": "Travel",
   "settings_title": "Settings",
   "settings_section_app": "Application",
+  "settings_section_work_pay": "Work & Pay",
   "settings_section_breaks": "Break Durations (min)",
   "settings_section_danger": "Danger Zone",
   "settings_field_theme": "Theme",

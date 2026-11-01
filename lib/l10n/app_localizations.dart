@@ -458,6 +458,12 @@ abstract class AppLocalizations {
   /// **'אפליקציה'**
   String get settings_section_app;
 
+  /// No description provided for @settings_section_work_pay.
+  ///
+  /// In he, this message translates to:
+  /// **'עבודה ושכר'**
+  String get settings_section_work_pay;
+
   /// No description provided for @settings_section_breaks.
   ///
   /// In he, this message translates to:
