@@ -7,6 +7,12 @@
       "skillPath": "SKILL.md",
       "computedHash": "a35331c049004f3408e6591ea2f3013cebc8cd7eb673e7713ded8db86b373bc4"
     },
+    "flutter-animating-apps": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-animating-apps/SKILL.md",
+      "computedHash": "6842df417e78b537a20ee354271c7595c646d7a86c39af365485c086cac2e394"
+    },
     "web-design-engineer": {
       "source": "ConardLi/garden-skills",
       "sourceType": "github",

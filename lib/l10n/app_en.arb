@@ -27,6 +27,14 @@
   "onboarding_welcome_title": "Welcome to Shiftly",
   "onboarding_welcome_subtitle": "The app that helps you track your shifts, salary, and tips easily and accurately.",
   "onboarding_welcome_description": "Let's set up some basics to get started.",
+  "onboarding_step_progress": "Step {current} of {total}",
+  "@onboarding_step_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "onboarding_skip_setup": "Skip setup",
   "onboarding_language_title": "App Language",
   "onboarding_language_subtitle": "Choose your preferred language.",
   "onboarding_currency_title": "Select Currency",

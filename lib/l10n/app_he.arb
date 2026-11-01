@@ -27,6 +27,14 @@
   "onboarding_welcome_title": "ברוכים הבאים ל-Shiftly",
   "onboarding_welcome_subtitle": "האפליקציה שתעזור לך לעקוב אחרי המשמרות, השכר והטיפים שלך בקלות ובדיוק.",
   "onboarding_welcome_description": "בוא נגדיר כמה דברים בסיסיים כדי להתחיל.",
+  "onboarding_step_progress": "שלב {current} מתוך {total}",
+  "@onboarding_step_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "onboarding_skip_setup": "דלג על ההגדרה",
   "onboarding_language_title": "שפת אפליקציה",
   "onboarding_language_subtitle": "בחר את השפה המועדפת עליך.",
   "onboarding_currency_title": "בחירת מטבע",

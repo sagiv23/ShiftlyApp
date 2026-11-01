@@ -92,6 +92,14 @@ class AppLocalizationsHe extends AppLocalizations {
       'בוא נגדיר כמה דברים בסיסיים כדי להתחיל.';
 
   @override
+  String onboarding_step_progress(Object current, Object total) {
+    return 'שלב $current מתוך $total';
+  }
+
+  @override
+  String get onboarding_skip_setup => 'דלג על ההגדרה';
+
+  @override
   String get onboarding_language_title => 'שפת אפליקציה';
 
   @override

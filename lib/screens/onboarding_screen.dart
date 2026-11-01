@@ -26,6 +26,8 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
+  static const int _pageCount = 6;
+
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
@@ -141,10 +143,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _nextPage() {
-    if (_currentPage < 8) {
+    if (_currentPage < _pageCount - 1) {
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
+        duration: MediaQuery.of(context).disableAnimations
+            ? Duration.zero
+            : const Duration(milliseconds: 320),
+        curve: Curves.easeOutCubic,
       );
     } else {
       _finishOnboarding();
@@ -154,13 +158,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _previousPage() {
     if (_currentPage > 0) {
       _pageController.previousPage(
-        duration: const Duration(milliseconds: 400),
+        duration: MediaQuery.of(context).disableAnimations
+            ? Duration.zero
+            : const Duration(milliseconds: 320),
         curve: Curves.easeInOut,
       );
     }
   }
 
-  void _finishOnboarding() async {
+  Future<void> _finishOnboarding({bool skipIncomplete = false}) async {
     final settings = context.read<SettingsProvider>();
     final l = AppLocalizations.of(context)!;
 
@@ -171,8 +177,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         final desc = _autoDescControllers[i].text.trim();
 
         if (amountText.isEmpty && desc.isEmpty) continue;
-
         final amount = double.tryParse(amountText);
+        if (skipIncomplete && (desc.isEmpty || amount == null || amount <= 0)) {
+          continue;
+        }
         if (desc.isEmpty) {
           UIUtils.showSnackBar(
             context,
@@ -200,8 +208,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         final desc = _autoIncomeDescControllers[i].text.trim();
 
         if (amountText.isEmpty && desc.isEmpty) continue;
-
         final amount = double.tryParse(amountText);
+        if (skipIncomplete && (desc.isEmpty || amount == null || amount <= 0)) {
+          continue;
+        }
         if (desc.isEmpty) {
           UIUtils.showSnackBar(
             context,
@@ -284,6 +294,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            _buildProgressHeader(),
             Expanded(
               child: PageView(
                 controller: _pageController,
@@ -291,26 +302,115 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 onPageChanged: (page) => setState(() => _currentPage = page),
                 children: [
                   _buildPage(pageIndex: 0, child: _buildWelcomePage()),
-                  _buildPage(pageIndex: 1, child: _buildLanguagePage()),
-                  _buildPage(pageIndex: 2, child: _buildCurrencyPage()),
-                  _buildPage(pageIndex: 3, child: _buildAutoExpensePage()),
-                  _buildPage(pageIndex: 4, child: _buildAutoIncomePage()),
-                  _buildPage(pageIndex: 5, child: _buildBreakSettingsPage()),
-                  _buildPage(pageIndex: 6, child: _buildOvertimeSettingsPage()),
-                  _buildPage(
-                    pageIndex: 7,
-                    child: _buildShabbatHolidaySettingsPage(),
-                  ),
                   PageEntranceAnimation(
-                    key: const ValueKey(8),
+                    key: const ValueKey(1),
                     child: _buildJobTypesPage(),
                   ),
+                  _buildPage(pageIndex: 2, child: _buildBreakSettingsPage()),
+                  _buildPage(pageIndex: 3, child: _buildPayRulesPage()),
+                  _buildPage(pageIndex: 4, child: _buildAutoExpensePage()),
+                  _buildPage(pageIndex: 5, child: _buildAutoIncomePage()),
                 ],
               ),
             ),
             _buildFooter(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildProgressHeader() {
+    final l = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final accent = isDark ? AppTheme.electricCyan : AppTheme.brightCyan;
+    final inactive = isDark
+        ? AppTheme.darkSurfaceElevated
+        : AppTheme.lightBorder;
+    final progressAnimationDuration = MediaQuery.of(context).disableAnimations
+        ? Duration.zero
+        : const Duration(milliseconds: 240);
+    final progressLabel = l.onboarding_step_progress(
+      _currentPage + 1,
+      _pageCount,
+    );
+    const stepIcons = [
+      Icons.tune_rounded,
+      Icons.work_outline_rounded,
+      Icons.schedule_rounded,
+      Icons.rule_rounded,
+      Icons.payments_outlined,
+      Icons.account_balance_wallet_rounded,
+    ];
+
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 12, 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  progressLabel,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ExcludeSemantics(
+                  child: Row(
+                    children: List.generate(_pageCount * 2 - 1, (index) {
+                      if (index.isOdd) {
+                        final completed = index ~/ 2 < _currentPage;
+                        return Expanded(
+                          child: AnimatedContainer(
+                            duration: progressAnimationDuration,
+                            height: 2,
+                            color: completed ? accent : inactive,
+                          ),
+                        );
+                      }
+
+                      final step = index ~/ 2;
+                      final completed = step < _currentPage;
+                      final active = step == _currentPage;
+                      final color = completed || active ? accent : inactive;
+                      return AnimatedContainer(
+                        duration: progressAnimationDuration,
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: active
+                              ? accent.withValues(alpha: 0.16)
+                              : Colors.transparent,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: color,
+                            width: active ? 2 : 1,
+                          ),
+                        ),
+                        child: Icon(
+                          completed ? Icons.check_rounded : stepIcons[step],
+                          size: 15,
+                          color: color,
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (_currentPage < _pageCount - 1)
+            TextButton(
+              onPressed: () => _finishOnboarding(skipIncomplete: true),
+              style: TextButton.styleFrom(minimumSize: const Size(80, 48)),
+              child: Text(l.onboarding_skip_setup),
+            ),
+        ],
       ),
     );
   }
@@ -322,10 +422,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 620),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 32.0,
-              vertical: 24.0,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: child,
           ),
         ),
@@ -337,223 +434,35 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final l = AppLocalizations.of(context)!;
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        EssentialWorkIcon(size: 120, symbol: _currencySymbol),
-        const SizedBox(height: 40),
+        Center(child: EssentialWorkIcon(size: 96, symbol: _currencySymbol)),
+        const SizedBox(height: 24),
         Text(
           l.onboarding_welcome_title,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.headlineLarge,
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 12),
         Text(
           l.onboarding_welcome_subtitle,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 18,
-            color: AppTheme.electricCyan,
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 40),
+        const SizedBox(height: 12),
         Text(
           l.onboarding_welcome_description,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
-      ],
-    );
-  }
-
-  Widget _buildOvertimeSettingsPage() {
-    final l = AppLocalizations.of(context)!;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Icon(
-          Icons.more_time_rounded,
-          size: 64,
-          color: AppTheme.electricCyan,
-        ),
-        const SizedBox(height: 24),
-        Text(
-          l.settings_section_overtime,
-          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          l.settings_overtime_enable_sub,
-          style: const TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-        const SizedBox(height: 32),
-        SwitchListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(
-            l.settings_overtime_enable,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          value: _onboardingOvertimeRules.enabled,
-          onChanged: (val) {
-            setState(() {
-              _onboardingOvertimeRules = _onboardingOvertimeRules.copyWith(
-                enabled: val,
-              );
-            });
-          },
-          activeThumbColor: const Color(0xFF040711),
-          activeTrackColor: AppTheme.electricCyan,
-        ),
-        if (_onboardingOvertimeRules.enabled) ...[
-          const SizedBox(height: 16),
-          TextField(
-            controller: _onboardingOtThresholdController,
-            decoration: InputDecoration(
-              labelText: l.settings_overtime_regular_threshold,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              filled: true,
-              prefixIcon: const Icon(Icons.access_time),
-            ),
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _onboardingOtTier1LimitController,
-            decoration: InputDecoration(
-              labelText: l.settings_overtime_tier1_limit,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              filled: true,
-              prefixIcon: const Icon(Icons.timelapse),
-            ),
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _onboardingOtTier1MultiplierController,
-            decoration: InputDecoration(
-              labelText: l.settings_overtime_tier1_rate,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              filled: true,
-              prefixIcon: const Icon(Icons.percent),
-            ),
-            keyboardType: TextInputType.number,
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _onboardingOtTier2MultiplierController,
-            decoration: InputDecoration(
-              labelText: l.settings_overtime_tier2_rate,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              filled: true,
-              prefixIcon: const Icon(Icons.percent),
-            ),
-            keyboardType: TextInputType.number,
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildShabbatHolidaySettingsPage() {
-    final l = AppLocalizations.of(context)!;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Icon(Icons.star_rounded, size: 64, color: AppTheme.warmAmber),
-        const SizedBox(height: 24),
-        Text(
-          l.onboarding_shabbat_title,
-          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          l.onboarding_shabbat_subtitle,
-          style: const TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-        const SizedBox(height: 32),
-        SwitchListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(
-            l.settings_shabbat_enable,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          value: _onboardingShabbatRules.enabled,
-          onChanged: (val) {
-            setState(() {
-              _onboardingShabbatRules = _onboardingShabbatRules.copyWith(
-                enabled: val,
-              );
-            });
-          },
-          activeThumbColor: const Color(0xFF040711),
-          activeTrackColor: AppTheme.electricCyan,
-        ),
-        if (_onboardingShabbatRules.enabled) ...[
-          const SizedBox(height: 24),
-          TextField(
-            controller: _onboardingShabbatMultiplierController,
-            decoration: InputDecoration(
-              labelText: l.settings_shabbat_multiplier_label,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              filled: true,
-              prefixIcon: const Icon(Icons.percent),
-            ),
-            keyboardType: TextInputType.number,
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _onboardingHolidayMultiplierController,
-            decoration: InputDecoration(
-              labelText: l.settings_holiday_multiplier_label,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              filled: true,
-              prefixIcon: const Icon(Icons.percent),
-            ),
-            keyboardType: TextInputType.number,
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildLanguagePage() {
-    final l = AppLocalizations.of(context)!;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Icon(
-          Icons.language_rounded,
-          size: 64,
-          color: AppTheme.electricCyan,
-        ),
-        const SizedBox(height: 24),
-        Text(
-          l.onboarding_language_title,
-          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          l.onboarding_language_subtitle,
-          style: const TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-        const SizedBox(height: 40),
+        const SizedBox(height: 28),
         DropdownButtonFormField<String>(
           initialValue: _locale.languageCode,
           decoration: InputDecoration(
+            labelText: l.onboarding_language_title,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             filled: true,
             prefixIcon: const Icon(Icons.translate_rounded),
@@ -570,104 +479,213 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             }
           },
         ),
-      ],
-    );
-  }
-
-  Widget _buildCurrencyPage() {
-    final l = AppLocalizations.of(context)!;
-    final currencies = [
-      {'value': '₪', 'label': '₪ ILS'},
-      {'value': '\$', 'label': '\$ USD'},
-      {'value': '€', 'label': '€ EUR'},
-      {'value': '£', 'label': '£ GBP'},
-    ];
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Icon(
-          Icons.payments_outlined,
-          size: 64,
-          color: AppTheme.electricCyan,
-        ),
-        const SizedBox(height: 24),
-        Text(
-          l.onboarding_currency_title,
-          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-        ),
         const SizedBox(height: 16),
-        Text(
-          l.onboarding_currency_subtitle,
-          style: const TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-        const SizedBox(height: 40),
         DropdownButtonFormField<String>(
           initialValue: _currencySymbol,
           decoration: InputDecoration(
+            labelText: l.onboarding_currency_title,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             filled: true,
             prefixIcon: const Icon(Icons.payments_outlined),
           ),
-          items: currencies.map((c) {
-            return DropdownMenuItem<String>(
-              value: c['value'],
-              child: Text(c['label']!),
-            );
-          }).toList(),
+          items: [
+            DropdownMenuItem(value: '₪', child: Text('₪ ILS')),
+            DropdownMenuItem(value: '\$', child: Text('\$ USD')),
+            DropdownMenuItem(value: '€', child: Text('€ EUR')),
+            DropdownMenuItem(value: '£', child: Text('£ GBP')),
+          ],
           onChanged: (val) {
-            if (val != null) {
-              setState(() => _currencySymbol = val);
-              context.read<SettingsProvider>().setCurrencySymbol(val);
-            }
+            if (val != null) setState(() => _currencySymbol = val);
           },
         ),
       ],
     );
   }
 
+  Widget _buildPayRulesPage() {
+    final l = AppLocalizations.of(context)!;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildPayRuleCard(
+          title: l.settings_section_overtime,
+          subtitle: l.settings_overtime_enable_sub,
+          icon: Icons.more_time_rounded,
+          enabled: _onboardingOvertimeRules.enabled,
+          onChanged: (enabled) => setState(() {
+            _onboardingOvertimeRules = _onboardingOvertimeRules.copyWith(
+              enabled: enabled,
+            );
+          }),
+          enableLabel: l.settings_overtime_enable,
+          fields: [
+            _buildRuleField(
+              controller: _onboardingOtThresholdController,
+              label: l.settings_overtime_regular_threshold,
+              icon: Icons.access_time,
+              decimal: true,
+            ),
+            _buildRuleField(
+              controller: _onboardingOtTier1LimitController,
+              label: l.settings_overtime_tier1_limit,
+              icon: Icons.timelapse,
+              decimal: true,
+            ),
+            _buildRuleField(
+              controller: _onboardingOtTier1MultiplierController,
+              label: l.settings_overtime_tier1_rate,
+              icon: Icons.percent,
+            ),
+            _buildRuleField(
+              controller: _onboardingOtTier2MultiplierController,
+              label: l.settings_overtime_tier2_rate,
+              icon: Icons.percent,
+            ),
+          ],
+        ),
+        const SizedBox(height: AppTheme.spaceSm),
+        _buildPayRuleCard(
+          title: l.onboarding_shabbat_title,
+          subtitle: l.onboarding_shabbat_subtitle,
+          icon: Icons.star_rounded,
+          enabled: _onboardingShabbatRules.enabled,
+          onChanged: (enabled) => setState(() {
+            _onboardingShabbatRules = _onboardingShabbatRules.copyWith(
+              enabled: enabled,
+            );
+          }),
+          enableLabel: l.settings_shabbat_enable,
+          fields: [
+            _buildRuleField(
+              controller: _onboardingShabbatMultiplierController,
+              label: l.settings_shabbat_multiplier_label,
+              icon: Icons.percent,
+            ),
+            _buildRuleField(
+              controller: _onboardingHolidayMultiplierController,
+              label: l.settings_holiday_multiplier_label,
+              icon: Icons.percent,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPayRuleCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool enabled,
+    required ValueChanged<bool> onChanged,
+    required String enableLabel,
+    required List<Widget> fields,
+  }) {
+    final theme = Theme.of(context);
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: ExpansionTile(
+        leading: Icon(icon, color: theme.colorScheme.primary),
+        title: Text(title, style: theme.textTheme.titleMedium),
+        subtitle: Text(
+          subtitle,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: theme.textTheme.bodySmall,
+        ),
+        children: [
+          SwitchListTile(
+            title: Text(enableLabel),
+            value: enabled,
+            onChanged: onChanged,
+            activeThumbColor: theme.colorScheme.onPrimary,
+            activeTrackColor: theme.colorScheme.primary,
+          ),
+          if (enabled)
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AppTheme.spaceSm,
+                0,
+                AppTheme.spaceSm,
+                AppTheme.spaceSm,
+              ),
+              child: Column(
+                children: [
+                  for (var index = 0; index < fields.length; index++) ...[
+                    if (index > 0) const SizedBox(height: AppTheme.spaceSm),
+                    fields[index],
+                  ],
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRuleField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool decimal = false,
+  }) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        ),
+        filled: true,
+        prefixIcon: Icon(icon),
+      ),
+      keyboardType: decimal
+          ? const TextInputType.numberWithOptions(decimal: true)
+          : TextInputType.number,
+    );
+  }
+
   Widget _buildBreakSettingsPage() {
     final l = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Icon(
           Icons.timer_outlined,
-          size: 64,
+          size: 48,
           color: AppTheme.electricCyan,
         ),
-        const SizedBox(height: 24),
-        Text(
-          l.onboarding_breaks_title,
-          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppTheme.spaceSm),
+        Text(l.onboarding_breaks_title, style: theme.textTheme.headlineMedium),
+        const SizedBox(height: AppTheme.spaceXs),
         Text(
           l.onboarding_breaks_subtitle,
-          style: const TextStyle(fontSize: 16, color: Colors.grey),
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
         ),
-        const SizedBox(height: 40),
+        const SizedBox(height: AppTheme.spaceSm),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(
             l.onboarding_breaks_enable,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: theme.textTheme.titleMedium,
           ),
           value: _breaksEnabled,
           onChanged: (val) => setState(() => _breaksEnabled = val),
-          activeThumbColor: const Color(0xFF040711),
-          activeTrackColor: AppTheme.electricCyan,
+          activeThumbColor: theme.colorScheme.onPrimary,
+          activeTrackColor: theme.colorScheme.primary,
         ),
         if (_breaksEnabled) ...[
-          const SizedBox(height: 32),
+          const SizedBox(height: AppTheme.spaceSm),
           _buildDurationSlider(
             label: l.onboarding_breaks_paid_label,
             value: _paidMinutes,
             onChanged: (val) => setState(() => _paidMinutes = val),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: AppTheme.spaceSm),
           _buildDurationSlider(
             label: l.onboarding_breaks_unpaid_label,
             value: _unpaidMinutes,
@@ -680,6 +698,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildAutoExpensePage() {
     final l = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -690,14 +709,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           color: AppTheme.electricCyan,
         ),
         const SizedBox(height: 24),
-        Text(
-          l.onboarding_auto_expenses_title,
-          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-        ),
+        Text(l.onboarding_auto_expenses_title, style: textTheme.headlineMedium),
         const SizedBox(height: 16),
         Text(
           l.onboarding_auto_expenses_subtitle,
-          style: const TextStyle(fontSize: 16, color: Colors.grey),
+          style: textTheme.bodyLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 40),
         SwitchListTile(
@@ -708,7 +726,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           value: _autoExpenseEnabled,
           onChanged: (val) => setState(() => _autoExpenseEnabled = val),
-          activeThumbColor: const Color(0xFF040711),
+          activeThumbColor: AppTheme.darkBackground,
           activeTrackColor: AppTheme.electricCyan,
         ),
         if (_autoExpenseEnabled) ...[
@@ -775,6 +793,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildAutoIncomePage() {
     final l = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -785,14 +804,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           color: AppTheme.mintGreen,
         ),
         const SizedBox(height: 24),
-        Text(
-          l.onboarding_auto_incomes_title,
-          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-        ),
+        Text(l.onboarding_auto_incomes_title, style: textTheme.headlineMedium),
         const SizedBox(height: 16),
         Text(
           l.onboarding_auto_incomes_subtitle,
-          style: const TextStyle(fontSize: 16, color: Colors.grey),
+          style: textTheme.bodyLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 40),
         SwitchListTile(
@@ -803,7 +821,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           value: _autoIncomeEnabled,
           onChanged: (val) => setState(() => _autoIncomeEnabled = val),
-          activeThumbColor: const Color(0xFF040711),
+          activeThumbColor: AppTheme.darkBackground,
           activeTrackColor: AppTheme.mintGreen,
         ),
         if (_autoIncomeEnabled) ...[
@@ -893,8 +911,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 '.0 ',
                 ' ',
               ),
-              style: const TextStyle(
-                color: AppTheme.electricCyan,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -942,7 +960,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               const SizedBox(height: 8),
               Text(
                 l.onboarding_job_types_subtitle,
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -1167,78 +1187,34 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildFooter() {
     final l = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 16),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            flex: 3,
-            child: Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: _currentPage > 0
-                  ? TextButton.icon(
-                      onPressed: _previousPage,
-                      icon: const Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        size: 16,
-                      ),
-                      label: Text(
-                        l.common_back,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    )
-                  : const SizedBox(),
+          if (_currentPage > 0)
+            TextButton.icon(
+              onPressed: _previousPage,
+              style: TextButton.styleFrom(minimumSize: const Size(80, 48)),
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 16),
+              label: Text(l.common_back),
+            )
+          else
+            const SizedBox(width: 80),
+          ElevatedButton(
+            onPressed: _nextPage,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.electricCyan,
+              foregroundColor: AppTheme.darkBackground,
+              minimumSize: const Size(120, 48),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
             ),
-          ),
-          Expanded(
-            flex: 4,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                9,
-                (index) => Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 3),
-                  width: _currentPage == index ? 12 : 8,
-                  height: _currentPage == index ? 12 : 8,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _currentPage == index
-                        ? AppTheme.electricCyan
-                        : (isDark ? AppTheme.darkBorder : Colors.grey.shade300),
-                    boxShadow: _currentPage == index
-                        ? [
-                            BoxShadow(
-                              color: AppTheme.electricCyan.withValues(
-                                alpha: 0.4,
-                              ),
-                              blurRadius: 6,
-                            ),
-                          ]
-                        : null,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: ElevatedButton(
-                onPressed: _nextPage,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.electricCyan,
-                  foregroundColor: const Color(0xFF040711),
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                ),
-                child: Text(
-                  _currentPage == 8 ? l.common_start : l.common_continue,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
+            child: Text(
+              _currentPage == _pageCount - 1
+                  ? l.common_start
+                  : l.common_continue,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],

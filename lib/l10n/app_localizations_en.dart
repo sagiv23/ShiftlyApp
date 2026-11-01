@@ -92,6 +92,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Let\'s set up some basics to get started.';
 
   @override
+  String onboarding_step_progress(Object current, Object total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get onboarding_skip_setup => 'Skip setup';
+
+  @override
   String get onboarding_language_title => 'App Language';
 
   @override

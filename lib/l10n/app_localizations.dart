@@ -260,6 +260,18 @@ abstract class AppLocalizations {
   /// **'בוא נגדיר כמה דברים בסיסיים כדי להתחיל.'**
   String get onboarding_welcome_description;
 
+  /// No description provided for @onboarding_step_progress.
+  ///
+  /// In he, this message translates to:
+  /// **'שלב {current} מתוך {total}'**
+  String onboarding_step_progress(Object current, Object total);
+
+  /// No description provided for @onboarding_skip_setup.
+  ///
+  /// In he, this message translates to:
+  /// **'דלג על ההגדרה'**
+  String get onboarding_skip_setup;
+
   /// No description provided for @onboarding_language_title.
   ///
   /// In he, this message translates to:
