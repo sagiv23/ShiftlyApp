@@ -16,17 +16,21 @@ Read this reference before modifying an existing visual product.
 
 ### Extension
 
-Add or change a bounded element inside the current system. Match the existing vocabulary. Do not “improve” unrelated surfaces.
+Add or change a bounded element inside the current system. Match the existing vocabulary. Do not
+“improve” unrelated surfaces.
 
 ### Redesign · Preserve
 
-Modernize while retaining identity, information architecture, content voice, and behavioral contracts. Prefer targeted evolution.
+Modernize while retaining identity, information architecture, content voice, and behavioral
+contracts. Prefer targeted evolution.
 
 ### Redesign · Overhaul
 
-Introduce a new visual language while retaining the agreed product, content, and technical contracts. Overhaul is not permission to rewrite everything.
+Introduce a new visual language while retaining the agreed product, content, and technical
+contracts. Overhaul is not permission to rewrite everything.
 
-If preserve versus overhaul would materially change the result and the request is ambiguous, ask one focused question.
+If preserve versus overhaul would materially change the result and the request is ambiguous, ask one
+focused question.
 
 ## 2. Audit Before Editing
 
@@ -93,13 +97,16 @@ Apply the lowest-risk lever that solves the problem, then reassess:
 7. Recompose hero or key sections.
 8. Replace full blocks only when they cannot be repaired.
 
-In Preserve mode, stop once the brief is satisfied. Do not turn incremental work into a portfolio redesign.
+In Preserve mode, stop once the brief is satisfied. Do not turn incremental work into a portfolio
+redesign.
 
 ## 5. Dial Guidance
 
 - **Extension**: match all existing dials; set Brand Fidelity to 10.
-- **Preserve**: keep density and assets stable; change variance/motion by at most one point unless requested.
-- **Overhaul**: derive new variance/motion from the brief, but retain a content-density map so information is not lost.
+- **Preserve**: keep density and assets stable; change variance/motion by at most one point unless
+  requested.
+- **Overhaul**: derive new variance/motion from the brief, but retain a content-density map so
+  information is not lost.
 
 ## 6. Before-and-After Plan
 
@@ -120,4 +127,6 @@ This is a decision record, not a long design essay.
 
 ## 7. Verification
 
-The default pre-delivery self-check confirms the requested scope and protected contracts by inspection. Run executable browser acceptance only when the user explicitly asks for it; then use `browser-acceptance.md` and include regression checks for the preserved journeys.
+The default pre-delivery self-check confirms the requested scope and protected contracts by
+inspection. Run executable browser acceptance only when the user explicitly asks for it; then use
+`browser-acceptance.md` and include regression checks for the preserved journeys.

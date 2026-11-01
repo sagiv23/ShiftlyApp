@@ -81,15 +81,13 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    _textEntranceSlideAnimation = Tween<Offset>(
-      begin: const Offset(0.0, 0.2),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _entranceController,
-        curve: const Interval(0.0, 1.0, curve: Curves.easeOutCubic),
-      ),
-    );
+    _textEntranceSlideAnimation =
+        Tween<Offset>(begin: const Offset(0.0, 0.2), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _entranceController,
+            curve: const Interval(0.0, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
 
     // 2. Icon glides down to center Offset(0, 0) and enlarges (1.0 -> 1.45) (0.08 to 0.72)
     _iconOffsetAnimation =
@@ -376,12 +374,12 @@ class _SplashScreenState extends State<SplashScreen>
                                             6.0;
 
                                   final currentOffset =
-                                          _iconOffsetAnimation.value +
-                                              Offset(0, floatY);
-                                      final currentScale =
-                                          _iconScaleAnimation.value;
-                                      final currentGlowScale =
-                                          _glowScaleAnimation.value;
+                                      _iconOffsetAnimation.value +
+                                      Offset(0, floatY);
+                                  final currentScale =
+                                      _iconScaleAnimation.value;
+                                  final currentGlowScale =
+                                      _glowScaleAnimation.value;
 
                                   return Transform.translate(
                                     offset: currentOffset,
@@ -431,24 +429,33 @@ class _SplashScreenState extends State<SplashScreen>
                                 ]),
                                 builder: (context, child) {
                                   final exitOpacity = _textOpacityAnimation
-                                      .value.clamp(0.0, 1.0);
-                                  final entranceOpacity = _textEntranceOpacityAnimation
-                                      .value.clamp(0.0, 1.0);
-                                  final textOpacity = (entranceOpacity *
-                                      exitOpacity).clamp(0.0, 1.0);
+                                      .value
+                                      .clamp(0.0, 1.0);
+                                  final entranceOpacity =
+                                      _textEntranceOpacityAnimation.value.clamp(
+                                        0.0,
+                                        1.0,
+                                      );
+                                  final textOpacity =
+                                      (entranceOpacity * exitOpacity).clamp(
+                                        0.0,
+                                        1.0,
+                                      );
 
                                   if (textOpacity <= 0.0) {
                                     return const SizedBox.shrink();
                                   }
 
-                                  final entranceSlide = _textEntranceSlideAnimation
-                                      .value;
-                                  final exitSlide = _textSlideAnimation.value *
-                                      100;
+                                  final entranceSlide =
+                                      _textEntranceSlideAnimation.value;
+                                  final exitSlide =
+                                      _textSlideAnimation.value * 100;
 
                                   return Transform.translate(
-                                    offset: const Offset(0, 110) +
-                                        (entranceSlide * 50) + exitSlide,
+                                    offset:
+                                        const Offset(0, 110) +
+                                        (entranceSlide * 50) +
+                                        exitSlide,
                                     child: Opacity(
                                       opacity: textOpacity,
                                       child: child,
@@ -525,9 +532,9 @@ class _SplashScreenState extends State<SplashScreen>
                                   ],
                                 ),
                               ),
-                                ],
-                              ),
-                            ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),

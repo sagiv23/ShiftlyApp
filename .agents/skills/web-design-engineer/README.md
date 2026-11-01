@@ -10,28 +10,42 @@
 
 ## What Is This?
 
-This is a reusable **Skill** (structured system prompt) for AI coding agents — such as [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Cursor](https://cursor.com), and other tools that support the `SKILL.md` format — that dramatically improves the design quality of AI-generated HTML/CSS/JavaScript artifacts.
+This is a reusable **Skill** (structured system prompt) for AI coding agents — such
+as [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Cursor](https://cursor.com), and
+other tools that support the `SKILL.md` format — that dramatically improves the design quality of
+AI-generated HTML/CSS/JavaScript artifacts.
 
-It distills the core design philosophy from [Claude Design](https://www.anthropic.com/news/claude-design-anthropic-labs)'s system prompt into an open, portable, and customizable skill file that you can drop into any project.
+It distills the core design philosophy
+from [Claude Design](https://www.anthropic.com/news/claude-design-anthropic-labs)'s system prompt
+into an open, portable, and customizable skill file that you can drop into any project.
 
 ### The Problem
 
-Modern LLMs can already produce functional web pages from simple prompts. But their output tends to converge on the same aesthetic: Inter font, blue primary buttons, purple-pink gradients, large-radius cards, emoji as icons, fabricated testimonials. Technically correct, visually generic.
+Modern LLMs can already produce functional web pages from simple prompts. But their output tends to
+converge on the same aesthetic: Inter font, blue primary buttons, purple-pink gradients,
+large-radius cards, emoji as icons, fabricated testimonials. Technically correct, visually generic.
 
 ### The Solution
 
 This skill injects **design taste** into the AI's decision-making process through:
 
 - **Anti-cliché rules** — an explicit blocklist of overused AI design patterns
-- **Design system declaration** — forces the AI to articulate color, typography, spacing, and motion choices *before writing code*
+- **Design system declaration** — forces the AI to articulate color, typography, spacing, and motion
+  choices *before writing code*
 - **oklch color theory** — perceptually uniform color derivation instead of random hex guessing
-- **Curated font & color pairings** — high-quality starting points that replace the default Inter + #3b82f6
+- **Curated font & color pairings** — high-quality starting points that replace the default Inter +
+  #3b82f6
 - **Placeholder philosophy** — honest `[icon]` markers instead of poorly drawn SVG fakes
-- **Five-dial Design Read** — turns audience, artifact, brand, and constraints into visible variance / motion / density / asset / fidelity decisions
-- **Preservation-aware redesigns** — separates extension, preserve, and overhaul modes before touching an existing product
-- **Contextual failure patterns** — detects recurring layout, content, imagery, motion, and dashboard failures without turning taste into universal bans
-- **Structured workflow** — requirements → context → calibrated design system → v0 draft → full build → verification
-- **Opt-in browser acceptance** — executable responsive / interaction / runtime QA only when the user explicitly requests acceptance or browser testing
+- **Five-dial Design Read** — turns audience, artifact, brand, and constraints into visible
+  variance / motion / density / asset / fidelity decisions
+- **Preservation-aware redesigns** — separates extension, preserve, and overhaul modes before
+  touching an existing product
+- **Contextual failure patterns** — detects recurring layout, content, imagery, motion, and
+  dashboard failures without turning taste into universal bans
+- **Structured workflow** — requirements → context → calibrated design system → v0 draft → full
+  build → verification
+- **Opt-in browser acceptance** — executable responsive / interaction / runtime QA only when the
+  user explicitly requests acceptance or browser testing
 
 ---
 
@@ -61,20 +75,22 @@ your-project/
 └── ...
 ```
 
-Or use the Claude Code plugin marketplace from the collection root — see the [top-level README](../../README.md#install).
+Or use the Claude Code plugin marketplace from the collection root — see
+the [top-level README](../../README.md#install).
 
-The agent will automatically pick up the skill when your request involves visual/interactive front-end work.
+The agent will automatically pick up the skill when your request involves visual/interactive
+front-end work.
 
 ### What It Covers
 
-| Output Type | Examples |
-|---|---|
-| Web pages & landing pages | Marketing sites, product pages, portfolios |
-| Interactive prototypes | Clickable app mockups with device frames |
-| Slide decks | HTML presentations (1920×1080, keyboard nav) |
-| Data visualizations | Dashboards with Chart.js or D3.js |
-| Animations | CSS/JS motion design, timeline-driven demos |
-| Design systems | Token exploration, component variants |
+| Output Type               | Examples                                     |
+|---------------------------|----------------------------------------------|
+| Web pages & landing pages | Marketing sites, product pages, portfolios   |
+| Interactive prototypes    | Clickable app mockups with device frames     |
+| Slide decks               | HTML presentations (1920×1080, keyboard nav) |
+| Data visualizations       | Dashboards with Chart.js or D3.js            |
+| Animations                | CSS/JS motion design, timeline-driven demos  |
+| Design systems            | Token exploration, component variants        |
 
 ---
 
@@ -95,48 +111,65 @@ The agent will automatically pick up the skill when your request involves visual
 ### Key Design Principles
 
 **Anti-AI-cliché checklist.** The skill explicitly bans:
+
 - Purple-pink-blue gradient backgrounds
 - Left-border accent cards
 - Inter / Roboto / Arial / Fraunces / system-ui fonts
 - Emoji as icon substitutes
 - Fabricated stats, fake logo walls, dummy testimonials
 
-**oklch color system.** Colors are derived in the perceptually uniform oklch space. Same lightness values actually *look* the same brightness to the human eye — unlike HSL, where yellow-at-50% looks much brighter than blue-at-50%.
+**oklch color system.** Colors are derived in the perceptually uniform oklch space. Same lightness
+values actually *look* the same brightness to the human eye — unlike HSL, where yellow-at-50% looks
+much brighter than blue-at-50%.
 
 **Curated starting points.** Six pre-validated color × font pairings for common use cases:
 
-| Style | Color | Fonts | Use Case |
-|---|---|---|---|
-| Modern tech | Blue-violet | Space Grotesk + Inter | SaaS, dev tools |
-| Elegant editorial | Warm brown | Newsreader + Outfit | Content, blogs |
-| Premium brand | Near-black | Sora + Plus Jakarta Sans | Luxury, finance |
-| Lively consumer | Coral | Plus Jakarta Sans + Outfit | E-commerce, social |
-| Minimal professional | Teal-blue | Outfit + Space Grotesk | Dashboards, B2B |
-| Artisan warmth | Caramel | Caveat + Newsreader | Food, education |
+| Style                | Color       | Fonts                      | Use Case           |
+|----------------------|-------------|----------------------------|--------------------|
+| Modern tech          | Blue-violet | Space Grotesk + Inter      | SaaS, dev tools    |
+| Elegant editorial    | Warm brown  | Newsreader + Outfit        | Content, blogs     |
+| Premium brand        | Near-black  | Sora + Plus Jakarta Sans   | Luxury, finance    |
+| Lively consumer      | Coral       | Plus Jakarta Sans + Outfit | E-commerce, social |
+| Minimal professional | Teal-blue   | Outfit + Space Grotesk     | Dashboards, B2B    |
+| Artisan warmth       | Caramel     | Caveat + Newsreader        | Food, education    |
 
-**Anchored style-recipe library (25 named recipes, progressively loaded).** When the user names an anchor ("Linear-style", "Aesop feeling", "Pentagram-grade type"), the agent reads **only the matching file** at `references/style-recipes/<anchor>.md` (~50 lines). The catalog index, 3 cross-indexes, and cross-cutting anti-patterns live in `references/style-recipes/INDEX.md` (~150 lines). The full catalog is never loaded at once. The 25 recipes are spread across 7 schools (the 6 Direction-Advisor schools plus a *Specialty / Genre* school reachable only via direct anchor names):
+**Anchored style-recipe library (25 named recipes, progressively loaded).** When the user names an
+anchor ("Linear-style", "Aesop feeling", "Pentagram-grade type"), the agent reads **only the
+matching file** at `references/style-recipes/<anchor>.md` (~50 lines). The catalog index, 3
+cross-indexes, and cross-cutting anti-patterns live in `references/style-recipes/INDEX.md` (~150
+lines). The full catalog is never loaded at once. The 25 recipes are spread across 7 schools (the 6
+Direction-Advisor schools plus a *Specialty / Genre* school reachable only via direct anchor names):
 
-| School | Recipes |
-|---|---|
-| Editorial / Minimalist | `apple-hig` · `muji-kenya-hara` · `aesop` · `dieter-rams-braun` · `monocle-magazine` |
-| Information Architecture | `pentagram` · `vignelli-swiss-helvetica` · `bloomberg-terminal` · `tufte-dataink` · `nyt-the-daily` |
-| Modern Tool / Builder SaaS | `linear` · `vercel-mesh` · `raycast` · `notion-pre-ai` |
-| Motion / Experimental | `field-io` · `active-theory` · `resn-storytelling` |
-| Brutalist / Raw | `are-na` · `bloomberg-businessweek-turley` · `balenciaga-post-2017` |
-| Warm Humanist | `mailchimp-freddie` · `stripe-press` · `headspace-meditation` |
-| Specialty / Genre | `y2k-retrofuturism` · `mid-century-modern` |
+| School                     | Recipes                                                                                             |
+|----------------------------|-----------------------------------------------------------------------------------------------------|
+| Editorial / Minimalist     | `apple-hig` · `muji-kenya-hara` · `aesop` · `dieter-rams-braun` · `monocle-magazine`                |
+| Information Architecture   | `pentagram` · `vignelli-swiss-helvetica` · `bloomberg-terminal` · `tufte-dataink` · `nyt-the-daily` |
+| Modern Tool / Builder SaaS | `linear` · `vercel-mesh` · `raycast` · `notion-pre-ai`                                              |
+| Motion / Experimental      | `field-io` · `active-theory` · `resn-storytelling`                                                  |
+| Brutalist / Raw            | `are-na` · `bloomberg-businessweek-turley` · `balenciaga-post-2017`                                 |
+| Warm Humanist              | `mailchimp-freddie` · `stripe-press` · `headspace-meditation`                                       |
+| Specialty / Genre          | `y2k-retrofuturism` · `mid-century-modern`                                                          |
 
 ---
 
 ## Style Recipe Gallery
 
-The skill ships **25 named recipes**, each tied to a real brand, studio, or designer. Every recipe has a working, full-page artefact in the demo gallery — not a shared template, not a thumbnail mood-board, but the form each recipe was actually designed for: an apothecary product page for Aesop, a trading workstation for Bloomberg Terminal, a Saul-Bass poster for Mid-Century, a Y2K portal for Retrofuturism. Browse by school below, pick the one whose vibe matches your brief, or read the spec file at `references/style-recipes/<recipe>.md`. Click any preview to open the full-resolution 2:1 frame.
+The skill ships **25 named recipes**, each tied to a real brand, studio, or designer. Every recipe
+has a working, full-page artefact in the demo gallery — not a shared template, not a thumbnail
+mood-board, but the form each recipe was actually designed for: an apothecary product page for
+Aesop, a trading workstation for Bloomberg Terminal, a Saul-Bass poster for Mid-Century, a Y2K
+portal for Retrofuturism. Browse by school below, pick the one whose vibe matches your brief, or
+read the spec file at `references/style-recipes/<recipe>.md`. Click any preview to open the
+full-resolution 2:1 frame.
 
-> Frames are real artefacts rendered by the live React + Vite gallery at [`demo/web-design-engineer-demo`](../../demo/web-design-engineer-demo/) — same fonts, same palettes, same signature moves as the recipe spec. Each demo is in `src/recipes/<id>.tsx`.
+> Frames are real artefacts rendered by the live React + Vite gallery at [
+`demo/web-design-engineer-demo`](../../demo/web-design-engineer-demo/) — same fonts, same palettes,
+> same signature moves as the recipe spec. Each demo is in `src/recipes/<id>.tsx`.
 
 ### Editorial / Minimalist · 5 recipes
 
-> Whitespace, refined typography, quiet luxury — the apothecary, the museum catalogue, the hardware product page.
+> Whitespace, refined typography, quiet luxury — the apothecary, the museum catalogue, the hardware
+> product page.
 
 <table>
 <tr>
@@ -187,7 +220,8 @@ The skill ships **25 named recipes**, each tied to a real brand, studio, or desi
 
 ### Information Architecture · 5 recipes
 
-> Rational, data-driven, restrained — wayfinding, terminals, footnoted essays, the newspaper of record.
+> Rational, data-driven, restrained — wayfinding, terminals, footnoted essays, the newspaper of
+> record.
 
 <table>
 <tr>
@@ -410,59 +444,77 @@ cd demo/web-design-engineer-demo
 npm install && npm run dev    # http://localhost:5181/
 ```
 
-Hash-routed URLs (`#/linear`, `#/aesop`, …) deep-link to any recipe. Press `H` to toggle the recipe HUD, `Esc` to return to the gallery. See the demo's own [README](../../demo/web-design-engineer-demo/README.md) for layout details.
+Hash-routed URLs (`#/linear`, `#/aesop`, …) deep-link to any recipe. Press `H` to toggle the recipe
+HUD, `Esc` to return to the gallery. See the demo's
+own [README](../../demo/web-design-engineer-demo/README.md) for layout details.
 
 ---
 
 ## Before & after: skill on / off
 
-The repository's [`demo/web-design-demo/`](../../demo/web-design-demo) directory contains side-by-side comparisons of pages generated with and without this skill, using identical prompts. Open [`demo/web-design-demo/demo2/index.html`](../../demo/web-design-demo/demo2/index.html) for a side-by-side viewer.
+The repository's [`demo/web-design-demo/`](../../demo/web-design-demo) directory contains
+side-by-side comparisons of pages generated with and without this skill, using identical prompts.
+Open [`demo/web-design-demo/demo2/index.html`](../../demo/web-design-demo/demo2/index.html) for a
+side-by-side viewer.
 
 ### Demo 1: Space Exploration Museum
 
-**Prompt:** *"Build a homepage for a fictional 'Space Exploration Museum' — full-screen hero, 4 exhibition sections, a timeline with 6+ milestones, a booking CTA, and a footer. Deep, immersive, cosmic feel."*
+**Prompt:** *"Build a homepage for a fictional 'Space Exploration Museum' — full-screen hero, 4
+exhibition sections, a timeline with 6+ milestones, a booking CTA, and a footer. Deep, immersive,
+cosmic feel."*
 
-| | Without Skill | With Skill |
-|---|---|---|
-| **File** | `demo/web-design-demo/demo2/demo1.html` | `demo/web-design-demo/demo2/demo1-with-skill.html` |
-| **Color system** | Hardcoded hex values (#7cf0ff, #b388ff) | oklch-based token system with CSS custom properties |
-| **Typography** | Orbitron + Noto Serif SC | Instrument Serif + Space Grotesk + JetBrains Mono |
-| **Layout** | Standard landing-page structure | Editorial magazine-style layout with grid compositions |
-| **Details** | Heavy glow effects, neon gradients | Restrained palette, typographic hierarchy, decorative data elements |
-| **Overall feel** | Enthusiastic junior designer | Experienced design director |
+|                  | Without Skill                           | With Skill                                                          |
+|------------------|-----------------------------------------|---------------------------------------------------------------------|
+| **File**         | `demo/web-design-demo/demo2/demo1.html` | `demo/web-design-demo/demo2/demo1-with-skill.html`                  |
+| **Color system** | Hardcoded hex values (#7cf0ff, #b388ff) | oklch-based token system with CSS custom properties                 |
+| **Typography**   | Orbitron + Noto Serif SC                | Instrument Serif + Space Grotesk + JetBrains Mono                   |
+| **Layout**       | Standard landing-page structure         | Editorial magazine-style layout with grid compositions              |
+| **Details**      | Heavy glow effects, neon gradients      | Restrained palette, typographic hierarchy, decorative data elements |
+| **Overall feel** | Enthusiastic junior designer            | Experienced design director                                         |
 
 ### Demo 2: Photographer Portfolio
 
 **Prompt:** *"Build a homepage for an independent photographer's portfolio."*
 
-| | With Skill |
-|---|---|
-| **File** | `demo/web-design-demo/demo2/demo2-with-skill.html` |
-| **Character** | Creates a fictional Nordic photographer "Mira Høst" with a complete visual identity |
-| **Color** | Paper-warm light (#f2efe8) + ink-dark (#161513) — extremely restrained two-tone palette |
-| **Typography** | Instrument Serif (display) + Space Grotesk (UI) with extensive italic usage |
-| **Layout** | Magazine-editorial structure with numbered sections, asymmetric grids, side rails |
-| **Motion** | Slow Ken Burns on hero image (24s cycle), film-grain texture overlay |
-| **Navigation** | `mix-blend-mode: difference` masthead — seamless across light/dark sections |
+|                | With Skill                                                                              |
+|----------------|-----------------------------------------------------------------------------------------|
+| **File**       | `demo/web-design-demo/demo2/demo2-with-skill.html`                                      |
+| **Character**  | Creates a fictional Nordic photographer "Mira Høst" with a complete visual identity     |
+| **Color**      | Paper-warm light (#f2efe8) + ink-dark (#161513) — extremely restrained two-tone palette |
+| **Typography** | Instrument Serif (display) + Space Grotesk (UI) with extensive italic usage             |
+| **Layout**     | Magazine-editorial structure with numbered sections, asymmetric grids, side rails       |
+| **Motion**     | Slow Ken Burns on hero image (24s cycle), film-grain texture overlay                    |
+| **Navigation** | `mix-blend-mode: difference` masthead — seamless across light/dark sections             |
 
-> The original Claude Design system prompt that inspired this skill is preserved at [`dist/prompt/claude-design-system-prompt.md`](../../dist/prompt/claude-design-system-prompt.md).
+> The original Claude Design system prompt that inspired this skill is preserved at [
+`dist/prompt/claude-design-system-prompt.md`](../../dist/prompt/claude-design-system-prompt.md).
 
 ---
 
 ## Background
 
-This skill is inspired by the system prompt of [Claude Design](https://www.anthropic.com/news/claude-design-anthropic-labs), Anthropic's visual design product launched in April 2026. Claude Design's system prompt (~420 lines) encodes a sophisticated set of design principles, anti-patterns, and workflow constraints that make its output consistently high-quality.
+This skill is inspired by the system prompt
+of [Claude Design](https://www.anthropic.com/news/claude-design-anthropic-labs), Anthropic's visual
+design product launched in April 2026. Claude Design's system prompt (~420 lines) encodes a
+sophisticated set of design principles, anti-patterns, and workflow constraints that make its output
+consistently high-quality.
 
-This project extracts and refines those core ideas into a portable skill that works with any AI coding agent — giving you Claude-Design-level design taste without the product lock-in or usage limits.
+This project extracts and refines those core ideas into a portable skill that works with any AI
+coding agent — giving you Claude-Design-level design taste without the product lock-in or usage
+limits.
 
 Key additions beyond the original Claude Design prompt:
-- **Design system declaration step** — forces the AI to articulate design tokens in natural language before coding
+
+- **Design system declaration step** — forces the AI to articulate design tokens in natural language
+  before coding
 - **v0 draft strategy** — a concrete methodology for showing work-in-progress early
 - **Extended anti-cliché list** — additional patterns identified from real-world AI output
 - **Placeholder philosophy** — a complete framework for handling missing assets professionally
 - **Color × font pairing table** — six validated visual system starting points
-- **Design Direction Advisor** — six-school conversational tool for vague requests, with explicit handoff to the recipe library
-- **25-recipe anchored style library** — each recipe tied to a real brand / studio / designer with concrete copy-able values; defends against AI-default mush
+- **Design Direction Advisor** — six-school conversational tool for vague requests, with explicit
+  handoff to the recipe library
+- **25-recipe anchored style library** — each recipe tied to a real brand / studio / designer with
+  concrete copy-able values; defends against AI-default mush
 - **Advanced pattern library** — ready-to-use code templates for common UI patterns
 
 ---

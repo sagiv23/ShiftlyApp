@@ -1049,15 +1049,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       l.settings_update_latest_toast;
 
                                   setState(() {
-                              _isCheckingUpdates = true;
-                            });
-                            UIUtils.showSnackBar(context, checkingMsg);
-                            final updateInfo =
-                            await UpdateService.checkForUpdates();
-                            if (!context.mounted) return;
-                            setState(() {
-                              _isCheckingUpdates = false;
-                            });
+                                    _isCheckingUpdates = true;
+                                  });
+                                  UIUtils.showSnackBar(context, checkingMsg);
+                                  final updateInfo =
+                                      await UpdateService.checkForUpdates();
+                                  if (!context.mounted) return;
+                                  setState(() {
+                                    _isCheckingUpdates = false;
+                                  });
 
                                   if (updateInfo == null) {
                                     UIUtils.showSnackBar(

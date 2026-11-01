@@ -12,11 +12,16 @@
 
 ## 1. Trigger Gate
 
-Run this harness only when the user explicitly requests acceptance / 验收, browser QA/testing / 浏览器测试, responsive verification / 响应式检查, cross-browser inspection, visual regression, interaction testing, or equivalent executable validation.
+Run this harness only when the user explicitly requests acceptance / 验收, browser QA/testing /
+浏览器测试, responsive verification / 响应式检查, cross-browser inspection, visual regression,
+interaction testing, or equivalent executable validation.
 
-Do **not** run it merely because the user says build, implement, polish, finish, review the code, or verify your work. Those requests receive the lightweight pre-delivery self-check unless browser execution is explicitly named or unmistakably requested.
+Do **not** run it merely because the user says build, implement, polish, finish, review the code, or
+verify your work. Those requests receive the lightweight pre-delivery self-check unless browser
+execution is explicitly named or unmistakably requested.
 
-If the user asks only for a design critique, inspect the supplied render or artifact and use `critique-guide.md`; do not silently expand into browser acceptance.
+If the user asks only for a design critique, inspect the supplied render or artifact and use
+`critique-guide.md`; do not silently expand into browser acceptance.
 
 ## 2. Resolve the Acceptance Contract
 
@@ -29,18 +34,20 @@ Infer from the request and project before asking questions:
 - Target browser(s), if specified
 - Whether the user wants evidence, repairs, or report-only QA
 
-Use the project's existing dev command and dependencies. Do not replace the stack or install a new test framework unless necessary and authorized.
+Use the project's existing dev command and dependencies. Do not replace the stack or install a new
+test framework unless necessary and authorized.
 
 Default viewports only when the user asked for responsive acceptance but did not provide targets:
 
-| Name | Viewport |
-|---|---|
-| Small mobile | 390 × 844 |
-| Tablet | 768 × 1024 |
+| Name         | Viewport   |
+|--------------|------------|
+| Small mobile | 390 × 844  |
+| Tablet       | 768 × 1024 |
 | Small laptop | 1280 × 720 |
-| Desktop | 1440 × 900 |
+| Desktop      | 1440 × 900 |
 
-For fixed 16:9 artifacts, test the intended internal canvas plus at least one smaller outer viewport to verify non-distorting scale behavior.
+For fixed 16:9 artifacts, test the intended internal canvas plus at least one smaller outer viewport
+to verify non-distorting scale behavior.
 
 ## 3. Start Safely
 
@@ -57,7 +64,8 @@ Use the environment's available browser-control or test tooling. Check the agree
 ### Runtime
 
 - Page loads without fatal errors.
-- Console contains no new actionable errors; classify unrelated third-party noise rather than hiding it.
+- Console contains no new actionable errors; classify unrelated third-party noise rather than hiding
+  it.
 - Local assets, fonts, images, and primary network requests succeed.
 - No hydration or framework mismatch appears.
 
@@ -75,7 +83,8 @@ Use the environment's available browser-control or test tooling. Check the agree
 - Keyboard focus is visible and follows a sensible order.
 - Forms expose labels, validation, errors, and submission feedback as applicable.
 - Overlays can be opened and closed without trapping or losing the user.
-- Loading, empty, error, and disabled states are exercised when they are in scope and safely reachable.
+- Loading, empty, error, and disabled states are exercised when they are in scope and safely
+  reachable.
 
 ### Motion and preferences
 
@@ -95,7 +104,8 @@ Capture evidence at each requested viewport and critical state. Inspect screensh
 - awkward folds, orphaned controls, and large accidental voids;
 - visual differences from supplied references or baselines.
 
-If a formal baseline exists, compare against it. If not, call the pass “visual acceptance,” not “visual regression.”
+If a formal baseline exists, compare against it. If not, call the pass “visual acceptance,” not
+“visual regression.”
 
 ## 6. Repair Loop
 
@@ -124,4 +134,5 @@ Remaining issues:
 Evidence:
 ```
 
-Never claim browser acceptance from code inspection alone. If the executable harness could not run, say exactly what was and was not verified.
+Never claim browser acceptance from code inspection alone. If the executable harness could not run,
+say exactly what was and was not verified.

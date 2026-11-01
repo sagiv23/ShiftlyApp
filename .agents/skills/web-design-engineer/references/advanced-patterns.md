@@ -1,6 +1,7 @@
 # Advanced Reference: Component Patterns & Code Templates
 
-This file contains advanced patterns and code templates to reference when implementing specific tasks.
+This file contains advanced patterns and code templates to reference when implementing specific
+tasks.
 
 ## Table of Contents
 
@@ -19,8 +20,10 @@ This file contains advanced patterns and code templates to reference when implem
 For building fixed-size presentations that auto-fit to any viewport.
 
 **Key conventions**:
+
 - Internal arrays use 0-indexed, **but numbers displayed to the user are always 1-indexed**
-- Each `<section class="slide">` gets `data-screen-label="01 Title"`, `data-screen-label="02 Agenda"`, etc. for easy reference
+- Each `<section class="slide">` gets `data-screen-label="01 Title"`,
+  `data-screen-label="02 Agenda"`, etc. for easy reference
 - Control buttons go **outside** the `.stage` scaled container to ensure usability on small screens
 
 ```html
@@ -479,19 +482,22 @@ Use oklch to define a harmonious color system:
 ## Font Recommendations (Non-default Choices)
 
 > ⚠️ **These are experience-based suggestions, not hard rules.**
-> - Always prefer fonts already specified by the brand or design system; only refer to this table when the user hasn't provided any font scheme.
-> - The only hard rule: **Avoid Inter / Roboto / Arial / Fraunces / system-ui — fonts overused by AI-generated content** that instantly signal "this was assembled by AI."
-> - When choosing fonts, focus on "personality fit" rather than "what's trendy." The table below lists common high-quality choices, not an exhaustive list.
+> - Always prefer fonts already specified by the brand or design system; only refer to this table
+    when the user hasn't provided any font scheme.
+> - The only hard rule: **Avoid Inter / Roboto / Arial / Fraunces / system-ui — fonts overused by
+    AI-generated content** that instantly signal "this was assembled by AI."
+> - When choosing fonts, focus on "personality fit" rather than "what's trendy." The table below
+    lists common high-quality choices, not an exhaustive list.
 
-| Use Case | Recommendation | Google Fonts Name |
-|------|------|------------------|
-| Modern headings | Plus Jakarta Sans | Plus+Jakarta+Sans |
-| Elegant body text | Outfit | Outfit |
-| Technical feel | Space Grotesk | Space+Grotesk |
-| Premium brand | Sora | Sora |
-| Editorial feel | Newsreader | Newsreader |
-| Handwritten style | Caveat | Caveat |
-| Monospace / code | JetBrains Mono | JetBrains+Mono |
+| Use Case          | Recommendation    | Google Fonts Name |
+|-------------------|-------------------|-------------------|
+| Modern headings   | Plus Jakarta Sans | Plus+Jakarta+Sans |
+| Elegant body text | Outfit            | Outfit            |
+| Technical feel    | Space Grotesk     | Space+Grotesk     |
+| Premium brand     | Sora              | Sora              |
+| Editorial feel    | Newsreader        | Newsreader        |
+| Handwritten style | Caveat            | Caveat            |
+| Monospace / code  | JetBrains Mono    | JetBrains+Mono    |
 
 ```html
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -501,21 +507,25 @@ Use oklch to define a harmonious color system:
 
 ## Color × Font Pairing Reference
 
-> ⚠️ **These are experience-based pairing suggestions, not hard rules.** When you have **absolutely no design context**, pick one as a starting point — it's far better than starting from Inter + #3b82f6.
-> Once the user provides a brand / design system / reference site, drop this table immediately and follow their materials.
+> ⚠️ **These are experience-based pairing suggestions, not hard rules.** When you have **absolutely
+no design context**, pick one as a starting point — it's far better than starting from Inter +
+> #3b82f6.
+> Once the user provides a brand / design system / reference site, drop this table immediately and
+> follow their materials.
 
 For quickly establishing a visual system with personality:
 
-| Style | Primary Color (oklch) | Font Pairing | Best For |
-|---|---|---|---|
-| Modern tech | `oklch(0.55 0.25 250)` blue-violet | Space Grotesk + Inter | SaaS, dev tools, AI products |
-| Elegant editorial | `oklch(0.35 0.10 30)` warm brown | Newsreader + Outfit | Content platforms, blogs, editorial |
-| Premium brand | `oklch(0.20 0.02 250)` near-black | Sora + Plus Jakarta Sans | Luxury, consulting, finance |
-| Lively consumer | `oklch(0.70 0.20 30)` coral | Plus Jakarta Sans + Outfit | E-commerce, lifestyle, social |
-| Minimal professional | `oklch(0.50 0.15 200)` teal-blue | Outfit + Space Grotesk | Data products, dashboards, B2B |
-| Artisan warmth | `oklch(0.55 0.15 80)` caramel | Caveat (decorative) + Newsreader | Food & beverage, education, creative |
+| Style                | Primary Color (oklch)              | Font Pairing                     | Best For                             |
+|----------------------|------------------------------------|----------------------------------|--------------------------------------|
+| Modern tech          | `oklch(0.55 0.25 250)` blue-violet | Space Grotesk + Inter            | SaaS, dev tools, AI products         |
+| Elegant editorial    | `oklch(0.35 0.10 30)` warm brown   | Newsreader + Outfit              | Content platforms, blogs, editorial  |
+| Premium brand        | `oklch(0.20 0.02 250)` near-black  | Sora + Plus Jakarta Sans         | Luxury, consulting, finance          |
+| Lively consumer      | `oklch(0.70 0.20 30)` coral        | Plus Jakarta Sans + Outfit       | E-commerce, lifestyle, social        |
+| Minimal professional | `oklch(0.50 0.15 200)` teal-blue   | Outfit + Space Grotesk           | Data products, dashboards, B2B       |
+| Artisan warmth       | `oklch(0.55 0.15 80)` caramel      | Caveat (decorative) + Newsreader | Food & beverage, education, creative |
 
 Avoid these combos:
+
 - ❌ Inter + Roboto + blue buttons (peak AI aesthetic)
 - ❌ Fraunces + purple-pink gradients (overused)
 - ❌ More than three font families (visual chaos)

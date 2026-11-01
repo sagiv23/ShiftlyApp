@@ -19,7 +19,8 @@ od:
 
 ## What it does
 
-Implement animated effects, transitions, and motion in Flutter apps. Useful for native iOS/Android motion design.
+Implement animated effects, transitions, and motion in Flutter apps. Useful for native iOS/Android
+motion design.
 
 ## Source
 

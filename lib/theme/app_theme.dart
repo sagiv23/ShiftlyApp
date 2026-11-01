@@ -50,9 +50,11 @@ class AppTheme {
 
   // Borders
   static const Color darkBorder = Color(
-      0x1F94A3B8); // Subtle rgba(148,163,184,0.12)
+    0x1F94A3B8,
+  ); // Subtle rgba(148,163,184,0.12)
   static const Color highlightBorder = Color(
-      0x4D38BDF8); // rgba(56,189,248,0.3)
+    0x4D38BDF8,
+  ); // rgba(56,189,248,0.3)
 
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(

@@ -15,7 +15,8 @@ template.
 npx skills add dickwu/apple-design-skill
 ```
 
-This works for Claude Code, Codex, Cursor, Antigravity, OpenCode, Windsurf, and every other agent the
+This works for Claude Code, Codex, Cursor, Antigravity, OpenCode, Windsurf, and every other agent
+the
 [skills CLI](https://skills.sh) supports. Useful variations:
 
 ```bash
@@ -152,19 +153,20 @@ apple-design-skill/
         └── ...
 ```
 
-| Section | Files | Includes |
-| --- | --- | --- |
-| Getting started | 6 | Design principles; designing for iOS, iPadOS, macOS, iPhone Duo, and games |
-| Foundations | 16 | Accessibility, color, typography, layout, materials, dark mode, icons, SF Symbols, images, motion, branding, privacy, inclusion, right to left, writing, app icons |
-| Patterns | 24 | Onboarding, launching, loading, feedback, modality, searching, settings, notifications, accounts, data entry, undo, sharing, files, charts, audio, video, haptics, printing, multitasking, full screen, help, drag and drop, ratings, live viewing |
-| Components | 57 | Buttons, menus, the menu bar, toolbars, tab bars, sidebars, split views, sheets, alerts, action sheets, popovers, panels, windows, lists and tables, collections, text fields, pickers, toggles, sliders, steppers, segmented controls, search fields, progress indicators, gauges, labels, charts, widgets, notifications, Live Activities, controls, status bars, and more |
-| Inputs | 7 | Gestures, keyboards, pointing devices, focus and selection, game controls, Apple Pencil, gyroscope and accelerometer |
-| Technologies | 13 | Apple Pay, Apple In-App Purchase, Sign in with Apple, Siri, Maps, augmented reality, machine learning, generative AI, iCloud, AirPlay, NFC, App Clips, VoiceOver |
-| Curated | 1 | Liquid Glass |
+| Section         | Files | Includes                                                                                                                                                                                                                                                                                                                                                                     |
+|-----------------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Getting started | 6     | Design principles; designing for iOS, iPadOS, macOS, iPhone Duo, and games                                                                                                                                                                                                                                                                                                   |
+| Foundations     | 16    | Accessibility, color, typography, layout, materials, dark mode, icons, SF Symbols, images, motion, branding, privacy, inclusion, right to left, writing, app icons                                                                                                                                                                                                           |
+| Patterns        | 24    | Onboarding, launching, loading, feedback, modality, searching, settings, notifications, accounts, data entry, undo, sharing, files, charts, audio, video, haptics, printing, multitasking, full screen, help, drag and drop, ratings, live viewing                                                                                                                           |
+| Components      | 57    | Buttons, menus, the menu bar, toolbars, tab bars, sidebars, split views, sheets, alerts, action sheets, popovers, panels, windows, lists and tables, collections, text fields, pickers, toggles, sliders, steppers, segmented controls, search fields, progress indicators, gauges, labels, charts, widgets, notifications, Live Activities, controls, status bars, and more |
+| Inputs          | 7     | Gestures, keyboards, pointing devices, focus and selection, game controls, Apple Pencil, gyroscope and accelerometer                                                                                                                                                                                                                                                         |
+| Technologies    | 13    | Apple Pay, Apple In-App Purchase, Sign in with Apple, Siri, Maps, augmented reality, machine learning, generative AI, iCloud, AirPlay, NFC, App Clips, VoiceOver                                                                                                                                                                                                             |
+| Curated         | 1     | Liquid Glass                                                                                                                                                                                                                                                                                                                                                                 |
 
 Each generated page keeps Apple's wording, headings, tables, notes, and change log, links to its
 source, relabels platform headings by device class (phone, tablet, mobile, desktop), and omits
-the sections that apply only to tvOS, visionOS, or watchOS. The 35 pages Apple publishes for other platforms or Apple-only
+the sections that apply only to tvOS, visionOS, or watchOS. The 35 pages Apple publishes for other
+platforms or Apple-only
 services are listed, with the reason, at the end of `references/hig-lookup.md`.
 
 ## Keeping the references current

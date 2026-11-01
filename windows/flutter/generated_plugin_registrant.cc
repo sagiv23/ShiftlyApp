@@ -13,17 +13,17 @@
 #include <share_plus/share_plus_windows_plugin_c_api.h>
 #include <url_launcher_windows/url_launcher_windows.h>
 
-void RegisterPlugins(flutter::PluginRegistry* registry) {
-  FileSaverPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FileSaverPlugin"));
-  FirebaseCorePluginCApiRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FirebaseCorePluginCApi"));
-  FlutterSecureStorageWindowsPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FlutterSecureStorageWindowsPlugin"));
-  FlutterTimezonePluginCApiRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FlutterTimezonePluginCApi"));
-  SharePlusWindowsPluginCApiRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("SharePlusWindowsPluginCApi"));
-  UrlLauncherWindowsRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("UrlLauncherWindows"));
+void RegisterPlugins(flutter::PluginRegistry *registry) {
+    FileSaverPluginRegisterWithRegistrar(
+            registry->GetRegistrarForPlugin("FileSaverPlugin"));
+    FirebaseCorePluginCApiRegisterWithRegistrar(
+            registry->GetRegistrarForPlugin("FirebaseCorePluginCApi"));
+    FlutterSecureStorageWindowsPluginRegisterWithRegistrar(
+            registry->GetRegistrarForPlugin("FlutterSecureStorageWindowsPlugin"));
+    FlutterTimezonePluginCApiRegisterWithRegistrar(
+            registry->GetRegistrarForPlugin("FlutterTimezonePluginCApi"));
+    SharePlusWindowsPluginCApiRegisterWithRegistrar(
+            registry->GetRegistrarForPlugin("SharePlusWindowsPluginCApi"));
+    UrlLauncherWindowsRegisterWithRegistrar(
+            registry->GetRegistrarForPlugin("UrlLauncherWindows"));
 }

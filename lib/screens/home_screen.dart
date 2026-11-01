@@ -161,64 +161,58 @@ class HomeScreen extends StatelessWidget {
                         AppTheme.spaceSm,
                         104,
                       ),
-                children: [
-                  _MonthlySnapshot(
-                    month: now,
-                    net:
-                    monthGross +
-                        monthTips +
-                        monthIncomes -
-                        monthExpenses,
-                    gross: monthGross,
-                    hours: monthHours,
-                    shiftCount:
-                    currentMonthShifts.length +
-                        (hasActiveTimer ? 1 : 0),
-                    tips: monthTips,
-                    reimbursements: monthIncomes,
-                    expenses: monthExpenses,
-                    onAddShift: () =>
-                        Navigator.push(
-                          context,
-                          AppPageRoute.slideUp(const AddShiftScreen()),
-                        ),
-                    onAnalytics: () =>
-                        MainScreenScope.of(context)?.onTabSelected(1),
-                  ),
-                  const SizedBox(height: AppTheme.spaceMd),
-                  if (groupedShifts.isNotEmpty) ...[
-                    _SectionHeading(
-                      title:
-                      '${l.home_shift_list_shifts_on} ${DateFormat.MMMM(l
-                          .localeName).format(now)}',
-                      historyLabel: l.export_range_all,
-                      onHistory: () =>
-                          Navigator.push(
+                      children: [
+                        _MonthlySnapshot(
+                          month: now,
+                          net:
+                              monthGross +
+                              monthTips +
+                              monthIncomes -
+                              monthExpenses,
+                          gross: monthGross,
+                          hours: monthHours,
+                          shiftCount:
+                              currentMonthShifts.length +
+                              (hasActiveTimer ? 1 : 0),
+                          tips: monthTips,
+                          reimbursements: monthIncomes,
+                          expenses: monthExpenses,
+                          onAddShift: () => Navigator.push(
                             context,
-                            AppPageRoute.slideUp(const ShiftHistoryScreen()),
+                            AppPageRoute.slideUp(const AddShiftScreen()),
                           ),
-                      actionLabel: l.home_action_calendar,
-                      onAction: () =>
-                          MainScreenScope.of(context)?.onTabSelected(0),
-                    ),
-                    const SizedBox(height: AppTheme.spaceXs),
-                    if (currentMonthShifts.isNotEmpty)
-                      _RecentShiftList(shifts: currentMonthShifts)
-                    else
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          l.home_empty_state_subtitle,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .bodySmall,
+                          onAnalytics: () =>
+                              MainScreenScope.of(context)?.onTabSelected(1),
                         ),
-                      ),
-                    const SizedBox(height: AppTheme.spaceLg),
-                  ],
-                ],
-              ),
+                        const SizedBox(height: AppTheme.spaceMd),
+                        if (groupedShifts.isNotEmpty) ...[
+                          _SectionHeading(
+                            title:
+                                '${l.home_shift_list_shifts_on} ${DateFormat.MMMM(l.localeName).format(now)}',
+                            historyLabel: l.export_range_all,
+                            onHistory: () => Navigator.push(
+                              context,
+                              AppPageRoute.slideUp(const ShiftHistoryScreen()),
+                            ),
+                            actionLabel: l.home_action_calendar,
+                            onAction: () =>
+                                MainScreenScope.of(context)?.onTabSelected(0),
+                          ),
+                          const SizedBox(height: AppTheme.spaceXs),
+                          if (currentMonthShifts.isNotEmpty)
+                            _RecentShiftList(shifts: currentMonthShifts)
+                          else
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Text(
+                                l.home_empty_state_subtitle,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ),
+                          const SizedBox(height: AppTheme.spaceLg),
+                        ],
+                      ],
+                    ),
             ),
           ],
         ),
@@ -257,22 +251,12 @@ class _MonthlySnapshot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    final symbol = context
-        .watch<SettingsProvider>()
-        .currencySymbol;
-    final isDark = Theme
-        .of(context)
-        .brightness == Brightness.dark;
+    final symbol = context.watch<SettingsProvider>().currencySymbol;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final daysInMonth = DateUtils.getDaysInMonth(month.year, month.month);
     final elapsed =
-    month.year == DateTime
-        .now()
-        .year && month.month == DateTime
-        .now()
-        .month
-        ? DateTime
-        .now()
-        .day / daysInMonth
+        month.year == DateTime.now().year && month.month == DateTime.now().month
+        ? DateTime.now().day / daysInMonth
         : 1.0;
     final monthName = DateFormat.MMMM(l.localeName).format(month);
 
@@ -308,11 +292,7 @@ class _MonthlySnapshot extends StatelessWidget {
             children: [
               Text(
                 monthName,
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: isDark
                       ? AppTheme.secondaryText
                       : const Color(0xFF475569),
@@ -340,10 +320,7 @@ class _MonthlySnapshot extends StatelessWidget {
                   children: [
                     Text(
                       l.analytics_net_pay,
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .titleSmall,
+                      style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const SizedBox(height: 2),
                     TweenAnimationBuilder<double>(
@@ -356,17 +333,14 @@ class _MonthlySnapshot extends StatelessWidget {
                           alignment: AlignmentDirectional.centerStart,
                           child: Text(
                             UIUtils.formatCurrency(value, symbol: symbol),
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .displaySmall
+                            style: Theme.of(context).textTheme.displaySmall
                                 ?.copyWith(
-                              color: AppTheme.mintGreen,
-                              fontWeight: FontWeight.bold,
-                              fontFeatures: const [
-                                FontFeature.tabularFigures(),
-                              ],
-                            ),
+                                  color: AppTheme.mintGreen,
+                                  fontWeight: FontWeight.bold,
+                                  fontFeatures: const [
+                                    FontFeature.tabularFigures(),
+                                  ],
+                                ),
                           ),
                         );
                       },
@@ -380,12 +354,8 @@ class _MonthlySnapshot extends StatelessWidget {
                 curve: Curves.easeOutCubic,
                 builder: (context, value, child) {
                   return Text(
-                    '${l.home_total_card_base}: ${UIUtils.formatCurrency(
-                        value, symbol: symbol)}',
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .bodySmall,
+                    '${l.home_total_card_base}: ${UIUtils.formatCurrency(value, symbol: symbol)}',
+                    style: Theme.of(context).textTheme.bodySmall,
                   );
                 },
               ),
@@ -397,8 +367,7 @@ class _MonthlySnapshot extends StatelessWidget {
               Expanded(
                 child: _SnapshotMetric(
                   icon: Icons.schedule_rounded,
-                  value:
-                  '${hours.toStringAsFixed(1)} ${l.common_hours_suffix}',
+                  value: '${hours.toStringAsFixed(1)} ${l.common_hours_suffix}',
                   label: l.home_total_card_hours,
                 ),
               ),
@@ -485,48 +454,43 @@ class _SnapshotMetric extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) =>
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: Theme
-              .of(context)
-              .colorScheme
-              .surface
-              .withValues(alpha: .45),
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: AppTheme.electricCyan, size: 18),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    value,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w800, fontSize: 13),
-                  ),
-                  Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(fontSize: 11),
-                  ),
-                ],
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    decoration: BoxDecoration(
+      color: Theme.of(context).colorScheme.surface.withValues(alpha: .45),
+      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+    ),
+    child: Row(
+      children: [
+        Icon(icon, color: AppTheme.electricCyan, size: 18),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 13,
+                ),
               ),
-            ),
-          ],
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(fontSize: 11),
+              ),
+            ],
+          ),
         ),
-      );
+      ],
+    ),
+  );
 }
 
 class _AmountPill extends StatelessWidget {
@@ -542,9 +506,7 @@ class _AmountPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final symbol = context
-        .watch<SettingsProvider>()
-        .currencySymbol;
+    final symbol = context.watch<SettingsProvider>().currencySymbol;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -579,45 +541,39 @@ class _SectionHeading extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) =>
-      Row(
-        children: [
-          Expanded(
-            child: Text(
-              title,
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+  Widget build(BuildContext context) => Row(
+    children: [
+      Expanded(
+        child: Text(
+          title,
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        ),
+      ),
+      if (onHistory != null && historyLabel != null)
+        TextButton.icon(
+          onPressed: onHistory,
+          icon: const Icon(Icons.history_rounded, size: 16),
+          label: Text(
+            historyLabel!,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
           ),
-          if (onHistory != null && historyLabel != null)
-            TextButton.icon(
-              onPressed: onHistory,
-              icon: const Icon(Icons.history_rounded, size: 16),
-              label: Text(
-                historyLabel!,
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 13),
-              ),
-              style: TextButton.styleFrom(
-                visualDensity: VisualDensity.compact,
-                foregroundColor: AppTheme.electricCyan,
-              ),
-            ),
-          if (onAction != null && actionLabel != null)
-            IconButton(
-              onPressed: onAction,
-              tooltip: actionLabel,
-              icon: const Icon(Icons.calendar_month_rounded, size: 20),
-              color: AppTheme.electricCyan,
-              visualDensity: VisualDensity.compact,
-            ),
-        ],
-      );
+          style: TextButton.styleFrom(
+            visualDensity: VisualDensity.compact,
+            foregroundColor: AppTheme.electricCyan,
+          ),
+        ),
+      if (onAction != null && actionLabel != null)
+        IconButton(
+          onPressed: onAction,
+          tooltip: actionLabel,
+          icon: const Icon(Icons.calendar_month_rounded, size: 20),
+          color: AppTheme.electricCyan,
+          visualDensity: VisualDensity.compact,
+        ),
+    ],
+  );
 }
 
 class _RecentShiftList extends StatelessWidget {
@@ -626,19 +582,18 @@ class _RecentShiftList extends StatelessWidget {
   const _RecentShiftList({required this.shifts});
 
   @override
-  Widget build(BuildContext context) =>
-      Container(
-        decoration: AppTheme.sectionDecoration(context),
-        child: Column(
-          children: [
-            for (var i = 0; i < shifts.length; i++) ...[
-              ShiftTile(shift: shifts[i]),
-              if (i < shifts.length - 1)
-                const Divider(height: 1, indent: 16, endIndent: 16),
-            ],
-          ],
-        ),
-      );
+  Widget build(BuildContext context) => Container(
+    decoration: AppTheme.sectionDecoration(context),
+    child: Column(
+      children: [
+        for (var i = 0; i < shifts.length; i++) ...[
+          ShiftTile(shift: shifts[i]),
+          if (i < shifts.length - 1)
+            const Divider(height: 1, indent: 16, endIndent: 16),
+        ],
+      ],
+    ),
+  );
 }
 
 class _ActiveTimerBanner extends StatelessWidget {

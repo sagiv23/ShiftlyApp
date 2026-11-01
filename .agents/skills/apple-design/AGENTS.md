@@ -27,20 +27,20 @@ a generated lookup table, and the script that regenerates all of it.
 
 ## File map
 
-| Path | Role | Edit by hand? |
-| --- | --- | --- |
-| `SKILL.md` | The skill: stance, principles, lenses, report format, improvement mode | Yes |
-| `AGENTS.md` | This file | Yes |
-| `README.md` | Installation and overview for people | Yes |
-| `.cursorrules` | Entry point for Cursor | Yes |
-| `GEMINI.md` | Entry point for Antigravity | Yes |
-| `.github/FUNDING.yml` | GitHub Sponsors button configuration | Yes |
-| `references/hig-lookup.md` | Generated table of every page with Apple's summary and change date, plus an omitted-pages list | No, re-run the script |
-| `references/hig/*.md` | 123 generated pages in Apple's wording | No, re-run the script |
-| `references/hig/liquid-glass.md` | Curated Liquid Glass guide; the script never touches it | Yes |
-| `references/cross-platform.md` | Apple's vocabulary and conventions for Flutter, React Native, Tauri, and Electron | Yes |
-| `references/code-audit.md` | Code patterns to search for (Apple Pay, Liquid Glass, iPhone Duo), with citations and replacements | Yes |
-| `scripts/pull-hig.mjs` | Pull script, Node 18 or newer, no dependencies | Yes |
+| Path                             | Role                                                                                               | Edit by hand?         |
+|----------------------------------|----------------------------------------------------------------------------------------------------|-----------------------|
+| `SKILL.md`                       | The skill: stance, principles, lenses, report format, improvement mode                             | Yes                   |
+| `AGENTS.md`                      | This file                                                                                          | Yes                   |
+| `README.md`                      | Installation and overview for people                                                               | Yes                   |
+| `.cursorrules`                   | Entry point for Cursor                                                                             | Yes                   |
+| `GEMINI.md`                      | Entry point for Antigravity                                                                        | Yes                   |
+| `.github/FUNDING.yml`            | GitHub Sponsors button configuration                                                               | Yes                   |
+| `references/hig-lookup.md`       | Generated table of every page with Apple's summary and change date, plus an omitted-pages list     | No, re-run the script |
+| `references/hig/*.md`            | 123 generated pages in Apple's wording                                                             | No, re-run the script |
+| `references/hig/liquid-glass.md` | Curated Liquid Glass guide; the script never touches it                                            | Yes                   |
+| `references/cross-platform.md`   | Apple's vocabulary and conventions for Flutter, React Native, Tauri, and Electron                  | Yes                   |
+| `references/code-audit.md`       | Code patterns to search for (Apple Pay, Liquid Glass, iPhone Duo), with citations and replacements | Yes                   |
+| `scripts/pull-hig.mjs`           | Pull script, Node 18 or newer, no dependencies                                                     | Yes                   |
 
 ## Refreshing the references
 
