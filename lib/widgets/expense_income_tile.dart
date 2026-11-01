@@ -200,11 +200,15 @@ class ExpenseTile extends StatelessWidget {
           children: [
             Text(
               UIUtils.formatCurrency(record.amount, symbol: symbol),
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: badgeColor,
-                fontFeatures: const [FontFeature.tabularFigures()],
+              style: UIUtils.getCurrencyStyle(
+                context,
+                isIncome ? record.amount : -record.amount,
+                baseStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
+                positiveColor: badgeColor,
               ),
             ),
             if (isWide) ...[

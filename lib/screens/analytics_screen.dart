@@ -643,6 +643,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               value: UIUtils.formatCurrency(totalNet, symbol: symbol),
               numericValue: totalNet,
               formatter: (v) => UIUtils.formatCurrency(v, symbol: symbol),
+              isCurrency: true,
               subtitle: _periodMode == AnalyticsPeriodMode.monthly
                   ? '${l.analytics_kpi_projected}: ${UIUtils.formatCurrency(projectedEom, symbol: symbol)}'
                   : '$shiftCount ${l.common_shifts_count}',
@@ -655,6 +656,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               value: UIUtils.formatCurrency(totalBaseSalary, symbol: symbol),
               numericValue: totalBaseSalary,
               formatter: (v) => UIUtils.formatCurrency(v, symbol: symbol),
+              isCurrency: true,
               subtitle: l.home_total_card_base,
               icon: Icons.work_rounded,
               gradientColors: const [Color(0xFF0EA5E9), Color(0xFF0284C7)],
@@ -666,6 +668,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 value: UIUtils.formatCurrency(totalTips, symbol: symbol),
                 numericValue: totalTips,
                 formatter: (v) => UIUtils.formatCurrency(v, symbol: symbol),
+                isCurrency: true,
                 subtitle: l.home_total_card_tips,
                 icon: Icons.local_activity_rounded,
                 gradientColors: const [Color(0xFF10B981), Color(0xFF059669)],
@@ -677,6 +680,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 value: UIUtils.formatCurrency(totalIncomes, symbol: symbol),
                 numericValue: totalIncomes,
                 formatter: (v) => UIUtils.formatCurrency(v, symbol: symbol),
+                isCurrency: true,
                 subtitle: l.expenses_tab_incomes,
                 icon: Icons.arrow_downward_rounded,
                 gradientColors: const [Color(0xFF6EE7B7), Color(0xFF34D399)],
@@ -688,6 +692,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 value: UIUtils.formatCurrency(totalExpenses, symbol: symbol),
                 numericValue: totalExpenses,
                 formatter: (v) => UIUtils.formatCurrency(v, symbol: symbol),
+                isCurrency: true,
+                isExpense: true,
                 subtitle: l.home_total_card_expenses,
                 icon: Icons.arrow_upward_rounded,
                 gradientColors: const [Color(0xFFEF4444), Color(0xFFDC2626)],
@@ -1123,11 +1129,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     const SizedBox(height: 4),
                     Text(
                       UIUtils.formatCurrency(overtimeEarnings, symbol: symbol),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.profit,
-                        fontFeatures: [FontFeature.tabularFigures()],
+                      style: UIUtils.getCurrencyStyle(
+                        context,
+                        overtimeEarnings,
+                        baseStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
+                        positiveColor: AppTheme.profit,
                       ),
                     ),
                   ],
@@ -1205,11 +1215,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       const SizedBox(height: 2),
                       Text(
                         UIUtils.formatCurrency(shabbatEarnings, symbol: symbol),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.profit,
-                          fontFeatures: [FontFeature.tabularFigures()],
+                        style: UIUtils.getCurrencyStyle(
+                          context,
+                          shabbatEarnings,
+                          baseStyle: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            fontFeatures: [FontFeature.tabularFigures()],
+                          ),
+                          positiveColor: AppTheme.profit,
                         ),
                       ),
                     ],
@@ -1241,11 +1255,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       const SizedBox(height: 2),
                       Text(
                         UIUtils.formatCurrency(holidayEarnings, symbol: symbol),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.profit,
-                          fontFeatures: [FontFeature.tabularFigures()],
+                        style: UIUtils.getCurrencyStyle(
+                          context,
+                          holidayEarnings,
+                          baseStyle: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            fontFeatures: [FontFeature.tabularFigures()],
+                          ),
+                          positiveColor: AppTheme.profit,
                         ),
                       ),
                     ],
@@ -1963,12 +1981,14 @@ class _SelectedPointDetailsCard extends StatelessWidget {
               _DetailSubItem(
                 label: l.analytics_base_salary,
                 value: UIUtils.formatCurrency(point.basePay, symbol: symbol),
+                amount: point.basePay,
               ),
               if (point.tips > 0)
                 _DetailSubItem(
                   label: l.home_total_card_tips,
                   value: UIUtils.formatCurrency(point.tips, symbol: symbol),
-                  color: AppTheme.profit,
+                  amount: point.tips,
+                  positiveColor: AppTheme.profit,
                 ),
               _DetailSubItem(
                 label: l.analytics_stat_avg_rate,
@@ -1976,13 +1996,15 @@ class _SelectedPointDetailsCard extends StatelessWidget {
                   point.effectiveHourlyRate,
                   symbol: symbol,
                 ),
+                amount: point.effectiveHourlyRate,
                 isBold: true,
               ),
               _DetailSubItem(
                 label: l.common_net,
                 value: UIUtils.formatCurrency(point.totalNet, symbol: symbol),
+                amount: point.totalNet,
                 isBold: true,
-                color: AppTheme.primaryDark,
+                positiveColor: AppTheme.primaryDark,
               ),
             ],
           ),
@@ -1995,14 +2017,16 @@ class _SelectedPointDetailsCard extends StatelessWidget {
 class _DetailSubItem extends StatelessWidget {
   final String label;
   final String value;
+  final double amount;
   final bool isBold;
-  final Color? color;
+  final Color? positiveColor;
 
   const _DetailSubItem({
     required this.label,
     required this.value,
+    required this.amount,
     this.isBold = false,
-    this.color,
+    this.positiveColor,
   });
 
   @override
@@ -2013,11 +2037,16 @@ class _DetailSubItem extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           value,
-          style: TextStyle(
-            fontSize: isBold ? 14 : 12,
-            fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
-            color: color,
-            fontFeatures: const [FontFeature.tabularFigures()],
+          style: UIUtils.getCurrencyStyle(
+            context,
+            amount,
+            baseStyle: TextStyle(
+              fontSize: isBold ? 14 : 12,
+              fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+            positiveColor:
+                positiveColor ?? Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],

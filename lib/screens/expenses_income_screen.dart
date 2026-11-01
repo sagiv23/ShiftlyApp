@@ -1089,9 +1089,11 @@ class _MonthItemSection extends StatelessWidget {
               ),
               Text(
                 '${l.expenses_total_label}: ${UIUtils.formatCurrency(total, symbol: symbol)}',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: isIncome ? AppTheme.profitSoft : AppTheme.expenseSoft,
+                style: UIUtils.getCurrencyStyle(
+                  context,
+                  isIncome ? total : -total,
+                  baseStyle: const TextStyle(fontWeight: FontWeight.w600),
+                  positiveColor: AppTheme.profit,
                 ),
               ),
             ],

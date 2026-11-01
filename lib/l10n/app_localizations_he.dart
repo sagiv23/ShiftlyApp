@@ -114,6 +114,27 @@ class AppLocalizationsHe extends AppLocalizations {
       'באיזה מטבע תרצה להשתמש להצגת השכר וההוצאות?';
 
   @override
+  String get monthly_progress_setting_title => 'המשמעות של קו ההתקדמות';
+
+  @override
+  String get monthly_progress_mode_month => 'הזמן שעבר בחודש';
+
+  @override
+  String get monthly_progress_mode_financial_goal => 'התקדמות ליעד כספי';
+
+  @override
+  String get monthly_progress_goal_amount => 'סכום היעד החודשי';
+
+  @override
+  String get monthly_progress_invalid_goal => 'יש להזין יעד כספי גדול מאפס';
+
+  @override
+  String get monthly_progress_month_elapsed => 'התקדמות החודש';
+
+  @override
+  String get monthly_progress_financial_goal => 'התקדמות ליעד';
+
+  @override
   String get onboarding_breaks_title => 'הגדרות הפסקה';
 
   @override

@@ -96,13 +96,13 @@ class EarningsBarChartWidget extends StatelessWidget {
       (sum, dp) => sum + dp.totalNet,
     );
     final chartSemanticSummary =
-        '${l.nav_analytics}: ${data.length} ${l.common_shifts_count}, ${l.common_net}: ${totalChartEarnings.toStringAsFixed(0)} $currencySymbol';
+        '${l.nav_analytics}: ${data.length} ${l.common_shifts_count}, ${l.common_net}: ${UIUtils.formatCurrency(totalChartEarnings, symbol: currencySymbol, decimals: 0)}';
 
     return Semantics(
       container: true,
       label: chartSemanticSummary,
       value: selectedIndex != null && selectedIndex! < data.length
-          ? '${data[selectedIndex!].label}: ${data[selectedIndex!].totalNet.toStringAsFixed(0)} $currencySymbol'
+          ? '${data[selectedIndex!].label}: ${UIUtils.formatCurrency(data[selectedIndex!].totalNet, symbol: currencySymbol, decimals: 0)}'
           : null,
       child: SizedBox(
         height: height,

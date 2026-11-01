@@ -45,6 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late TextEditingController _holidayMultiplierController;
   late TextEditingController _candleLightingController;
   late TextEditingController _shabbatExitController;
+  late TextEditingController _monthlyFinancialGoalController;
 
   @override
   void initState() {
@@ -95,6 +96,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _shabbatExitController = TextEditingController(
       text: shabbatRules.shabbatExitMinutesAfterSunset.toStringAsFixed(0),
     );
+    _monthlyFinancialGoalController = TextEditingController(
+      text: settings.monthlyFinancialGoal > 0
+          ? settings.monthlyFinancialGoal.toStringAsFixed(2)
+          : '',
+    );
   }
 
   Future<void> _loadVersion() async {
@@ -120,7 +126,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _holidayMultiplierController.dispose();
     _candleLightingController.dispose();
     _shabbatExitController.dispose();
+    _monthlyFinancialGoalController.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveMonthlyFinancialGoal() async {
+    final l = AppLocalizations.of(context)!;
+    final amount = double.tryParse(_monthlyFinancialGoalController.text.trim());
+    if (amount == null || !amount.isFinite || amount <= 0) {
+      UIUtils.showSnackBar(
+        context,
+        l.monthly_progress_invalid_goal,
+        isError: true,
+      );
+      return;
+    }
+    await context.read<SettingsProvider>().setMonthlyFinancialGoal(amount);
   }
 
   void _showEditJobDialog(BuildContext context, [JobType? job]) {
@@ -545,6 +566,80 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ),
                           const Divider(height: 1, indent: 56),
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.show_chart_rounded,
+                                      color: AppTheme.electricCyan,
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Text(
+                                        l.monthly_progress_setting_title,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.titleMedium,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                DropdownButtonFormField<MonthlyProgressMode>(
+                                  initialValue: settings.monthlyProgressMode,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  items: [
+                                    DropdownMenuItem(
+                                      value: MonthlyProgressMode.month,
+                                      child: Text(
+                                        l.monthly_progress_mode_month,
+                                      ),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: MonthlyProgressMode.financialGoal,
+                                      child: Text(
+                                        l.monthly_progress_mode_financial_goal,
+                                      ),
+                                    ),
+                                  ],
+                                  onChanged: (mode) {
+                                    if (mode != null) {
+                                      settings.setMonthlyProgressMode(mode);
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (settings.monthlyProgressMode ==
+                              MonthlyProgressMode.financialGoal)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                              child: TextField(
+                                controller: _monthlyFinancialGoalController,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
+                                decoration: InputDecoration(
+                                  labelText: l.monthly_progress_goal_amount,
+                                  prefixText: '$symbol ',
+                                  suffixIcon: IconButton(
+                                    tooltip: l.common_save,
+                                    onPressed: _saveMonthlyFinancialGoal,
+                                    icon: const Icon(Icons.check_rounded),
+                                  ),
+                                ),
+                                onSubmitted: (_) => _saveMonthlyFinancialGoal(),
+                              ),
+                            ),
+                          const Divider(height: 1, indent: 56),
                           ListTile(
                             title: Text(l.accessibility_statement),
                             subtitle: Text(l.settings_accessibility_sub),
@@ -592,7 +687,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     value: settings.breaksEnabled,
                                     onChanged: (val) =>
                                         settings.setBreaksEnabled(val),
-                                    activeThumbColor: const Color(0xFF040711),
+                                    activeThumbColor: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimary,
                                     activeTrackColor: AppTheme.electricCyan,
                                   ),
                                   if (settings.breaksEnabled) ...[
@@ -698,7 +795,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           .copyWith(enabled: val);
                                       settings.setOvertimeRules(updated);
                                     },
-                                    activeThumbColor: const Color(0xFF040711),
+                                    activeThumbColor: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimary,
                                     activeTrackColor: AppTheme.electricCyan,
                                   ),
                                   if (settings.overtimeRules.enabled) ...[
@@ -854,7 +953,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           .copyWith(enabled: val);
                                       settings.setShabbatHolidayRules(updated);
                                     },
-                                    activeThumbColor: const Color(0xFF040711),
+                                    activeThumbColor: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimary,
                                     activeTrackColor: AppTheme.electricCyan,
                                   ),
                                   if (settings.shabbatHolidayRules.enabled) ...[
@@ -1364,10 +1465,14 @@ class _JobCard extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           '${UIUtils.formatCurrency(currentRate, symbol: symbol)} ${l.onboarding_job_types_rate_suffix}',
-                          style: const TextStyle(
-                            color: AppTheme.electricCyan,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
+                          style: UIUtils.getCurrencyStyle(
+                            context,
+                            currentRate,
+                            baseStyle: AppTheme.monoNumber.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                            positiveColor: AppTheme.electricCyan,
                           ),
                         ),
                       ],
@@ -1511,7 +1616,9 @@ class _WageTimeline extends StatelessWidget {
                                 fontWeight: FontWeight.w500,
                                 color: isDark
                                     ? AppTheme.secondaryText
-                                    : Colors.grey.shade600,
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                               ),
                             ),
                             if (isFirst && !compact)
@@ -1531,13 +1638,17 @@ class _WageTimeline extends StatelessWidget {
                           entry.hourlyRate,
                           symbol: symbol,
                         ),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: compact ? 13 : 15,
-                          color: isFirst
+                        style: UIUtils.getCurrencyStyle(
+                          context,
+                          entry.hourlyRate,
+                          baseStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: compact ? 13 : 15,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
+                          positiveColor: isFirst
                               ? AppTheme.electricCyan
                               : Theme.of(context).colorScheme.onSurface,
-                          fontFeatures: const [FontFeature.tabularFigures()],
                         ),
                       ),
                       if (delta != null && delta != 0) ...[
@@ -1549,22 +1660,24 @@ class _WageTimeline extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color:
-                                (delta > 0
-                                        ? AppTheme.mintGreen
-                                        : AppTheme.softCoral)
+                                (delta > 0 ? AppTheme.profit : AppTheme.expense)
                                     .withValues(alpha: 0.14),
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(
+                              AppTheme.radiusSm / 2,
+                            ),
                           ),
                           child: Text(
                             delta > 0
                                 ? '+${UIUtils.formatCurrency(delta, symbol: symbol)}'
                                 : UIUtils.formatCurrency(delta, symbol: symbol),
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: delta > 0
-                                  ? AppTheme.mintGreen
-                                  : AppTheme.softCoral,
+                            style: UIUtils.getCurrencyStyle(
+                              context,
+                              delta,
+                              baseStyle: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              positiveColor: AppTheme.profit,
                             ),
                           ),
                         ),

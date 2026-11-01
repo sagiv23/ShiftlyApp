@@ -680,11 +680,16 @@ class _YearMonthTabLayoutState extends State<YearMonthTabLayout> {
                           alignment: AlignmentDirectional.centerStart,
                           child: Text(
                             UIUtils.formatCurrency(value, symbol: symbol),
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(
-                                  color: AppTheme.mintGreen,
-                                  fontWeight: FontWeight.w900,
-                                ),
+                            style: UIUtils.getCurrencyStyle(
+                              context,
+                              value,
+                              baseStyle: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.w900),
+                              positiveColor: AppTheme.profit,
+                            ),
                           ),
                         );
                       },
@@ -719,8 +724,21 @@ class _YearMonthTabLayoutState extends State<YearMonthTabLayout> {
                           alignment: AlignmentDirectional.center,
                           child: Text(
                             UIUtils.formatCurrency(value, symbol: symbol),
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.w700),
+                            style: UIUtils.getCurrencyStyle(
+                              context,
+                              value,
+                              baseStyle: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.w700),
+                              positiveColor: Theme
+                                  .of(
+                                context,
+                              )
+                                  .colorScheme
+                                  .onSurface,
+                            ),
                           ),
                         );
                       },
@@ -825,10 +843,14 @@ class _PillBadge extends StatelessWidget {
       ),
       child: Text(
         '$label ${UIUtils.formatCurrency(amount, symbol: symbol)}',
-        style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.w700,
-          fontSize: 11,
+        style: UIUtils.getCurrencyStyle(
+          context,
+          amount,
+          baseStyle: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 11,
+          ),
+          positiveColor: color,
         ),
       ),
     );

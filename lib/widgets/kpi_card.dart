@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import '../utils/ui_utils.dart';
 
 /// Reusable KPI / Stats Card widget with gradient icon badge, subtle borders, and smooth animations.
 class KpiCard extends StatelessWidget {
@@ -8,6 +9,8 @@ class KpiCard extends StatelessWidget {
   final String value;
   final double? numericValue;
   final String Function(double)? formatter;
+  final bool isCurrency;
+  final bool isExpense;
   final String subtitle;
   final IconData icon;
   final List<Color> gradientColors;
@@ -19,6 +22,8 @@ class KpiCard extends StatelessWidget {
     required this.value,
     this.numericValue,
     this.formatter,
+    this.isCurrency = false,
+    this.isExpense = false,
     required this.subtitle,
     required this.icon,
     required this.gradientColors,
@@ -96,6 +101,12 @@ class KpiCard extends StatelessWidget {
                     duration: const Duration(milliseconds: 600),
                     curve: Curves.easeOutCubic,
                     builder: (context, val, child) {
+                      final style = TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? AppTheme.primaryText : AppTheme.profit,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      );
                       return FittedBox(
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerRight,
@@ -103,12 +114,20 @@ class KpiCard extends StatelessWidget {
                           formatter != null
                               ? formatter!(val)
                               : val.toStringAsFixed(2),
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? AppTheme.primaryText : mainColor,
-                            fontFeatures: const [FontFeature.tabularFigures()],
-                          ),
+                          style: isCurrency
+                              ? UIUtils.getCurrencyStyle(
+                                  context,
+                                  isExpense ? -val.abs() : val,
+                                  baseStyle: style,
+                                  positiveColor: isDark
+                                      ? AppTheme.primaryText
+                                      : AppTheme.profit,
+                                )
+                              : style.copyWith(
+                                  color: isDark
+                                      ? AppTheme.primaryText
+                                      : mainColor,
+                                ),
                         ),
                       );
                     },

@@ -1158,9 +1158,11 @@ class _AddShiftScreenState extends State<AddShiftScreen>
               const SizedBox(height: AppTheme.spaceXs),
               Text(
                 UIUtils.formatCurrency(livePay, symbol: symbol),
-                style: AppTheme.monoNumber.copyWith(
-                  fontSize: 28,
-                  color: livePay < 0 ? AppTheme.expense : AppTheme.primaryDark,
+                style: UIUtils.getCurrencyStyle(
+                  context,
+                  livePay,
+                  baseStyle: AppTheme.monoNumber.copyWith(fontSize: 28),
+                  positiveColor: AppTheme.primaryDark,
                 ),
               ),
               Text(

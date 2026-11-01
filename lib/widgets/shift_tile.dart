@@ -228,6 +228,7 @@ class ShiftTile extends StatelessWidget {
                               '+${UIUtils.formatCurrency(shift.tips, symbol: settings.currencySymbol)}',
                           icon: Icons.payments_outlined,
                           color: AppTheme.mintGreen,
+                          monetaryAmount: shift.tips,
                         ),
                       if (shift.totalAutomaticIncomes > 0)
                         ShiftTag(
@@ -235,6 +236,7 @@ class ShiftTile extends StatelessWidget {
                               '+${UIUtils.formatCurrency(shift.totalAutomaticIncomes, symbol: settings.currencySymbol)}',
                           icon: Icons.account_balance_wallet_rounded,
                           color: AppTheme.mintGreen,
+                          monetaryAmount: shift.totalAutomaticIncomes,
                         ),
                       if (breakType == BreakType.paid)
                         ShiftTag(
@@ -255,7 +257,8 @@ class ShiftTile extends StatelessWidget {
                           label:
                               '-${UIUtils.formatCurrency(shift.totalAutomaticExpenses, symbol: settings.currencySymbol)}',
                           icon: Icons.money_off_rounded,
-                          color: AppTheme.softCoral,
+                          color: AppTheme.expense,
+                          monetaryAmount: -shift.totalAutomaticExpenses,
                         ),
                     ],
                   ),
@@ -269,11 +272,15 @@ class ShiftTile extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: Text(
               UIUtils.formatCurrency(pay, symbol: settings.currencySymbol),
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: isDark ? AppTheme.electricCyan : AppTheme.primaryDark,
-                fontFeatures: const [FontFeature.tabularFigures()],
+              style: UIUtils.getCurrencyStyle(
+                context,
+                pay,
+                baseStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
+                positiveColor: AppTheme.electricCyan,
               ),
             ),
           ),
@@ -412,6 +419,7 @@ class ShiftTag extends StatelessWidget {
   final IconData? icon;
   final Widget? customIcon;
   final Color color;
+  final double? monetaryAmount;
 
   const ShiftTag({
     super.key,
@@ -419,6 +427,7 @@ class ShiftTag extends StatelessWidget {
     this.icon,
     this.customIcon,
     required this.color,
+    this.monetaryAmount,
   });
 
   @override
@@ -443,12 +452,23 @@ class ShiftTag extends StatelessWidget {
             Flexible(
               child: Text(
                 label,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: color,
-                  fontFeatures: const [FontFeature.tabularFigures()],
-                ),
+                style: monetaryAmount == null
+                    ? TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: color,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      )
+                    : UIUtils.getCurrencyStyle(
+                        context,
+                        monetaryAmount!,
+                        baseStyle: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
+                        positiveColor: color,
+                      ),
                 overflow: TextOverflow.ellipsis,
               ),
             ),

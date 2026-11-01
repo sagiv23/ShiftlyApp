@@ -38,7 +38,7 @@ class GrandTotalCard extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppTheme.radiusXl),
-        color: isDark ? AppTheme.darkCard : Colors.white,
+        color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
         border: Border.all(
           color: isDark ? AppTheme.highlightBorder : AppTheme.lightBorder,
           width: 1.5,
@@ -74,8 +74,8 @@ class GrandTotalCard extends StatelessWidget {
                             const Color(0xFF070B18),
                           ]
                         : [
-                            Colors.white,
-                            const Color(0xFFF8FAFC),
+                            AppTheme.lightCard,
+                            AppTheme.lightBackground,
                             AppTheme.lightSurfaceElevated,
                           ],
                   ),
@@ -184,23 +184,25 @@ class GrandTotalCard extends StatelessWidget {
                         fit: BoxFit.scaleDown,
                         child: Text(
                           UIUtils.formatCurrency(animNet, symbol: symbol),
-                          style: AppTheme.monoNumber.copyWith(
-                            color: animNet < 0
-                                ? AppTheme.softCoral
-                                : (isDark
-                                      ? AppTheme.primaryText
-                                      : const Color(0xFF0F172A)),
-                            fontSize: 40,
-                            height: 1.1,
-                            shadows: [
-                              if (isDark)
-                                BoxShadow(
-                                  color: AppTheme.electricCyan.withValues(
-                                    alpha: 0.3,
+                          style: UIUtils.getCurrencyStyle(
+                            context,
+                            animNet,
+                            baseStyle: AppTheme.monoNumber.copyWith(
+                              fontSize: 40,
+                              height: 1.1,
+                              shadows: [
+                                if (isDark)
+                                  BoxShadow(
+                                    color: AppTheme.electricCyan.withValues(
+                                      alpha: 0.3,
+                                    ),
+                                    blurRadius: 16,
                                   ),
-                                  blurRadius: 16,
-                                ),
-                            ],
+                              ],
+                            ),
+                            positiveColor: isDark
+                                ? AppTheme.primaryText
+                                : Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       );
@@ -218,7 +220,7 @@ class GrandTotalCard extends StatelessWidget {
                           ? AppTheme.darkSecondaryBackground.withValues(
                               alpha: 0.7,
                             )
-                          : const Color(0xFFF1F5F9),
+                          : AppTheme.lightSurfaceElevated,
                       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                       border: Border.all(
                         color: isDark
@@ -359,15 +361,6 @@ class _HeaderInfoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color valColor;
-    if ((amount ?? 0) < 0) {
-      valColor = AppTheme.softCoral;
-    } else if (accentColor != null) {
-      valColor = accentColor!;
-    } else {
-      valColor = isDark ? AppTheme.primaryText : const Color(0xFF0F172A);
-    }
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -376,7 +369,7 @@ class _HeaderInfoItem extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: isDark ? AppTheme.secondaryText : const Color(0xFF64748B),
+              color: isDark ? AppTheme.secondaryText : AppTheme.mutedText,
               fontSize: 11,
               fontWeight: FontWeight.w600,
             ),
@@ -387,12 +380,29 @@ class _HeaderInfoItem extends StatelessWidget {
           fit: BoxFit.scaleDown,
           child: Text(
             value,
-            style: TextStyle(
-              color: valColor,
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
+            style: amount == null
+                ? TextStyle(
+                    color: isDark
+                        ? AppTheme.primaryText
+                        : Theme.of(context).colorScheme.onSurface,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  )
+                : UIUtils.getCurrencyStyle(
+                    context,
+                    amount!,
+                    baseStyle: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      fontFeatures: [FontFeature.tabularFigures()],
+                    ),
+                    positiveColor:
+                        accentColor ??
+                        (isDark
+                            ? AppTheme.primaryText
+                            : Theme.of(context).colorScheme.onSurface),
+                  ),
           ),
         ),
       ],

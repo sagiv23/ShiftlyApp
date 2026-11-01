@@ -296,6 +296,48 @@ abstract class AppLocalizations {
   /// **'באיזה מטבע תרצה להשתמש להצגת השכר וההוצאות?'**
   String get onboarding_currency_subtitle;
 
+  /// No description provided for @monthly_progress_setting_title.
+  ///
+  /// In he, this message translates to:
+  /// **'המשמעות של קו ההתקדמות'**
+  String get monthly_progress_setting_title;
+
+  /// No description provided for @monthly_progress_mode_month.
+  ///
+  /// In he, this message translates to:
+  /// **'הזמן שעבר בחודש'**
+  String get monthly_progress_mode_month;
+
+  /// No description provided for @monthly_progress_mode_financial_goal.
+  ///
+  /// In he, this message translates to:
+  /// **'התקדמות ליעד כספי'**
+  String get monthly_progress_mode_financial_goal;
+
+  /// No description provided for @monthly_progress_goal_amount.
+  ///
+  /// In he, this message translates to:
+  /// **'סכום היעד החודשי'**
+  String get monthly_progress_goal_amount;
+
+  /// No description provided for @monthly_progress_invalid_goal.
+  ///
+  /// In he, this message translates to:
+  /// **'יש להזין יעד כספי גדול מאפס'**
+  String get monthly_progress_invalid_goal;
+
+  /// No description provided for @monthly_progress_month_elapsed.
+  ///
+  /// In he, this message translates to:
+  /// **'התקדמות החודש'**
+  String get monthly_progress_month_elapsed;
+
+  /// No description provided for @monthly_progress_financial_goal.
+  ///
+  /// In he, this message translates to:
+  /// **'התקדמות ליעד'**
+  String get monthly_progress_financial_goal;
+
   /// No description provided for @onboarding_breaks_title.
   ///
   /// In he, this message translates to:

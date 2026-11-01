@@ -37,6 +37,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   late bool _autoExpenseEnabled;
   late bool _autoIncomeEnabled;
   late String _currencySymbol;
+  late MonthlyProgressMode _monthlyProgressMode;
+  late TextEditingController _monthlyFinancialGoalController;
   late Locale _locale;
   late bool _breaksEnabled;
   late OvertimeRules _onboardingOvertimeRules;
@@ -61,6 +63,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _autoExpenseEnabled = settings.automaticExpenseEnabled;
     _autoIncomeEnabled = settings.automaticIncomeEnabled;
     _currencySymbol = settings.currencySymbol;
+    _monthlyProgressMode = settings.monthlyProgressMode;
+    _monthlyFinancialGoalController = TextEditingController(
+      text: settings.monthlyFinancialGoal > 0
+          ? settings.monthlyFinancialGoal.toStringAsFixed(2)
+          : '',
+    );
     _locale = settings.locale;
     _breaksEnabled = settings.breaksEnabled;
     _onboardingOvertimeRules = settings.overtimeRules;
@@ -121,6 +129,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void dispose() {
     _pageController.dispose();
+    _monthlyFinancialGoalController.dispose();
     _onboardingOtThresholdController.dispose();
     _onboardingOtTier1LimitController.dispose();
     _onboardingOtTier1MultiplierController.dispose();
@@ -169,6 +178,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _finishOnboarding({bool skipIncomplete = false}) async {
     final settings = context.read<SettingsProvider>();
     final l = AppLocalizations.of(context)!;
+    var progressMode = _monthlyProgressMode;
+    final financialGoal = double.tryParse(
+      _monthlyFinancialGoalController.text.trim(),
+    );
+    if (progressMode == MonthlyProgressMode.financialGoal &&
+        (financialGoal == null ||
+            !financialGoal.isFinite ||
+            financialGoal <= 0)) {
+      if (!skipIncomplete) {
+        UIUtils.showSnackBar(
+          context,
+          l.monthly_progress_invalid_goal,
+          isError: true,
+        );
+        return;
+      }
+      progressMode = MonthlyProgressMode.month;
+    }
 
     List<AutomaticExpense> expenses = [];
     if (_autoExpenseEnabled) {
@@ -240,6 +267,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await settings.updateDefaultAutomaticIncomes(incomes);
     await settings.setCurrencySymbol(_currencySymbol);
     await settings.setLocale(_locale);
+    if (progressMode == MonthlyProgressMode.financialGoal) {
+      await settings.setMonthlyFinancialGoal(financialGoal!);
+    }
+    await settings.setMonthlyProgressMode(progressMode);
 
     final threshold =
         double.tryParse(_onboardingOtThresholdController.text) ?? 8.0;
@@ -568,6 +599,46 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ],
         ),
+        const SizedBox(height: AppTheme.spaceSm),
+        DropdownButtonFormField<MonthlyProgressMode>(
+          initialValue: _monthlyProgressMode,
+          decoration: InputDecoration(
+            labelText: l.monthly_progress_setting_title,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+            ),
+            filled: true,
+            prefixIcon: const Icon(Icons.show_chart_rounded),
+          ),
+          items: [
+            DropdownMenuItem(
+              value: MonthlyProgressMode.month,
+              child: Text(l.monthly_progress_mode_month),
+            ),
+            DropdownMenuItem(
+              value: MonthlyProgressMode.financialGoal,
+              child: Text(l.monthly_progress_mode_financial_goal),
+            ),
+          ],
+          onChanged: (mode) {
+            if (mode != null) setState(() => _monthlyProgressMode = mode);
+          },
+        ),
+        if (_monthlyProgressMode == MonthlyProgressMode.financialGoal) ...[
+          const SizedBox(height: AppTheme.spaceSm),
+          TextField(
+            controller: _monthlyFinancialGoalController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(
+              labelText: l.monthly_progress_goal_amount,
+              prefixText: '$_currencySymbol ',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+              ),
+              filled: true,
+            ),
+          ),
+        ],
       ],
     );
   }

@@ -10,6 +10,8 @@ import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
 import 'package:shiftly/utils/number_utils.dart';
 
+enum MonthlyProgressMode { month, financialGoal }
+
 class SettingsProvider with ChangeNotifier {
   final PersistenceService _persistence;
   final ApiService _apiService = ApiService();
@@ -43,12 +45,18 @@ class SettingsProvider with ChangeNotifier {
   String? _cookieConsent;
   OvertimeRules _overtimeRules = const OvertimeRules();
   ShabbatHolidayRules _shabbatHolidayRules = const ShabbatHolidayRules();
+  MonthlyProgressMode _monthlyProgressMode = MonthlyProgressMode.month;
+  double _monthlyFinancialGoal = 0;
 
   ThemeMode get themeMode => _themeMode;
 
   OvertimeRules get overtimeRules => _overtimeRules;
 
   ShabbatHolidayRules get shabbatHolidayRules => _shabbatHolidayRules;
+
+  MonthlyProgressMode get monthlyProgressMode => _monthlyProgressMode;
+
+  double get monthlyFinancialGoal => _monthlyFinancialGoal;
 
   double get paidBreakDurationMinutes => _paidBreakDurationMinutes;
 
@@ -106,6 +114,12 @@ class SettingsProvider with ChangeNotifier {
     _breaksEnabled = box.get('breaksEnabled', defaultValue: true);
     _autoSyncEnabled = box.get('autoSyncEnabled', defaultValue: true);
     _cookieConsent = box.get('cookieConsent');
+    final storedProgressMode = box.get('monthlyProgressMode');
+    _monthlyProgressMode = MonthlyProgressMode.values.firstWhere(
+      (mode) => mode.name == storedProgressMode,
+      orElse: () => MonthlyProgressMode.month,
+    );
+    _monthlyFinancialGoal = box.get('monthlyFinancialGoal', defaultValue: 0.0);
     _applyCrashlyticsConsent(_cookieConsent);
     final String? localeCode = box.get('locale');
     if (localeCode != null) {
@@ -408,6 +422,25 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setMonthlyProgressMode(MonthlyProgressMode mode) async {
+    _monthlyProgressMode = mode;
+    await _persistence.settingsBox.put('monthlyProgressMode', mode.name);
+    notifyListeners();
+  }
+
+  Future<void> setMonthlyFinancialGoal(double amount) async {
+    if (!amount.isFinite || amount <= 0) {
+      throw ArgumentError.value(
+        amount,
+        'amount',
+        'Monthly financial goal must be greater than zero.',
+      );
+    }
+    _monthlyFinancialGoal = amount;
+    await _persistence.settingsBox.put('monthlyFinancialGoal', amount);
+    notifyListeners();
+  }
+
   Future<void> setBreaksEnabled(bool enabled) async {
     _breaksEnabled = enabled;
     await _persistence.settingsBox.put('breaksEnabled', enabled);
@@ -472,8 +505,12 @@ class SettingsProvider with ChangeNotifier {
     _currencySymbol = '₪';
     _locale = const Locale('he', 'IL');
     _breaksEnabled = true;
+    _monthlyProgressMode = MonthlyProgressMode.month;
+    _monthlyFinancialGoal = 0;
     _overtimeRules = const OvertimeRules();
     await _persistence.settingsBox.delete('overtimeRules');
+    await _persistence.settingsBox.delete('monthlyProgressMode');
+    await _persistence.settingsBox.delete('monthlyFinancialGoal');
     notifyListeners();
   }
 }

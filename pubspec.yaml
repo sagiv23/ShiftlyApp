@@ -41,6 +41,8 @@ dependencies:
 
 dependency_overrides:
   path_provider_android: 2.2.5
+  # 2.5.x pulls jni 1.1.x, which currently fails compilation in Windows builds.
+  shared_preferences_android: 2.4.28
 
 dev_dependencies:
   flutter_test:

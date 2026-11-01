@@ -114,6 +114,29 @@ class AppLocalizationsEn extends AppLocalizations {
       'Which currency would you like to use for salary and expenses?';
 
   @override
+  String get monthly_progress_setting_title => 'Progress line meaning';
+
+  @override
+  String get monthly_progress_mode_month => 'Time elapsed in the month';
+
+  @override
+  String get monthly_progress_mode_financial_goal =>
+      'Progress toward a financial goal';
+
+  @override
+  String get monthly_progress_goal_amount => 'Monthly goal amount';
+
+  @override
+  String get monthly_progress_invalid_goal =>
+      'Enter a financial goal greater than zero';
+
+  @override
+  String get monthly_progress_month_elapsed => 'Month progress';
+
+  @override
+  String get monthly_progress_financial_goal => 'Goal progress';
+
+  @override
   String get onboarding_breaks_title => 'Break Settings';
 
   @override
