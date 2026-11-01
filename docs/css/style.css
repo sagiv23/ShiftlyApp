@@ -240,15 +240,16 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  padding-top: 100px;
 }
 
 /* --- Navigation Bar --- */
 .navbar {
-  position: sticky;
+  position: fixed;
   top: max(12px, env(safe-area-inset-top));
   left: 0;
   right: 0;
-  width: calc(100% - 32px);
+  width: calc(100% - 48px);
   max-width: var(--container-max);
   margin: 0 auto;
   min-height: var(--nav-height);
@@ -257,7 +258,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 0 28px;
-  background: rgba(8, 13, 26, 0.82);
+  background: rgba(8, 13, 26, 0.85);
   backdrop-filter: blur(24px) saturate(190%);
   -webkit-backdrop-filter: blur(24px) saturate(190%);
   border: 1px solid rgba(181, 211, 255, 0.15);
@@ -583,14 +584,11 @@ body {
 
 /* --- Hero Section --- */
 .hero-section {
-  padding: clamp(5rem, 11vw, 9.5rem) 24px 60px;
-  max-width: var(--content-measure);
+  padding: clamp(2rem, 3.5vw, 3.5rem) 24px 60px;
+  max-width: var(--container-max);
   margin: 0 auto;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+  width: 100%;
 }
 
 .hero-badge-pill {
@@ -1860,7 +1858,7 @@ input:checked + .toggle-slider:before {
 /* --- Document Pages Specific Styles (Terms / Privacy / Accessibility) --- */
 .document-container {
   width: min(100% - 48px, 78rem);
-  margin: clamp(4rem, 9vw, 7rem) auto clamp(3rem, 8vw, 6rem);
+  margin: clamp(2rem, 3.5vw, 3.5rem) auto clamp(3rem, 8vw, 6rem);
   padding: 0 24px;
 }
 
