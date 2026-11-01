@@ -1292,7 +1292,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                 ),
-                ?trailing,
+                // ignore: use_null_aware_elements
+                if (trailing != null) trailing,
               ],
             ),
           ),
