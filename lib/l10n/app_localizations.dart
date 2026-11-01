@@ -1262,6 +1262,18 @@ abstract class AppLocalizations {
   /// **'המשמרת נשמרה בהצלחה'**
   String get add_shift_shift_saved;
 
+  /// No description provided for @add_shift_preview_title.
+  ///
+  /// In he, this message translates to:
+  /// **'תצוגה מקדימה'**
+  String get add_shift_preview_title;
+
+  /// No description provided for @add_shift_segments_count.
+  ///
+  /// In he, this message translates to:
+  /// **'{count} תקופות'**
+  String add_shift_segments_count(int count);
+
   /// No description provided for @add_shift_overlap_title.
   ///
   /// In he, this message translates to:

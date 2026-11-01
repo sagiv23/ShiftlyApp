@@ -18,6 +18,7 @@ import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
+import 'package:shiftly/widgets/shift_tile.dart';
 import 'package:uuid/uuid.dart';
 
 class AddShiftScreen extends StatefulWidget {
@@ -282,6 +283,27 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         .toList();
   }
 
+  List<AutomaticExpense> _peekMoneyList({
+    required List<TextEditingController> amounts,
+    required List<TextEditingController> descs,
+  }) {
+    final list = <AutomaticExpense>[];
+    for (int i = 0; i < amounts.length; i++) {
+      final amountText = amounts[i].text.trim();
+      final desc = descs[i].text.trim();
+      if (amountText.isEmpty && desc.isEmpty) continue;
+      final amount = double.tryParse(amountText);
+      if (amount == null || amount <= 0) continue;
+      list.add(
+        AutomaticExpense(
+          description: desc.isEmpty ? '—' : desc,
+          amount: amount,
+        ),
+      );
+    }
+    return list;
+  }
+
   List<AutomaticExpense>? _getExpenseList() {
     final l = AppLocalizations.of(context)!;
     List<AutomaticExpense> list = [];
@@ -346,6 +368,166 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       }
     }
     return list;
+  }
+
+  List<ShiftWageSegment> _peekWageSegments() {
+    final segments = <ShiftWageSegment>[];
+    for (int i = 0; i < _segmentStartTimes.length; i++) {
+      final sTime = _segmentStartTimes[i];
+      final eTime = _segmentEndTimes[i];
+      final pct =
+          double.tryParse(_segmentPercentageControllers[i].text) ?? 100.0;
+      DateTime segStart = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        sTime.hour,
+        sTime.minute,
+      );
+      DateTime segEnd = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        eTime.hour,
+        eTime.minute,
+      );
+      if (segEnd.isBefore(segStart)) {
+        segEnd = segEnd.add(const Duration(days: 1));
+      }
+      if (!segStart.isBefore(segEnd)) continue;
+      segments.add(
+        ShiftWageSegment(startTime: segStart, endTime: segEnd, percentage: pct),
+      );
+    }
+    return segments;
+  }
+
+  Shift? _buildManualDraftShift() {
+    if (_selectedJobTypeId == null) return null;
+    final settings = context.read<SettingsProvider>();
+    final shiftProvider = context.read<ShiftProvider>();
+    final job = shiftProvider.getJobTypeById(_selectedJobTypeId!);
+
+    final start = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      _startTime.hour,
+      _startTime.minute,
+    );
+    var end = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      _endTime.hour,
+      _endTime.minute,
+    );
+    if (end.isBefore(start)) {
+      end = end.add(const Duration(days: 1));
+    }
+
+    return Shift(
+      id: widget.shiftToEdit?.id ?? 'preview-manual',
+      date: _selectedDate,
+      startTime: start,
+      endTime: end,
+      jobTypeId: _selectedJobTypeId!,
+      tips: _calculateTotalTips(_tipControllers),
+      individualTips: _getTipList(_tipControllers),
+      hourlyRate: job?.getRateForDate(_selectedDate),
+      automaticExpenses: _peekMoneyList(
+        amounts: _autoExpenseAmountControllers,
+        descs: _autoExpenseDescControllers,
+      ),
+      automaticIncomes: _peekMoneyList(
+        amounts: _autoIncomeAmountControllers,
+        descs: _autoIncomeDescControllers,
+      ),
+      breakType: _selectedBreakType,
+      unpaidBreakMinutes: settings.unpaidBreakDurationMinutes,
+      description: _descriptionController.text.trim().isEmpty
+          ? null
+          : _descriptionController.text.trim(),
+      wageSegments: _peekWageSegments(),
+    );
+  }
+
+  Shift? _buildTimerDraftShift() {
+    final timer = context.read<TimerProvider>();
+    final settings = context.read<SettingsProvider>();
+    final shiftProvider = context.read<ShiftProvider>();
+    final jobId = timer.jobTypeId ?? _selectedJobTypeId;
+    if (jobId == null || timer.startTime == null) return null;
+
+    final end = timer.isRunning
+        ? DateTime.now()
+        : (timer.reviewEndTime ?? DateTime.now());
+    final job = shiftProvider.getJobTypeById(jobId);
+
+    return Shift(
+      id: 'preview-timer',
+      date: timer.startTime!,
+      startTime: timer.startTime!,
+      endTime: end,
+      jobTypeId: jobId,
+      tips: _calculateTotalTips(_timerTipControllers),
+      individualTips: _getTipList(_timerTipControllers),
+      hourlyRate: job?.getRateForDate(timer.startTime!),
+      automaticExpenses: _peekMoneyList(
+        amounts: _autoExpenseAmountControllers,
+        descs: _autoExpenseDescControllers,
+      ),
+      automaticIncomes: _peekMoneyList(
+        amounts: _autoIncomeAmountControllers,
+        descs: _autoIncomeDescControllers,
+      ),
+      breakType: timer.accumulatedUnpaidMinutes > 0
+          ? BreakType.unpaid
+          : BreakType.none,
+      unpaidBreakMinutes: timer.accumulatedUnpaidMinutes > 0
+          ? timer.accumulatedUnpaidMinutes
+          : settings.unpaidBreakDurationMinutes,
+      description: _descriptionController.text.trim().isEmpty
+          ? null
+          : _descriptionController.text.trim(),
+    );
+  }
+
+  Widget _buildLivePreview(Shift? draft) {
+    if (draft == null) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 4,
+            right: 4,
+            bottom: AppTheme.spaceXs,
+          ),
+          child: Text(
+            l.add_shift_preview_title,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
+          ),
+        ),
+        ShiftTile(
+          shift: draft,
+          useCardDecoration: true,
+          interactive: false,
+          margin: EdgeInsets.zero,
+        ),
+      ],
+    );
+  }
+
+  String _moneySummary(double total, String symbol) {
+    if (total <= 0) return '';
+    return UIUtils.formatCurrency(total, symbol: symbol);
   }
 
   Future<bool> _confirmOverlappingShifts({
@@ -771,26 +953,36 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         title: Text(isEditing ? l.add_shift_edit_title : l.add_shift_title),
         bottom: isEditing
             ? null
-            : TabBar(
-                controller: _tabController,
-                tabs: [
-                  Tab(
-                    text: l.add_shift_timer_tab,
-                    icon: const Icon(Icons.timer_outlined),
+            : PreferredSize(
+                preferredSize: const Size.fromHeight(56),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 760),
+                    child: TabBar(
+                      controller: _tabController,
+                      isScrollable: false,
+                      tabAlignment: TabAlignment.fill,
+                      tabs: [
+                        Tab(
+                          text: l.add_shift_timer_tab,
+                          icon: const Icon(Icons.timer_outlined),
+                        ),
+                        Tab(
+                          text: l.add_shift_manual_tab,
+                          icon: const Icon(Icons.edit_note_rounded),
+                        ),
+                        Tab(
+                          text: l.add_shift_paste_tab,
+                          icon: const Icon(Icons.paste_rounded),
+                        ),
+                      ],
+                    ),
                   ),
-                  Tab(
-                    text: l.add_shift_manual_tab,
-                    icon: const Icon(Icons.edit_note_rounded),
-                  ),
-                  Tab(
-                    text: l.add_shift_paste_tab,
-                    icon: const Icon(Icons.paste_rounded),
-                  ),
-                ],
+                ),
               ),
       ),
       body: ResponsivePageBody(
-        maxWidth: 760,
+        maxWidth: 1180,
         child: SafeArea(
           child: PageEntranceAnimation(
             child: isEditing
@@ -842,183 +1034,188 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         AppTheme.spaceMd,
         AppTheme.spaceLg,
       ),
-      child: Column(
-        children: [
-          const SizedBox(height: AppTheme.spaceSm),
-          // Pulsating circular start/stop
-          ScalePress(
-            onTap: () {
-              if (isReviewMode) {
-                timerProvider.resumeShift();
-                _tabController.animateTo(0);
-              } else if (!isRunning) {
-                if (_selectedJobTypeId == null) {
-                  UIUtils.showSnackBar(
-                    context,
-                    l.add_shift_pick_a_job,
-                    isError: true,
-                  );
-                  return;
-                }
-                timerProvider.startShift(_selectedJobTypeId!);
-                for (var c in _timerTipControllers) {
-                  c.text = '0';
-                }
-              } else {
-                if (isOnBreak) {
-                  timerProvider.endBreak();
-                } else {
-                  _showFinishDialog();
-                }
-              }
-            },
-            child: AnimatedBuilder(
-              animation: _pulseController,
-              builder: (context, child) {
-                final pulse = isRunning && !isOnBreak
-                    ? 8 + (_pulseController.value * 14)
-                    : 6.0;
-                final glowAlpha = isRunning && !isOnBreak
-                    ? 0.25 + (_pulseController.value * 0.25)
-                    : 0.2;
-                return Container(
-                  width: 210,
-                  height: 210,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: buttonColor.withValues(alpha: glowAlpha),
-                        blurRadius: pulse,
-                        spreadRadius: isRunning && !isOnBreak
-                            ? 4 + (_pulseController.value * 8)
-                            : 2,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 760),
+          child: Column(
+            children: [
+              const SizedBox(height: AppTheme.spaceSm),
+              // Pulsating circular start/stop
+              ScalePress(
+                onTap: () {
+                  if (isReviewMode) {
+                    timerProvider.resumeShift();
+                    _tabController.animateTo(0);
+                  } else if (!isRunning) {
+                    if (_selectedJobTypeId == null) {
+                      UIUtils.showSnackBar(
+                        context,
+                        l.add_shift_pick_a_job,
+                        isError: true,
+                      );
+                      return;
+                    }
+                    timerProvider.startShift(_selectedJobTypeId!);
+                    for (var c in _timerTipControllers) {
+                      c.text = '0';
+                    }
+                  } else {
+                    if (isOnBreak) {
+                      timerProvider.endBreak();
+                    } else {
+                      _showFinishDialog();
+                    }
+                  }
+                },
+                child: AnimatedBuilder(
+                  animation: _pulseController,
+                  builder: (context, child) {
+                    final pulse = isRunning && !isOnBreak
+                        ? 8 + (_pulseController.value * 14)
+                        : 6.0;
+                    final glowAlpha = isRunning && !isOnBreak
+                        ? 0.25 + (_pulseController.value * 0.25)
+                        : 0.2;
+                    return Container(
+                      width: 210,
+                      height: 210,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: buttonColor.withValues(alpha: glowAlpha),
+                            blurRadius: pulse,
+                            spreadRadius: isRunning && !isOnBreak
+                                ? 4 + (_pulseController.value * 8)
+                                : 2,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: child,
-                );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: buttonColor,
-                  border: Border.all(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    width: 8,
+                      child: child,
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: buttonColor,
+                      border: Border.all(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        width: 8,
+                      ),
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            isReviewMode
+                                ? Icons.play_arrow_rounded
+                                : (isRunning
+                                      ? (isOnBreak
+                                            ? Icons.play_arrow_rounded
+                                            : Icons.stop_rounded)
+                                      : Icons.play_arrow_rounded),
+                            size: 64,
+                            color: isReviewMode || isRunning
+                                ? Colors.white
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: AppTheme.spaceXs),
+                          Text(
+                            isReviewMode
+                                ? l.add_shift_timer_continue_work
+                                : (isRunning
+                                      ? (isOnBreak
+                                            ? l.add_shift_timer_resume_work
+                                            : l.add_shift_timer_stop_shift)
+                                      : l.add_shift_timer_start_shift),
+                            style: TextStyle(
+                              color: isReviewMode || isRunning
+                                  ? Colors.white
+                                  : Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                child: Center(
+              ),
+              const SizedBox(height: AppTheme.spaceLg),
+              Text(
+                formatDuration(timerProvider.elapsed),
+                style: AppTheme.monoNumber.copyWith(
+                  fontSize: 48,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spaceXs),
+              Text(
+                UIUtils.formatCurrency(livePay, symbol: symbol),
+                style: AppTheme.monoNumber.copyWith(
+                  fontSize: 28,
+                  color: livePay < 0 ? AppTheme.expense : AppTheme.primaryDark,
+                ),
+              ),
+              Text(
+                l.add_shift_timer_accumulated_live,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              if (isOnBreak || timerProvider.accumulatedUnpaidMinutes > 0) ...[
+                const SizedBox(height: AppTheme.spaceSm),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spaceSm,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.warning.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    border: Border.all(
+                      color: AppTheme.warning.withValues(alpha: 0.3),
+                    ),
+                  ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        isReviewMode
-                            ? Icons.play_arrow_rounded
-                            : (isRunning
-                                  ? (isOnBreak
-                                        ? Icons.play_arrow_rounded
-                                        : Icons.stop_rounded)
-                                  : Icons.play_arrow_rounded),
-                        size: 64,
-                        color: isReviewMode || isRunning
-                            ? Colors.white
-                            : Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(height: AppTheme.spaceXs),
+                      if (isOnBreak)
+                        Text(
+                          '${l.add_shift_timer_countdown} ${timerProvider.breakRemaining.inMinutes}:${(timerProvider.breakRemaining.inSeconds % 60).toString().padLeft(2, '0')}',
+                          style: AppTheme.monoNumber.copyWith(
+                            fontSize: 20,
+                            color:
+                                timerProvider.activeBreakType == BreakType.paid
+                                ? AppTheme.primaryDark
+                                : AppTheme.warningSoft,
+                          ),
+                        ),
                       Text(
-                        isReviewMode
-                            ? l.add_shift_timer_continue_work
-                            : (isRunning
-                                  ? (isOnBreak
-                                        ? l.add_shift_timer_resume_work
-                                        : l.add_shift_timer_stop_shift)
-                                  : l.add_shift_timer_start_shift),
+                        isOnBreak
+                            ? (timerProvider.activeBreakType == BreakType.paid
+                                  ? l.add_shift_timer_break_paid
+                                  : l.add_shift_timer_break_unpaid)
+                            : '${l.add_shift_timer_total_break_unpaid} ${timerProvider.accumulatedUnpaidMinutes.toStringAsFixed(1)} ${l.common_min_suffix}',
                         style: TextStyle(
-                          color: isReviewMode || isRunning
-                              ? Colors.white
-                              : Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                          color: AppTheme.warningSoft,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ),
-          ),
-          const SizedBox(height: AppTheme.spaceLg),
-          Text(
-            formatDuration(timerProvider.elapsed),
-            style: AppTheme.monoNumber.copyWith(
-              fontSize: 48,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: AppTheme.spaceXs),
-          Text(
-            UIUtils.formatCurrency(livePay, symbol: symbol),
-            style: AppTheme.monoNumber.copyWith(
-              fontSize: 28,
-              color: livePay < 0 ? AppTheme.expense : AppTheme.primaryDark,
-            ),
-          ),
-          Text(
-            l.add_shift_timer_accumulated_live,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          if (isOnBreak || timerProvider.accumulatedUnpaidMinutes > 0) ...[
-            const SizedBox(height: AppTheme.spaceSm),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTheme.spaceSm,
-                vertical: 10,
-              ),
-              decoration: BoxDecoration(
-                color: AppTheme.warning.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                border: Border.all(
-                  color: AppTheme.warning.withValues(alpha: 0.3),
-                ),
-              ),
-              child: Column(
-                children: [
-                  if (isOnBreak)
-                    Text(
-                      '${l.add_shift_timer_countdown} ${timerProvider.breakRemaining.inMinutes}:${(timerProvider.breakRemaining.inSeconds % 60).toString().padLeft(2, '0')}',
-                      style: AppTheme.monoNumber.copyWith(
-                        fontSize: 20,
-                        color: timerProvider.activeBreakType == BreakType.paid
-                            ? AppTheme.primaryDark
-                            : AppTheme.warningSoft,
-                      ),
-                    ),
-                  Text(
-                    isOnBreak
-                        ? (timerProvider.activeBreakType == BreakType.paid
-                              ? l.add_shift_timer_break_paid
-                              : l.add_shift_timer_break_unpaid)
-                        : '${l.add_shift_timer_total_break_unpaid} ${timerProvider.accumulatedUnpaidMinutes.toStringAsFixed(1)} ${l.common_min_suffix}',
-                    style: TextStyle(
-                      color: AppTheme.warningSoft,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-          const SizedBox(height: AppTheme.spaceLg),
+              ],
+              const SizedBox(height: AppTheme.spaceLg),
 
-          // Controls section
-          _FormSection(
-            title: l.add_shift_manual_work_tips_section,
-            icon: Icons.work_outline_rounded,
-            child: Column(
-              children: [
-                DropdownButtonFormField<String>(
+              _FormSection(
+                title: l.add_shift_manual_job_type_label,
+                icon: Icons.work_outline_rounded,
+                child: DropdownButtonFormField<String>(
                   initialValue: (isRunning || isReviewMode)
                       ? timerProvider.jobTypeId
                       : _selectedJobTypeId,
@@ -1049,105 +1246,128 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                     }
                   },
                 ),
+              ),
+
+              if (settings.breaksEnabled && isRunning && !isReviewMode) ...[
                 const SizedBox(height: AppTheme.spaceMd),
-                _buildTipsSection(_timerTipControllers, symbol),
-                const SizedBox(height: AppTheme.spaceMd),
-                _buildAutoExpensesSection(symbol),
-                const SizedBox(height: AppTheme.spaceMd),
-                _buildAutoIncomesSection(symbol),
+                _FormSection(
+                  title: l.add_shift_manual_break_type_section,
+                  icon: Icons.coffee_outlined,
+                  child: SegmentedButton<BreakType?>(
+                    emptySelectionAllowed: true,
+                    showSelectedIcon: false,
+                    segments: [
+                      ButtonSegment(
+                        value: BreakType.paid,
+                        icon: const Icon(Icons.timer_outlined, size: 18),
+                        label: Text(
+                          '${settings.paidBreakDurationMinutes.toStringAsFixed(0)}\' ${l.add_shift_manual_paid_break}',
+                        ),
+                      ),
+                      ButtonSegment(
+                        value: BreakType.unpaid,
+                        icon: const Icon(Icons.coffee_outlined, size: 18),
+                        label: Text(
+                          '${settings.unpaidBreakDurationMinutes.toStringAsFixed(0)}\' ${l.add_shift_manual_unpaid_break}',
+                        ),
+                      ),
+                    ],
+                    selected: {if (isOnBreak) timerProvider.activeBreakType},
+                    onSelectionChanged: (val) {
+                      if (val.isEmpty) {
+                        if (isOnBreak) timerProvider.endBreak();
+                        return;
+                      }
+                      final type = val.first!;
+                      final minutes = type == BreakType.paid
+                          ? settings.paidBreakDurationMinutes
+                          : settings.unpaidBreakDurationMinutes;
+                      timerProvider.toggleBreak(type, minutes);
+                    },
+                  ),
+                ),
               ],
-            ),
-          ),
 
-          if (settings.breaksEnabled) ...[
-            if (isRunning && !isReviewMode) ...[
-              const SizedBox(height: AppTheme.spaceMd),
-              _FormSection(
-                title: l.add_shift_manual_break_type_section,
-                icon: Icons.coffee_outlined,
-                child: SegmentedButton<BreakType?>(
-                  emptySelectionAllowed: true,
-                  showSelectedIcon: false,
-                  segments: [
-                    ButtonSegment(
-                      value: BreakType.paid,
-                      icon: const Icon(Icons.timer_outlined, size: 18),
-                      label: Text(
-                        '${context.read<SettingsProvider>().paidBreakDurationMinutes.toStringAsFixed(0)}\' ${l.add_shift_manual_paid_break}',
-                      ),
+              if (isRunning || isReviewMode) ...[
+                const SizedBox(height: AppTheme.spaceMd),
+                _CollapsibleFormSection(
+                  title: l.add_shift_tips_title,
+                  icon: Icons.payments_outlined,
+                  summary: _moneySummary(
+                    _calculateTotalTips(_timerTipControllers),
+                    symbol,
+                  ),
+                  initiallyExpanded:
+                      _calculateTotalTips(_timerTipControllers) > 0,
+                  child: _buildTipsSection(_timerTipControllers),
+                ),
+                const SizedBox(height: AppTheme.spaceSm),
+                _CollapsibleFormSection(
+                  title: l.add_shift_expenses_title,
+                  icon: Icons.money_off_rounded,
+                  summary: _moneySummary(_calculateTotalAutoExpenses(), symbol),
+                  initiallyExpanded: _calculateTotalAutoExpenses() > 0,
+                  child: _buildAutoExpensesSection(symbol),
+                ),
+                const SizedBox(height: AppTheme.spaceSm),
+                _CollapsibleFormSection(
+                  title: l.add_shift_incomes_title,
+                  icon: Icons.account_balance_wallet_rounded,
+                  summary: _moneySummary(_calculateTotalAutoIncomes(), symbol),
+                  initiallyExpanded: _calculateTotalAutoIncomes() > 0,
+                  child: _buildAutoIncomesSection(symbol),
+                ),
+                const SizedBox(height: AppTheme.spaceMd),
+                _buildLivePreview(_buildTimerDraftShift()),
+                const SizedBox(height: AppTheme.spaceMd),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: isReviewMode
+                        ? _finishTimerShift
+                        : _showFinishDialog,
+                    icon: Icon(
+                      isReviewMode ? Icons.check_rounded : Icons.stop_rounded,
                     ),
-                    ButtonSegment(
-                      value: BreakType.unpaid,
-                      icon: const Icon(Icons.coffee_outlined, size: 18),
-                      label: Text(
-                        '${context.read<SettingsProvider>().unpaidBreakDurationMinutes.toStringAsFixed(0)}\' ${l.add_shift_manual_unpaid_break}',
-                      ),
+                    label: Text(
+                      isReviewMode
+                          ? l.common_save_and_finish
+                          : l.add_shift_timer_stop_shift,
                     ),
-                  ],
-                  selected: {if (isOnBreak) timerProvider.activeBreakType},
-                  onSelectionChanged: (val) {
-                    final settings = context.read<SettingsProvider>();
-                    if (val.isEmpty) {
-                      if (isOnBreak) timerProvider.endBreak();
-                      return;
-                    }
-                    final type = val.first!;
-                    final minutes = type == BreakType.paid
-                        ? settings.paidBreakDurationMinutes
-                        : settings.unpaidBreakDurationMinutes;
-                    timerProvider.toggleBreak(type, minutes);
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isReviewMode
+                          ? AppTheme.profit
+                          : AppTheme.primaryDark,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    final confirmed = await UIUtils.showConfirmDialog(
+                      context: context,
+                      title: l.add_shift_timer_reset_title,
+                      content: l.add_shift_timer_reset_desc,
+                      isDestructive: true,
+                      confirmLabel: l.common_reset,
+                    );
+                    if (confirmed != true) return;
+                    if (!mounted) return;
+                    timerProvider.resetTimer();
                   },
+                  child: Text(
+                    l.common_reset_and_cancel,
+                    style: TextStyle(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.45),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ],
-          ],
-
-          const SizedBox(height: AppTheme.spaceMd),
-          if (isRunning || isReviewMode)
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: isReviewMode ? _finishTimerShift : _showFinishDialog,
-                icon: Icon(
-                  isReviewMode ? Icons.check_rounded : Icons.stop_rounded,
-                ),
-                label: Text(
-                  isReviewMode
-                      ? l.common_save_and_finish
-                      : l.add_shift_timer_stop_shift,
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isReviewMode
-                      ? AppTheme.profit
-                      : AppTheme.primaryDark,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ),
-          if (isRunning || isReviewMode)
-            TextButton(
-              onPressed: () async {
-                final confirmed = await UIUtils.showConfirmDialog(
-                  context: context,
-                  title: l.add_shift_timer_reset_title,
-                  content: l.add_shift_timer_reset_desc,
-                  isDestructive: true,
-                  confirmLabel: l.common_reset,
-                );
-                if (confirmed != true) return;
-                if (!mounted) return;
-                timerProvider.resetTimer();
-              },
-              child: Text(
-                l.common_reset_and_cancel,
-                style: TextStyle(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.45),
-                ),
-              ),
-            ),
-        ],
+          ),
+        ),
       ),
     );
   }
@@ -1184,135 +1404,133 @@ class _AddShiftScreenState extends State<AddShiftScreen>
 
   Widget _buildWageSegmentsSection() {
     final l = AppLocalizations.of(context)!;
-    return _FormSection(
-      title: l.add_shift_wage_segments_title,
-      icon: Icons.percent_rounded,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(child: Text(l.add_shift_wage_segments_subtitle)),
-              const SizedBox(width: 8),
-              TextButton.icon(
-                onPressed: () {
-                  setState(() {
-                    _segmentStartTimes.add(_startTime);
-                    _segmentEndTimes.add(_endTime);
-                    _segmentPercentageControllers.add(TextEditingController());
-                  });
-                },
-                icon: const Icon(Icons.add, size: 16),
-                label: Text(l.add_shift_wage_segments_add),
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                l.add_shift_wage_segments_subtitle,
+                style: Theme.of(context).textTheme.bodySmall,
               ),
-            ],
-          ),
-          if (_segmentStartTimes.isNotEmpty) const SizedBox(height: 8),
-          for (int i = 0; i < _segmentStartTimes.length; i++)
-            Card(
-              margin: const EdgeInsets.symmetric(vertical: 4),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: InkWell(
-                        onTap: () async {
-                          final picked = await showTimePicker(
-                            context: context,
-                            initialTime: _segmentStartTimes[i],
-                          );
-                          if (picked != null && mounted) {
-                            setState(() => _segmentStartTimes[i] = picked);
-                          }
-                        },
-                        child: InputDecorator(
-                          decoration: InputDecoration(
-                            labelText: l.add_shift_wage_segment_start,
-                            isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 8,
-                            ),
-                          ),
-                          child: Text(
-                            _segmentStartTimes[i].format(context),
-                            style: const TextStyle(fontSize: 13),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      flex: 2,
-                      child: InkWell(
-                        onTap: () async {
-                          final picked = await showTimePicker(
-                            context: context,
-                            initialTime: _segmentEndTimes[i],
-                          );
-                          if (picked != null && mounted) {
-                            setState(() => _segmentEndTimes[i] = picked);
-                          }
-                        },
-                        child: InputDecorator(
-                          decoration: InputDecoration(
-                            labelText: l.add_shift_wage_segment_end,
-                            isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 8,
-                            ),
-                          ),
-                          child: Text(
-                            _segmentEndTimes[i].format(context),
-                            style: const TextStyle(fontSize: 13),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    SizedBox(
-                      width: 80,
-                      child: TextField(
-                        controller: _segmentPercentageControllers[i],
-                        keyboardType: TextInputType.number,
-                        style: const TextStyle(fontSize: 13),
+            ),
+            const SizedBox(width: 8),
+            TextButton.icon(
+              onPressed: () {
+                setState(() {
+                  _segmentStartTimes.add(_startTime);
+                  _segmentEndTimes.add(_endTime);
+                  _segmentPercentageControllers.add(TextEditingController());
+                });
+              },
+              icon: const Icon(Icons.add, size: 16),
+              label: Text(l.add_shift_wage_segments_add),
+            ),
+          ],
+        ),
+        if (_segmentStartTimes.isNotEmpty) const SizedBox(height: 8),
+        for (int i = 0; i < _segmentStartTimes.length; i++)
+          Card(
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: InkWell(
+                      onTap: () async {
+                        final picked = await showTimePicker(
+                          context: context,
+                          initialTime: _segmentStartTimes[i],
+                        );
+                        if (picked != null && mounted) {
+                          setState(() => _segmentStartTimes[i] = picked);
+                        }
+                      },
+                      child: InputDecorator(
                         decoration: InputDecoration(
-                          labelText: l.add_shift_wage_segment_percentage,
-                          hintText: '150',
+                          labelText: l.add_shift_wage_segment_start,
                           isDense: true,
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 8,
-                            vertical: 10,
+                            vertical: 8,
                           ),
+                        ),
+                        child: Text(
+                          _segmentStartTimes[i].format(context),
+                          style: const TextStyle(fontSize: 13),
                         ),
                       ),
                     ),
-                    IconButton(
-                      constraints: const BoxConstraints(),
-                      padding: const EdgeInsets.all(6),
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _segmentStartTimes.removeAt(i);
-                          _segmentEndTimes.removeAt(i);
-                          _segmentPercentageControllers[i].dispose();
-                          _segmentPercentageControllers.removeAt(i);
-                        });
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    flex: 2,
+                    child: InkWell(
+                      onTap: () async {
+                        final picked = await showTimePicker(
+                          context: context,
+                          initialTime: _segmentEndTimes[i],
+                        );
+                        if (picked != null && mounted) {
+                          setState(() => _segmentEndTimes[i] = picked);
+                        }
                       },
+                      child: InputDecorator(
+                        decoration: InputDecoration(
+                          labelText: l.add_shift_wage_segment_end,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 8,
+                          ),
+                        ),
+                        child: Text(
+                          _segmentEndTimes[i].format(context),
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 6),
+                  SizedBox(
+                    width: 80,
+                    child: TextField(
+                      controller: _segmentPercentageControllers[i],
+                      keyboardType: TextInputType.number,
+                      style: const TextStyle(fontSize: 13),
+                      decoration: InputDecoration(
+                        labelText: l.add_shift_wage_segment_percentage,
+                        hintText: '150',
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 10,
+                        ),
+                      ),
+                      onChanged: (_) => setState(() {}),
+                    ),
+                  ),
+                  IconButton(
+                    constraints: const BoxConstraints(),
+                    padding: const EdgeInsets.all(6),
+                    icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+                    onPressed: () {
+                      setState(() {
+                        _segmentStartTimes.removeAt(i);
+                        _segmentEndTimes.removeAt(i);
+                        _segmentPercentageControllers[i].dispose();
+                        _segmentPercentageControllers.removeAt(i);
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 
@@ -1390,187 +1608,170 @@ class _AddShiftScreenState extends State<AddShiftScreen>
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return _FormSection(
-      title: l.overtime_breakdown_title,
-      icon:
-          breakdown.hasOvertime || breakdown.hasShabbat || breakdown.hasHoliday
-          ? Icons.more_time_rounded
-          : Icons.calculate_rounded,
-      child: Container(
-        padding: const EdgeInsets.all(AppTheme.spaceSm),
-        decoration: BoxDecoration(
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spaceSm),
+      decoration: BoxDecoration(
+        color:
+            (breakdown.hasOvertime ||
+                breakdown.hasShabbat ||
+                breakdown.hasHoliday)
+            ? AppTheme.primary.withValues(alpha: isDark ? 0.15 : 0.08)
+            : Theme.of(
+                context,
+              ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        border: Border.all(
           color:
               (breakdown.hasOvertime ||
                   breakdown.hasShabbat ||
                   breakdown.hasHoliday)
-              ? AppTheme.primary.withValues(alpha: isDark ? 0.15 : 0.08)
-              : Theme.of(
-                  context,
-                ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          border: Border.all(
-            color:
-                (breakdown.hasOvertime ||
-                    breakdown.hasShabbat ||
-                    breakdown.hasHoliday)
-                ? AppTheme.primary.withValues(alpha: 0.3)
-                : Theme.of(context).dividerColor.withValues(alpha: 0.3),
-          ),
+              ? AppTheme.primary.withValues(alpha: 0.3)
+              : Theme.of(context).dividerColor.withValues(alpha: 0.3),
         ),
-        child: Column(
-          children: [
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  l.overtime_regular_hours_label,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '${breakdown.regularHours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.regularEarnings, symbol: symbol)}',
+                style: const TextStyle(
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
+              ),
+            ],
+          ),
+          if (breakdown.hasShabbat) ...[
+            const SizedBox(height: 6),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: Text(
-                    l.overtime_regular_hours_label,
-                    style: const TextStyle(fontWeight: FontWeight.w500),
+                    l.add_shift_shabbat_breakdown(
+                      (breakdown.shabbatMultiplier * 100).toStringAsFixed(0),
+                    ),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.amber.shade800,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${breakdown.regularHours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.regularEarnings, symbol: symbol)}',
+                  '${breakdown.shabbatHours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.shabbatEarnings, symbol: symbol)}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.amber.shade800,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ],
+            ),
+          ],
+          if (breakdown.hasHoliday) ...[
+            const SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    l.add_shift_holiday_breakdown(
+                      breakdown.holidayName ?? l.holiday_tag_label,
+                      (breakdown.holidayMultiplier * 100).toStringAsFixed(0),
+                    ),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.purple.shade700,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${breakdown.holidayHours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.holidayEarnings, symbol: symbol)}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.purple.shade700,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ],
+            ),
+          ],
+          if (breakdown.tier1Hours > 0) ...[
+            const SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    l.overtime_tier_custom_label.replaceFirst(
+                      '[[rate]]',
+                      (breakdown.tier1Multiplier * 100).toStringAsFixed(0),
+                    ),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.primaryDark,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${breakdown.tier1Hours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.tier1Earnings, symbol: symbol)}',
                   style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.primaryDark,
                     fontFeatures: [FontFeature.tabularFigures()],
                   ),
                 ),
               ],
             ),
-            if (breakdown.hasShabbat) ...[
-              const SizedBox(height: 6),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      l.add_shift_shabbat_breakdown(
-                        (breakdown.shabbatMultiplier * 100).toStringAsFixed(0),
-                      ),
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.amber.shade800,
-                      ),
+          ],
+          if (breakdown.tier2Hours > 0) ...[
+            const SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    l.overtime_tier_custom_label.replaceFirst(
+                      '[[rate]]',
+                      (breakdown.tier2Multiplier * 100).toStringAsFixed(0),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${breakdown.shabbatHours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.shabbatEarnings, symbol: symbol)}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.amber.shade800,
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-            if (breakdown.hasHoliday) ...[
-              const SizedBox(height: 6),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      l.add_shift_holiday_breakdown(
-                        breakdown.holidayName ?? l.holiday_tag_label,
-                        (breakdown.holidayMultiplier * 100).toStringAsFixed(0),
-                      ),
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.purple.shade700,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${breakdown.holidayHours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.holidayEarnings, symbol: symbol)}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.purple.shade700,
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-            if (breakdown.tier1Hours > 0) ...[
-              const SizedBox(height: 6),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      l.overtime_tier_custom_label.replaceFirst(
-                        '[[rate]]',
-                        (breakdown.tier1Multiplier * 100).toStringAsFixed(0),
-                      ),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.primaryDark,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${breakdown.tier1Hours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.tier1Earnings, symbol: symbol)}',
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       color: AppTheme.primaryDark,
-                      fontFeatures: [FontFeature.tabularFigures()],
                     ),
                   ),
-                ],
-              ),
-            ],
-            if (breakdown.tier2Hours > 0) ...[
-              const SizedBox(height: 6),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      l.overtime_tier_custom_label.replaceFirst(
-                        '[[rate]]',
-                        (breakdown.tier2Multiplier * 100).toStringAsFixed(0),
-                      ),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.primaryDark,
-                      ),
-                    ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${breakdown.tier2Hours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.tier2Earnings, symbol: symbol)}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.primaryDark,
+                    fontFeatures: [FontFeature.tabularFigures()],
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${breakdown.tier2Hours.toStringAsFixed(2)} ${l.common_hours_suffix} - ${UIUtils.formatCurrency(breakdown.tier2Earnings, symbol: symbol)}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.primaryDark,
-                      fontFeatures: [FontFeature.tabularFigures()],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-            if (_selectedBreakType == BreakType.unpaid) ...[
-              const SizedBox(height: 6),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      l.overtime_unpaid_break,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '-${breakdown.unpaidBreakHours.toStringAsFixed(2)} ${l.common_hours_suffix}',
+                ),
+              ],
+            ),
+          ],
+          if (_selectedBreakType == BreakType.unpaid) ...[
+            const SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    l.overtime_unpaid_break,
                     style: TextStyle(
                       fontSize: 12,
                       color: Theme.of(
@@ -1578,39 +1779,46 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                       ).colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
-                ],
-              ),
-            ],
-            const Divider(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    '${l.overtime_total_paid_time}: ${breakdown.netPaidHours.toStringAsFixed(2)} ${l.common_hours_suffix}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                    ),
-                  ),
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  UIUtils.formatCurrency(
-                    breakdown.totalShiftPay,
-                    symbol: symbol,
-                  ),
+                  '-${breakdown.unpaidBreakHours.toStringAsFixed(2)} ${l.common_hours_suffix}',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: AppTheme.primaryDark,
-                    fontFeatures: const [FontFeature.tabularFigures()],
+                    fontSize: 12,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
             ),
           ],
-        ),
+          const Divider(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  '${l.overtime_total_paid_time}: ${breakdown.netPaidHours.toStringAsFixed(2)} ${l.common_hours_suffix}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                UIUtils.formatCurrency(breakdown.totalShiftPay, symbol: symbol),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: AppTheme.primaryDark,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -1619,176 +1827,272 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     final settings = context.read<SettingsProvider>();
     final symbol = settings.currencySymbol;
     final l = AppLocalizations.of(context)!;
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(
-        AppTheme.spaceSm,
-        AppTheme.spaceSm,
-        AppTheme.spaceSm,
-        AppTheme.spaceLg,
+    final tipsTotal = _calculateTotalTips(_tipControllers);
+    final expensesTotal = _calculateTotalAutoExpenses();
+    final incomesTotal = _calculateTotalAutoIncomes();
+    final descText = _descriptionController.text.trim();
+    final breakOptions = <({BreakType type, String label})>[
+      (type: BreakType.none, label: l.add_shift_manual_no_break),
+      (
+        type: BreakType.paid,
+        label:
+            '${settings.paidBreakDurationMinutes.toStringAsFixed(0)}\' ${l.add_shift_manual_paid_break}',
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _FormSection(
-            title: l.add_shift_manual_time_section,
-            icon: Icons.schedule_rounded,
-            child: Column(
-              children: [
-                _PickerTile(
-                  icon: Icons.calendar_month_rounded,
-                  title: l.add_shift_manual_date_label,
-                  value: AppConstants.formatDate(_selectedDate),
-                  onTap: () async {
-                    final picked = await AppDatePicker.showSingleDatePicker(
-                      context: context,
-                      initialDate: _selectedDate,
-                    );
-                    if (picked != null && mounted) {
-                      setState(() => _selectedDate = picked);
-                    }
-                  },
-                ),
-                const Divider(height: 1),
-                _PickerTile(
-                  icon: Icons.access_time_rounded,
-                  title: l.add_shift_manual_start_time_label,
-                  value: _startTime.format(context),
-                  onTap: () async {
-                    final picked = await showTimePicker(
-                      context: context,
-                      initialTime: _startTime,
-                    );
-                    if (picked != null && mounted) {
-                      setState(() => _startTime = picked);
-                    }
-                  },
-                ),
-                const Divider(height: 1),
-                _PickerTile(
-                  icon: Icons.access_time_filled_rounded,
-                  title: l.add_shift_manual_end_time_label,
-                  value: _endTime.format(context),
-                  onTap: () async {
-                    final picked = await showTimePicker(
-                      context: context,
-                      initialTime: _endTime,
-                    );
-                    if (picked != null && mounted) {
-                      setState(() => _endTime = picked);
-                    }
-                  },
-                ),
-              ],
+      (
+        type: BreakType.unpaid,
+        label:
+            '${settings.unpaidBreakDurationMinutes.toStringAsFixed(0)}\' ${l.add_shift_manual_unpaid_break}',
+      ),
+    ];
+
+    final shiftSections = <Widget>[
+      _FormSection(
+        title: l.add_shift_manual_time_section,
+        icon: Icons.schedule_rounded,
+        child: Column(
+          children: [
+            _PickerTile(
+              icon: Icons.calendar_month_rounded,
+              title: l.add_shift_manual_date_label,
+              value: AppConstants.formatDate(_selectedDate),
+              onTap: () async {
+                final picked = await AppDatePicker.showSingleDatePicker(
+                  context: context,
+                  initialDate: _selectedDate,
+                );
+                if (picked != null && mounted) {
+                  setState(() => _selectedDate = picked);
+                }
+              },
             ),
+            const Divider(height: 1),
+            _PickerTile(
+              icon: Icons.access_time_rounded,
+              title: l.add_shift_manual_start_time_label,
+              value: _startTime.format(context),
+              onTap: () async {
+                final picked = await showTimePicker(
+                  context: context,
+                  initialTime: _startTime,
+                );
+                if (picked != null && mounted) {
+                  setState(() => _startTime = picked);
+                }
+              },
+            ),
+            const Divider(height: 1),
+            _PickerTile(
+              icon: Icons.access_time_filled_rounded,
+              title: l.add_shift_manual_end_time_label,
+              value: _endTime.format(context),
+              onTap: () async {
+                final picked = await showTimePicker(
+                  context: context,
+                  initialTime: _endTime,
+                );
+                if (picked != null && mounted) {
+                  setState(() => _endTime = picked);
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+      _FormSection(
+        title: l.add_shift_manual_job_type_label,
+        icon: Icons.work_rounded,
+        child: DropdownButtonFormField<String>(
+          initialValue: _selectedJobTypeId,
+          decoration: InputDecoration(
+            labelText: l.add_shift_manual_job_type_label,
+            prefixIcon: const Icon(Icons.work_rounded),
           ),
-          const SizedBox(height: AppTheme.spaceSm),
-          _buildWageSegmentsSection(),
-          if (settings.breaksEnabled) ...[
-            const SizedBox(height: AppTheme.spaceSm),
-            _FormSection(
-              title: l.add_shift_manual_break_type_section,
-              icon: Icons.coffee_outlined,
-              child: SizedBox(
+          items: jobs
+              .map(
+                (j) => DropdownMenuItem<String>(
+                  value: j.id,
+                  child: Row(
+                    children: [
+                      Icon(AppTheme.iconForJobName(j.name), size: 18),
+                      const SizedBox(width: 8),
+                      Text(j.name),
+                    ],
+                  ),
+                ),
+              )
+              .toList(),
+          onChanged: (val) => setState(() => _selectedJobTypeId = val),
+        ),
+      ),
+      if (settings.breaksEnabled)
+        _FormSection(
+          title: l.add_shift_manual_break_type_section,
+          icon: Icons.coffee_outlined,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 480) {
+                return Wrap(
+                  spacing: AppTheme.spaceXs,
+                  runSpacing: AppTheme.spaceXs,
+                  children: [
+                    for (final option in breakOptions)
+                      ChoiceChip(
+                        label: Text(option.label),
+                        selected: _selectedBreakType == option.type,
+                        onSelected: (_) =>
+                            setState(() => _selectedBreakType = option.type),
+                      ),
+                  ],
+                );
+              }
+
+              return SizedBox(
                 width: double.infinity,
                 child: SegmentedButton<BreakType>(
                   segments: [
-                    ButtonSegment(
-                      value: BreakType.none,
-                      label: Text(l.add_shift_manual_no_break),
-                    ),
-                    ButtonSegment(
-                      value: BreakType.paid,
-                      label: Text(
-                        '${settings.paidBreakDurationMinutes.toStringAsFixed(0)}\' ${l.add_shift_manual_paid_break}',
+                    for (final option in breakOptions)
+                      ButtonSegment(
+                        value: option.type,
+                        label: Text(option.label),
                       ),
-                    ),
-                    ButtonSegment(
-                      value: BreakType.unpaid,
-                      label: Text(
-                        '${settings.unpaidBreakDurationMinutes.toStringAsFixed(0)}\' ${l.add_shift_manual_unpaid_break}',
-                      ),
-                    ),
                   ],
                   selected: {_selectedBreakType},
-                  onSelectionChanged: (val) =>
-                      setState(() => _selectedBreakType = val.first),
+                  onSelectionChanged: (value) =>
+                      setState(() => _selectedBreakType = value.first),
                 ),
-              ),
-            ),
-          ],
-          const SizedBox(height: AppTheme.spaceSm),
-          _FormSection(
-            title: l.add_shift_manual_work_tips_section,
-            icon: Icons.payments_outlined,
-            child: Column(
-              children: [
-                DropdownButtonFormField<String>(
-                  initialValue: _selectedJobTypeId,
-                  decoration: InputDecoration(
-                    labelText: l.add_shift_manual_job_type_label,
-                    prefixIcon: const Icon(Icons.work_rounded),
-                  ),
-                  items: jobs
-                      .map(
-                        (j) => DropdownMenuItem<String>(
-                          value: j.id,
-                          child: Row(
-                            children: [
-                              Icon(AppTheme.iconForJobName(j.name), size: 18),
-                              const SizedBox(width: 8),
-                              Text(j.name),
-                            ],
-                          ),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (val) => setState(() => _selectedJobTypeId = val),
-                ),
-                const SizedBox(height: AppTheme.spaceMd),
-                _buildTipsSection(_tipControllers, symbol),
-                const SizedBox(height: AppTheme.spaceMd),
-                _buildAutoExpensesSection(symbol),
-                const SizedBox(height: AppTheme.spaceMd),
-                _buildAutoIncomesSection(symbol),
-              ],
-            ),
+              );
+            },
           ),
-          const SizedBox(height: AppTheme.spaceSm),
-          _buildOvertimeSalaryBreakdownSection(),
-          const SizedBox(height: AppTheme.spaceSm),
-          _FormSection(
-            title: l.shift_description_label,
-            icon: Icons.note_alt_rounded,
-            child: TextField(
-              controller: _descriptionController,
-              decoration: InputDecoration(
-                labelText: l.shift_description_label,
-                hintText: l.shift_description_hint,
-              ),
-              maxLines: 3,
-              minLines: 1,
-            ),
-          ),
-          const SizedBox(height: AppTheme.spaceLg),
-          SizedBox(
-            width: double.infinity,
-            child: ScalePress(
-              onTap: _saveManual,
-              child: ElevatedButton.icon(
-                onPressed: _saveManual,
-                icon: const Icon(Icons.check_circle_rounded),
-                label: Text(
-                  widget.shiftToEdit != null
-                      ? l.add_shift_shift_edit_dialog_title
-                      : l.add_shift_shift_ended_dialog_title,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: AppTheme.spaceMd),
-        ],
+        ),
+    ];
+    final earningsSections = <Widget>[
+      _CollapsibleFormSection(
+        title: l.add_shift_tips_title,
+        icon: Icons.payments_outlined,
+        summary: _moneySummary(tipsTotal, symbol),
+        initiallyExpanded: tipsTotal > 0,
+        child: _buildTipsSection(_tipControllers),
       ),
+      _CollapsibleFormSection(
+        title: l.add_shift_expenses_title,
+        icon: Icons.money_off_rounded,
+        summary: _moneySummary(expensesTotal, symbol),
+        initiallyExpanded: expensesTotal > 0,
+        child: _buildAutoExpensesSection(symbol),
+      ),
+      _CollapsibleFormSection(
+        title: l.add_shift_incomes_title,
+        icon: Icons.account_balance_wallet_rounded,
+        summary: _moneySummary(incomesTotal, symbol),
+        initiallyExpanded: incomesTotal > 0,
+        child: _buildAutoIncomesSection(symbol),
+      ),
+    ];
+    final detailSections = <Widget>[
+      _CollapsibleFormSection(
+        title: l.add_shift_wage_segments_title,
+        icon: Icons.percent_rounded,
+        summary: _segmentStartTimes.isEmpty
+            ? ''
+            : l.add_shift_segments_count(_segmentStartTimes.length),
+        initiallyExpanded: _segmentStartTimes.isNotEmpty,
+        child: _buildWageSegmentsSection(),
+      ),
+      _CollapsibleFormSection(
+        title: l.overtime_breakdown_title,
+        icon: Icons.calculate_rounded,
+        initiallyExpanded: false,
+        child: _buildOvertimeSalaryBreakdownSection(),
+      ),
+      _CollapsibleFormSection(
+        title: l.shift_description_label,
+        icon: Icons.note_alt_rounded,
+        summary: descText.isEmpty
+            ? ''
+            : (descText.length > 28
+                  ? '${descText.substring(0, 28)}…'
+                  : descText),
+        initiallyExpanded: descText.isNotEmpty,
+        child: TextField(
+          controller: _descriptionController,
+          decoration: InputDecoration(
+            labelText: l.shift_description_label,
+            hintText: l.shift_description_hint,
+          ),
+          maxLines: 3,
+          minLines: 1,
+          onChanged: (_) => setState(() {}),
+        ),
+      ),
+    ];
+    final endingSections = <Widget>[
+      _buildLivePreview(_buildManualDraftShift()),
+      SizedBox(
+        width: double.infinity,
+        child: ScalePress(
+          onTap: _saveManual,
+          child: ElevatedButton.icon(
+            onPressed: _saveManual,
+            icon: const Icon(Icons.check_circle_rounded),
+            label: Text(
+              widget.shiftToEdit != null
+                  ? l.add_shift_shift_edit_dialog_title
+                  : l.add_shift_shift_ended_dialog_title,
+            ),
+          ),
+        ),
+      ),
+    ];
+
+    Widget buildColumn(List<Widget> sections) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var i = 0; i < sections.length; i++) ...[
+          sections[i],
+          if (i < sections.length - 1) const SizedBox(height: AppTheme.spaceSm),
+        ],
+      ],
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth >= 900;
+        final sections = [
+          ...shiftSections,
+          ...earningsSections,
+          ...detailSections,
+          ...endingSections,
+        ];
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(
+            AppTheme.spaceSm,
+            AppTheme.spaceSm,
+            AppTheme.spaceSm,
+            AppTheme.spaceLg,
+          ),
+          child: isWide
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: buildColumn([
+                        ...shiftSections,
+                        ...earningsSections,
+                      ]),
+                    ),
+                    const SizedBox(width: AppTheme.spaceMd),
+                    Expanded(
+                      child: buildColumn([
+                        ...detailSections,
+                        ...endingSections,
+                      ]),
+                    ),
+                  ],
+                )
+              : buildColumn(sections),
+        );
+      },
     );
   }
 
@@ -1801,135 +2105,114 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         AppTheme.spaceSm,
         AppTheme.spaceLg,
       ),
-      child: Column(
-        children: [
-          _FormSection(
-            title: l.add_shift_paste_title,
-            icon: Icons.paste_rounded,
-            child: Column(
-              children: [
-                DropdownButtonFormField<String>(
-                  initialValue: _selectedJobTypeId,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 900),
+          child: Column(
+            children: [
+              _FormSection(
+                title: l.add_shift_paste_title,
+                icon: Icons.paste_rounded,
+                child: Column(
+                  children: [
+                    DropdownButtonFormField<String>(
+                      initialValue: _selectedJobTypeId,
+                      decoration: InputDecoration(
+                        labelText: l.add_shift_paste_default_job_label,
+                        prefixIcon: const Icon(Icons.work_history_rounded),
+                      ),
+                      items: jobs
+                          .map(
+                            (j) => DropdownMenuItem<String>(
+                              value: j.id,
+                              child: Text(j.name),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (val) =>
+                          setState(() => _selectedJobTypeId = val),
+                    ),
+                    const SizedBox(height: AppTheme.spaceSm),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primary.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.info_outline_rounded,
+                            color: AppTheme.primaryDark,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              l.add_shift_paste_format_info,
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
+                                  ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppTheme.spaceSm),
+              Container(
+                decoration: AppTheme.sectionDecoration(context),
+                padding: const EdgeInsets.all(4),
+                constraints: const BoxConstraints(minHeight: 200),
+                child: TextField(
+                  controller: _rawTextController,
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                  textAlignVertical: TextAlignVertical.top,
                   decoration: InputDecoration(
-                    labelText: l.add_shift_paste_default_job_label,
-                    prefixIcon: const Icon(Icons.work_history_rounded),
+                    hintText: l.add_shift_paste_hint,
+                    alignLabelWithHint: true,
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
                   ),
-                  items: jobs
-                      .map(
-                        (j) => DropdownMenuItem<String>(
-                          value: j.id,
-                          child: Text(j.name),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (val) => setState(() => _selectedJobTypeId = val),
-                ),
-                const SizedBox(height: AppTheme.spaceSm),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primary.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(
-                        Icons.info_outline_rounded,
-                        color: AppTheme.primaryDark,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          l.add_shift_paste_format_info,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: AppTheme.spaceSm),
-          Container(
-            decoration: AppTheme.sectionDecoration(context),
-            padding: const EdgeInsets.all(4),
-            constraints: const BoxConstraints(minHeight: 200),
-            child: TextField(
-              controller: _rawTextController,
-              maxLines: null,
-              keyboardType: TextInputType.multiline,
-              textAlignVertical: TextAlignVertical.top,
-              decoration: InputDecoration(
-                hintText: l.add_shift_paste_hint,
-                alignLabelWithHint: true,
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-              ),
-            ),
-          ),
-          const SizedBox(height: AppTheme.spaceSm),
-          SizedBox(
-            width: double.infinity,
-            child: ScalePress(
-              onTap: _saveRaw,
-              child: ElevatedButton.icon(
-                onPressed: _saveRaw,
-                icon: const Icon(Icons.bolt_rounded),
-                label: Text(l.add_shift_paste_parse_button),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryDark,
-                  foregroundColor: Colors.white,
                 ),
               ),
-            ),
+              const SizedBox(height: AppTheme.spaceSm),
+              SizedBox(
+                width: double.infinity,
+                child: ScalePress(
+                  onTap: _saveRaw,
+                  child: ElevatedButton.icon(
+                    onPressed: _saveRaw,
+                    icon: const Icon(Icons.bolt_rounded),
+                    label: Text(l.add_shift_paste_parse_button),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryDark,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildTipsSection(
-    List<TextEditingController> controllers,
-    String symbol,
-  ) {
-    final total = _calculateTotalTips(controllers);
+  Widget _buildTipsSection(List<TextEditingController> controllers) {
     final l = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              l.add_shift_tips_title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppTheme.profit.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                '${l.add_shift_tips_total} ${UIUtils.formatCurrency(total, symbol: symbol)}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.profitSoft,
-                  fontSize: 13,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
         ...controllers.asMap().entries.map((entry) {
           final idx = entry.key;
           final controller = entry.value;
@@ -1999,40 +2282,11 @@ class _AddShiftScreenState extends State<AddShiftScreen>
   }
 
   Widget _buildAutoExpensesSection(String symbol) {
-    double total = 0;
-    for (var c in _autoExpenseAmountControllers) {
-      total += double.tryParse(c.text) ?? 0.0;
-    }
     final l = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              l.add_shift_expenses_title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppTheme.expense.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                '${l.add_shift_expenses_total} ${UIUtils.formatCurrency(total, symbol: symbol)}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.expenseSoft,
-                  fontSize: 13,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
         ...List.generate(_autoExpenseAmountControllers.length, (index) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
@@ -2090,40 +2344,11 @@ class _AddShiftScreenState extends State<AddShiftScreen>
   }
 
   Widget _buildAutoIncomesSection(String symbol) {
-    double total = 0;
-    for (var c in _autoIncomeAmountControllers) {
-      total += double.tryParse(c.text) ?? 0.0;
-    }
     final l = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              l.add_shift_incomes_title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppTheme.profit.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                '${l.add_shift_incomes_total} ${UIUtils.formatCurrency(total, symbol: symbol)}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.profitSoft,
-                  fontSize: 13,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
         ...List.generate(_autoIncomeAmountControllers.length, (index) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
@@ -2211,6 +2436,61 @@ class _FormSection extends StatelessWidget {
           const SizedBox(height: 14),
           child,
         ],
+      ),
+    );
+  }
+}
+
+class _CollapsibleFormSection extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final String? summary;
+  final bool initiallyExpanded;
+  final Widget child;
+
+  const _CollapsibleFormSection({
+    required this.title,
+    required this.icon,
+    this.summary,
+    this.initiallyExpanded = false,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasSummary = summary != null && summary!.isNotEmpty;
+    return Container(
+      width: double.infinity,
+      decoration: AppTheme.sectionDecoration(context),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          initiallyExpanded: initiallyExpanded,
+          maintainState: true,
+          leading: Icon(icon, size: 18, color: AppTheme.primaryDark),
+          title: Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          ),
+          subtitle: hasSummary
+              ? Text(
+                  summary!,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.primaryDark.withValues(alpha: 0.85),
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                )
+              : null,
+          childrenPadding: const EdgeInsets.fromLTRB(
+            AppTheme.spaceSm,
+            0,
+            AppTheme.spaceSm,
+            AppTheme.spaceSm,
+          ),
+          children: [child],
+        ),
       ),
     );
   }

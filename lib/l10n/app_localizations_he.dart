@@ -620,6 +620,14 @@ class AppLocalizationsHe extends AppLocalizations {
   String get add_shift_shift_saved => 'המשמרת נשמרה בהצלחה';
 
   @override
+  String get add_shift_preview_title => 'תצוגה מקדימה';
+
+  @override
+  String add_shift_segments_count(int count) {
+    return '$count תקופות';
+  }
+
+  @override
   String get add_shift_overlap_title => 'חפיפה בין משמרות';
 
   @override

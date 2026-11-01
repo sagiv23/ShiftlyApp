@@ -622,6 +622,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get add_shift_shift_saved => 'Shift saved successfully';
 
   @override
+  String get add_shift_preview_title => 'Preview';
+
+  @override
+  String add_shift_segments_count(int count) {
+    return '$count periods';
+  }
+
+  @override
   String get add_shift_overlap_title => 'Overlapping shift';
 
   @override

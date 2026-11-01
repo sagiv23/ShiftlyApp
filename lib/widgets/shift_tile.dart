@@ -18,11 +18,15 @@ class ShiftTile extends StatelessWidget {
   final bool useCardDecoration;
   final EdgeInsetsGeometry? margin;
 
+  /// When false, disables edit/delete/dismiss — used as a live form preview.
+  final bool interactive;
+
   const ShiftTile({
     super.key,
     required this.shift,
     this.useCardDecoration = false,
     this.margin,
+    this.interactive = true,
   });
 
   Future<void> _deleteShift(
@@ -273,7 +277,7 @@ class ShiftTile extends StatelessWidget {
               ),
             ),
           ),
-          if (isWide) ...[
+          if (interactive && isWide) ...[
             const SizedBox(width: 8),
             IconButton(
               icon: const Icon(Icons.edit_outlined, size: 20),
@@ -299,6 +303,13 @@ class ShiftTile extends StatelessWidget {
 
     Widget tileContent;
     if (useCardDecoration) {
+      final padded = Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spaceSm,
+          vertical: AppTheme.spaceXs,
+        ),
+        child: childContent,
+      );
       tileContent = Container(
         margin: margin ?? const EdgeInsets.only(bottom: AppTheme.spaceSm),
         decoration: BoxDecoration(
@@ -317,22 +328,18 @@ class ShiftTile extends StatelessWidget {
         ),
         child: Material(
           color: Colors.transparent,
-          child: Semantics(
-            button: true,
-            label: shiftSemanticLabel,
-            hint: l.add_shift_edit_title,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-              onTap: () => _editShift(context),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppTheme.spaceSm,
-                  vertical: AppTheme.spaceXs,
-                ),
-                child: childContent,
-              ),
-            ),
-          ),
+          child: interactive
+              ? Semantics(
+                  button: true,
+                  label: shiftSemanticLabel,
+                  hint: l.add_shift_edit_title,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                    onTap: () => _editShift(context),
+                    child: padded,
+                  ),
+                )
+              : Semantics(label: shiftSemanticLabel, child: padded),
         ),
       );
     } else {
@@ -341,21 +348,23 @@ class ShiftTile extends StatelessWidget {
             margin ?? const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
         child: Material(
           color: Colors.transparent,
-          child: Semantics(
-            button: true,
-            label: shiftSemanticLabel,
-            hint: l.add_shift_edit_title,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-              onTap: () => _editShift(context),
-              child: childContent,
-            ),
-          ),
+          child: interactive
+              ? Semantics(
+                  button: true,
+                  label: shiftSemanticLabel,
+                  hint: l.add_shift_edit_title,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    onTap: () => _editShift(context),
+                    child: childContent,
+                  ),
+                )
+              : Semantics(label: shiftSemanticLabel, child: childContent),
         ),
       );
     }
 
-    if (isWide) {
+    if (!interactive || isWide) {
       return tileContent;
     }
 

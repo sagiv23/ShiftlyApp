@@ -194,6 +194,15 @@
   "add_shift_shift_ended_edit_dialog_desc": "Are you sure you want to save the shift details?",
   "add_shift_shift_edit_dialog_title": "Update Shift",
   "add_shift_shift_saved": "Shift saved successfully",
+  "add_shift_preview_title": "Preview",
+  "add_shift_segments_count": "{count} periods",
+  "@add_shift_segments_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "add_shift_overlap_title": "Overlapping shift",
   "add_shift_overlap_content": "This shift overlaps {count} existing shift(s):\n\n{details}\n\nSave it anyway?",
   "@add_shift_overlap_content": {
