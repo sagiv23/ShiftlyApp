@@ -353,7 +353,7 @@ function initSmartParserDemo() {
       parserResultCard.innerHTML = `
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px;">
           <span style="font-weight: 700; color: var(--primary); font-size: 15px;"><i class="fa-solid fa-circle-check" style="color: var(--profit);"></i> פוענח בהצלחה</span>
-          <span style="font-size: 12px; color: var(--text-dim); font-family: var(--font-accent);">Shiftly Engine v1.0.3</span>
+          <span style="font-size: 12px; color: var(--text-dim); font-family: var(--font-accent);">Shiftly Engine v1.0.0</span>
         </div>
         <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
           <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">תאריך משמרת:</span> <strong style="color:#FFF;">24.06.2026</strong></div>
