@@ -365,6 +365,15 @@ class AppLocalizationsHe extends AppLocalizations {
   String get home_shift_list_no_shifts => 'אין משמרות ביום זה';
 
   @override
+  String get home_shift_list_no_shifts_month => 'אין משמרות בחודש זה';
+
+  @override
+  String get shift_history_empty_title => 'אין משמרות להצגה';
+
+  @override
+  String get shift_history_empty_subtitle => 'עדיין לא נוספו משמרות להיסטוריה';
+
+  @override
   String get home_shift_list_select_day => 'בחר יום להצגת משמרות';
 
   @override
@@ -375,6 +384,21 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get home_action_calendar => 'לוח משמרות';
+
+  @override
+  String get calendar_legend_today => 'היום';
+
+  @override
+  String get calendar_legend_selected => 'נבחר';
+
+  @override
+  String get calendar_legend_shift => 'משמרת';
+
+  @override
+  String get calendar_legend_holiday => 'מועד / שבת';
+
+  @override
+  String get calendar_legend_holiday_shift => 'משמרת במועד';
 
   @override
   String get expenses_title => 'הוצאות והכנסות';

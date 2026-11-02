@@ -369,6 +369,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_shift_list_no_shifts => 'No shifts on this day';
 
   @override
+  String get home_shift_list_no_shifts_month => 'No shifts in this month';
+
+  @override
+  String get shift_history_empty_title => 'No shifts found';
+
+  @override
+  String get shift_history_empty_subtitle => 'No shift history available';
+
+  @override
   String get home_shift_list_select_day => 'Select a day to show shifts';
 
   @override
@@ -379,6 +388,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get home_action_calendar => 'Calendar';
+
+  @override
+  String get calendar_legend_today => 'Today';
+
+  @override
+  String get calendar_legend_selected => 'Selected';
+
+  @override
+  String get calendar_legend_shift => 'Shift';
+
+  @override
+  String get calendar_legend_holiday => 'Holiday / Shabbat';
+
+  @override
+  String get calendar_legend_holiday_shift => 'Holiday Shift';
 
   @override
   String get expenses_title => 'Expenses & Incomes';

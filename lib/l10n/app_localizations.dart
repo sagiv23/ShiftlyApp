@@ -776,6 +776,24 @@ abstract class AppLocalizations {
   /// **'אין משמרות ביום זה'**
   String get home_shift_list_no_shifts;
 
+  /// No description provided for @home_shift_list_no_shifts_month.
+  ///
+  /// In he, this message translates to:
+  /// **'אין משמרות בחודש זה'**
+  String get home_shift_list_no_shifts_month;
+
+  /// No description provided for @shift_history_empty_title.
+  ///
+  /// In he, this message translates to:
+  /// **'אין משמרות להצגה'**
+  String get shift_history_empty_title;
+
+  /// No description provided for @shift_history_empty_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'עדיין לא נוספו משמרות להיסטוריה'**
+  String get shift_history_empty_subtitle;
+
   /// No description provided for @home_shift_list_select_day.
   ///
   /// In he, this message translates to:
@@ -799,6 +817,36 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'לוח משמרות'**
   String get home_action_calendar;
+
+  /// No description provided for @calendar_legend_today.
+  ///
+  /// In he, this message translates to:
+  /// **'היום'**
+  String get calendar_legend_today;
+
+  /// No description provided for @calendar_legend_selected.
+  ///
+  /// In he, this message translates to:
+  /// **'נבחר'**
+  String get calendar_legend_selected;
+
+  /// No description provided for @calendar_legend_shift.
+  ///
+  /// In he, this message translates to:
+  /// **'משמרת'**
+  String get calendar_legend_shift;
+
+  /// No description provided for @calendar_legend_holiday.
+  ///
+  /// In he, this message translates to:
+  /// **'מועד / שבת'**
+  String get calendar_legend_holiday;
+
+  /// No description provided for @calendar_legend_holiday_shift.
+  ///
+  /// In he, this message translates to:
+  /// **'משמרת במועד'**
+  String get calendar_legend_holiday_shift;
 
   /// No description provided for @expenses_title.
   ///

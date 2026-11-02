@@ -153,194 +153,238 @@ class _CalendarScreenState extends State<CalendarScreen>
                                   ),
                                 ],
                               ),
-                              child: TableCalendar<Shift>(
-                                locale: l.localeName,
-                                firstDay: DateTime.utc(2020, 1, 1),
-                                lastDay: DateTime.utc(2030, 12, 31),
-                                focusedDay: _focusedDay,
-                                calendarFormat: _calendarFormat,
-                                startingDayOfWeek: StartingDayOfWeek.sunday,
-                                weekendDays: const [DateTime.saturday],
-                                rowHeight: 52,
-                                daysOfWeekHeight: 40,
-                                headerStyle: HeaderStyle(
-                                  formatButtonVisible: false,
-                                  titleCentered: true,
-                                  titleTextStyle: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppTheme.electricCyan,
-                                  ),
-                                  leftChevronIcon: const Icon(
-                                    Icons.chevron_left,
-                                    color: AppTheme.electricCyan,
-                                  ),
-                                  rightChevronIcon: const Icon(
-                                    Icons.chevron_right,
-                                    color: AppTheme.electricCyan,
-                                  ),
-                                ),
-                                daysOfWeekStyle: DaysOfWeekStyle(
-                                  weekdayStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: isDark
-                                        ? AppTheme.secondaryText
-                                        : const Color(0xFF475569),
-                                    fontSize: 13,
-                                  ),
-                                  weekendStyle: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppTheme.electricCyan,
-                                    fontSize: 13,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.electricCyan.withValues(
-                                      alpha: isDark ? 0.08 : 0.05,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TableCalendar<Shift>(
+                                    locale: l.localeName,
+                                    firstDay: DateTime.utc(2020, 1, 1),
+                                    lastDay: DateTime.utc(2030, 12, 31),
+                                    focusedDay: _focusedDay,
+                                    calendarFormat: _calendarFormat,
+                                    startingDayOfWeek: StartingDayOfWeek.sunday,
+                                    weekendDays: const [DateTime.saturday],
+                                    rowHeight: 52,
+                                    daysOfWeekHeight: 40,
+                                    headerStyle: HeaderStyle(
+                                      formatButtonVisible: false,
+                                      titleCentered: true,
+                                      titleTextStyle: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppTheme.electricCyan,
+                                      ),
+                                      leftChevronIcon: const Icon(
+                                        Icons.chevron_left,
+                                        color: AppTheme.electricCyan,
+                                      ),
+                                      rightChevronIcon: const Icon(
+                                        Icons.chevron_right,
+                                        color: AppTheme.electricCyan,
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                calendarStyle: CalendarStyle(
-                                  outsideDaysVisible: false,
-                                  weekendTextStyle: const TextStyle(
-                                    color: AppTheme.electricCyan,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  selectedDecoration: const BoxDecoration(
-                                    color: AppTheme.electricCyan,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  selectedTextStyle: const TextStyle(
-                                    color: Color(0xFF040711),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  todayDecoration: BoxDecoration(
-                                    color: AppTheme.neonViolet.withValues(
-                                      alpha: 0.35,
+                                    daysOfWeekStyle: DaysOfWeekStyle(
+                                      weekdayStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: isDark
+                                            ? AppTheme.secondaryText
+                                            : const Color(0xFF475569),
+                                        fontSize: 13,
+                                      ),
+                                      weekendStyle: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppTheme.warmAmber,
+                                        fontSize: 13,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.warmAmber.withValues(
+                                          alpha: isDark ? 0.08 : 0.05,
+                                        ),
+                                      ),
                                     ),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: AppTheme.neonViolet,
+                                    calendarStyle: CalendarStyle(
+                                      outsideDaysVisible: false,
+                                      weekendTextStyle: const TextStyle(
+                                        color: AppTheme.warmAmber,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      selectedDecoration: const BoxDecoration(
+                                        color: AppTheme.electricCyan,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      selectedTextStyle: const TextStyle(
+                                        color: Color(0xFF040711),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      todayDecoration: BoxDecoration(
+                                        color: AppTheme.neonViolet.withValues(
+                                          alpha: 0.35,
+                                        ),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: AppTheme.neonViolet,
+                                        ),
+                                      ),
+                                      todayTextStyle: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      markerDecoration: const BoxDecoration(
+                                        color: AppTheme.mintGreen,
+                                        shape: BoxShape.circle,
+                                      ),
                                     ),
-                                  ),
-                                  todayTextStyle: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  markerDecoration: const BoxDecoration(
-                                    color: AppTheme.mintGreen,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                calendarBuilders: CalendarBuilders(
-                                  markerBuilder: (context, day, events) {
-                                    if (!settings.shabbatHolidayRules.enabled) {
-                                      return null;
-                                    }
+                                    calendarBuilders: CalendarBuilders(
+                                      markerBuilder: (context, day, events) {
+                                        final hasShift =
+                                            events.isNotEmpty ||
+                                                _getShiftsForDay(
+                                                  day,
+                                                  allShifts,
+                                                ).isNotEmpty;
 
-                                    final dayStart = DateTime(
-                                      day.year,
-                                      day.month,
-                                      day.day,
-                                    );
-                                    final dayEnd = dayStart.add(
-                                      const Duration(days: 1),
-                                    );
+                                        if (!settings
+                                            .shabbatHolidayRules
+                                            .enabled) {
+                                          if (hasShift) {
+                                            return Positioned(
+                                              bottom: 4,
+                                              child: Container(
+                                                width: 6,
+                                                height: 6,
+                                                decoration: const BoxDecoration(
+                                                  color: AppTheme.mintGreen,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                          return null;
+                                        }
 
-                                    final localBoundaries =
-                                        ShabbatHolidayService.getBoundariesForRange(
+                                        final dayStart = DateTime(
+                                          day.year,
+                                          day.month,
+                                          day.day,
+                                        );
+                                        final dayEnd = dayStart.add(
+                                          const Duration(days: 1),
+                                        );
+
+                                        final localBoundaries =
+                                        ShabbatHolidayService
+                                            .getBoundariesForRange(
                                           dayStart,
                                           dayEnd,
                                           settings.shabbatHolidayRules,
                                         );
 
-                                    final allBoundaries = [
-                                      ..._monthBoundaries,
-                                      ...localBoundaries,
-                                    ];
-                                    final matchingBoundary = allBoundaries
-                                        .firstWhereOrNull(
-                                          (b) =>
-                                              dayStart.isBefore(b.end) &&
+                                        final allBoundaries = [
+                                          ..._monthBoundaries,
+                                          ...localBoundaries,
+                                        ];
+                                        final matchingBoundary = allBoundaries
+                                            .firstWhereOrNull(
+                                              (b) =>
+                                          dayStart.isBefore(b.end) &&
                                               dayEnd.isAfter(b.start),
                                         );
 
-                                    if (matchingBoundary != null) {
-                                      final holidayName = matchingBoundary.name;
-                                      final isHoliday =
-                                          matchingBoundary.type == 'holiday';
-                                      final textColor = isDark
-                                          ? AppTheme.primaryText
-                                          : Theme.of(
-                                              context,
-                                            ).colorScheme.onSurface;
+                                        if (matchingBoundary != null) {
+                                          final holidayName =
+                                              matchingBoundary.name;
+                                          final isHoliday =
+                                              matchingBoundary.type ==
+                                                  'holiday';
 
-                                      final hasShift =
-                                          events.isNotEmpty ||
-                                          _getShiftsForDay(
-                                            day,
-                                            allShifts,
-                                          ).isNotEmpty;
-
-                                      return Positioned(
-                                        bottom: 1,
-                                        child: GestureDetector(
-                                          behavior: HitTestBehavior.opaque,
-                                          onTap: () => _showHolidayBanner(
-                                            context,
-                                            holidayName,
-                                            isHoliday,
-                                          ),
-                                          child: Container(
-                                            padding: const EdgeInsets.all(3),
-                                            decoration: BoxDecoration(
-                                              color: hasShift
-                                                  ? AppTheme.electricCyan
-                                                        .withValues(alpha: 0.25)
-                                                  : textColor.withValues(
-                                                      alpha: 0.12,
+                                          return Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              Positioned(
+                                                top: 3,
+                                                child: GestureDetector(
+                                                  behavior:
+                                                  HitTestBehavior.opaque,
+                                                  onTap: () =>
+                                                      _showHolidayBanner(
+                                                        context,
+                                                        holidayName,
+                                                        isHoliday,
+                                                      ),
+                                                  child: const MagenDavidIcon(
+                                                    size: 15,
+                                                    color: AppTheme.warmAmber,
+                                                  ),
+                                                ),
+                                              ),
+                                              if (hasShift)
+                                                Positioned(
+                                                  bottom: 4,
+                                                  child: Container(
+                                                    width: 6,
+                                                    height: 6,
+                                                    decoration:
+                                                    const BoxDecoration(
+                                                      color: AppTheme
+                                                          .mintGreen,
+                                                      shape: BoxShape.circle,
                                                     ),
-                                              shape: BoxShape.circle,
+                                                  ),
+                                                ),
+                                            ],
+                                          );
+                                        }
+
+                                        if (hasShift) {
+                                          return Positioned(
+                                            bottom: 4,
+                                            child: Container(
+                                              width: 6,
+                                              height: 6,
+                                              decoration: const BoxDecoration(
+                                                color: AppTheme.mintGreen,
+                                                shape: BoxShape.circle,
+                                              ),
                                             ),
-                                            child: MagenDavidIcon(
-                                              size: 13,
-                                              color: hasShift
-                                                  ? AppTheme.electricCyan
-                                                  : AppTheme.warmAmber,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                availableGestures: AvailableGestures.all,
-                                selectedDayPredicate: (day) {
-                                  return isSameDay(_selectedDay, day);
-                                },
-                                onDaySelected: (selectedDay, focusedDay) {
-                                  if (!isSameDay(_selectedDay, selectedDay)) {
-                                    setState(() {
-                                      _selectedDay = selectedDay;
-                                      _focusedDay = focusedDay;
-                                    });
-                                  }
-                                },
-                                onFormatChanged: (format) {
-                                  if (_calendarFormat != format) {
-                                    setState(() {
-                                      _calendarFormat = format;
-                                    });
-                                  }
-                                },
-                                onPageChanged: (focusedDay) {
-                                  setState(() {
-                                    _focusedDay = focusedDay;
-                                  });
-                                  _loadMonthBoundaries(focusedDay);
-                                },
-                                eventLoader: (day) =>
-                                    _getShiftsForDay(day, allShifts),
+                                          );
+                                        }
+
+                                        return null;
+                                      },
+                                    ),
+                                    availableGestures: AvailableGestures.all,
+                                    selectedDayPredicate: (day) {
+                                      return isSameDay(_selectedDay, day);
+                                    },
+                                    onDaySelected: (selectedDay, focusedDay) {
+                                      if (!isSameDay(
+                                        _selectedDay,
+                                        selectedDay,
+                                      )) {
+                                        setState(() {
+                                          _selectedDay = selectedDay;
+                                          _focusedDay = focusedDay;
+                                        });
+                                      }
+                                    },
+                                    onFormatChanged: (format) {
+                                      if (_calendarFormat != format) {
+                                        setState(() {
+                                          _calendarFormat = format;
+                                        });
+                                      }
+                                    },
+                                    onPageChanged: (focusedDay) {
+                                      setState(() {
+                                        _focusedDay = focusedDay;
+                                      });
+                                      _loadMonthBoundaries(focusedDay);
+                                    },
+                                    eventLoader: (day) =>
+                                        _getShiftsForDay(day, allShifts),
+                                  ),
+                                  _buildLegend(context, isDark, l, settings),
+                                ],
                               ),
                             ),
                           ),
@@ -452,6 +496,126 @@ class _CalendarScreenState extends State<CalendarScreen>
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLegend(BuildContext context,
+      bool isDark,
+      AppLocalizations l,
+      SettingsProvider settings,) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+          ),
+        ),
+      ),
+      child: Center(
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 16,
+          runSpacing: 8,
+          children: [
+            _buildLegendItem(
+              icon: Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppTheme.neonViolet, width: 2),
+                  color: AppTheme.neonViolet.withValues(alpha: 0.3),
+                ),
+              ),
+              label: l.calendar_legend_today,
+              isDark: isDark,
+            ),
+            _buildLegendItem(
+              icon: Container(
+                width: 12,
+                height: 12,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppTheme.electricCyan,
+                ),
+              ),
+              label: l.calendar_legend_selected,
+              isDark: isDark,
+            ),
+            _buildLegendItem(
+              icon: Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppTheme.mintGreen,
+                ),
+              ),
+              label: l.calendar_legend_shift,
+              isDark: isDark,
+            ),
+            if (settings.shabbatHolidayRules.enabled) ...[
+              _buildLegendItem(
+                icon: const MagenDavidIcon(
+                  size: 14,
+                  color: AppTheme.warmAmber,
+                ),
+                label: l.calendar_legend_holiday,
+                isDark: isDark,
+              ),
+              _buildLegendItem(
+                icon: SizedBox(
+                  width: 16,
+                  height: 24,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const MagenDavidIcon(
+                        size: 13,
+                        color: AppTheme.warmAmber,
+                      ),
+                      const SizedBox(height: 2),
+                      Container(
+                        width: 5,
+                        height: 5,
+                        decoration: const BoxDecoration(
+                          color: AppTheme.mintGreen,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                label: l.calendar_legend_holiday_shift,
+                isDark: isDark,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLegendItem({
+    required Widget icon,
+    required String label,
+    required bool isDark,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        icon,
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: isDark ? AppTheme.secondaryText : const Color(0xFF64748B),
+          ),
+        ),
+      ],
     );
   }
 }

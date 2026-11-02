@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/widgets/empty_state_widget.dart';
 import 'package:shiftly/widgets/export_bottom_sheet.dart';
 import 'package:shiftly/widgets/filter_bottom_sheet.dart';
 import 'package:shiftly/widgets/year_month_tab_layout.dart';
@@ -90,14 +91,20 @@ class _ShiftHistoryScreenState extends State<ShiftHistoryScreen> {
           children: [
             if (isFilterActive) const ActiveFiltersBar(),
             Expanded(
-              child: _useTabView
-                  ? YearMonthTabLayout(
-                      groupedShifts: groupedShifts,
-                      currentMonthKey: currentMonthKey,
-                      initialYear: _targetYear,
-                      initialMonth: _targetMonth,
+              child: groupedShifts.isEmpty
+                  ? EmptyStateWidget(
+                      icon: Icons.event_busy_rounded,
+                      title: l.shift_history_empty_title,
+                      subtitle: l.shift_history_empty_subtitle,
                     )
-                  : _buildListView(context, groupedShifts, l),
+                  : (_useTabView
+                        ? YearMonthTabLayout(
+                            groupedShifts: groupedShifts,
+                            currentMonthKey: currentMonthKey,
+                            initialYear: _targetYear,
+                            initialMonth: _targetMonth,
+                          )
+                        : _buildListView(context, groupedShifts, l)),
             ),
           ],
         ),

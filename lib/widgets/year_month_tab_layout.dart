@@ -240,7 +240,7 @@ class _YearMonthTabLayoutState extends State<YearMonthTabLayout> {
                   key: ValueKey('empty_$_currentKey'),
                   padding: const EdgeInsets.symmetric(vertical: 24),
                   child: EmptyStateWidget(
-                    title: l.home_shift_list_no_shifts,
+                    title: l.home_shift_list_no_shifts_month,
                     subtitle:
                         '${l.home_shift_list_shifts_on} $monthFullName $_selectedYear',
                   ),
