@@ -77,6 +77,9 @@ class UIUtils {
       SnackBar(
         content: Text(
           message,
+          key: ValueKey('snackbar_${message}_${DateTime
+              .now()
+              .microsecondsSinceEpoch}'),
           style: isError ? TextStyle(color: colorScheme.onError) : null,
         ),
         behavior: SnackBarBehavior.floating,

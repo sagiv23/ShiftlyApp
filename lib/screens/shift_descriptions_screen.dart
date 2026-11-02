@@ -5,12 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/providers/shift_provider.dart';
-import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
-import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
+import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/skeleton_loaders.dart';
 
@@ -36,6 +35,82 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
         });
       }
     });
+  }
+
+  Future<void> _deleteDescription(BuildContext context,
+      Shift shift, {
+        bool skipDialog = false,
+      }) async {
+    final l = AppLocalizations.of(context)!;
+    final shiftProvider = context.read<ShiftProvider>();
+    final oldDesc = shift.description;
+    final dateStr = AppConstants.formatDate(shift.date);
+
+    if (!skipDialog) {
+      final confirm = await UIUtils.showConfirmDialog(
+        context: context,
+        title: l.shift_descriptions_delete_title,
+        content: '${l.shift_descriptions_delete_content} $dateStr?',
+        isDestructive: true,
+        confirmLabel: l.common_delete,
+      );
+      if (!context.mounted) return;
+      if (confirm != true) return;
+    }
+
+    shift.description = null;
+    shiftProvider.updateShift(shift);
+    UIUtils.showSnackBar(
+      context,
+      l.shift_descriptions_deleted_msg,
+      action: SnackBarAction(
+        label: l.common_cancel,
+        onPressed: () {
+          shift.description = oldDesc;
+          shiftProvider.updateShift(shift);
+        },
+      ),
+    );
+  }
+
+  void _editDescription(BuildContext context, Shift shift) {
+    final l = AppLocalizations.of(context)!;
+    final controller = TextEditingController(text: shift.description ?? '');
+
+    showDialog(
+      context: context,
+      builder: (ctx) =>
+          AlertDialog(
+            title: Text(l.shift_descriptions_edit_title),
+            content: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                labelText: l.shift_description_label,
+                hintText: l.shift_description_hint,
+              ),
+              maxLines: 3,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(l.common_cancel),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final newDesc = controller.text.trim();
+                  shift.description = newDesc.isEmpty ? null : newDesc;
+                  context.read<ShiftProvider>().updateShift(shift);
+                  Navigator.pop(ctx);
+                  UIUtils.showSnackBar(
+                    context,
+                    l.shift_descriptions_updated_msg,
+                  );
+                },
+                child: Text(l.common_save),
+              ),
+            ],
+          ),
+    );
   }
 
   @override
@@ -214,23 +289,23 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                                       final jobName =
                                           job?.name ?? l.common_unknown_job;
                                       final timeStr =
-                                          '${DateFormat('HH:mm').format(shift.startTime)} - ${DateFormat('HH:mm').format(shift.endTime)}';
+                                          '${AppConstants.formatTime(
+                                          shift.startTime)} - ${AppConstants
+                                          .formatTime(shift.endTime)}';
+                                      final screenWidth = MediaQuery
+                                          .of(context)
+                                          .size
+                                          .width;
+                                      final isWide = screenWidth >=
+                                          AppConstants.wideScreenWidth;
 
-                                      return Card(
+                                      final cardWidget = Card(
                                         margin: const EdgeInsets.only(
                                           bottom: 8,
                                         ),
                                         child: ListTile(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              AppPageRoute.sharedAxis(
-                                                AddShiftScreen(
-                                                  shiftToEdit: shift,
-                                                ),
-                                              ),
-                                            );
-                                          },
+                                          onTap: () =>
+                                              _editDescription(context, shift),
                                           leading: Container(
                                             width: 40,
                                             height: 40,
@@ -286,11 +361,86 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                                               ),
                                             ),
                                           ),
-                                          trailing: const Icon(
-                                            Icons.chevron_right_rounded,
-                                            size: 20,
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              if (isWide) ...[
+                                                IconButton(
+                                                  icon: const Icon(
+                                                      Icons.edit_outlined,
+                                                      size: 20),
+                                                  tooltip: l.common_edit,
+                                                  onPressed: () =>
+                                                      _editDescription(
+                                                          context, shift),
+                                                ),
+                                                IconButton(
+                                                  icon: const Icon(
+                                                    Icons
+                                                        .delete_outline_rounded,
+                                                    size: 20,
+                                                    color: AppTheme.softCoral,
+                                                  ),
+                                                  tooltip: l.common_delete,
+                                                  onPressed: () =>
+                                                      _deleteDescription(
+                                                          context, shift),
+                                                ),
+                                              ] else
+                                                ...[
+                                                  const Icon(
+                                                    Icons.chevron_right_rounded,
+                                                    size: 20,
+                                                  ),
+                                                ],
+                                            ],
                                           ),
                                         ),
+                                      );
+
+                                      if (isWide) {
+                                        return cardWidget;
+                                      }
+
+                                      return Dismissible(
+                                        key: Key(shift.id),
+                                        direction: DismissDirection.startToEnd,
+                                        background: Container(
+                                          margin: const EdgeInsets.only(
+                                              bottom: 8),
+                                          decoration: BoxDecoration(
+                                            color: AppTheme.softCoral
+                                                .withValues(
+                                                alpha: isDark ? 0.25 : 0.15),
+                                            borderRadius: BorderRadius.circular(
+                                                AppTheme.radiusMd),
+                                          ),
+                                          alignment: Alignment.centerRight,
+                                          padding: const EdgeInsets.only(
+                                              right: AppTheme.spaceMd),
+                                          child: const Icon(
+                                            Icons.delete_sweep_rounded,
+                                            color: AppTheme.softCoral,
+                                          ),
+                                        ),
+                                        confirmDismiss: (direction) async {
+                                          final dateStr = AppConstants
+                                              .formatDate(shift.date);
+                                          return await UIUtils
+                                              .showConfirmDialog(
+                                            context: context,
+                                            title: l
+                                                .shift_descriptions_delete_title,
+                                            content: '${l
+                                                .shift_descriptions_delete_content} $dateStr?',
+                                            isDestructive: true,
+                                            confirmLabel: l.common_delete,
+                                          );
+                                        },
+                                        onDismissed: (_) =>
+                                            _deleteDescription(context, shift,
+                                                skipDialog: true),
+                                        child: cardWidget,
                                       );
                                     }),
                                     const SizedBox(height: 8),

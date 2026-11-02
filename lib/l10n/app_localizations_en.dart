@@ -1280,6 +1280,24 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enter notes or summary for this shift...';
 
   @override
+  String get shift_descriptions_delete_title => 'Delete Description';
+
+  @override
+  String get shift_descriptions_delete_content =>
+      'Are you sure you want to delete the description for this shift?';
+
+  @override
+  String get shift_descriptions_deleted_msg =>
+      'Description deleted successfully';
+
+  @override
+  String get shift_descriptions_edit_title => 'Edit Description';
+
+  @override
+  String get shift_descriptions_updated_msg =>
+      'Description updated successfully';
+
+  @override
   String get common_search_by_date => 'Search by date';
 
   @override

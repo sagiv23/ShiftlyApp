@@ -1051,7 +1051,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
   }
 }
 
-class _MonthItemSection extends StatelessWidget {
+class _MonthItemSection extends StatefulWidget {
   final String monthKey;
   final List<ExpenseRecord> items;
   final bool isIncome;
@@ -1065,48 +1065,86 @@ class _MonthItemSection extends StatelessWidget {
   });
 
   @override
+  State<_MonthItemSection> createState() => _MonthItemSectionState();
+}
+
+class _MonthItemSectionState extends State<_MonthItemSection> {
+  bool _isExpanded = true;
+
+  @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
     final symbol = settings.currencySymbol;
     final l = AppLocalizations.of(context)!;
-    final date = DateTime.parse("$monthKey-01");
+    final date = DateTime.parse("${widget.monthKey}-01");
     final monthName = DateFormat.MMMM(l.localeName).format(date);
-    final total = items.fold<double>(0, (sum, e) => sum + e.amount);
+    final total = widget.items.fold<double>(0, (sum, e) => sum + e.amount);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '$monthName ${date.year}',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryDark,
+        InkWell(
+          onTap: () => setState(() => _isExpanded = !_isExpanded),
+          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      _isExpanded
+                          ? Icons.expand_less_rounded
+                          : Icons.expand_more_rounded,
+                      size: 20,
+                      color: AppTheme.primaryDark,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '$monthName ${date.year}',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primaryDark,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Text(
-                '${l.expenses_total_label}: ${UIUtils.formatCurrency(total, symbol: symbol)}',
-                style: UIUtils.getCurrencyStyle(
-                  context,
-                  isIncome ? total : -total,
-                  baseStyle: const TextStyle(fontWeight: FontWeight.w600),
-                  positiveColor: AppTheme.profit,
+                Row(
+                  children: [
+                    Text(
+                      '${l.expenses_total_label}: ${UIUtils.formatCurrency(total, symbol: symbol)}',
+                      style: UIUtils.getCurrencyStyle(
+                        context,
+                        widget.isIncome ? total : -total,
+                        baseStyle: const TextStyle(fontWeight: FontWeight.w600),
+                        positiveColor: AppTheme.profit,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      _isExpanded
+                          ? Icons.keyboard_arrow_up_rounded
+                          : Icons.keyboard_arrow_down_rounded,
+                      size: 18,
+                      color: Colors.grey,
+                    ),
+                  ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-        ...items.asMap().entries.map(
-          (entry) => ExpenseTile(
-            record: entry.value,
-            isIncome: isIncome,
-            onTap: () => onEdit(entry.value),
-            symbol: symbol,
+        if (_isExpanded) ...[
+          ...widget.items.asMap().entries.map(
+            (entry) => ExpenseTile(
+              record: entry.value,
+              isIncome: widget.isIncome,
+              onTap: () => widget.onEdit(entry.value),
+              symbol: symbol,
+            ),
           ),
-        ),
+        ],
         const Divider(),
       ],
     );

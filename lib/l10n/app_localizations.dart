@@ -2480,6 +2480,36 @@ abstract class AppLocalizations {
   /// **'הכנס הערות או סיכום למשמרת זו...'**
   String get shift_description_hint;
 
+  /// No description provided for @shift_descriptions_delete_title.
+  ///
+  /// In he, this message translates to:
+  /// **'מחיקת תיאור'**
+  String get shift_descriptions_delete_title;
+
+  /// No description provided for @shift_descriptions_delete_content.
+  ///
+  /// In he, this message translates to:
+  /// **'האם למחוק את התיאור של משמרת זו?'**
+  String get shift_descriptions_delete_content;
+
+  /// No description provided for @shift_descriptions_deleted_msg.
+  ///
+  /// In he, this message translates to:
+  /// **'התיאור נמחק בהצלחה'**
+  String get shift_descriptions_deleted_msg;
+
+  /// No description provided for @shift_descriptions_edit_title.
+  ///
+  /// In he, this message translates to:
+  /// **'עריכת תיאור'**
+  String get shift_descriptions_edit_title;
+
+  /// No description provided for @shift_descriptions_updated_msg.
+  ///
+  /// In he, this message translates to:
+  /// **'התיאור עודכן בהצלחה'**
+  String get shift_descriptions_updated_msg;
+
   /// No description provided for @common_search_by_date.
   ///
   /// In he, this message translates to:

@@ -1267,6 +1267,22 @@ class AppLocalizationsHe extends AppLocalizations {
   String get shift_description_hint => 'הכנס הערות או סיכום למשמרת זו...';
 
   @override
+  String get shift_descriptions_delete_title => 'מחיקת תיאור';
+
+  @override
+  String get shift_descriptions_delete_content =>
+      'האם למחוק את התיאור של משמרת זו?';
+
+  @override
+  String get shift_descriptions_deleted_msg => 'התיאור נמחק בהצלחה';
+
+  @override
+  String get shift_descriptions_edit_title => 'עריכת תיאור';
+
+  @override
+  String get shift_descriptions_updated_msg => 'התיאור עודכן בהצלחה';
+
+  @override
   String get common_search_by_date => 'חיפוש לפי תאריך';
 
   @override
