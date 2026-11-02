@@ -10,13 +10,16 @@ import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
-import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
+import 'package:shiftly/widgets/analytics/analytics_earnings_section.dart';
+import 'package:shiftly/widgets/analytics/analytics_hero.dart';
+import 'package:shiftly/widgets/analytics/analytics_nav.dart';
+import 'package:shiftly/widgets/analytics/analytics_overview_section.dart';
+import 'package:shiftly/widgets/analytics/analytics_pay_breakdown_section.dart';
+import 'package:shiftly/widgets/analytics/analytics_smart_insights.dart';
+import 'package:shiftly/widgets/analytics/analytics_work_patterns_section.dart';
 import 'package:shiftly/widgets/analytics_charts.dart';
-import 'package:shiftly/widgets/kpi_card.dart';
 import 'package:shiftly/widgets/skeleton_loaders.dart';
-
-enum AnalyticsPeriodMode { monthly, yearly, allTime }
 
 class AnalyticsScreen extends StatefulWidget {
   const AnalyticsScreen({super.key});
@@ -31,6 +34,20 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   String? _selectedJobId; // null = all jobs
   int? _selectedBarIndex;
   bool _byEarningsForJobs = true;
+  int _activeSectionIndex =
+      0; // 0: Overview, 1: Earnings, 2: Work Patterns, 3: Pay Breakdown
+
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _overviewKey = GlobalKey();
+  final GlobalKey _earningsKey = GlobalKey();
+  final GlobalKey _workPatternsKey = GlobalKey();
+  final GlobalKey _payBreakdownKey = GlobalKey();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   void _changePeriod(AnalyticsPeriodMode newMode) {
     if (_periodMode != newMode) {
@@ -69,6 +86,36 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         _selectedDate = DateTime(_selectedDate.year + 1, 1, 1);
       }
     });
+  }
+
+  void _scrollToSection(int index) {
+    setState(() {
+      _activeSectionIndex = index;
+    });
+
+    GlobalKey? targetKey;
+    switch (index) {
+      case 0:
+        targetKey = _overviewKey;
+        break;
+      case 1:
+        targetKey = _earningsKey;
+        break;
+      case 2:
+        targetKey = _workPatternsKey;
+        break;
+      case 3:
+        targetKey = _payBreakdownKey;
+        break;
+    }
+
+    if (targetKey?.currentContext != null) {
+      Scrollable.ensureVisible(
+        targetKey!.currentContext!,
+        duration: const Duration(milliseconds: 380),
+        curve: Curves.easeInOutCubic,
+      );
+    }
   }
 
   List<Shift> _filterShifts(List<Shift> allShifts) {
@@ -110,8 +157,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     double totalExpenses = 0;
     double totalIncomes = 0;
     double totalRegularHours = 0;
+    double totalRegularEarnings = 0;
+    double totalTier1Hours = 0;
+    double totalTier1Earnings = 0;
+    double totalTier2Hours = 0;
+    double totalTier2Earnings = 0;
     double totalOvertimeHours = 0;
-    double totalOvertimeEarnings = 0;
     double totalShabbatHours = 0;
     double totalShabbatEarnings = 0;
     double totalHolidayHours = 0;
@@ -139,8 +190,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         shabbatRules: settings.shabbatHolidayRules,
       );
       totalRegularHours += breakdown.regularHours;
+      totalRegularEarnings += breakdown.regularEarnings;
+      totalTier1Hours += breakdown.tier1Hours;
+      totalTier1Earnings += breakdown.tier1Earnings;
+      totalTier2Hours += breakdown.tier2Hours;
+      totalTier2Earnings += breakdown.tier2Earnings;
       totalOvertimeHours += breakdown.totalOvertimeHours;
-      totalOvertimeEarnings += breakdown.totalOvertimeEarnings;
       totalShabbatHours += breakdown.shabbatHours;
       totalShabbatEarnings += breakdown.shabbatEarnings;
       totalHolidayHours += breakdown.holidayHours;
@@ -159,6 +214,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final retentionPct = totalGross > 0
         ? ((grandTotalNet / totalGross) * 100)
         : 100.0;
+
     // Monthly Projection
     double projectedEom = grandTotalNet;
     if (_periodMode == AnalyticsPeriodMode.monthly) {
@@ -181,14 +237,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       settings,
       l,
     );
-
-    // Selected Bar Details
-    BarDataPoint? selectedPoint;
-    if (_selectedBarIndex != null &&
-        _selectedBarIndex! >= 0 &&
-        _selectedBarIndex! < barDataPoints.length) {
-      selectedPoint = barDataPoints[_selectedBarIndex!];
-    }
 
     // Prepare Cumulative Growth Data
     final cumulativeData = _generateCumulativeData(barDataPoints);
@@ -217,85 +265,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       l,
     );
 
-    // Chart Widgets
-    final earningsBarCard = _buildEarningsChartCard(
-      context,
-      l: l,
-      symbol: symbol,
-      dataPoints: barDataPoints,
-      selectedPoint: selectedPoint,
-    );
-
-    final cumulativeLineCard = _buildCumulativeGrowthCard(
-      context,
-      l: l,
-      symbol: symbol,
-      cumulativeData: cumulativeData,
-    );
-
-    final todCard = todSegments.isNotEmpty
-        ? _buildTimeOfDayCard(
-            context,
-            l: l,
-            symbol: symbol,
-            segments: todSegments,
-          )
-        : null;
-
-    final durationCard = durationCategories.isNotEmpty
-        ? _buildDurationCard(
-            context,
-            l: l,
-            symbol: symbol,
-            categories: durationCategories,
-          )
-        : null;
-
-    final jobDonutCard = (jobTypes.length > 1 || donutSegments.isNotEmpty)
-        ? _buildJobDistributionCard(
-            context,
-            l: l,
-            symbol: symbol,
-            segments: donutSegments,
-            totalNet: grandTotalNet,
-            totalHours: totalNetHours,
-          )
-        : null;
-
-    final smartInsightsCard = _buildSmartInsightsCard(
-      context,
-      l: l,
-      symbol: symbol,
-      retentionPct: retentionPct,
-      rateBoost: rateBoost,
-      totalTips: totalTips,
-      totalNet: grandTotalNet,
-      durationCategories: durationCategories,
-      todSegments: todSegments,
-    );
-
-    final overtimeSummaryCard = _buildOvertimeSummaryCard(
-      context,
-      l: l,
-      symbol: symbol,
-      regularHours: totalRegularHours,
-      overtimeHours: totalOvertimeHours,
-      overtimeEarnings: totalOvertimeEarnings,
-    );
-
-    final shabbatHolidaySummaryCard =
-        (totalShabbatHours > 0 || totalHolidayHours > 0)
-        ? _buildShabbatHolidaySummaryCard(
-            context,
-            l: l,
-            symbol: symbol,
-            shabbatHours: totalShabbatHours,
-            shabbatEarnings: totalShabbatEarnings,
-            holidayHours: totalHolidayHours,
-            holidayEarnings: totalHolidayEarnings,
-          )
-        : null;
-
     return AdaptiveScaffold(
       currentIndex: 1,
       title: l.analytics_title,
@@ -304,6 +273,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         child: shiftProvider.isLoading && shiftProvider.shifts.isEmpty
             ? const AnalyticsScreenSkeleton()
             : SingleChildScrollView(
+                controller: _scrollController,
                 padding: const EdgeInsets.fromLTRB(
                   AppTheme.spaceSm,
                   AppTheme.spaceXs,
@@ -313,1160 +283,178 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 1. Controls Header (Period Mode, Pager, Job Filter)
+                    // 1. Signature Hero Section
                     PageEntranceAnimation(
                       delayFraction: 0.0,
-                      child: _buildFilterHeader(context, l, jobTypes),
+                      child: AnalyticsHero(
+                        periodMode: _periodMode,
+                        selectedDate: _selectedDate,
+                        selectedJobId: _selectedJobId,
+                        jobTypes: jobTypes,
+                        totalNet: grandTotalNet,
+                        totalBaseSalary: totalBaseSalary,
+                        totalTips: totalTips,
+                        totalIncomes: totalIncomes,
+                        totalExpenses: totalExpenses,
+                        totalHours: totalNetHours,
+                        avgRate: avgEffectiveRate,
+                        shiftCount: shiftCount,
+                        projectedEom: projectedEom,
+                        retentionPct: retentionPct,
+                        rateBoost: rateBoost,
+                        symbol: symbol,
+                        onPeriodChanged: _changePeriod,
+                        onPreviousPeriod: _previousPeriod,
+                        onNextPeriod: _nextPeriod,
+                        onJobChanged: (val) {
+                          setState(() {
+                            _selectedJobId = val;
+                            _selectedBarIndex = null;
+                          });
+                        },
+                      ),
                     ),
                     const SizedBox(height: AppTheme.spaceSm),
 
-                    // Animated Transition for Analytics Content
+                    // 2. Quick Navigation Section Bar ("Explore Your Data")
                     PageEntranceAnimation(
-                      delayFraction: 0.2,
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 320),
-                        switchInCurve: Curves.easeOutCubic,
-                        switchOutCurve: Curves.easeInCubic,
-                        child: Column(
-                          key: ValueKey(
-                            '$_periodMode-$_selectedJobId-${_selectedDate.year}-${_selectedDate.month}',
+                      delayFraction: 0.1,
+                      child: AnalyticsNav(
+                        selectedIndex: _activeSectionIndex,
+                        onSectionSelected: _scrollToSection,
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spaceSm),
+
+                    // 3. Smart Insights Card
+                    if (shiftCount > 0) ...[
+                      PageEntranceAnimation(
+                        delayFraction: 0.15,
+                        child: AnalyticsSmartInsights(
+                          l: l,
+                          symbol: symbol,
+                          retentionPct: retentionPct,
+                          rateBoost: rateBoost,
+                          totalTips: totalTips,
+                          totalNet: grandTotalNet,
+                          durationCategories: durationCategories,
+                          todSegments: todSegments,
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spaceMd),
+                    ],
+
+                    // Main Analytics Sections
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // SECTION C: OVERVIEW
+                        Container(key: _overviewKey),
+                        _SectionHeading(
+                          title: l.analytics_section_overview,
+                          icon: Icons.grid_view_rounded,
+                        ),
+                        const SizedBox(height: AppTheme.spaceXs),
+                        AnalyticsOverviewSection(
+                          l: l,
+                          symbol: symbol,
+                          totalNet: grandTotalNet,
+                          totalBaseSalary: totalBaseSalary,
+                          totalTips: totalTips,
+                          totalIncomes: totalIncomes,
+                          totalExpenses: totalExpenses,
+                          totalHours: totalNetHours,
+                          avgRate: avgEffectiveRate,
+                          shiftCount: shiftCount,
+                          projectedEom: projectedEom,
+                          retentionPct: retentionPct,
+                          rateBoost: rateBoost,
+                          isMonthly: _periodMode == AnalyticsPeriodMode.monthly,
+                        ),
+                        const SizedBox(height: AppTheme.spaceLg),
+
+                        // SECTION D: EARNINGS
+                        Container(key: _earningsKey),
+                        _SectionHeading(
+                          title: l.analytics_section_earnings,
+                          icon: Icons.payments_rounded,
+                        ),
+                        const SizedBox(height: AppTheme.spaceXs),
+                        AnalyticsEarningsSection(
+                          l: l,
+                          symbol: symbol,
+                          dataPoints: barDataPoints,
+                          selectedBarIndex: _selectedBarIndex,
+                          onBarSelected: (idx) {
+                            setState(() => _selectedBarIndex = idx);
+                          },
+                          cumulativeData: cumulativeData,
+                          isWideScreen: isWideScreen,
+                          isMonthMode:
+                              _periodMode != AnalyticsPeriodMode.monthly,
+                        ),
+                        const SizedBox(height: AppTheme.spaceLg),
+
+                        // SECTION E: WORK PATTERNS
+                        if (todSegments.isNotEmpty ||
+                            durationCategories.isNotEmpty ||
+                            donutSegments.isNotEmpty) ...[
+                          Container(key: _workPatternsKey),
+                          _SectionHeading(
+                            title: l.analytics_section_work_patterns,
+                            icon: Icons.schedule_rounded,
                           ),
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // 2. Summary KPI Cards
-                            _buildKpiGrid(
-                              context,
-                              l: l,
-                              symbol: symbol,
-                              totalNet: grandTotalNet,
-                              totalBaseSalary: totalBaseSalary,
-                              totalTips: totalTips,
-                              totalIncomes: totalIncomes,
-                              totalExpenses: totalExpenses,
-                              totalHours: totalNetHours,
-                              avgRate: avgEffectiveRate,
-                              shiftCount: shiftCount,
-                              projectedEom: projectedEom,
-                              retentionPct: retentionPct,
-                              rateBoost: rateBoost,
-                            ),
-                            const SizedBox(height: AppTheme.spaceMd),
-
-                            // 3. Smart Insights Card
-                            if (shiftCount > 0) ...[
-                              smartInsightsCard,
-                              const SizedBox(height: AppTheme.spaceMd),
-                            ],
-
-                            // 4. Overtime Summary Card
-                            if (shiftCount > 0 && totalOvertimeHours > 0) ...[
-                              overtimeSummaryCard,
-                              const SizedBox(height: AppTheme.spaceMd),
-                            ],
-
-                            // 5. Shabbat & Holidays Summary Card
-                            if (shabbatHolidaySummaryCard != null) ...[
-                              shabbatHolidaySummaryCard,
-                              const SizedBox(height: AppTheme.spaceMd),
-                            ],
-
-                            // Responsive Chart Layout
-                            isWideScreen
-                                ? Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(child: earningsBarCard),
-                                          const SizedBox(
-                                            width: AppTheme.spaceSm,
-                                          ),
-                                          Expanded(child: cumulativeLineCard),
-                                        ],
-                                      ),
-                                      const SizedBox(height: AppTheme.spaceSm),
-                                      if (todCard != null ||
-                                          durationCard != null) ...[
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            if (todCard != null)
-                                              Expanded(child: todCard)
-                                            else
-                                              const Spacer(),
-                                            const SizedBox(
-                                              width: AppTheme.spaceSm,
-                                            ),
-                                            if (durationCard != null)
-                                              Expanded(child: durationCard)
-                                            else
-                                              const Spacer(),
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: AppTheme.spaceSm,
-                                        ),
-                                      ],
-                                      if (jobDonutCard != null) ...[
-                                        jobDonutCard,
-                                        const SizedBox(
-                                          height: AppTheme.spaceSm,
-                                        ),
-                                      ],
-                                    ],
-                                  )
-                                : Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      earningsBarCard,
-                                      const SizedBox(height: AppTheme.spaceSm),
-                                      cumulativeLineCard,
-                                      const SizedBox(height: AppTheme.spaceSm),
-                                      if (todCard != null) ...[
-                                        todCard,
-                                        const SizedBox(
-                                          height: AppTheme.spaceSm,
-                                        ),
-                                      ],
-                                      if (durationCard != null) ...[
-                                        durationCard,
-                                        const SizedBox(
-                                          height: AppTheme.spaceSm,
-                                        ),
-                                      ],
-                                      if (jobDonutCard != null) ...[
-                                        jobDonutCard,
-                                        const SizedBox(
-                                          height: AppTheme.spaceSm,
-                                        ),
-                                      ],
-                                    ],
-                                  ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-      ),
-    );
-  }
-
-  Widget _buildFilterHeader(
-    BuildContext context,
-    AppLocalizations l,
-    List<JobType> jobTypes,
-  ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    String dateTitle = '';
-    if (_periodMode == AnalyticsPeriodMode.monthly) {
-      dateTitle = DateFormat.yMMMM(l.localeName).format(_selectedDate);
-    } else if (_periodMode == AnalyticsPeriodMode.yearly) {
-      dateTitle = '${_selectedDate.year}';
-    } else {
-      dateTitle = l.analytics_period_all_time;
-    }
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spaceSm),
-        child: Column(
-          children: [
-            // Period Segmented Control
-            SizedBox(
-              width: double.infinity,
-              child: SegmentedButton<AnalyticsPeriodMode>(
-                segments: [
-                  ButtonSegment(
-                    value: AnalyticsPeriodMode.monthly,
-                    label: Text(l.analytics_period_monthly),
-                    icon: const Icon(
-                      Icons.calendar_view_month_rounded,
-                      size: 18,
-                    ),
-                  ),
-                  ButtonSegment(
-                    value: AnalyticsPeriodMode.yearly,
-                    label: Text(l.analytics_period_yearly),
-                    icon: const Icon(Icons.calendar_today_rounded, size: 18),
-                  ),
-                  ButtonSegment(
-                    value: AnalyticsPeriodMode.allTime,
-                    label: Text(l.analytics_period_all_time),
-                    icon: const Icon(Icons.all_inclusive_rounded, size: 18),
-                  ),
-                ],
-                selected: {_periodMode},
-                onSelectionChanged: (val) => _changePeriod(val.first),
-              ),
-            ),
-            const SizedBox(height: AppTheme.spaceSm),
-
-            // Date Pager & Job Selector Row
-            Row(
-              children: [
-                if (_periodMode != AnalyticsPeriodMode.allTime) ...[
-                  IconButton(
-                    icon: const Icon(Icons.chevron_left_rounded),
-                    onPressed: _previousPeriod,
-                    tooltip: l.common_previous,
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        dateTitle,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.primaryDark,
-                            ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.chevron_right_rounded),
-                    onPressed: _nextPeriod,
-                    tooltip: l.common_next,
-                  ),
-                ] else
-                  Expanded(
-                    child: Text(
-                      l.analytics_period_all_time,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryDark,
-                      ),
-                    ),
-                  ),
-
-                if (jobTypes.isNotEmpty) ...[
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withValues(
-                        alpha: isDark ? 0.2 : 0.08,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primary.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: DropdownButton<String?>(
-                      value: _selectedJobId,
-                      underline: const SizedBox(),
-                      icon: const Icon(Icons.work_outline_rounded, size: 18),
-                      hint: Text(
-                        l.analytics_all_jobs,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      items: [
-                        DropdownMenuItem<String?>(
-                          value: null,
-                          child: Text(
-                            l.analytics_all_jobs,
-                            style: const TextStyle(fontSize: 13),
+                          const SizedBox(height: AppTheme.spaceXs),
+                          AnalyticsWorkPatternsSection(
+                            l: l,
+                            symbol: symbol,
+                            todSegments: todSegments,
+                            durationCategories: durationCategories,
+                            donutSegments: donutSegments,
+                            jobTypes: jobTypes,
+                            grandTotalNet: grandTotalNet,
+                            totalNetHours: totalNetHours,
+                            byEarningsForJobs: _byEarningsForJobs,
+                            onToggleByEarnings: (val) {
+                              setState(() => _byEarningsForJobs = val);
+                            },
+                            isWideScreen: isWideScreen,
                           ),
-                        ),
-                        ...jobTypes.map(
-                          (job) => DropdownMenuItem<String?>(
-                            value: job.id,
-                            child: Text(
-                              job.name,
-                              style: const TextStyle(fontSize: 13),
-                            ),
+                          const SizedBox(height: AppTheme.spaceLg),
+                        ],
+
+                        // SECTION F: PAY BREAKDOWN
+                        if (totalRegularHours > 0 ||
+                            totalOvertimeHours > 0 ||
+                            totalShabbatHours > 0 ||
+                            totalHolidayHours > 0) ...[
+                          Container(key: _payBreakdownKey),
+                          _SectionHeading(
+                            title: l.analytics_section_pay_breakdown,
+                            icon: Icons.receipt_long_rounded,
                           ),
-                        ),
+                          const SizedBox(height: AppTheme.spaceXs),
+                          AnalyticsPayBreakdownSection(
+                            l: l,
+                            symbol: symbol,
+                            totalRegularHours: totalRegularHours,
+                            totalRegularEarnings: totalRegularEarnings,
+                            totalTier1Hours: totalTier1Hours,
+                            totalTier1Earnings: totalTier1Earnings,
+                            totalTier2Hours: totalTier2Hours,
+                            totalTier2Earnings: totalTier2Earnings,
+                            totalShabbatHours: totalShabbatHours,
+                            totalShabbatEarnings: totalShabbatEarnings,
+                            totalHolidayHours: totalHolidayHours,
+                            totalHolidayEarnings: totalHolidayEarnings,
+                          ),
+                          const SizedBox(height: AppTheme.spaceLg),
+                        ],
                       ],
-                      onChanged: (val) {
-                        setState(() {
-                          _selectedJobId = val;
-                          _selectedBarIndex = null;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildKpiGrid(
-    BuildContext context, {
-    required AppLocalizations l,
-    required String symbol,
-    required double totalNet,
-    required double totalBaseSalary,
-    required double totalTips,
-    required double totalIncomes,
-    required double totalExpenses,
-    required double totalHours,
-    required double avgRate,
-    required int shiftCount,
-    required double projectedEom,
-    required double retentionPct,
-    required double rateBoost,
-  }) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final crossAxisCount = constraints.maxWidth > 700 ? 4 : 2;
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-
-        return GridView.count(
-          crossAxisCount: crossAxisCount,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: AppTheme.spaceSm,
-          crossAxisSpacing: AppTheme.spaceSm,
-          // Give the two-column mobile layout enough vertical room for
-          // localized titles and subtitles to wrap instead of being clipped.
-          childAspectRatio: constraints.maxWidth > 700 ? 1.5 : 1.15,
-          children: [
-            KpiCard(
-              title: l.analytics_stat_total_net,
-              value: UIUtils.formatCurrency(totalNet, symbol: symbol),
-              numericValue: totalNet,
-              formatter: (v) => UIUtils.formatCurrency(v, symbol: symbol),
-              isCurrency: true,
-              subtitle: _periodMode == AnalyticsPeriodMode.monthly
-                  ? '${l.analytics_kpi_projected}: ${UIUtils.formatCurrency(projectedEom, symbol: symbol)}'
-                  : '$shiftCount ${l.common_shifts_count}',
-              icon: Icons.account_balance_wallet_rounded,
-              gradientColors: const [Color(0xFF6366F1), Color(0xFF4F46E5)],
-              isDark: isDark,
-            ),
-            KpiCard(
-              title: l.analytics_base_salary,
-              value: UIUtils.formatCurrency(totalBaseSalary, symbol: symbol),
-              numericValue: totalBaseSalary,
-              formatter: (v) => UIUtils.formatCurrency(v, symbol: symbol),
-              isCurrency: true,
-              subtitle: l.home_total_card_base,
-              icon: Icons.work_rounded,
-              gradientColors: const [Color(0xFF0EA5E9), Color(0xFF0284C7)],
-              isDark: isDark,
-            ),
-            if (totalTips > 0)
-              KpiCard(
-                title: l.home_total_card_tips,
-                value: UIUtils.formatCurrency(totalTips, symbol: symbol),
-                numericValue: totalTips,
-                formatter: (v) => UIUtils.formatCurrency(v, symbol: symbol),
-                isCurrency: true,
-                subtitle: l.home_total_card_tips,
-                icon: Icons.local_activity_rounded,
-                gradientColors: const [Color(0xFF10B981), Color(0xFF059669)],
-                isDark: isDark,
-              ),
-            if (totalIncomes > 0)
-              KpiCard(
-                title: l.expenses_tab_incomes,
-                value: UIUtils.formatCurrency(totalIncomes, symbol: symbol),
-                numericValue: totalIncomes,
-                formatter: (v) => UIUtils.formatCurrency(v, symbol: symbol),
-                isCurrency: true,
-                subtitle: l.expenses_tab_incomes,
-                icon: Icons.arrow_downward_rounded,
-                gradientColors: const [Color(0xFF6EE7B7), Color(0xFF34D399)],
-                isDark: isDark,
-              ),
-            if (totalExpenses > 0)
-              KpiCard(
-                title: l.home_total_card_expenses,
-                value: UIUtils.formatCurrency(totalExpenses, symbol: symbol),
-                numericValue: totalExpenses,
-                formatter: (v) => UIUtils.formatCurrency(v, symbol: symbol),
-                isCurrency: true,
-                isExpense: true,
-                subtitle: l.home_total_card_expenses,
-                icon: Icons.arrow_upward_rounded,
-                gradientColors: const [Color(0xFFEF4444), Color(0xFFDC2626)],
-                isDark: isDark,
-              ),
-            KpiCard(
-              title: l.common_shifts_count,
-              value: '$shiftCount',
-              numericValue: shiftCount.toDouble(),
-              formatter: (v) => '${v.round()}',
-              subtitle: l.common_shifts_count,
-              icon: Icons.work_history_rounded,
-              gradientColors: const [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-              isDark: isDark,
-            ),
-            KpiCard(
-              title: l.analytics_stat_total_hours,
-              value: l.analytics_hours_suffix_format(
-                totalHours.toStringAsFixed(1),
-              ),
-              numericValue: totalHours,
-              formatter: (v) =>
-                  l.analytics_hours_suffix_format(v.toStringAsFixed(1)),
-              subtitle: '$shiftCount ${l.common_shifts_count}',
-              icon: Icons.schedule_rounded,
-              gradientColors: const [Color(0xFFF59E0B), Color(0xFFD97706)],
-              isDark: isDark,
-            ),
-            KpiCard(
-              title: l.analytics_kpi_retention,
-              value: '${retentionPct.toStringAsFixed(1)}%',
-              numericValue: retentionPct,
-              formatter: (v) => '${v.toStringAsFixed(1)}%',
-              subtitle: l.analytics_retention_subtitle,
-              icon: Icons.savings_rounded,
-              gradientColors: const [Color(0xFF6366F1), Color(0xFF4F46E5)],
-              isDark: isDark,
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildSmartInsightsCard(
-    BuildContext context, {
-    required AppLocalizations l,
-    required String symbol,
-    required double retentionPct,
-    required double rateBoost,
-    required double totalTips,
-    required double totalNet,
-    required List<ShiftDurationCategory> durationCategories,
-    required List<TimeOfDaySegment> todSegments,
-  }) {
-    final insights = <String>[];
-
-    // Insight 1: Off-peak / Evening & Night hours ratio
-    double totalTodHours = 0;
-    for (var s in todSegments) {
-      totalTodHours += s.hours;
-    }
-    if (totalTodHours > 0) {
-      final offPeakHours = todSegments
-          .where(
-            (s) =>
-                s.timeRange == '04:00-06:00' ||
-                s.timeRange == '18:00-22:00' ||
-                s.timeRange == '22:00-06:00',
-          )
-          .fold<double>(0, (sum, s) => sum + s.hours);
-      final offPeakPct = (offPeakHours / totalTodHours * 100).round();
-      if (offPeakPct > 20) {
-        insights.add(
-          l.analytics_insight_night_boost.replaceFirst(
-            '[[percent]]',
-            '$offPeakPct',
-          ),
-        );
-      }
-    }
-
-    // Insight 2: Retention
-    if (retentionPct < 100 && retentionPct > 0) {
-      insights.add(
-        l.analytics_insight_retention.replaceFirst(
-          '[[percent]]',
-          retentionPct.toStringAsFixed(1),
-        ),
-      );
-    }
-
-    // Insight 3: Long shift fatigue
-    final longCategory = durationCategories.firstWhere(
-      (c) => c.icon == Icons.warning_amber_rounded,
-      orElse: () => const ShiftDurationCategory(
-        label: '',
-        durationRange: '',
-        count: 0,
-        hours: 0,
-        avgEarnings: 0,
-        color: Colors.transparent,
-        icon: Icons.timer,
-      ),
-    );
-    int totalCount = 0;
-    for (var c in durationCategories) {
-      totalCount += c.count;
-    }
-    if (totalCount > 0 && longCategory.count > 0) {
-      final longPct = (longCategory.count / totalCount * 100).round();
-      if (longPct >= 15) {
-        insights.add(
-          l.analytics_insight_fatigue.replaceFirst('[[percent]]', '$longPct'),
-        );
-      }
-    }
-
-    // Insight 4: Tips ratio
-    if (totalNet > 0 && totalTips > 0) {
-      final tipsPct = ((totalTips / totalNet) * 100).round();
-      if (tipsPct > 5) {
-        insights.add(
-          l.analytics_insight_tips_ratio.replaceFirst(
-            '[[percent]]',
-            '$tipsPct',
-          ),
-        );
-      }
-    }
-
-    if (insights.isEmpty) return const SizedBox.shrink();
-
-    return Card(
-      color: AppTheme.primary.withValues(alpha: 0.06),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spaceSm),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(
-                  Icons.auto_awesome_rounded,
-                  color: Colors.amber,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  l.analytics_insights_title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: AppTheme.primaryDark,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            ...insights.map((text) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 3),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '• ',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        text,
-                        style: const TextStyle(fontSize: 13, height: 1.3),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTimeOfDayCard(
-    BuildContext context, {
-    required AppLocalizations l,
-    required String symbol,
-    required List<TimeOfDaySegment> segments,
-  }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spaceSm),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l.analytics_chart_tod_title,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            Text(
-              l.analytics_chart_tod_subtitle,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: AppTheme.spaceSm),
-
-            TimeOfDayChartWidget(segments: segments, currencySymbol: symbol),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDurationCard(
-    BuildContext context, {
-    required AppLocalizations l,
-    required String symbol,
-    required List<ShiftDurationCategory> categories,
-  }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spaceSm),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l.analytics_chart_duration_title,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            Text(
-              l.analytics_chart_duration_subtitle,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: AppTheme.spaceSm),
-
-            ShiftDurationDistributionWidget(
-              categories: categories,
-              currencySymbol: symbol,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEarningsChartCard(
-    BuildContext context, {
-    required AppLocalizations l,
-    required String symbol,
-    required List<BarDataPoint> dataPoints,
-    required BarDataPoint? selectedPoint,
-  }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spaceSm),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l.analytics_chart_earnings_title,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        l.analytics_chart_earnings_subtitle,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                ),
-                // Legend
-                Row(
-                  children: [
-                    _LegendDot(
-                      color: AppTheme.primary,
-                      label: l.analytics_base_salary,
-                    ),
-                    const SizedBox(width: 8),
-                    _LegendDot(
-                      color: AppTheme.profit,
-                      label: l.analytics_tips_and_extra,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spaceSm),
-
-            EarningsBarChartWidget(
-              data: dataPoints,
-              selectedIndex: _selectedBarIndex,
-              onSelected: (idx) {
-                setState(() => _selectedBarIndex = idx);
-              },
-              currencySymbol: symbol,
-              height: 200,
-            ),
-
-            if (selectedPoint != null) ...[
-              const Divider(height: AppTheme.spaceMd),
-              _SelectedPointDetailsCard(
-                point: selectedPoint,
-                symbol: symbol,
-                l: l,
-                isMonthMode: _periodMode != AnalyticsPeriodMode.monthly,
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOvertimeSummaryCard(
-    BuildContext context, {
-    required AppLocalizations l,
-    required String symbol,
-    required double regularHours,
-    required double overtimeHours,
-    required double overtimeEarnings,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final totalHours = regularHours + overtimeHours;
-    final otPct = totalHours > 0 ? (overtimeHours / totalHours) * 100 : 0.0;
-
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spaceMd),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        border: Border.all(
-          color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.more_time_rounded, color: AppTheme.primaryDark),
-              const SizedBox(width: 8),
-              Text(
-                l.analytics_overtime_section_title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppTheme.spaceSm),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l.analytics_regular_hours,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${regularHours.toStringAsFixed(1)} ${l.common_hours_suffix}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        fontFeatures: [FontFeature.tabularFigures()],
-                      ),
                     ),
                   ],
                 ),
               ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l.analytics_overtime_hours,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${overtimeHours.toStringAsFixed(1)} ${l.common_hours_suffix} (${otPct.toStringAsFixed(0)}%)',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryDark,
-                        fontFeatures: [FontFeature.tabularFigures()],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l.analytics_overtime_earnings,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      UIUtils.formatCurrency(overtimeEarnings, symbol: symbol),
-                      style: UIUtils.getCurrencyStyle(
-                        context,
-                        overtimeEarnings,
-                        baseStyle: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          fontFeatures: [FontFeature.tabularFigures()],
-                        ),
-                        positiveColor: AppTheme.profit,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildShabbatHolidaySummaryCard(
-    BuildContext context, {
-    required AppLocalizations l,
-    required String symbol,
-    required double shabbatHours,
-    required double shabbatEarnings,
-    required double holidayHours,
-    required double holidayEarnings,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spaceMd),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        border: Border.all(
-          color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.star_rounded, color: Colors.amber),
-              const SizedBox(width: 8),
-              Text(
-                l.analytics_shabbat_holiday_summary,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppTheme.spaceSm),
-          Row(
-            children: [
-              if (shabbatHours > 0)
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l.analytics_shabbat_hours,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.6),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${shabbatHours.toStringAsFixed(1)} ${l.common_hours_suffix}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          fontFeatures: [FontFeature.tabularFigures()],
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        UIUtils.formatCurrency(shabbatEarnings, symbol: symbol),
-                        style: UIUtils.getCurrencyStyle(
-                          context,
-                          shabbatEarnings,
-                          baseStyle: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            fontFeatures: [FontFeature.tabularFigures()],
-                          ),
-                          positiveColor: AppTheme.profit,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              if (holidayHours > 0)
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l.analytics_holiday_hours,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.6),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${holidayHours.toStringAsFixed(1)} ${l.common_hours_suffix}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          fontFeatures: [FontFeature.tabularFigures()],
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        UIUtils.formatCurrency(holidayEarnings, symbol: symbol),
-                        style: UIUtils.getCurrencyStyle(
-                          context,
-                          holidayEarnings,
-                          baseStyle: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            fontFeatures: [FontFeature.tabularFigures()],
-                          ),
-                          positiveColor: AppTheme.profit,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCumulativeGrowthCard(
-    BuildContext context, {
-    required AppLocalizations l,
-    required String symbol,
-    required List<CumulativeGrowthData> cumulativeData,
-  }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spaceSm),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l.analytics_chart_cumulative_title,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        l.analytics_chart_cumulative_subtitle,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
-                  children: [
-                    _LegendDot(
-                      color: const Color(0xFF6366F1),
-                      label: l.analytics_gross_pay,
-                    ),
-                    const SizedBox(width: 8),
-                    _LegendDot(
-                      color: const Color(0xFF10B981),
-                      label: l.analytics_net_pay,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spaceSm),
-
-            CumulativeEarningsLineChartWidget(
-              data: cumulativeData,
-              currencySymbol: symbol,
-              height: 200,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildJobDistributionCard(
-    BuildContext context, {
-    required AppLocalizations l,
-    required String symbol,
-    required List<DonutSegment> segments,
-    required double totalNet,
-    required double totalHours,
-  }) {
-    final centerTitle = _byEarningsForJobs
-        ? UIUtils.formatCurrency(totalNet, symbol: symbol)
-        : l.analytics_hours_suffix_format(totalHours.toStringAsFixed(1));
-
-    final centerSubtitle = _byEarningsForJobs
-        ? l.analytics_stat_total_net
-        : l.analytics_stat_total_hours;
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spaceSm),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                Text(
-                  l.analytics_chart_jobs_title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                // Toggle By Earnings vs By Hours
-                SegmentedButton<bool>(
-                  segments: [
-                    ButtonSegment(
-                      value: true,
-                      label: Text(
-                        l.analytics_chart_jobs_by_earnings,
-                        style: const TextStyle(fontSize: 11),
-                      ),
-                    ),
-                    ButtonSegment(
-                      value: false,
-                      label: Text(
-                        l.analytics_chart_jobs_by_hours,
-                        style: const TextStyle(fontSize: 11),
-                      ),
-                    ),
-                  ],
-                  selected: {_byEarningsForJobs},
-                  onSelectionChanged: (val) {
-                    setState(() => _byEarningsForJobs = val.first);
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spaceMd),
-
-            Row(
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: JobDonutChartWidget(
-                    segments: segments,
-                    centerTitle: centerTitle,
-                    centerSubtitle: centerSubtitle,
-                    size: 160,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 6,
-                  child: Column(
-                    children: segments.map((seg) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 12,
-                              height: 12,
-                              decoration: BoxDecoration(
-                                color: seg.color,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                seg.name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Text(
-                              _byEarningsForJobs
-                                  ? UIUtils.formatCurrency(
-                                      seg.amount,
-                                      symbol: symbol,
-                                    )
-                                  : l.analytics_hours_suffix_format(
-                                      seg.hours.toStringAsFixed(1),
-                                    ),
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '(${seg.percentage.toStringAsFixed(0)}%)',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -1888,7 +876,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         hours: shortHours,
         avgEarnings: shortCount > 0 ? (shortPay / shortCount) : 0,
         color: const Color(0xFF10B981),
-        // Green
         icon: Icons.bolt_rounded,
       ),
       ShiftDurationCategory(
@@ -1898,7 +885,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         hours: stdHours,
         avgEarnings: stdCount > 0 ? (stdPay / stdCount) : 0,
         color: const Color(0xFF0284C7),
-        // Blue
         icon: Icons.timer_outlined,
       ),
       ShiftDurationCategory(
@@ -1908,171 +894,39 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         hours: longHours,
         avgEarnings: longCount > 0 ? (longPay / longCount) : 0,
         color: const Color(0xFFEF4444),
-        // Red/Warning
         icon: Icons.warning_amber_rounded,
       ),
     ];
   }
 }
 
-class _SelectedPointDetailsCard extends StatelessWidget {
-  final BarDataPoint point;
-  final String symbol;
-  final AppLocalizations l;
-  final bool isMonthMode;
+class _SectionHeading extends StatelessWidget {
+  final String title;
+  final IconData icon;
 
-  const _SelectedPointDetailsCard({
-    required this.point,
-    required this.symbol,
-    required this.l,
-    this.isMonthMode = false,
-  });
+  const _SectionHeading({required this.title, required this.icon});
 
   @override
   Widget build(BuildContext context) {
-    final label = isMonthMode
-        ? l.analytics_selected_month_breakdown
-        : l.analytics_selected_breakdown;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final dateStr = isMonthMode
-        ? DateFormat.yMMMM(l.localeName).format(point.date)
-        : DateFormat('dd/MM/yyyy').format(point.date);
-
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppTheme.primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.primary.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 4),
+      child: Row(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  '$label: $dateStr',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: AppTheme.primaryDark,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                l.analytics_hours_suffix_format(
-                  point.netHours.toStringAsFixed(1),
-                ),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _DetailSubItem(
-                label: l.analytics_base_salary,
-                value: UIUtils.formatCurrency(point.basePay, symbol: symbol),
-                amount: point.basePay,
-              ),
-              if (point.tips > 0)
-                _DetailSubItem(
-                  label: l.home_total_card_tips,
-                  value: UIUtils.formatCurrency(point.tips, symbol: symbol),
-                  amount: point.tips,
-                  positiveColor: AppTheme.profit,
-                ),
-              _DetailSubItem(
-                label: l.analytics_stat_avg_rate,
-                value: UIUtils.formatCurrency(
-                  point.effectiveHourlyRate,
-                  symbol: symbol,
-                ),
-                amount: point.effectiveHourlyRate,
-                isBold: true,
-              ),
-              _DetailSubItem(
-                label: l.common_net,
-                value: UIUtils.formatCurrency(point.totalNet, symbol: symbol),
-                amount: point.totalNet,
-                isBold: true,
-                positiveColor: AppTheme.primaryDark,
-              ),
-            ],
+          Icon(icon, size: 18, color: AppTheme.electricCyan),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: isDark ? AppTheme.primaryText : const Color(0xFF0F172A),
+              letterSpacing: -0.2,
+            ),
           ),
         ],
       ),
-    );
-  }
-}
-
-class _DetailSubItem extends StatelessWidget {
-  final String label;
-  final String value;
-  final double amount;
-  final bool isBold;
-  final Color? positiveColor;
-
-  const _DetailSubItem({
-    required this.label,
-    required this.value,
-    required this.amount,
-    this.isBold = false,
-    this.positiveColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
-        const SizedBox(height: 2),
-        Text(
-          value,
-          style: UIUtils.getCurrencyStyle(
-            context,
-            amount,
-            baseStyle: TextStyle(
-              fontSize: isBold ? 14 : 12,
-              fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
-            positiveColor:
-                positiveColor ?? Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _LegendDot extends StatelessWidget {
-  final Color color;
-  final String label;
-
-  const _LegendDot({required this.color, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
-        const SizedBox(width: 4),
-        Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
-      ],
     );
   }
 }

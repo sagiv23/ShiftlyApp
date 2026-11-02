@@ -999,6 +999,25 @@ class AppLocalizationsHe extends AppLocalizations {
   String get analytics_title => 'אנליטיקה ותובנות';
 
   @override
+  String get analytics_hero_greeting => 'תמונת מצב פיננסית';
+
+  @override
+  String get analytics_hero_subtitle =>
+      'מבט כולל על הביצועים הכספיים ודפוסי העבודה שלך';
+
+  @override
+  String get analytics_section_overview => 'סקירה';
+
+  @override
+  String get analytics_section_earnings => 'הכנסות';
+
+  @override
+  String get analytics_section_work_patterns => 'דפוסי עבודה';
+
+  @override
+  String get analytics_section_pay_breakdown => 'רכיבי שכר';
+
+  @override
   String get analytics_period_monthly => 'חודשי';
 
   @override
@@ -1101,13 +1120,13 @@ class AppLocalizationsHe extends AppLocalizations {
       'חלוקה לפי אורך המשמרות (קצרות, רגילות, ארוכות)';
 
   @override
-  String get analytics_duration_short => 'קצרות (<6 שעות)';
+  String get analytics_duration_short => 'קצרות';
 
   @override
-  String get analytics_duration_standard => 'רגילות (6-9 שעות)';
+  String get analytics_duration_standard => 'רגילות';
 
   @override
-  String get analytics_duration_long => 'ארוכות (>9 שעות)';
+  String get analytics_duration_long => 'ארוכות';
 
   @override
   String get analytics_insights_title => 'תובנות ומגמות מרכזיות';

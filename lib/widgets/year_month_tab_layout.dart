@@ -683,10 +683,7 @@ class _YearMonthTabLayoutState extends State<YearMonthTabLayout> {
                             style: UIUtils.getCurrencyStyle(
                               context,
                               value,
-                              baseStyle: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .titleLarge
+                              baseStyle: Theme.of(context).textTheme.titleLarge
                                   ?.copyWith(fontWeight: FontWeight.w900),
                               positiveColor: AppTheme.profit,
                             ),
@@ -727,17 +724,11 @@ class _YearMonthTabLayoutState extends State<YearMonthTabLayout> {
                             style: UIUtils.getCurrencyStyle(
                               context,
                               value,
-                              baseStyle: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .titleMedium
+                              baseStyle: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(fontWeight: FontWeight.w700),
-                              positiveColor: Theme
-                                  .of(
+                              positiveColor: Theme.of(
                                 context,
-                              )
-                                  .colorScheme
-                                  .onSurface,
+                              ).colorScheme.onSurface,
                             ),
                           ),
                         );
@@ -846,10 +837,7 @@ class _PillBadge extends StatelessWidget {
         style: UIUtils.getCurrencyStyle(
           context,
           amount,
-          baseStyle: const TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 11,
-          ),
+          baseStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11),
           positiveColor: color,
         ),
       ),

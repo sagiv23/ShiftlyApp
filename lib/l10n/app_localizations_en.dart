@@ -1009,6 +1009,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analytics_title => 'Analytics & Insights';
 
   @override
+  String get analytics_hero_greeting => 'Financial Snapshot';
+
+  @override
+  String get analytics_hero_subtitle =>
+      'Your financial performance & work patterns at a glance';
+
+  @override
+  String get analytics_section_overview => 'Overview';
+
+  @override
+  String get analytics_section_earnings => 'Earnings';
+
+  @override
+  String get analytics_section_work_patterns => 'Work Patterns';
+
+  @override
+  String get analytics_section_pay_breakdown => 'Pay Breakdown';
+
+  @override
   String get analytics_period_monthly => 'Monthly';
 
   @override
@@ -1113,13 +1132,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Distribution of shift lengths (short, standard, long)';
 
   @override
-  String get analytics_duration_short => 'Short (<6h)';
+  String get analytics_duration_short => 'Short';
 
   @override
-  String get analytics_duration_standard => 'Standard (6-9h)';
+  String get analytics_duration_standard => 'Standard';
 
   @override
-  String get analytics_duration_long => 'Long (>9h)';
+  String get analytics_duration_long => 'Long';
 
   @override
   String get analytics_insights_title => 'Key Smart Insights';

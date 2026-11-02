@@ -1988,6 +1988,42 @@ abstract class AppLocalizations {
   /// **'אנליטיקה ותובנות'**
   String get analytics_title;
 
+  /// No description provided for @analytics_hero_greeting.
+  ///
+  /// In he, this message translates to:
+  /// **'תמונת מצב פיננסית'**
+  String get analytics_hero_greeting;
+
+  /// No description provided for @analytics_hero_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'מבט כולל על הביצועים הכספיים ודפוסי העבודה שלך'**
+  String get analytics_hero_subtitle;
+
+  /// No description provided for @analytics_section_overview.
+  ///
+  /// In he, this message translates to:
+  /// **'סקירה'**
+  String get analytics_section_overview;
+
+  /// No description provided for @analytics_section_earnings.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנסות'**
+  String get analytics_section_earnings;
+
+  /// No description provided for @analytics_section_work_patterns.
+  ///
+  /// In he, this message translates to:
+  /// **'דפוסי עבודה'**
+  String get analytics_section_work_patterns;
+
+  /// No description provided for @analytics_section_pay_breakdown.
+  ///
+  /// In he, this message translates to:
+  /// **'רכיבי שכר'**
+  String get analytics_section_pay_breakdown;
+
   /// No description provided for @analytics_period_monthly.
   ///
   /// In he, this message translates to:
@@ -2189,19 +2225,19 @@ abstract class AppLocalizations {
   /// No description provided for @analytics_duration_short.
   ///
   /// In he, this message translates to:
-  /// **'קצרות (<6 שעות)'**
+  /// **'קצרות'**
   String get analytics_duration_short;
 
   /// No description provided for @analytics_duration_standard.
   ///
   /// In he, this message translates to:
-  /// **'רגילות (6-9 שעות)'**
+  /// **'רגילות'**
   String get analytics_duration_standard;
 
   /// No description provided for @analytics_duration_long.
   ///
   /// In he, this message translates to:
-  /// **'ארוכות (>9 שעות)'**
+  /// **'ארוכות'**
   String get analytics_duration_long;
 
   /// No description provided for @analytics_insights_title.

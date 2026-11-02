@@ -263,21 +263,17 @@ class _MonthlySnapshot extends StatelessWidget {
     final monthStart = DateTime(month.year, month.month);
     final nextMonth = DateTime(month.year, month.month + 1);
     final monthProgress = month.year == now.year && month.month == now.month
-        ? (now
-        .difference(monthStart)
-        .inMilliseconds /
-        nextMonth
-            .difference(monthStart)
-            .inMilliseconds)
-        .clamp(0.0, 1.0)
-        .toDouble()
+        ? (now.difference(monthStart).inMilliseconds /
+                  nextMonth.difference(monthStart).inMilliseconds)
+              .clamp(0.0, 1.0)
+              .toDouble()
         : 1.0;
     final isFinancialGoal =
         monthlyProgressMode == MonthlyProgressMode.financialGoal;
     final progress = isFinancialGoal
         ? (monthlyFinancialGoal > 0 ? net / monthlyFinancialGoal : 0.0)
-        .clamp(0.0, 1.0)
-        .toDouble()
+              .clamp(0.0, 1.0)
+              .toDouble()
         : monthProgress;
     final monthName = DateFormat.MMMM(l.localeName).format(month);
 
@@ -357,16 +353,15 @@ class _MonthlySnapshot extends StatelessWidget {
                             style: UIUtils.getCurrencyStyle(
                               context,
                               value,
-                              baseStyle: Theme
-                                  .of(context)
+                              baseStyle: Theme.of(context)
                                   .textTheme
                                   .displaySmall
                                   ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontFeatures: const [
-                                  FontFeature.tabularFigures(),
-                                ],
-                              ),
+                                    fontWeight: FontWeight.bold,
+                                    fontFeatures: const [
+                                      FontFeature.tabularFigures(),
+                                    ],
+                                  ),
                               positiveColor: AppTheme.profit,
                             ),
                           ),
@@ -386,14 +381,8 @@ class _MonthlySnapshot extends StatelessWidget {
                     style: UIUtils.getCurrencyStyle(
                       context,
                       value,
-                      baseStyle: Theme
-                          .of(context)
-                          .textTheme
-                          .bodySmall,
-                      positiveColor: Theme
-                          .of(context)
-                          .colorScheme
-                          .onSurface,
+                      baseStyle: Theme.of(context).textTheme.bodySmall,
+                      positiveColor: Theme.of(context).colorScheme.onSurface,
                     ),
                   );
                 },
@@ -460,28 +449,20 @@ class _MonthlySnapshot extends StatelessWidget {
                 isFinancialGoal
                     ? l.monthly_progress_financial_goal
                     : l.monthly_progress_month_elapsed,
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .bodySmall,
+                style: Theme.of(context).textTheme.bodySmall,
               ),
               if (isFinancialGoal)
                 Text(
                   '${UIUtils.formatCurrency(net, symbol: symbol)} / '
-                      '${UIUtils.formatCurrency(
-                      monthlyFinancialGoal, symbol: symbol)}',
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .bodySmall,
+                  '${UIUtils.formatCurrency(monthlyFinancialGoal, symbol: symbol)}',
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
             ],
           ),
           const SizedBox(height: 6),
           Semantics(
             label:
-            '${isFinancialGoal ? l.monthly_progress_financial_goal : l
-                .monthly_progress_month_elapsed} '
+                '${isFinancialGoal ? l.monthly_progress_financial_goal : l.monthly_progress_month_elapsed} '
                 '${(progress * 100).round()}%',
             child: ClipRRect(
               borderRadius: BorderRadius.circular(99),
@@ -585,10 +566,7 @@ class _AmountPill extends StatelessWidget {
         style: UIUtils.getCurrencyStyle(
           context,
           amount,
-          baseStyle: const TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 11,
-          ),
+          baseStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11),
           positiveColor: color,
         ),
       ),

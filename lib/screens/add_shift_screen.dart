@@ -1436,7 +1436,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
           Card(
             margin: const EdgeInsets.symmetric(vertical: 4),
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
               child: Row(
                 children: [
                   Expanded(
@@ -2289,6 +2289,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 4),
         ...List.generate(_autoExpenseAmountControllers.length, (index) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
@@ -2351,6 +2352,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 4),
         ...List.generate(_autoIncomeAmountControllers.length, (index) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
@@ -2487,7 +2489,7 @@ class _CollapsibleFormSection extends StatelessWidget {
               : null,
           childrenPadding: const EdgeInsets.fromLTRB(
             AppTheme.spaceSm,
-            0,
+            AppTheme.spaceSm,
             AppTheme.spaceSm,
             AppTheme.spaceSm,
           ),
