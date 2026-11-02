@@ -14,11 +14,12 @@ import 'package:shiftly/services/overtime_calculator.dart';
 import 'package:shiftly/services/shift_parser.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
-import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
-import 'package:shiftly/widgets/shift_tile.dart';
+import 'package:shiftly/widgets/add_shift/add_shift_manual_tab.dart';
+import 'package:shiftly/widgets/add_shift/add_shift_raw_tab.dart';
+import 'package:shiftly/widgets/add_shift/add_shift_timer_tab.dart';
 import 'package:uuid/uuid.dart';
 
 class AddShiftScreen extends StatefulWidget {
@@ -74,7 +75,6 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       duration: const Duration(milliseconds: 1600),
     )..repeat(reverse: true);
 
-    // Immediate lightweight defaults to prevent any freeze on transition start
     _selectedDate = widget.shiftToEdit?.date ?? DateTime.now();
     _startTime = widget.shiftToEdit != null
         ? TimeOfDay.fromDateTime(widget.shiftToEdit!.startTime)
@@ -160,72 +160,28 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         }
       }
 
-      if (settings.automaticIncomeEnabled ||
-          settings.defaultAutomaticIncomes.isNotEmpty) {
-        for (var e in settings.defaultAutomaticIncomes) {
+      if (settings.defaultAutomaticIncomes.isNotEmpty) {
+        for (var inc in settings.defaultAutomaticIncomes) {
           _autoIncomeAmountControllers.add(
             TextEditingController(
-              text: e.amount > 0 ? e.amount.toStringAsFixed(0) : '',
+              text: inc.amount > 0 ? inc.amount.toStringAsFixed(0) : '',
             ),
           );
           _autoIncomeDescControllers.add(
-            TextEditingController(text: e.description),
+            TextEditingController(text: inc.description),
           );
         }
       }
 
-      final timer = context.read<TimerProvider>();
-      final isFromTimerReview = timer.startTime != null && !timer.isRunning;
-
-      if (isFromTimerReview) {
-        _selectedDate = timer.startTime!;
-        _startTime = TimeOfDay.fromDateTime(timer.startTime!);
-        _endTime = TimeOfDay.fromDateTime(
-          timer.reviewEndTime ?? DateTime.now(),
-        );
-        _selectedJobTypeId = timer.jobTypeId;
-        _selectedBreakType = timer.accumulatedUnpaidMinutes > 0
-            ? BreakType.unpaid
-            : BreakType.none;
-
-        _tipControllers.clear();
-        _tipControllers.add(
-          TextEditingController(
-            text: timer.tips > 0 ? timer.tips.toStringAsFixed(0) : '',
-          ),
-        );
-        _timerTipControllers.clear();
-        _timerTipControllers.add(
-          TextEditingController(
-            text: timer.tips > 0 ? timer.tips.toStringAsFixed(0) : '',
-          ),
-        );
-      } else {
-        final jobs = context.read<ShiftProvider>().jobTypes;
-        if (jobs.isNotEmpty && _selectedJobTypeId == null) {
-          final buffet = jobs.firstWhere(
-            (j) => j.id == '1',
-            orElse: () => jobs.first,
-          );
-          _selectedJobTypeId = buffet.id;
-        }
-
-        if (timer.isRunning) {
-          _selectedJobTypeId = timer.jobTypeId ?? _selectedJobTypeId;
-          _timerTipControllers.clear();
-          _timerTipControllers.add(
-            TextEditingController(
-              text: timer.tips > 0 ? timer.tips.toStringAsFixed(0) : '',
-            ),
-          );
-        }
+      final shiftProvider = context.read<ShiftProvider>();
+      if (_selectedJobTypeId == null && shiftProvider.jobTypes.isNotEmpty) {
+        _selectedJobTypeId = shiftProvider.jobTypes.first.id;
       }
     }
   }
 
   @override
   void dispose() {
-    _descriptionController.dispose();
     for (var c in _tipControllers) {
       c.dispose();
     }
@@ -248,6 +204,7 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       c.dispose();
     }
     _rawTextController.dispose();
+    _descriptionController.dispose();
     _tabController.dispose();
     _pulseController.dispose();
     super.dispose();
@@ -281,27 +238,6 @@ class _AddShiftScreenState extends State<AddShiftScreen>
         .map((c) => double.tryParse(c.text) ?? 0.0)
         .where((t) => t > 0)
         .toList();
-  }
-
-  List<AutomaticExpense> _peekMoneyList({
-    required List<TextEditingController> amounts,
-    required List<TextEditingController> descs,
-  }) {
-    final list = <AutomaticExpense>[];
-    for (int i = 0; i < amounts.length; i++) {
-      final amountText = amounts[i].text.trim();
-      final desc = descs[i].text.trim();
-      if (amountText.isEmpty && desc.isEmpty) continue;
-      final amount = double.tryParse(amountText);
-      if (amount == null || amount <= 0) continue;
-      list.add(
-        AutomaticExpense(
-          description: desc.isEmpty ? '—' : desc,
-          amount: amount,
-        ),
-      );
-    }
-    return list;
   }
 
   List<AutomaticExpense>? _getExpenseList() {
@@ -368,166 +304,6 @@ class _AddShiftScreenState extends State<AddShiftScreen>
       }
     }
     return list;
-  }
-
-  List<ShiftWageSegment> _peekWageSegments() {
-    final segments = <ShiftWageSegment>[];
-    for (int i = 0; i < _segmentStartTimes.length; i++) {
-      final sTime = _segmentStartTimes[i];
-      final eTime = _segmentEndTimes[i];
-      final pct =
-          double.tryParse(_segmentPercentageControllers[i].text) ?? 100.0;
-      DateTime segStart = DateTime(
-        _selectedDate.year,
-        _selectedDate.month,
-        _selectedDate.day,
-        sTime.hour,
-        sTime.minute,
-      );
-      DateTime segEnd = DateTime(
-        _selectedDate.year,
-        _selectedDate.month,
-        _selectedDate.day,
-        eTime.hour,
-        eTime.minute,
-      );
-      if (segEnd.isBefore(segStart)) {
-        segEnd = segEnd.add(const Duration(days: 1));
-      }
-      if (!segStart.isBefore(segEnd)) continue;
-      segments.add(
-        ShiftWageSegment(startTime: segStart, endTime: segEnd, percentage: pct),
-      );
-    }
-    return segments;
-  }
-
-  Shift? _buildManualDraftShift() {
-    if (_selectedJobTypeId == null) return null;
-    final settings = context.read<SettingsProvider>();
-    final shiftProvider = context.read<ShiftProvider>();
-    final job = shiftProvider.getJobTypeById(_selectedJobTypeId!);
-
-    final start = DateTime(
-      _selectedDate.year,
-      _selectedDate.month,
-      _selectedDate.day,
-      _startTime.hour,
-      _startTime.minute,
-    );
-    var end = DateTime(
-      _selectedDate.year,
-      _selectedDate.month,
-      _selectedDate.day,
-      _endTime.hour,
-      _endTime.minute,
-    );
-    if (end.isBefore(start)) {
-      end = end.add(const Duration(days: 1));
-    }
-
-    return Shift(
-      id: widget.shiftToEdit?.id ?? 'preview-manual',
-      date: _selectedDate,
-      startTime: start,
-      endTime: end,
-      jobTypeId: _selectedJobTypeId!,
-      tips: _calculateTotalTips(_tipControllers),
-      individualTips: _getTipList(_tipControllers),
-      hourlyRate: job?.getRateForDate(_selectedDate),
-      automaticExpenses: _peekMoneyList(
-        amounts: _autoExpenseAmountControllers,
-        descs: _autoExpenseDescControllers,
-      ),
-      automaticIncomes: _peekMoneyList(
-        amounts: _autoIncomeAmountControllers,
-        descs: _autoIncomeDescControllers,
-      ),
-      breakType: _selectedBreakType,
-      unpaidBreakMinutes: settings.unpaidBreakDurationMinutes,
-      description: _descriptionController.text.trim().isEmpty
-          ? null
-          : _descriptionController.text.trim(),
-      wageSegments: _peekWageSegments(),
-    );
-  }
-
-  Shift? _buildTimerDraftShift() {
-    final timer = context.read<TimerProvider>();
-    final settings = context.read<SettingsProvider>();
-    final shiftProvider = context.read<ShiftProvider>();
-    final jobId = timer.jobTypeId ?? _selectedJobTypeId;
-    if (jobId == null || timer.startTime == null) return null;
-
-    final end = timer.isRunning
-        ? DateTime.now()
-        : (timer.reviewEndTime ?? DateTime.now());
-    final job = shiftProvider.getJobTypeById(jobId);
-
-    return Shift(
-      id: 'preview-timer',
-      date: timer.startTime!,
-      startTime: timer.startTime!,
-      endTime: end,
-      jobTypeId: jobId,
-      tips: _calculateTotalTips(_timerTipControllers),
-      individualTips: _getTipList(_timerTipControllers),
-      hourlyRate: job?.getRateForDate(timer.startTime!),
-      automaticExpenses: _peekMoneyList(
-        amounts: _autoExpenseAmountControllers,
-        descs: _autoExpenseDescControllers,
-      ),
-      automaticIncomes: _peekMoneyList(
-        amounts: _autoIncomeAmountControllers,
-        descs: _autoIncomeDescControllers,
-      ),
-      breakType: timer.accumulatedUnpaidMinutes > 0
-          ? BreakType.unpaid
-          : BreakType.none,
-      unpaidBreakMinutes: timer.accumulatedUnpaidMinutes > 0
-          ? timer.accumulatedUnpaidMinutes
-          : settings.unpaidBreakDurationMinutes,
-      description: _descriptionController.text.trim().isEmpty
-          ? null
-          : _descriptionController.text.trim(),
-    );
-  }
-
-  Widget _buildLivePreview(Shift? draft) {
-    if (draft == null) return const SizedBox.shrink();
-    final l = AppLocalizations.of(context)!;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 4,
-            right: 4,
-            bottom: AppTheme.spaceXs,
-          ),
-          child: Text(
-            l.add_shift_preview_title,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
-          ),
-        ),
-        ShiftTile(
-          shift: draft,
-          useCardDecoration: true,
-          interactive: false,
-          margin: EdgeInsets.zero,
-        ),
-      ],
-    );
-  }
-
-  String _moneySummary(double total, String symbol) {
-    if (total <= 0) return '';
-    return UIUtils.formatCurrency(total, symbol: symbol);
   }
 
   Future<bool> _confirmOverlappingShifts({
@@ -624,6 +400,37 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     if (!mounted) return;
     UIUtils.showSnackBar(context, l.add_shift_shift_saved);
     Navigator.pop(context);
+  }
+
+  void _showFinishDialog() {
+    context.read<TimerProvider>().stopShift();
+    final l = AppLocalizations.of(context)!;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) =>
+          AlertDialog(
+            title: Text(l.add_shift_timer_stop_shift),
+            content: Text(l.add_shift_timer_stopped_msg),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  context.read<TimerProvider>().resumeShift();
+                },
+                child: Text(l.add_shift_timer_continue_work),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  _finishTimerShift();
+                },
+                child: Text(l.common_save_and_finish),
+              ),
+            ],
+          ),
+    );
   }
 
   void _saveManual() async {
@@ -930,478 +737,6 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     } else {
       UIUtils.showSnackBar(context, l.add_shift_paste_error, isError: true);
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context)!;
-    final rawJobs = context.watch<ShiftProvider>().jobTypes;
-
-    final jobs = List<JobType>.from(rawJobs)
-      ..sort((a, b) {
-        if (a.id == '1') return -1;
-        if (b.id == '1') return 1;
-        if (a.id == '2') return -1;
-        if (b.id == '2') return 1;
-        return a.name.compareTo(b.name);
-      });
-
-    final isEditing = widget.shiftToEdit != null;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? l.add_shift_edit_title : l.add_shift_title),
-        bottom: isEditing
-            ? null
-            : PreferredSize(
-                preferredSize: const Size.fromHeight(56),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 760),
-                    child: TabBar(
-                      controller: _tabController,
-                      isScrollable: false,
-                      tabAlignment: TabAlignment.fill,
-                      tabs: [
-                        Tab(
-                          text: l.add_shift_timer_tab,
-                          icon: const Icon(Icons.timer_outlined),
-                        ),
-                        Tab(
-                          text: l.add_shift_manual_tab,
-                          icon: const Icon(Icons.edit_note_rounded),
-                        ),
-                        Tab(
-                          text: l.add_shift_paste_tab,
-                          icon: const Icon(Icons.paste_rounded),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-      ),
-      body: ResponsivePageBody(
-        maxWidth: 1180,
-        child: SafeArea(
-          child: PageEntranceAnimation(
-            child: isEditing
-                ? _buildManualForm(jobs)
-                : TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildTimerForm(jobs),
-                      _buildManualForm(jobs),
-                      _buildRawForm(jobs),
-                    ],
-                  ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTimerForm(List<JobType> jobs) {
-    final timerProvider = context.watch<TimerProvider>();
-    final shiftProvider = context.watch<ShiftProvider>();
-    final settings = context.watch<SettingsProvider>();
-    final symbol = settings.currencySymbol;
-    final l = AppLocalizations.of(context)!;
-    final isRunning = timerProvider.isRunning;
-    final isOnBreak = timerProvider.isOnBreak;
-    final isReviewMode = timerProvider.startTime != null && !isRunning;
-    final job = shiftProvider.getJobTypeById(timerProvider.jobTypeId ?? "");
-    final livePay = timerProvider.calculateLivePay(
-      job?.getRateForDate(timerProvider.startTime ?? DateTime.now()) ??
-          AppConstants.defaultHourlyRate,
-    );
-
-    String formatDuration(Duration d) {
-      String twoDigits(int n) => n.toString().padLeft(2, '0');
-      return "${d.inHours}:${twoDigits(d.inMinutes.remainder(60))}:${twoDigits(d.inSeconds.remainder(60))}";
-    }
-
-    final buttonColor = isReviewMode
-        ? AppTheme.profit
-        : (isRunning
-              ? (isOnBreak ? AppTheme.warningSoft : AppTheme.primary)
-              : Theme.of(context).colorScheme.surfaceContainerHighest);
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(
-        AppTheme.spaceMd,
-        AppTheme.spaceMd,
-        AppTheme.spaceMd,
-        AppTheme.spaceLg,
-      ),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 760),
-          child: Column(
-            children: [
-              const SizedBox(height: AppTheme.spaceSm),
-              // Pulsating circular start/stop
-              ScalePress(
-                onTap: () {
-                  if (isReviewMode) {
-                    timerProvider.resumeShift();
-                    _tabController.animateTo(0);
-                  } else if (!isRunning) {
-                    if (_selectedJobTypeId == null) {
-                      UIUtils.showSnackBar(
-                        context,
-                        l.add_shift_pick_a_job,
-                        isError: true,
-                      );
-                      return;
-                    }
-                    timerProvider.startShift(_selectedJobTypeId!);
-                    for (var c in _timerTipControllers) {
-                      c.text = '0';
-                    }
-                  } else {
-                    if (isOnBreak) {
-                      timerProvider.endBreak();
-                    } else {
-                      _showFinishDialog();
-                    }
-                  }
-                },
-                child: AnimatedBuilder(
-                  animation: _pulseController,
-                  builder: (context, child) {
-                    final pulse = isRunning && !isOnBreak
-                        ? 8 + (_pulseController.value * 14)
-                        : 6.0;
-                    final glowAlpha = isRunning && !isOnBreak
-                        ? 0.25 + (_pulseController.value * 0.25)
-                        : 0.2;
-                    return Container(
-                      width: 210,
-                      height: 210,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: buttonColor.withValues(alpha: glowAlpha),
-                            blurRadius: pulse,
-                            spreadRadius: isRunning && !isOnBreak
-                                ? 4 + (_pulseController.value * 8)
-                                : 2,
-                          ),
-                        ],
-                      ),
-                      child: child,
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: buttonColor,
-                      border: Border.all(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        width: 8,
-                      ),
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            isReviewMode
-                                ? Icons.play_arrow_rounded
-                                : (isRunning
-                                      ? (isOnBreak
-                                            ? Icons.play_arrow_rounded
-                                            : Icons.stop_rounded)
-                                      : Icons.play_arrow_rounded),
-                            size: 64,
-                            color: isReviewMode || isRunning
-                                ? Colors.white
-                                : Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
-                          ),
-                          const SizedBox(height: AppTheme.spaceXs),
-                          Text(
-                            isReviewMode
-                                ? l.add_shift_timer_continue_work
-                                : (isRunning
-                                      ? (isOnBreak
-                                            ? l.add_shift_timer_resume_work
-                                            : l.add_shift_timer_stop_shift)
-                                      : l.add_shift_timer_start_shift),
-                            style: TextStyle(
-                              color: isReviewMode || isRunning
-                                  ? Colors.white
-                                  : Theme.of(
-                                      context,
-                                    ).colorScheme.onSurfaceVariant,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppTheme.spaceLg),
-              Text(
-                formatDuration(timerProvider.elapsed),
-                style: AppTheme.monoNumber.copyWith(
-                  fontSize: 48,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spaceXs),
-              Text(
-                UIUtils.formatCurrency(livePay, symbol: symbol),
-                style: UIUtils.getCurrencyStyle(
-                  context,
-                  livePay,
-                  baseStyle: AppTheme.monoNumber.copyWith(fontSize: 28),
-                  positiveColor: AppTheme.primaryDark,
-                ),
-              ),
-              Text(
-                l.add_shift_timer_accumulated_live,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              if (isOnBreak || timerProvider.accumulatedUnpaidMinutes > 0) ...[
-                const SizedBox(height: AppTheme.spaceSm),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spaceSm,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppTheme.warning.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                    border: Border.all(
-                      color: AppTheme.warning.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      if (isOnBreak)
-                        Text(
-                          '${l.add_shift_timer_countdown} ${timerProvider.breakRemaining.inMinutes}:${(timerProvider.breakRemaining.inSeconds % 60).toString().padLeft(2, '0')}',
-                          style: AppTheme.monoNumber.copyWith(
-                            fontSize: 20,
-                            color:
-                                timerProvider.activeBreakType == BreakType.paid
-                                ? AppTheme.primaryDark
-                                : AppTheme.warningSoft,
-                          ),
-                        ),
-                      Text(
-                        isOnBreak
-                            ? (timerProvider.activeBreakType == BreakType.paid
-                                  ? l.add_shift_timer_break_paid
-                                  : l.add_shift_timer_break_unpaid)
-                            : '${l.add_shift_timer_total_break_unpaid} ${timerProvider.accumulatedUnpaidMinutes.toStringAsFixed(1)} ${l.common_min_suffix}',
-                        style: TextStyle(
-                          color: AppTheme.warningSoft,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              const SizedBox(height: AppTheme.spaceLg),
-
-              _FormSection(
-                title: l.add_shift_manual_job_type_label,
-                icon: Icons.work_outline_rounded,
-                child: DropdownButtonFormField<String>(
-                  initialValue: (isRunning || isReviewMode)
-                      ? timerProvider.jobTypeId
-                      : _selectedJobTypeId,
-                  decoration: InputDecoration(
-                    labelText: l.add_shift_manual_job_type_label,
-                    prefixIcon: const Icon(Icons.work_rounded),
-                  ),
-                  items: jobs
-                      .map(
-                        (j) => DropdownMenuItem(
-                          value: j.id,
-                          child: Row(
-                            children: [
-                              Icon(AppTheme.iconForJobName(j.name), size: 18),
-                              const SizedBox(width: 8),
-                              Text(j.name),
-                            ],
-                          ),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (val) {
-                    if (val == null) return;
-                    if (isRunning || isReviewMode) {
-                      timerProvider.setJobType(val);
-                    } else {
-                      setState(() => _selectedJobTypeId = val);
-                    }
-                  },
-                ),
-              ),
-
-              if (settings.breaksEnabled && isRunning && !isReviewMode) ...[
-                const SizedBox(height: AppTheme.spaceMd),
-                _FormSection(
-                  title: l.add_shift_manual_break_type_section,
-                  icon: Icons.coffee_outlined,
-                  child: SegmentedButton<BreakType?>(
-                    emptySelectionAllowed: true,
-                    showSelectedIcon: false,
-                    segments: [
-                      ButtonSegment(
-                        value: BreakType.paid,
-                        icon: const Icon(Icons.timer_outlined, size: 18),
-                        label: Text(
-                          '${settings.paidBreakDurationMinutes.toStringAsFixed(0)}\' ${l.add_shift_manual_paid_break}',
-                        ),
-                      ),
-                      ButtonSegment(
-                        value: BreakType.unpaid,
-                        icon: const Icon(Icons.coffee_outlined, size: 18),
-                        label: Text(
-                          '${settings.unpaidBreakDurationMinutes.toStringAsFixed(0)}\' ${l.add_shift_manual_unpaid_break}',
-                        ),
-                      ),
-                    ],
-                    selected: {if (isOnBreak) timerProvider.activeBreakType},
-                    onSelectionChanged: (val) {
-                      if (val.isEmpty) {
-                        if (isOnBreak) timerProvider.endBreak();
-                        return;
-                      }
-                      final type = val.first!;
-                      final minutes = type == BreakType.paid
-                          ? settings.paidBreakDurationMinutes
-                          : settings.unpaidBreakDurationMinutes;
-                      timerProvider.toggleBreak(type, minutes);
-                    },
-                  ),
-                ),
-              ],
-
-              if (isRunning || isReviewMode) ...[
-                const SizedBox(height: AppTheme.spaceMd),
-                _CollapsibleFormSection(
-                  title: l.add_shift_tips_title,
-                  icon: Icons.payments_outlined,
-                  summary: _moneySummary(
-                    _calculateTotalTips(_timerTipControllers),
-                    symbol,
-                  ),
-                  initiallyExpanded:
-                      _calculateTotalTips(_timerTipControllers) > 0,
-                  child: _buildTipsSection(_timerTipControllers),
-                ),
-                const SizedBox(height: AppTheme.spaceSm),
-                _CollapsibleFormSection(
-                  title: l.add_shift_expenses_title,
-                  icon: Icons.money_off_rounded,
-                  summary: _moneySummary(_calculateTotalAutoExpenses(), symbol),
-                  initiallyExpanded: _calculateTotalAutoExpenses() > 0,
-                  child: _buildAutoExpensesSection(symbol),
-                ),
-                const SizedBox(height: AppTheme.spaceSm),
-                _CollapsibleFormSection(
-                  title: l.add_shift_incomes_title,
-                  icon: Icons.account_balance_wallet_rounded,
-                  summary: _moneySummary(_calculateTotalAutoIncomes(), symbol),
-                  initiallyExpanded: _calculateTotalAutoIncomes() > 0,
-                  child: _buildAutoIncomesSection(symbol),
-                ),
-                const SizedBox(height: AppTheme.spaceMd),
-                _buildLivePreview(_buildTimerDraftShift()),
-                const SizedBox(height: AppTheme.spaceMd),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: isReviewMode
-                        ? _finishTimerShift
-                        : _showFinishDialog,
-                    icon: Icon(
-                      isReviewMode ? Icons.check_rounded : Icons.stop_rounded,
-                    ),
-                    label: Text(
-                      isReviewMode
-                          ? l.common_save_and_finish
-                          : l.add_shift_timer_stop_shift,
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isReviewMode
-                          ? AppTheme.profit
-                          : AppTheme.primaryDark,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    final confirmed = await UIUtils.showConfirmDialog(
-                      context: context,
-                      title: l.add_shift_timer_reset_title,
-                      content: l.add_shift_timer_reset_desc,
-                      isDestructive: true,
-                      confirmLabel: l.common_reset,
-                    );
-                    if (confirmed != true) return;
-                    if (!mounted) return;
-                    timerProvider.resetTimer();
-                  },
-                  child: Text(
-                    l.common_reset_and_cancel,
-                    style: TextStyle(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.45),
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showFinishDialog() {
-    context.read<TimerProvider>().stopShift();
-    final l = AppLocalizations.of(context)!;
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.add_shift_timer_stop_shift),
-        content: Text(l.add_shift_timer_stopped_msg),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              context.read<TimerProvider>().resumeShift();
-            },
-            child: Text(l.add_shift_timer_continue_work),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              _finishTimerShift();
-            },
-            child: Text(l.common_save_and_finish),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildWageSegmentsSection() {
@@ -1825,730 +1160,228 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     );
   }
 
-  Widget _buildManualForm(List<JobType> jobs) {
-    final settings = context.read<SettingsProvider>();
-    final symbol = settings.currencySymbol;
+  @override
+  Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    final tipsTotal = _calculateTotalTips(_tipControllers);
-    final expensesTotal = _calculateTotalAutoExpenses();
-    final incomesTotal = _calculateTotalAutoIncomes();
-    final descText = _descriptionController.text.trim();
-    final breakOptions = <({BreakType type, String label})>[
-      (type: BreakType.none, label: l.add_shift_manual_no_break),
-      (
-        type: BreakType.paid,
-        label:
-            '${settings.paidBreakDurationMinutes.toStringAsFixed(0)}\' ${l.add_shift_manual_paid_break}',
-      ),
-      (
-        type: BreakType.unpaid,
-        label:
-            '${settings.unpaidBreakDurationMinutes.toStringAsFixed(0)}\' ${l.add_shift_manual_unpaid_break}',
-      ),
-    ];
+    final rawJobs = context
+        .watch<ShiftProvider>()
+        .jobTypes;
 
-    final shiftSections = <Widget>[
-      _FormSection(
-        title: l.add_shift_manual_time_section,
-        icon: Icons.schedule_rounded,
-        child: Column(
-          children: [
-            _PickerTile(
-              icon: Icons.calendar_month_rounded,
-              title: l.add_shift_manual_date_label,
-              value: AppConstants.formatDate(_selectedDate),
-              onTap: () async {
-                final picked = await AppDatePicker.showSingleDatePicker(
-                  context: context,
-                  initialDate: _selectedDate,
-                );
-                if (picked != null && mounted) {
-                  setState(() => _selectedDate = picked);
-                }
-              },
-            ),
-            const Divider(height: 1),
-            _PickerTile(
-              icon: Icons.access_time_rounded,
-              title: l.add_shift_manual_start_time_label,
-              value: _startTime.format(context),
-              onTap: () async {
-                final picked = await showTimePicker(
-                  context: context,
-                  initialTime: _startTime,
-                );
-                if (picked != null && mounted) {
-                  setState(() => _startTime = picked);
-                }
-              },
-            ),
-            const Divider(height: 1),
-            _PickerTile(
-              icon: Icons.access_time_filled_rounded,
-              title: l.add_shift_manual_end_time_label,
-              value: _endTime.format(context),
-              onTap: () async {
-                final picked = await showTimePicker(
-                  context: context,
-                  initialTime: _endTime,
-                );
-                if (picked != null && mounted) {
-                  setState(() => _endTime = picked);
-                }
-              },
-            ),
-          ],
-        ),
-      ),
-      _FormSection(
-        title: l.add_shift_manual_job_type_label,
-        icon: Icons.work_rounded,
-        child: DropdownButtonFormField<String>(
-          initialValue: _selectedJobTypeId,
-          decoration: InputDecoration(
-            labelText: l.add_shift_manual_job_type_label,
-            prefixIcon: const Icon(Icons.work_rounded),
-          ),
-          items: jobs
-              .map(
-                (j) => DropdownMenuItem<String>(
-                  value: j.id,
-                  child: Row(
-                    children: [
-                      Icon(AppTheme.iconForJobName(j.name), size: 18),
-                      const SizedBox(width: 8),
-                      Text(j.name),
-                    ],
+    final jobs = List<JobType>.from(rawJobs)
+      ..sort((a, b) {
+        if (a.id == '1') return -1;
+        if (b.id == '1') return 1;
+        if (a.id == '2') return -1;
+        if (b.id == '2') return 1;
+        return a.name.compareTo(b.name);
+      });
+
+    final isEditing = widget.shiftToEdit != null;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(isEditing ? l.add_shift_edit_title : l.add_shift_title),
+        bottom: isEditing
+            ? null
+            : PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 760),
+              child: TabBar(
+                controller: _tabController,
+                isScrollable: false,
+                tabAlignment: TabAlignment.fill,
+                tabs: [
+                  Tab(
+                    text: l.add_shift_timer_tab,
+                    icon: const Icon(Icons.timer_outlined),
                   ),
-                ),
-              )
-              .toList(),
-          onChanged: (val) => setState(() => _selectedJobTypeId = val),
-        ),
-      ),
-      if (settings.breaksEnabled)
-        _FormSection(
-          title: l.add_shift_manual_break_type_section,
-          icon: Icons.coffee_outlined,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth < 480) {
-                return Wrap(
-                  spacing: AppTheme.spaceXs,
-                  runSpacing: AppTheme.spaceXs,
-                  children: [
-                    for (final option in breakOptions)
-                      ChoiceChip(
-                        label: Text(option.label),
-                        selected: _selectedBreakType == option.type,
-                        onSelected: (_) =>
-                            setState(() => _selectedBreakType = option.type),
-                      ),
-                  ],
-                );
-              }
-
-              return SizedBox(
-                width: double.infinity,
-                child: SegmentedButton<BreakType>(
-                  segments: [
-                    for (final option in breakOptions)
-                      ButtonSegment(
-                        value: option.type,
-                        label: Text(option.label),
-                      ),
-                  ],
-                  selected: {_selectedBreakType},
-                  onSelectionChanged: (value) =>
-                      setState(() => _selectedBreakType = value.first),
-                ),
-              );
-            },
-          ),
-        ),
-    ];
-    final earningsSections = <Widget>[
-      _CollapsibleFormSection(
-        title: l.add_shift_tips_title,
-        icon: Icons.payments_outlined,
-        summary: _moneySummary(tipsTotal, symbol),
-        initiallyExpanded: tipsTotal > 0,
-        child: _buildTipsSection(_tipControllers),
-      ),
-      _CollapsibleFormSection(
-        title: l.add_shift_expenses_title,
-        icon: Icons.money_off_rounded,
-        summary: _moneySummary(expensesTotal, symbol),
-        initiallyExpanded: expensesTotal > 0,
-        child: _buildAutoExpensesSection(symbol),
-      ),
-      _CollapsibleFormSection(
-        title: l.add_shift_incomes_title,
-        icon: Icons.account_balance_wallet_rounded,
-        summary: _moneySummary(incomesTotal, symbol),
-        initiallyExpanded: incomesTotal > 0,
-        child: _buildAutoIncomesSection(symbol),
-      ),
-    ];
-    final detailSections = <Widget>[
-      _CollapsibleFormSection(
-        title: l.add_shift_wage_segments_title,
-        icon: Icons.percent_rounded,
-        summary: _segmentStartTimes.isEmpty
-            ? ''
-            : l.add_shift_segments_count(_segmentStartTimes.length),
-        initiallyExpanded: _segmentStartTimes.isNotEmpty,
-        child: _buildWageSegmentsSection(),
-      ),
-      _CollapsibleFormSection(
-        title: l.overtime_breakdown_title,
-        icon: Icons.calculate_rounded,
-        initiallyExpanded: false,
-        child: _buildOvertimeSalaryBreakdownSection(),
-      ),
-      _CollapsibleFormSection(
-        title: l.shift_description_label,
-        icon: Icons.note_alt_rounded,
-        summary: descText.isEmpty
-            ? ''
-            : (descText.length > 28
-                  ? '${descText.substring(0, 28)}…'
-                  : descText),
-        initiallyExpanded: descText.isNotEmpty,
-        child: TextField(
-          controller: _descriptionController,
-          decoration: InputDecoration(
-            labelText: l.shift_description_label,
-            hintText: l.shift_description_hint,
-          ),
-          maxLines: 3,
-          minLines: 1,
-          onChanged: (_) => setState(() {}),
-        ),
-      ),
-    ];
-    final endingSections = <Widget>[
-      _buildLivePreview(_buildManualDraftShift()),
-      SizedBox(
-        width: double.infinity,
-        child: ScalePress(
-          onTap: _saveManual,
-          child: ElevatedButton.icon(
-            onPressed: _saveManual,
-            icon: const Icon(Icons.check_circle_rounded),
-            label: Text(
-              widget.shiftToEdit != null
-                  ? l.add_shift_shift_edit_dialog_title
-                  : l.add_shift_shift_ended_dialog_title,
-            ),
-          ),
-        ),
-      ),
-    ];
-
-    Widget buildColumn(List<Widget> sections) => Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (var i = 0; i < sections.length; i++) ...[
-          sections[i],
-          if (i < sections.length - 1) const SizedBox(height: AppTheme.spaceSm),
-        ],
-      ],
-    );
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isWide = constraints.maxWidth >= 900;
-        final sections = [
-          ...shiftSections,
-          ...earningsSections,
-          ...detailSections,
-          ...endingSections,
-        ];
-
-        return SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(
-            AppTheme.spaceSm,
-            AppTheme.spaceSm,
-            AppTheme.spaceSm,
-            AppTheme.spaceLg,
-          ),
-          child: isWide
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: buildColumn([
-                        ...shiftSections,
-                        ...earningsSections,
-                      ]),
-                    ),
-                    const SizedBox(width: AppTheme.spaceMd),
-                    Expanded(
-                      child: buildColumn([
-                        ...detailSections,
-                        ...endingSections,
-                      ]),
-                    ),
-                  ],
-                )
-              : buildColumn(sections),
-        );
-      },
-    );
-  }
-
-  Widget _buildRawForm(List<JobType> jobs) {
-    final l = AppLocalizations.of(context)!;
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(
-        AppTheme.spaceSm,
-        AppTheme.spaceSm,
-        AppTheme.spaceSm,
-        AppTheme.spaceLg,
-      ),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 900),
-          child: Column(
-            children: [
-              _FormSection(
-                title: l.add_shift_paste_title,
-                icon: Icons.paste_rounded,
-                child: Column(
-                  children: [
-                    DropdownButtonFormField<String>(
-                      initialValue: _selectedJobTypeId,
-                      decoration: InputDecoration(
-                        labelText: l.add_shift_paste_default_job_label,
-                        prefixIcon: const Icon(Icons.work_history_rounded),
-                      ),
-                      items: jobs
-                          .map(
-                            (j) => DropdownMenuItem<String>(
-                              value: j.id,
-                              child: Text(j.name),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (val) =>
-                          setState(() => _selectedJobTypeId = val),
-                    ),
-                    const SizedBox(height: AppTheme.spaceSm),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primary.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(
-                            Icons.info_outline_rounded,
-                            color: AppTheme.primaryDark,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              l.add_shift_paste_format_info,
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface,
-                                  ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppTheme.spaceSm),
-              Container(
-                decoration: AppTheme.sectionDecoration(context),
-                padding: const EdgeInsets.all(4),
-                constraints: const BoxConstraints(minHeight: 200),
-                child: TextField(
-                  controller: _rawTextController,
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  textAlignVertical: TextAlignVertical.top,
-                  decoration: InputDecoration(
-                    hintText: l.add_shift_paste_hint,
-                    alignLabelWithHint: true,
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
+                  Tab(
+                    text: l.add_shift_manual_tab,
+                    icon: const Icon(Icons.edit_note_rounded),
                   ),
-                ),
-              ),
-              const SizedBox(height: AppTheme.spaceSm),
-              SizedBox(
-                width: double.infinity,
-                child: ScalePress(
-                  onTap: _saveRaw,
-                  child: ElevatedButton.icon(
-                    onPressed: _saveRaw,
-                    icon: const Icon(Icons.bolt_rounded),
-                    label: Text(l.add_shift_paste_parse_button),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryDark,
-                      foregroundColor: Colors.white,
-                    ),
+                  Tab(
+                    text: l.add_shift_paste_tab,
+                    icon: const Icon(Icons.paste_rounded),
                   ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTipsSection(List<TextEditingController> controllers) {
-    final l = AppLocalizations.of(context)!;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ...controllers.asMap().entries.map((entry) {
-          final idx = entry.key;
-          final controller = entry.value;
-          return Padding(
-            padding: const EdgeInsets.only(bottom: AppTheme.spaceXs),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? AppTheme.darkBackground.withValues(alpha: 0.4)
-                    : AppTheme.lightBackground,
-                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-              ),
-              child: Row(
-                children: [
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.monetization_on_outlined,
-                    size: 20,
-                    color: AppTheme.profit.withValues(alpha: 0.8),
-                  ),
-                  Expanded(
-                    child: TextField(
-                      controller: controller,
-                      decoration: InputDecoration(
-                        hintText: l.add_shift_tips_hint,
-                        filled: false,
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 12,
-                        ),
-                      ),
-                      keyboardType: TextInputType.number,
-                      onChanged: (_) => setState(() {}),
-                    ),
-                  ),
-                  if (controllers.length > 1)
-                    IconButton(
-                      tooltip: l.common_delete,
-                      icon: const Icon(
-                        Icons.remove_circle_outline_rounded,
-                        color: AppTheme.expense,
-                      ),
-                      onPressed: () => setState(() {
-                        controllers.removeAt(idx);
-                      }),
-                    )
-                  else
-                    const SizedBox(width: 12),
                 ],
               ),
             ),
-          );
-        }),
-        TextButton.icon(
-          onPressed: () => setState(() {
-            controllers.add(TextEditingController());
-          }),
-          icon: const Icon(Icons.add_circle_outline_rounded),
-          label: Text(l.add_shift_tips_add_button),
-          style: TextButton.styleFrom(foregroundColor: AppTheme.primaryDark),
+          ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildAutoExpensesSection(String symbol) {
-    final l = AppLocalizations.of(context)!;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 4),
-        ...List.generate(_autoExpenseAmountControllers.length, (index) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: TextField(
-                    controller: _autoExpenseDescControllers[index],
-                    decoration: InputDecoration(
-                      labelText: l.onboarding_auto_expenses_desc_label,
-                      hintText: l.default_expenses_trips,
-                    ),
-                    onChanged: (_) => setState(() {}),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  flex: 1,
-                  child: TextField(
-                    controller: _autoExpenseAmountControllers[index],
-                    decoration: InputDecoration(
-                      labelText: symbol,
-                      hintText: '0',
-                    ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (_) => setState(() {}),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.remove_circle_outline,
-                    color: AppTheme.expense,
-                  ),
-                  onPressed: () => setState(() {
-                    _autoExpenseAmountControllers.removeAt(index);
-                    _autoExpenseDescControllers.removeAt(index);
+      ),
+      body: ResponsivePageBody(
+        child: SafeArea(
+          child: PageEntranceAnimation(
+            child: isEditing
+                ? AddShiftManualTab(
+              jobs: jobs,
+              selectedDate: _selectedDate,
+              startTime: _startTime,
+              endTime: _endTime,
+              selectedJobTypeId: _selectedJobTypeId,
+              selectedBreakType: _selectedBreakType,
+              tipControllers: _tipControllers,
+              autoExpenseAmountControllers: _autoExpenseAmountControllers,
+              autoExpenseDescControllers: _autoExpenseDescControllers,
+              autoIncomeAmountControllers: _autoIncomeAmountControllers,
+              autoIncomeDescControllers: _autoIncomeDescControllers,
+              segmentStartTimes: _segmentStartTimes,
+              segmentEndTimes: _segmentEndTimes,
+              segmentPercentageControllers: _segmentPercentageControllers,
+              descriptionController: _descriptionController,
+              shiftToEdit: widget.shiftToEdit,
+              onDateChanged: (val) => setState(() => _selectedDate = val),
+              onStartTimeChanged: (val) => setState(() => _startTime = val),
+              onEndTimeChanged: (val) => setState(() => _endTime = val),
+              onJobTypeChanged: (val) =>
+                  setState(() => _selectedJobTypeId = val),
+              onBreakTypeChanged: (val) =>
+                  setState(() => _selectedBreakType = val),
+              onAddTip: () =>
+                  setState(() => _tipControllers.add(TextEditingController())),
+              onRemoveTip: (idx) =>
+                  setState(() => _tipControllers.removeAt(idx)),
+              onAddExpense: () =>
+                  setState(() {
+                    _autoExpenseAmountControllers.add(TextEditingController());
+                    _autoExpenseDescControllers.add(TextEditingController());
                   }),
+              onRemoveExpense: (idx) =>
+                  setState(() {
+                    _autoExpenseAmountControllers.removeAt(idx);
+                    _autoExpenseDescControllers.removeAt(idx);
+                  }),
+              onAddIncome: () =>
+                  setState(() {
+                    _autoIncomeAmountControllers.add(TextEditingController());
+                    _autoIncomeDescControllers.add(TextEditingController());
+                  }),
+              onRemoveIncome: (idx) =>
+                  setState(() {
+                    _autoIncomeAmountControllers.removeAt(idx);
+                    _autoIncomeDescControllers.removeAt(idx);
+                  }),
+              onChanged: () => setState(() {}),
+              onSaveManual: _saveManual,
+              buildWageSegmentsSection: _buildWageSegmentsSection,
+              buildOvertimeSalaryBreakdownSection: _buildOvertimeSalaryBreakdownSection,
+            )
+                : TabBarView(
+              controller: _tabController,
+              children: [
+                AddShiftTimerTab(
+                  jobs: jobs,
+                  pulseController: _pulseController,
+                  selectedJobTypeId: _selectedJobTypeId,
+                  onJobTypeChanged: (val) =>
+                      setState(() => _selectedJobTypeId = val),
+                  timerTipControllers: _timerTipControllers,
+                  autoExpenseAmountControllers: _autoExpenseAmountControllers,
+                  autoExpenseDescControllers: _autoExpenseDescControllers,
+                  autoIncomeAmountControllers: _autoIncomeAmountControllers,
+                  autoIncomeDescControllers: _autoIncomeDescControllers,
+                  onAddTip: () =>
+                      setState(() =>
+                          _timerTipControllers.add(TextEditingController())),
+                  onRemoveTip: (idx) =>
+                      setState(() => _timerTipControllers.removeAt(idx)),
+                  onAddExpense: () =>
+                      setState(() {
+                        _autoExpenseAmountControllers.add(
+                            TextEditingController());
+                        _autoExpenseDescControllers.add(
+                            TextEditingController());
+                      }),
+                  onRemoveExpense: (idx) =>
+                      setState(() {
+                        _autoExpenseAmountControllers.removeAt(idx);
+                        _autoExpenseDescControllers.removeAt(idx);
+                      }),
+                  onAddIncome: () =>
+                      setState(() {
+                        _autoIncomeAmountControllers.add(
+                            TextEditingController());
+                        _autoIncomeDescControllers.add(TextEditingController());
+                      }),
+                  onRemoveIncome: (idx) =>
+                      setState(() {
+                        _autoIncomeAmountControllers.removeAt(idx);
+                        _autoIncomeDescControllers.removeAt(idx);
+                      }),
+                  onChanged: () => setState(() {}),
+                  onFinishTimerShift: _finishTimerShift,
+                  onShowFinishDialog: _showFinishDialog,
+                  tabController: _tabController,
+                ),
+                AddShiftManualTab(
+                  jobs: jobs,
+                  selectedDate: _selectedDate,
+                  startTime: _startTime,
+                  endTime: _endTime,
+                  selectedJobTypeId: _selectedJobTypeId,
+                  selectedBreakType: _selectedBreakType,
+                  tipControllers: _tipControllers,
+                  autoExpenseAmountControllers: _autoExpenseAmountControllers,
+                  autoExpenseDescControllers: _autoExpenseDescControllers,
+                  autoIncomeAmountControllers: _autoIncomeAmountControllers,
+                  autoIncomeDescControllers: _autoIncomeDescControllers,
+                  segmentStartTimes: _segmentStartTimes,
+                  segmentEndTimes: _segmentEndTimes,
+                  segmentPercentageControllers: _segmentPercentageControllers,
+                  descriptionController: _descriptionController,
+                  shiftToEdit: widget.shiftToEdit,
+                  onDateChanged: (val) => setState(() => _selectedDate = val),
+                  onStartTimeChanged: (val) => setState(() => _startTime = val),
+                  onEndTimeChanged: (val) => setState(() => _endTime = val),
+                  onJobTypeChanged: (val) =>
+                      setState(() => _selectedJobTypeId = val),
+                  onBreakTypeChanged: (val) =>
+                      setState(() => _selectedBreakType = val),
+                  onAddTip: () =>
+                      setState(() =>
+                          _tipControllers.add(TextEditingController())),
+                  onRemoveTip: (idx) =>
+                      setState(() => _tipControllers.removeAt(idx)),
+                  onAddExpense: () =>
+                      setState(() {
+                        _autoExpenseAmountControllers.add(
+                            TextEditingController());
+                        _autoExpenseDescControllers.add(
+                            TextEditingController());
+                      }),
+                  onRemoveExpense: (idx) =>
+                      setState(() {
+                        _autoExpenseAmountControllers.removeAt(idx);
+                        _autoExpenseDescControllers.removeAt(idx);
+                      }),
+                  onAddIncome: () =>
+                      setState(() {
+                        _autoIncomeAmountControllers.add(
+                            TextEditingController());
+                        _autoIncomeDescControllers.add(TextEditingController());
+                      }),
+                  onRemoveIncome: (idx) =>
+                      setState(() {
+                        _autoIncomeAmountControllers.removeAt(idx);
+                        _autoIncomeDescControllers.removeAt(idx);
+                      }),
+                  onChanged: () => setState(() {}),
+                  onSaveManual: _saveManual,
+                  buildWageSegmentsSection: _buildWageSegmentsSection,
+                  buildOvertimeSalaryBreakdownSection: _buildOvertimeSalaryBreakdownSection,
+                ),
+                AddShiftRawTab(
+                  jobs: jobs,
+                  selectedJobTypeId: _selectedJobTypeId,
+                  onJobTypeChanged: (val) =>
+                      setState(() => _selectedJobTypeId = val),
+                  rawTextController: _rawTextController,
+                  onSaveRaw: _saveRaw,
                 ),
               ],
             ),
-          );
-        }),
-        TextButton.icon(
-          onPressed: () => setState(() {
-            _autoExpenseAmountControllers.add(TextEditingController());
-            _autoExpenseDescControllers.add(TextEditingController());
-          }),
-          icon: const Icon(Icons.add_circle_outline_rounded),
-          label: Text(l.add_shift_expenses_add_button),
-          style: TextButton.styleFrom(foregroundColor: AppTheme.primaryDark),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAutoIncomesSection(String symbol) {
-    final l = AppLocalizations.of(context)!;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 4),
-        ...List.generate(_autoIncomeAmountControllers.length, (index) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: TextField(
-                    controller: _autoIncomeDescControllers[index],
-                    decoration: InputDecoration(
-                      labelText: l.onboarding_auto_expenses_desc_label,
-                      hintText: l.default_expenses_trips,
-                    ),
-                    onChanged: (_) => setState(() {}),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  flex: 1,
-                  child: TextField(
-                    controller: _autoIncomeAmountControllers[index],
-                    decoration: InputDecoration(
-                      labelText: symbol,
-                      hintText: '0',
-                    ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (_) => setState(() {}),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.remove_circle_outline,
-                    color: AppTheme.profit,
-                  ),
-                  onPressed: () => setState(() {
-                    _autoIncomeAmountControllers.removeAt(index);
-                    _autoIncomeDescControllers.removeAt(index);
-                  }),
-                ),
-              ],
-            ),
-          );
-        }),
-        TextButton.icon(
-          onPressed: () => setState(() {
-            _autoIncomeAmountControllers.add(TextEditingController());
-            _autoIncomeDescControllers.add(TextEditingController());
-          }),
-          icon: const Icon(Icons.add_circle_outline_rounded),
-          label: Text(l.add_shift_incomes_add_button),
-          style: TextButton.styleFrom(foregroundColor: AppTheme.profitSoft),
-        ),
-      ],
-    );
-  }
-}
-
-class _FormSection extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final Widget child;
-
-  const _FormSection({
-    required this.title,
-    required this.icon,
-    required this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppTheme.spaceSm),
-      decoration: AppTheme.sectionDecoration(context),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: AppTheme.primaryDark),
-              const SizedBox(width: 8),
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-            ],
-          ),
-          const SizedBox(height: 14),
-          child,
-        ],
-      ),
-    );
-  }
-}
-
-class _CollapsibleFormSection extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final String? summary;
-  final bool initiallyExpanded;
-  final Widget child;
-
-  const _CollapsibleFormSection({
-    required this.title,
-    required this.icon,
-    this.summary,
-    this.initiallyExpanded = false,
-    required this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final hasSummary = summary != null && summary!.isNotEmpty;
-    return Container(
-      width: double.infinity,
-      decoration: AppTheme.sectionDecoration(context),
-      child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          initiallyExpanded: initiallyExpanded,
-          maintainState: true,
-          leading: Icon(icon, size: 18, color: AppTheme.primaryDark),
-          title: Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-          ),
-          subtitle: hasSummary
-              ? Text(
-                  summary!,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.primaryDark.withValues(alpha: 0.85),
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                  ),
-                )
-              : null,
-          childrenPadding: const EdgeInsets.fromLTRB(
-            AppTheme.spaceSm,
-            AppTheme.spaceSm,
-            AppTheme.spaceSm,
-            AppTheme.spaceSm,
-          ),
-          children: [child],
-        ),
-      ),
-    );
-  }
-}
-
-class _PickerTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String value;
-  final VoidCallback onTap;
-
-  const _PickerTile({
-    required this.icon,
-    required this.title,
-    required this.value,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-          child: Row(
-            children: [
-              Icon(icon, color: AppTheme.primaryDark, size: 22),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(value, style: Theme.of(context).textTheme.bodySmall),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.chevron_left_rounded,
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.35),
-              ),
-            ],
           ),
         ),
       ),

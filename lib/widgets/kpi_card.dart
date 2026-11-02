@@ -36,7 +36,7 @@ class KpiCard extends StatelessWidget {
 
     return ScalePress(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: isDark ? AppTheme.darkCard : Theme.of(context).cardTheme.color,
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
@@ -53,13 +53,18 @@ class KpiCard extends StatelessWidget {
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+        child: OverflowBox(
+          alignment: Alignment.topLeft,
+          minHeight: 0,
+          maxHeight: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                 Expanded(
                   child: Text(
                     title,
@@ -157,6 +162,7 @@ class KpiCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

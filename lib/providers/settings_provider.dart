@@ -158,8 +158,11 @@ class SettingsProvider with ChangeNotifier {
         }
       } catch (e) {
         debugPrint('Failed to parse stored overtime rules: $e');
-        _overtimeRules = const OvertimeRules();
+        _overtimeRules = const OvertimeRules(enabled: true);
       }
+    } else {
+      _overtimeRules = const OvertimeRules(enabled: true);
+      box.put('overtimeRules', _overtimeRules.toJson());
     }
 
     final rawShabbat = box.get('shabbatHolidayRules');
@@ -509,8 +512,12 @@ class SettingsProvider with ChangeNotifier {
     _breaksEnabled = true;
     _monthlyProgressMode = MonthlyProgressMode.month;
     _monthlyFinancialGoal = 0;
-    _overtimeRules = const OvertimeRules();
-    await _persistence.settingsBox.delete('overtimeRules');
+    _overtimeRules = const OvertimeRules(enabled: true);
+    _shabbatHolidayRules = const ShabbatHolidayRules(enabled: true);
+    await _persistence.settingsBox.put(
+        'overtimeRules', _overtimeRules.toJson());
+    await _persistence.settingsBox.put(
+        'shabbatHolidayRules', _shabbatHolidayRules.toJson());
     await _persistence.settingsBox.delete('monthlyProgressMode');
     await _persistence.settingsBox.delete('monthlyFinancialGoal');
     notifyListeners();

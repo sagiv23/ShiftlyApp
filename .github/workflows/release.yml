@@ -135,9 +135,38 @@ jobs:
           name: ios-assets
           path: ios-release.ipa
 
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Linux Dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Run build_runner
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Build Linux
+        run: flutter build linux --release --build-name="${GITHUB_REF_NAME#v}" --build-number="$GITHUB_RUN_NUMBER"
+      - name: Create Linux TAR.GZ
+        run: |
+          cd build/linux/x64/release/bundle
+          tar -czvf ../../../../../Shiftly_Linux.tar.gz .
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-assets
+          path: Shiftly_Linux.tar.gz
+
   create-release:
     name: Create GitHub Release
-    needs: [ build-android, build-windows, build-macos, build-ios ]
+    needs: [ build-android, build-windows, build-macos, build-ios, build-linux ]
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifacts
@@ -154,6 +183,7 @@ jobs:
             <div dir="rtl">
             * **Windows Setup (.exe)** - קובץ התקנה ישיר למחשבי Windows.
             * **macOS DMG / ZIP** - קובץ התקנה (DMG) ו-ZIP למחשבי Mac.
+            * **Linux TAR.GZ** - חבילת הפעלה מנוהלת למערכות Linux.
             * **Android APK** - התקנה ישירה למכשירי אנדרואיד.
             * **iOS IPA** - קובץ IPA לא חתום; נדרשת חתימה עם חשבון Apple Developer כדי להתקין.
             </div>
@@ -163,5 +193,6 @@ jobs:
             release-assets/Shiftly_macOS.dmg
             release-assets/Shiftly_macOS.zip
             release-assets/ios-release.ipa
+            release-assets/Shiftly_Linux.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
