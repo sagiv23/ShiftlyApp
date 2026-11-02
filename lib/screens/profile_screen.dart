@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/providers/auth_provider.dart';
@@ -179,7 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Text(
                                   l.profile_created_at.replaceAll(
                                     '[[date]]',
-                                    DateFormat('dd/MM/yyyy').format(
+                                    AppConstants.formatDate(
                                       DateTime.tryParse(auth.userCreatedAt!) ??
                                           DateTime.now(),
                                     ),
@@ -198,7 +197,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   l.profile_birth_date_display
                                       .replaceAll(
                                         '[[date]]',
-                                        DateFormat('dd/MM/yyyy').format(
+                                        AppConstants.formatDate(
                                           DateTime.tryParse(
                                                 auth.userBirthDate!,
                                               ) ??

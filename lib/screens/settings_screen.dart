@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
@@ -1610,7 +1609,7 @@ class _WageTimeline extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              DateFormat('dd/MM/yyyy').format(entry.startDate),
+                              AppConstants.formatDate(entry.startDate),
                               style: TextStyle(
                                 fontSize: compact ? 12 : 13,
                                 fontWeight: FontWeight.w500,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/analytics_charts.dart';
 
@@ -211,7 +212,7 @@ class _SelectedPointDetailsCard extends StatelessWidget {
 
     final dateStr = isMonthMode
         ? DateFormat.yMMMM(l.localeName).format(point.date)
-        : DateFormat('dd/MM/yyyy').format(point.date);
+        : AppConstants.formatDate(point.date);
 
     return Container(
       padding: const EdgeInsets.all(12),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/app_constants.dart';
+
 class EssentialWorkIcon extends StatelessWidget {
   final double size;
   final String? symbol;
@@ -23,7 +25,9 @@ class EssentialWorkIcon extends StatelessWidget {
         ],
       ),
       child: CustomPaint(
-        painter: _EssentialWorkIconPainter(symbol: symbol ?? '₪'),
+        painter: _EssentialWorkIconPainter(
+          symbol: symbol ?? AppConstants.defaultCurrencySymbol,
+        ),
       ),
     );
   }

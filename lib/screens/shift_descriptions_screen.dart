@@ -146,7 +146,7 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
     // Group by date
     final groupedShifts = groupBy(
       shiftsWithDesc,
-      (s) => DateFormat('yyyy-MM-dd').format(s.date),
+          (s) => AppConstants.formatIsoDate(s.date),
     );
 
     return AdaptiveScaffold(

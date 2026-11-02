@@ -12,6 +12,7 @@ import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
+import 'package:shiftly/utils/number_utils.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/expense_income_tile.dart';
@@ -293,7 +294,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
             ElevatedButton(
               onPressed: () async {
                 final desc = descriptionController.text.trim();
-                final amount = double.tryParse(amountController.text) ?? 0.0;
+                final amount = NumberUtils.parseDouble(amountController.text);
 
                 if (desc.isEmpty) {
                   UIUtils.showSnackBar(
@@ -403,27 +404,14 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                     );
                   }
                 } else {
-                  final createAnyway = await showDialog<bool>(
+                  final createAnyway = await UIUtils.showConfirmDialog(
                     context: context,
-                    builder: (noShiftCtx) => AlertDialog(
-                      title: Text(l.expenses_no_shift_dialog_title),
-                      content: Text(
-                        l.expenses_no_shift_dialog_content.replaceAll(
-                          '[[type]]',
-                          typeStr,
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(noShiftCtx, false),
-                          child: Text(l.common_cancel),
-                        ),
-                        ElevatedButton(
-                          onPressed: () => Navigator.pop(noShiftCtx, true),
-                          child: Text(l.expenses_create_anyway_button),
-                        ),
-                      ],
+                    title: l.expenses_no_shift_dialog_title,
+                    content: l.expenses_no_shift_dialog_content.replaceAll(
+                      '[[type]]',
+                      typeStr,
                     ),
+                    confirmLabel: l.expenses_create_anyway_button,
                   );
 
                   if (createAnyway != true || !context.mounted) {
@@ -609,7 +597,7 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${l.common_filter_date}: ${DateFormat('dd/MM/yyyy').format(_selectedDateFilter!)}',
+                            '${l.common_filter_date}: ${AppConstants.formatDate(_selectedDateFilter!)}',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           TextButton(

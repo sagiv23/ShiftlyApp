@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../l10n/app_localizations.dart';
@@ -8,6 +7,7 @@ import '../models/expense.dart';
 import '../models/shift.dart';
 import '../providers/shift_provider.dart';
 import '../theme/app_theme.dart';
+import '../utils/app_constants.dart';
 import '../utils/ui_utils.dart';
 
 class ExpenseRecord {
@@ -132,7 +132,7 @@ class ExpenseTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isWide = screenWidth >= 768;
+    final isWide = screenWidth >= AppConstants.wideScreenWidth;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final badgeColor = isIncome ? AppTheme.mintGreen : AppTheme.softCoral;
@@ -189,7 +189,7 @@ class ExpenseTile extends StatelessWidget {
           ],
         ),
         subtitle: Text(
-          DateFormat('dd/MM/yyyy').format(record.date),
+          AppConstants.formatDate(record.date),
           style: TextStyle(
             fontSize: 12,
             color: isDark ? AppTheme.secondaryText : Colors.grey.shade600,

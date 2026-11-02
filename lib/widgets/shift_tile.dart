@@ -9,6 +9,7 @@ import '../providers/settings_provider.dart';
 import '../providers/shift_provider.dart';
 import '../screens/add_shift_screen.dart';
 import '../theme/app_theme.dart';
+import '../utils/app_constants.dart';
 import '../utils/app_page_route.dart';
 import '../utils/ui_utils.dart';
 import 'magen_david_icon.dart';
@@ -35,7 +36,7 @@ class ShiftTile extends StatelessWidget {
   }) async {
     final l = AppLocalizations.of(context)!;
     final shiftProvider = context.read<ShiftProvider>();
-    final dateStr = DateFormat('dd/MM/yyyy').format(shift.date);
+    final dateStr = AppConstants.formatDate(shift.date);
 
     if (!skipDialog) {
       final confirm = await UIUtils.showConfirmDialog(
@@ -72,13 +73,16 @@ class ShiftTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isWide = screenWidth >= 768;
+    final isWide = screenWidth >= AppConstants.wideScreenWidth;
 
     final shiftProvider = context.read<ShiftProvider>();
     final settings = context.watch<SettingsProvider>();
     final l = AppLocalizations.of(context)!;
     final job = shiftProvider.getJobTypeById(shift.jobTypeId);
-    final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
+    final rate =
+        shift.hourlyRate ??
+        job?.getRateForDate(shift.date) ??
+        AppConstants.defaultHourlyRate;
     final pay = shift.calculateTotalPay(
       rate,
       rules: settings.overtimeRules,
@@ -306,7 +310,7 @@ class ShiftTile extends StatelessWidget {
     );
 
     final shiftSemanticLabel =
-        '${job?.name ?? ""}, ${DateFormat('dd/MM/yyyy').format(shift.date)}, ${shift.netHours.toStringAsFixed(1)} ${l.common_hours_suffix}';
+        '${job?.name ?? ""}, ${AppConstants.formatDate(shift.date)}, ${shift.netHours.toStringAsFixed(1)} ${l.common_hours_suffix}';
 
     Widget tileContent;
     if (useCardDecoration) {
@@ -399,7 +403,7 @@ class ShiftTile extends StatelessWidget {
         ),
       ),
       confirmDismiss: (direction) async {
-        final dateStr = DateFormat('dd/MM/yyyy').format(shift.date);
+        final dateStr = AppConstants.formatDate(shift.date);
         return await UIUtils.showConfirmDialog(
           context: context,
           title: l.add_shift_delete_title,

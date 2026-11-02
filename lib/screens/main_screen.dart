@@ -8,6 +8,7 @@ import 'package:shiftly/screens/settings_screen.dart';
 import 'package:shiftly/screens/shift_descriptions_screen.dart';
 import 'package:shiftly/services/update_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/cookie_consent_banner.dart';
@@ -148,7 +149,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isDesktopOrWide = screenWidth >= 768;
+    final isDesktopOrWide = screenWidth >= AppConstants.wideScreenWidth;
     final activeIndex = _currentIndex > 4 ? 2 : _currentIndex;
 
     final currentTabWidget = IndexedStack(

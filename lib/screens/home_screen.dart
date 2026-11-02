@@ -10,6 +10,7 @@ import 'package:shiftly/providers/timer_provider.dart';
 import 'package:shiftly/screens/add_shift_screen.dart';
 import 'package:shiftly/screens/shift_history_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
@@ -45,7 +46,10 @@ class HomeScreen extends StatelessWidget {
 
     for (final shift in currentMonthShifts) {
       final job = shiftProvider.getJobTypeById(shift.jobTypeId);
-      final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
+      final rate =
+          shift.hourlyRate ??
+          job?.getRateForDate(shift.date) ??
+          AppConstants.defaultHourlyRate;
       monthHours += shift.netHours;
       monthGross += shift.calculateBaseSalary(
         rate,
@@ -74,7 +78,9 @@ class HomeScreen extends StatelessWidget {
       if (timerProvider.startTime?.year == now.year &&
           timerProvider.startTime?.month == now.month) {
         final job = shiftProvider.getJobTypeById(timerProvider.jobTypeId ?? "");
-        final rate = job?.getRateForDate(timerProvider.startTime!) ?? 40.22;
+        final rate =
+            job?.getRateForDate(timerProvider.startTime!) ??
+            AppConstants.defaultHourlyRate;
         monthHours += timerProvider.netMinutes / 60.0;
         monthGross += (timerProvider.netMinutes / 60.0) * rate;
         monthTips += timerProvider.tips;
@@ -656,8 +662,9 @@ class _ActiveTimerBanner extends StatelessWidget {
     final symbol = context.watch<SettingsProvider>().currencySymbol;
     final job = shiftProvider.getJobTypeById(timer.jobTypeId ?? "");
     final rate = timer.startTime != null
-        ? (job?.getRateForDate(timer.startTime!) ?? 40.22)
-        : (job?.hourlyRate ?? 40.22);
+        ? (job?.getRateForDate(timer.startTime!) ??
+              AppConstants.defaultHourlyRate)
+        : (job?.hourlyRate ?? AppConstants.defaultHourlyRate);
     final pay = timer.calculateLivePay(rate);
 
     String twoDigits(int n) => n.toString().padLeft(2, '0');

@@ -8,6 +8,7 @@ import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/providers/timer_provider.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/empty_state_widget.dart';
 import 'package:shiftly/widgets/shift_tile.dart';
@@ -138,7 +139,10 @@ class _YearMonthTabLayoutState extends State<YearMonthTabLayout> {
 
     for (final shift in shiftsForMonth) {
       final job = shiftProvider.getJobTypeById(shift.jobTypeId);
-      final rate = shift.hourlyRate ?? job?.getRateForDate(shift.date) ?? 40.22;
+      final rate =
+          shift.hourlyRate ??
+          job?.getRateForDate(shift.date) ??
+          AppConstants.defaultHourlyRate;
       monthHours += shift.netHours;
       monthGross += shift.calculateBaseSalary(
         rate,
@@ -167,7 +171,9 @@ class _YearMonthTabLayoutState extends State<YearMonthTabLayout> {
         timerProvider.startTime!.month == _selectedMonth) {
       totalShiftsCount += 1;
       final job = shiftProvider.getJobTypeById(timerProvider.jobTypeId ?? "");
-      final rate = job?.getRateForDate(timerProvider.startTime!) ?? 40.22;
+      final rate =
+          job?.getRateForDate(timerProvider.startTime!) ??
+          AppConstants.defaultHourlyRate;
       monthHours += timerProvider.netMinutes / 60.0;
       monthGross += (timerProvider.netMinutes / 60.0) * rate;
       monthTips += timerProvider.tips;

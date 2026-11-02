@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/models/shift.dart';
@@ -8,6 +7,7 @@ import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/services/shabbat_holiday_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/empty_state_widget.dart';
@@ -363,7 +363,7 @@ class _CalendarScreenState extends State<CalendarScreen>
                               Text(
                                 _selectedDay == null
                                     ? l.home_shift_list_select_day
-                                    : '${l.home_shift_list_shifts_on}${DateFormat('dd/MM').format(_selectedDay!)}',
+                                    : '${l.home_shift_list_shifts_on}${AppConstants.formatDateShort(_selectedDay)}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,

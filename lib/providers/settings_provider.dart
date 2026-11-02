@@ -8,6 +8,7 @@ import 'package:shiftly/models/overtime_rules.dart';
 import 'package:shiftly/models/shabbat_holiday_rules.dart';
 import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
+import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/number_utils.dart';
 
 enum MonthlyProgressMode { month, financialGoal }
@@ -38,7 +39,7 @@ class SettingsProvider with ChangeNotifier {
   List<AutomaticExpense> _defaultAutomaticExpenses = [];
   bool _automaticIncomeEnabled = false;
   List<AutomaticExpense> _defaultAutomaticIncomes = [];
-  String _currencySymbol = '₪';
+  String _currencySymbol = AppConstants.defaultCurrencySymbol;
   Locale _locale = const Locale('he', 'IL');
   bool _breaksEnabled = true;
   bool _autoSyncEnabled = true;
@@ -110,7 +111,8 @@ class SettingsProvider with ChangeNotifier {
       'automaticIncomeEnabled',
       defaultValue: false,
     );
-    _currencySymbol = box.get('currencySymbol', defaultValue: '₪');
+    _currencySymbol = box.get(
+        'currencySymbol', defaultValue: AppConstants.defaultCurrencySymbol);
     _breaksEnabled = box.get('breaksEnabled', defaultValue: true);
     _autoSyncEnabled = box.get('autoSyncEnabled', defaultValue: true);
     _cookieConsent = box.get('cookieConsent');
@@ -502,7 +504,7 @@ class SettingsProvider with ChangeNotifier {
     _defaultAutomaticExpenses = [];
     _automaticIncomeEnabled = false;
     _defaultAutomaticIncomes = [];
-    _currencySymbol = '₪';
+    _currencySymbol = AppConstants.defaultCurrencySymbol;
     _locale = const Locale('he', 'IL');
     _breaksEnabled = true;
     _monthlyProgressMode = MonthlyProgressMode.month;

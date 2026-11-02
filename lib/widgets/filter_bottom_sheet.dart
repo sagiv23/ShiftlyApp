@@ -7,6 +7,7 @@ import 'package:shiftly/models/shift_filter.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 
@@ -491,13 +492,13 @@ class ActiveFiltersBar extends StatelessWidget {
                   .replaceFirst(
                     '[[start]]',
                     filter.startDate != null
-                        ? DateFormat('dd/MM').format(filter.startDate!)
+                        ? AppConstants.formatDateShort(filter.startDate)
                         : '...',
                   )
                   .replaceFirst(
                     '[[end]]',
                     filter.endDate != null
-                        ? DateFormat('dd/MM').format(filter.endDate!)
+                        ? AppConstants.formatDateShort(filter.endDate)
                         : '...',
                   ),
               onDeleted: () => provider.setFilter(

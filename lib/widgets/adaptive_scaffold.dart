@@ -6,6 +6,7 @@ import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/screens/profile_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/widgets/cookie_consent_banner.dart';
 
@@ -58,7 +59,7 @@ class AdaptiveScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     final screenWidth = MediaQuery.of(context).size.width;
-    final isDesktopOrWide = screenWidth >= 768;
+    final isDesktopOrWide = screenWidth >= AppConstants.wideScreenWidth;
     final scope = MainScreenScope.of(context);
     final effectiveIndex = scope?.currentIndex ?? currentIndex;
     final activeIndex = effectiveIndex > 4 ? 2 : effectiveIndex;
