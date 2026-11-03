@@ -5,7 +5,6 @@ import 'package:shiftly/main.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/services/api_service.dart';
-import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/secure_storage_helper.dart';
@@ -13,7 +12,6 @@ import 'package:shiftly/utils/secure_storage_helper.dart';
 class AuthProvider with ChangeNotifier {
   final PersistenceService _persistence;
   final ApiService _apiService = ApiService();
-  final GoogleDriveService _driveService = GoogleDriveService();
 
   bool _isLoggedIn = false;
   bool _isGuest = false;
@@ -24,7 +22,6 @@ class AuthProvider with ChangeNotifier {
   String? _userName;
   String? _userEmail;
 
-  // String? _byosEmail;
   String? _token;
   String? _userCreatedAt;
   String? _userBirthDate;
@@ -84,10 +81,8 @@ class AuthProvider with ChangeNotifier {
       final box = _persistence.settingsBox;
       _isLoggedIn = box.get('isLoggedIn', defaultValue: false);
       _isGuest = box.get('isGuest', defaultValue: false);
-      // _isByosConnected = box.get('isByosConnected', defaultValue: false);
       _userName = box.get('userName');
       _userEmail = box.get('userEmail');
-      // _byosEmail = box.get('byosEmail');
       _userCreatedAt = box.get('userCreatedAt');
       _userBirthDate = box.get('userBirthDate');
       _token = await SecureStorageHelper.getToken();
@@ -102,14 +97,6 @@ class AuthProvider with ChangeNotifier {
         _isLoggedIn = false;
         await box.put('isLoggedIn', false);
         _isGuest = box.get('isGuest', defaultValue: false);
-      }
-
-      if (_isByosConnected) {
-        try {
-          await _driveService.init();
-        } catch (e) {
-          debugPrint('Drive init failed in restoreLocalSession: $e');
-        }
       }
     } catch (e) {
       debugPrint('Failed to restore local session: $e');
@@ -206,14 +193,6 @@ class AuthProvider with ChangeNotifier {
         await _persistence.settingsBox.put('userCreatedAt', _userCreatedAt!);
       }
 
-      if (_isByosConnected) {
-        try {
-          await _driveService.init();
-        } catch (e) {
-          debugPrint('Drive init failed: $e');
-        }
-      }
-
       return _isLoggedIn;
     } catch (e) {
       debugPrint('Unexpected error in syncProfileAndDrive: $e');
@@ -239,43 +218,6 @@ class AuthProvider with ChangeNotifier {
     await restoreLocalSession();
     await syncProfileAndDrive();
   }
-
-  /*
-  Future<void> connectBYOS() async {
-    try {
-      final email = await _driveService.signIn();
-      if (email != null) {
-        _isByosConnected = true;
-        _byosEmail = email;
-
-        final box = _persistence.settingsBox;
-        await box.put('isByosConnected', true);
-        await box.put('byosEmail', _byosEmail ?? '');
-        notifyListeners();
-      } else {
-        throw Exception('Google Sign-In returned no credentials.');
-      }
-    } catch (e) {
-      debugPrint('BYOS connection failed: $e');
-      rethrow;
-    }
-  }
-
-  Future<void> disconnectBYOS() async {
-    try {
-      await _driveService.signOut();
-    } catch (e) {
-      debugPrint('Drive signOut failed: $e');
-    }
-    _isByosConnected = false;
-    _byosEmail = null;
-
-    final box = _persistence.settingsBox;
-    await box.put('isByosConnected', false);
-    await box.delete('byosEmail');
-    notifyListeners();
-  }
-  */
 
   Future<Map<String, dynamic>> authenticateOnly(
     String email,

@@ -14,7 +14,6 @@ import 'package:shiftly/models/wage_entry.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/services/api_service.dart';
-import 'package:shiftly/services/google_drive_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_page_route.dart';
@@ -22,7 +21,6 @@ import 'package:shiftly/utils/app_page_route.dart';
 class ShiftProvider with ChangeNotifier {
   final PersistenceService _persistence;
   final ApiService _apiService = ApiService();
-  final GoogleDriveService _driveService = GoogleDriveService();
   String? _authToken;
   bool _isBYOS = false;
   bool _autoSyncEnabled = true;
@@ -57,15 +55,6 @@ class ShiftProvider with ChangeNotifier {
   ShiftProvider(this._persistence) {
     // _loadStoredLastBackupTime();
   }
-
-  /*
-  void _loadStoredLastBackupTime() {
-    final raw = _persistence.settingsBox.get('byos_last_backup_time');
-    if (raw != null && raw is String) {
-      _lastBackupTime = DateTime.tryParse(raw);
-    }
-  }
-  */
 
   bool _hasSyncedOnStartup = false;
   SettingsProvider? _settingsProvider;
@@ -168,69 +157,13 @@ class ShiftProvider with ChangeNotifier {
   }
 
   Future<void> fetchLastBackupTimeFromDrive() async {
-    if (!_isBYOS) return;
-    try {
-      final modifiedTime = await _driveService.getBackupModifiedTime();
-      if (modifiedTime != null) {
-        _lastBackupTime = modifiedTime.toLocal();
-        await _persistence.settingsBox.put(
-          'byos_last_backup_time',
-          _lastBackupTime!.toIso8601String(),
-        );
-        notifyListeners();
-      }
-    } catch (e) {
-      debugPrint('ShiftProvider: Error fetching Drive backup time: $e');
-    }
+    // Drive backup disabled
   }
 
   Future<bool> _performBackup() async {
-    if (_isBYOS) {
-      try {
-        final data = {
-          'shifts': shifts.map((s) => s.toJson()).toList(),
-          'expenses': _persistence.expensesBox.values
-              .map((e) => e.toJson())
-              .toList(),
-          'jobTypes': jobTypes.map((j) => j.toJson()).toList(),
-          'settings': {
-            'defaultAutomaticExpenses':
-                _settingsProvider?.defaultAutomaticExpenses
-                    .map((e) => e.toJson())
-                    .toList() ??
-                [],
-            'defaultAutomaticIncomes':
-                _settingsProvider?.defaultAutomaticIncomes
-                    .map((e) => e.toJson())
-                    .toList() ??
-                [],
-            'automaticExpenseEnabled':
-                _settingsProvider?.automaticExpenseEnabled ?? false,
-            'automaticIncomeEnabled':
-                _settingsProvider?.automaticIncomeEnabled ?? false,
-          },
-        };
-        await _driveService.uploadBackup(data);
-        _lastBackupTime = DateTime.now();
-        await _persistence.settingsBox.put(
-          'byos_last_backup_time',
-          _lastBackupTime!.toIso8601String(),
-        );
-        notifyListeners();
-        return true;
-      } catch (e) {
-        debugPrint('Backup failed: $e');
-        return false;
-      }
-    }
     return false;
   }
 
-  /*
-  Future<Map<String, int>> restoreFromBYOS() async {
-    ...
-  }
-  */
   Future<Map<String, int>> restoreFromBYOS() async {
     return {'shifts': 0, 'jobs': 0, 'expenses': 0};
   }
