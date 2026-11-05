@@ -474,7 +474,7 @@ class ImportUtils {
       if (parsed != null) return parsed;
 
       // DD.MM.YYYY or DD/MM/YYYY
-      final parts = raw.split(RegExp(r'[.\/-]'));
+      final parts = raw.split(RegExp(r'[./-]'));
       if (parts.length >= 2) {
         final day = int.parse(parts[0]);
         final month = int.parse(parts[1]);
