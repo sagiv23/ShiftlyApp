@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -896,6 +897,10 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get auth_register_guest_transfer => 'התחברות או הרשמה לחשבון Shiftly';
+
+  @override
+  String get auth_user_deleted_local_data_preserved =>
+      'המשתמש שלך אינו קיים עוד במסד הנתונים. התנתקת מהמערכת, אך הנתונים הלוקאליים שלך במכשיר זה עדיין נשמרו.';
 
   @override
   String get home_welcome_back => 'שלום, [[name]]';

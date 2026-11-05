@@ -42,6 +42,37 @@ class _YearMonthTabLayoutState extends State<YearMonthTabLayout> {
   late List<int> _availableYears;
   final ScrollController _monthScrollController = ScrollController();
 
+  List<int> _getAvailableMonthsForYear(int year) {
+    final monthsSet = <int>{};
+    for (final key in widget.groupedShifts.keys) {
+      final parts = key.split('-');
+      if (parts.length == 2) {
+        final y = int.tryParse(parts[0]);
+        final m = int.tryParse(parts[1]);
+        if (y == year && m != null) {
+          monthsSet.add(m);
+        }
+      }
+    }
+    for (final shift in context.read<ShiftProvider>().filteredShifts) {
+      if (shift.date.year == year) {
+        monthsSet.add(shift.date.month);
+      }
+    }
+    final timerProvider = context.read<TimerProvider>();
+    if (timerProvider.startTime != null &&
+        timerProvider.startTime!.year == year) {
+      monthsSet.add(timerProvider.startTime!.month);
+    }
+
+    if (monthsSet.isEmpty && year == DateTime.now().year) {
+      monthsSet.add(DateTime.now().month);
+    }
+
+    final sortedMonths = monthsSet.toList()..sort((a, b) => a.compareTo(b));
+    return sortedMonths;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -62,7 +93,13 @@ class _YearMonthTabLayoutState extends State<YearMonthTabLayout> {
     _selectedYear =
         widget.initialYear ??
         (_availableYears.contains(now.year) ? now.year : _availableYears.first);
-    _selectedMonth = widget.initialMonth ?? now.month;
+
+    final initialMonths = _getAvailableMonthsForYear(_selectedYear);
+    _selectedMonth =
+        widget.initialMonth ??
+        (initialMonths.contains(now.month)
+            ? now.month
+            : (initialMonths.isNotEmpty ? initialMonths.first : now.month));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToSelectedMonth();
@@ -75,10 +112,16 @@ class _YearMonthTabLayoutState extends State<YearMonthTabLayout> {
     if ((widget.initialYear != null &&
             widget.initialYear != oldWidget.initialYear) ||
         (widget.initialMonth != null &&
-            widget.initialMonth != oldWidget.initialMonth)) {
+            widget.initialMonth != oldWidget.initialMonth) ||
+        widget.groupedShifts != oldWidget.groupedShifts) {
       setState(() {
         if (widget.initialYear != null) _selectedYear = widget.initialYear!;
         if (widget.initialMonth != null) _selectedMonth = widget.initialMonth!;
+
+        final monthsForYear = _getAvailableMonthsForYear(_selectedYear);
+        if (!monthsForYear.contains(_selectedMonth)) {
+          _selectedMonth = monthsForYear.isNotEmpty ? monthsForYear.first : 1;
+        }
       });
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToSelectedMonth();
@@ -94,9 +137,18 @@ class _YearMonthTabLayoutState extends State<YearMonthTabLayout> {
 
   void _scrollToSelectedMonth() {
     if (!_monthScrollController.hasClients) return;
+    final availableMonths = _getAvailableMonthsForYear(_selectedYear);
+    final index = availableMonths.indexOf(_selectedMonth);
+    if (index < 0 || availableMonths.isEmpty) return;
+
     final maxScroll = _monthScrollController.position.maxScrollExtent;
     if (maxScroll <= 0) return;
-    final targetOffset = ((_selectedMonth - 1) / 11.0) * maxScroll;
+
+    final fraction = availableMonths.length > 1
+        ? index / (availableMonths.length - 1)
+        : 0.0;
+    final targetOffset = fraction * maxScroll;
+
     _monthScrollController.animateTo(
       targetOffset.clamp(0.0, maxScroll),
       duration: const Duration(milliseconds: 300),
@@ -319,6 +371,13 @@ class _YearMonthTabLayoutState extends State<YearMonthTabLayout> {
                           onTap: () {
                             setState(() {
                               _selectedYear = year;
+                              final monthsForNewYear =
+                                  _getAvailableMonthsForYear(year);
+                              if (!monthsForNewYear.contains(_selectedMonth)) {
+                                _selectedMonth = monthsForNewYear.isNotEmpty
+                                    ? monthsForNewYear.first
+                                    : 1;
+                              }
                             });
                             WidgetsBinding.instance.addPostFrameCallback((_) {
                               _scrollToSelectedMonth();
@@ -400,6 +459,8 @@ class _YearMonthTabLayoutState extends State<YearMonthTabLayout> {
     bool isDark,
     AppLocalizations l,
   ) {
+    final availableMonths = _getAvailableMonthsForYear(_selectedYear);
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
@@ -442,10 +503,9 @@ class _YearMonthTabLayoutState extends State<YearMonthTabLayout> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    for (int index = 0; index < 12; index++)
+                    for (final monthNum in availableMonths)
                       Builder(
                         builder: (context) {
-                          final monthNum = index + 1;
                           final isSelected = monthNum == _selectedMonth;
                           final date = DateTime(_selectedYear, monthNum);
                           final monthShortName = DateFormat.MMM(

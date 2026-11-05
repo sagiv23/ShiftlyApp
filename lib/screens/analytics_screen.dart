@@ -99,13 +99,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         targetKey = _overviewKey;
         break;
       case 1:
-        targetKey = _earningsKey;
+        targetKey = _payBreakdownKey;
         break;
       case 2:
-        targetKey = _workPatternsKey;
+        targetKey = _earningsKey;
         break;
       case 3:
-        targetKey = _payBreakdownKey;
+        targetKey = _workPatternsKey;
         break;
     }
 
@@ -373,6 +373,34 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         ),
                         const SizedBox(height: AppTheme.spaceLg),
 
+                        // SECTION F: PAY BREAKDOWN
+                        if (totalRegularHours > 0 ||
+                            totalOvertimeHours > 0 ||
+                            totalShabbatHours > 0 ||
+                            totalHolidayHours > 0) ...[
+                          Container(key: _payBreakdownKey),
+                          _SectionHeading(
+                            title: l.analytics_section_pay_breakdown,
+                            icon: Icons.receipt_long_rounded,
+                          ),
+                          const SizedBox(height: AppTheme.spaceXs),
+                          AnalyticsPayBreakdownSection(
+                            l: l,
+                            symbol: symbol,
+                            totalRegularHours: totalRegularHours,
+                            totalRegularEarnings: totalRegularEarnings,
+                            totalTier1Hours: totalTier1Hours,
+                            totalTier1Earnings: totalTier1Earnings,
+                            totalTier2Hours: totalTier2Hours,
+                            totalTier2Earnings: totalTier2Earnings,
+                            totalShabbatHours: totalShabbatHours,
+                            totalShabbatEarnings: totalShabbatEarnings,
+                            totalHolidayHours: totalHolidayHours,
+                            totalHolidayEarnings: totalHolidayEarnings,
+                          ),
+                          const SizedBox(height: AppTheme.spaceLg),
+                        ],
+
                         // SECTION D: EARNINGS
                         Container(key: _earningsKey),
                         _SectionHeading(
@@ -419,34 +447,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                               setState(() => _byEarningsForJobs = val);
                             },
                             isWideScreen: isWideScreen,
-                          ),
-                          const SizedBox(height: AppTheme.spaceLg),
-                        ],
-
-                        // SECTION F: PAY BREAKDOWN
-                        if (totalRegularHours > 0 ||
-                            totalOvertimeHours > 0 ||
-                            totalShabbatHours > 0 ||
-                            totalHolidayHours > 0) ...[
-                          Container(key: _payBreakdownKey),
-                          _SectionHeading(
-                            title: l.analytics_section_pay_breakdown,
-                            icon: Icons.receipt_long_rounded,
-                          ),
-                          const SizedBox(height: AppTheme.spaceXs),
-                          AnalyticsPayBreakdownSection(
-                            l: l,
-                            symbol: symbol,
-                            totalRegularHours: totalRegularHours,
-                            totalRegularEarnings: totalRegularEarnings,
-                            totalTier1Hours: totalTier1Hours,
-                            totalTier1Earnings: totalTier1Earnings,
-                            totalTier2Hours: totalTier2Hours,
-                            totalTier2Earnings: totalTier2Earnings,
-                            totalShabbatHours: totalShabbatHours,
-                            totalShabbatEarnings: totalShabbatEarnings,
-                            totalHolidayHours: totalHolidayHours,
-                            totalHolidayEarnings: totalHolidayEarnings,
                           ),
                           const SizedBox(height: AppTheme.spaceLg),
                         ],

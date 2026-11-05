@@ -306,6 +306,7 @@
   "auth_guest_mode_subtitle": "You are using Shiftly in Guest Mode. Your data is saved locally on this device. Create an account to sync across devices or log in to an existing account.",
   "auth_guest_migration_failed": "Failed to retrieve account data. Your guest data has been preserved.",
   "auth_register_guest_transfer": "Sign In or Create Shiftly Account",
+  "auth_user_deleted_local_data_preserved": "Your account no longer exists in the database. You have been logged out, but your local data remains saved on this device.",
   "home_welcome_back": "Hello, [[name]]",
   "settings_user_name": "Name",
   "settings_user_email": "Email",

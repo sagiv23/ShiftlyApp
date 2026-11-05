@@ -1796,6 +1796,12 @@ abstract class AppLocalizations {
   /// **'התחברות או הרשמה לחשבון Shiftly'**
   String get auth_register_guest_transfer;
 
+  /// No description provided for @auth_user_deleted_local_data_preserved.
+  ///
+  /// In he, this message translates to:
+  /// **'המשתמש שלך אינו קיים עוד במסד הנתונים. התנתקת מהמערכת, אך הנתונים הלוקאליים שלך במכשיר זה עדיין נשמרו.'**
+  String get auth_user_deleted_local_data_preserved;
+
   /// No description provided for @home_welcome_back.
   ///
   /// In he, this message translates to:

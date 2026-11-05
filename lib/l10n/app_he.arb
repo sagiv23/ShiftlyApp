@@ -306,6 +306,7 @@
   "auth_guest_mode_subtitle": "אתה משתמש ב-Shiftly במצב אורח. הנתונים שלך שמורים מקומית במכשיר זה. ניתן ליצור חשבון חדש כדי לסנכרן בין מכשירים או להתחבר לחשבון קיים.",
   "auth_guest_migration_failed": "טעינת נתוני החשבון נכשלה. נתוני האורח המקומיים שלך נשמרו.",
   "auth_register_guest_transfer": "התחברות או הרשמה לחשבון Shiftly",
+  "auth_user_deleted_local_data_preserved": "המשתמש שלך אינו קיים עוד במסד הנתונים. התנתקת מהמערכת, אך הנתונים הלוקאליים שלך במכשיר זה עדיין נשמרו.",
   "home_welcome_back": "שלום, [[name]]",
   "settings_user_name": "שם",
   "settings_user_email": "אימייל",

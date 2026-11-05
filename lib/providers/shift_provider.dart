@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/main.dart';
 import 'package:shiftly/models/automatic_expense.dart';
 import 'package:shiftly/models/expense.dart';
@@ -17,6 +19,8 @@ import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
 import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_page_route.dart';
+import 'package:shiftly/utils/secure_storage_helper.dart';
+import 'package:shiftly/utils/ui_utils.dart';
 
 class ShiftProvider with ChangeNotifier {
   final PersistenceService _persistence;
@@ -277,12 +281,8 @@ class ShiftProvider with ChangeNotifier {
 
       // 4. Populate remote expenses
       for (var expData in remoteExpenses) {
-        final exp = Expense(
-          id: expData['id'].toString(),
-          date: DateTime.parse(expData['date'].toString()),
-          description: expData['description']?.toString() ?? '',
-          amount: double.parse((expData['amount'] ?? 0).toString()),
-          isIncome: expData['is_income'] == true || expData['isIncome'] == true,
+        final exp = Expense.fromJson(
+          Map<String, dynamic>.from(expData as Map),
         );
         await _persistence.expensesBox.put(exp.id, exp);
       }
@@ -386,12 +386,8 @@ class ShiftProvider with ChangeNotifier {
       }
 
       for (var expData in remoteExpenses) {
-        final exp = Expense(
-          id: expData['id'].toString(),
-          date: DateTime.parse(expData['date'].toString()),
-          description: expData['description']?.toString() ?? '',
-          amount: double.parse((expData['amount'] ?? 0).toString()),
-          isIncome: expData['is_income'] == true || expData['isIncome'] == true,
+        final exp = Expense.fromJson(
+          Map<String, dynamic>.from(expData as Map),
         );
         await _persistence.expensesBox.put(exp.id, exp);
       }
@@ -457,6 +453,17 @@ class ShiftProvider with ChangeNotifier {
     } catch (e) {
       if (e.toString().contains('unauthorized')) {
         if (!_isBYOS) {
+          final l = lookupAppLocalizations(const Locale('he', 'IL'));
+          final msg = l.auth_user_deleted_local_data_preserved;
+
+          await SecureStorageHelper.deleteToken();
+          try {
+            final box = Hive.box<dynamic>('settings');
+            await box.put('isLoggedIn', false);
+            await box.delete('userEmail');
+            await box.delete('userName');
+          } catch (_) {}
+
           navigatorKey.currentState?.pushAndRemoveUntil(
             AppPageRoute.fadeScale(
               const AuthScreen(),
@@ -464,6 +471,15 @@ class ShiftProvider with ChangeNotifier {
             ),
             (route) => false,
           );
+
+          Future.delayed(const Duration(milliseconds: 300), () {
+            // ignore: use_build_context_synchronously
+            final ctx = navigatorKey.currentContext;
+            if (ctx != null) {
+              // ignore: use_build_context_synchronously
+              UIUtils.showSnackBar(ctx, msg);
+            }
+          });
         }
       }
       debugPrint('Sync failed: $e');

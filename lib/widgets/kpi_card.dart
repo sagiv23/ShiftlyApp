@@ -53,18 +53,13 @@ class KpiCard extends StatelessWidget {
             ),
           ],
         ),
-        child: OverflowBox(
-          alignment: Alignment.topLeft,
-          minHeight: 0,
-          maxHeight: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 Expanded(
                   child: Text(
                     title,
@@ -100,6 +95,7 @@ class KpiCard extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 6),
             numericValue != null
                 ? TweenAnimationBuilder<double>(
                     tween: Tween<double>(begin: 0.0, end: numericValue!),
@@ -150,6 +146,7 @@ class KpiCard extends StatelessWidget {
                       ),
                     ),
                   ),
+            const SizedBox(height: 4),
             Text(
               subtitle,
               style: TextStyle(
@@ -162,7 +159,6 @@ class KpiCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
       ),
     );
   }

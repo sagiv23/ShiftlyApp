@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/main.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/screens/auth_screen.dart';
@@ -8,6 +9,7 @@ import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/secure_storage_helper.dart';
+import 'package:shiftly/utils/ui_utils.dart';
 
 class AuthProvider with ChangeNotifier {
   final PersistenceService _persistence;
@@ -118,6 +120,39 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> _handleUserNotFoundOrUnauthorized() async {
+    debugPrint('User no longer exists in database or unauthorized.');
+    final locale = _settingsProvider?.locale ?? const Locale('he', 'IL');
+    final l = lookupAppLocalizations(locale);
+    final msg = l.auth_user_deleted_local_data_preserved;
+
+    if (!_isByosConnected) {
+      await logout(navigate: true, clearData: false, notificationMessage: msg);
+    } else {
+      _isLoggedIn = false;
+      _token = null;
+      await SecureStorageHelper.deleteToken();
+      await _persistence.settingsBox.put('isLoggedIn', false);
+      notifyListeners();
+      navigatorKey.currentState?.pushAndRemoveUntil(
+        AppPageRoute.fadeScale(
+          const AuthScreen(),
+          duration: const Duration(milliseconds: 200),
+        ),
+        (route) => false,
+      );
+      Future.delayed(const Duration(milliseconds: 300), () {
+        // ignore: use_build_context_synchronously
+        final ctx = navigatorKey.currentContext;
+        if (ctx != null) {
+          // ignore: use_build_context_synchronously
+          UIUtils.showSnackBar(ctx, msg);
+        }
+      });
+    }
+    return false;
+  }
+
   Future<bool> syncProfileAndDrive() async {
     try {
       if (_isLoggedIn) {
@@ -142,16 +177,7 @@ class AuthProvider with ChangeNotifier {
                   profile['id'] == null &&
                   profile['name'] == null)) {
             debugPrint('User does not exist in database.');
-            if (!_isByosConnected) {
-              await logout(navigate: false);
-            } else {
-              _isLoggedIn = false;
-              _token = null;
-              await SecureStorageHelper.deleteToken();
-              await _persistence.settingsBox.put('isLoggedIn', false);
-              notifyListeners();
-            }
-            return false;
+            return await _handleUserNotFoundOrUnauthorized();
           }
 
           _userName = profile['name'] ?? _userName;
@@ -170,16 +196,7 @@ class AuthProvider with ChangeNotifier {
           debugPrint('Failed to sync profile on load: $e');
           if (e.toString().contains('unauthorized')) {
             debugPrint('User check failed with unauthorized.');
-            if (!_isByosConnected) {
-              await logout(navigate: false);
-            } else {
-              _isLoggedIn = false;
-              _token = null;
-              await SecureStorageHelper.deleteToken();
-              await _persistence.settingsBox.put('isLoggedIn', false);
-              notifyListeners();
-            }
-            return false;
+            return await _handleUserNotFoundOrUnauthorized();
           } else {
             debugPrint(
               'Network or server error during profile sync. Continuing with local cached user session.',
@@ -197,8 +214,7 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       debugPrint('Unexpected error in syncProfileAndDrive: $e');
       if (e.toString().contains('unauthorized')) {
-        await logout(navigate: false);
-        return false;
+        return await _handleUserNotFoundOrUnauthorized();
       }
       return _isLoggedIn;
     } finally {
@@ -379,7 +395,11 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> logout({bool navigate = true}) async {
+  Future<void> logout({
+    bool navigate = true,
+    bool clearData = true,
+    String? notificationMessage,
+  }) async {
     _isLoggedIn = false;
     _isGuest = false;
     _userName = null;
@@ -387,7 +407,7 @@ class AuthProvider with ChangeNotifier {
     _token = null;
     _userCreatedAt = null;
     _userBirthDate = null;
-    if (!_isByosConnected) {
+    if (clearData && !_isByosConnected) {
       await _persistence.clearUserData();
     }
     await _settingsProvider?.resetUserSettings();
@@ -409,6 +429,16 @@ class AuthProvider with ChangeNotifier {
         ),
         (route) => false,
       );
+      if (notificationMessage != null && notificationMessage.isNotEmpty) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          // ignore: use_build_context_synchronously
+          final navContext = navigatorKey.currentContext;
+          if (navContext != null) {
+            // ignore: use_build_context_synchronously
+            UIUtils.showSnackBar(navContext, notificationMessage);
+          }
+        });
+      }
     }
   }
 

@@ -25,18 +25,18 @@ class AnalyticsNav extends StatelessWidget {
       ),
       _NavSectionItem(
         index: 1,
+        label: l.analytics_section_pay_breakdown,
+        icon: Icons.receipt_long_rounded,
+      ),
+      _NavSectionItem(
+        index: 2,
         label: l.analytics_section_earnings,
         icon: Icons.payments_rounded,
       ),
       _NavSectionItem(
-        index: 2,
+        index: 3,
         label: l.analytics_section_work_patterns,
         icon: Icons.schedule_rounded,
-      ),
-      _NavSectionItem(
-        index: 3,
-        label: l.analytics_section_pay_breakdown,
-        icon: Icons.receipt_long_rounded,
       ),
     ];
 

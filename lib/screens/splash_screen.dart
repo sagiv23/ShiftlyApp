@@ -4,12 +4,14 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
+import 'package:shiftly/main.dart';
 import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/screens/auth_screen.dart';
 import 'package:shiftly/screens/main_screen.dart';
 import 'package:shiftly/screens/onboarding_screen.dart';
 import 'package:shiftly/theme/app_theme.dart';
+import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/app_icon.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -194,7 +196,17 @@ class _SplashScreenState extends State<SplashScreen>
       debugPrint('Initialization error during splash screen: $e');
       if (e.toString().contains('unauthorized')) {
         try {
-          await auth.logout(navigate: false);
+          final l = lookupAppLocalizations(const Locale('he', 'IL'));
+          final msg = l.auth_user_deleted_local_data_preserved;
+          await auth.logout(navigate: false, clearData: false);
+          Future.delayed(const Duration(milliseconds: 300), () {
+            // ignore: use_build_context_synchronously
+            final navCtx = navigatorKey.currentContext;
+            if (navCtx != null) {
+              // ignore: use_build_context_synchronously
+              UIUtils.showSnackBar(navCtx, msg);
+            }
+          });
         } catch (_) {}
       }
     }
