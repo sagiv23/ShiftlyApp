@@ -499,7 +499,7 @@ class ImportUtils {
       final parts = timeStr.split(':');
       if (parts.length >= 2) {
         final hour = int.parse(parts[0]);
-        final minute = int.parse(parts[1].replaceAll(RegExp(r'[^\d]'), ''));
+        final minute = int.parse(parts[1].replaceAll(RegExp(r'\D'), ''));
         return DateTime(date.year, date.month, date.day, hour, minute);
       }
     } catch (_) {}
