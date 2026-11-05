@@ -140,11 +140,30 @@ class Shift extends HiveObject {
     }
   }
 
+  static DateTime _parseWallClockDateTime(dynamic raw) {
+    if (raw == null) return DateTime.now();
+    if (raw is DateTime) return raw;
+    final str = raw.toString().trim();
+    if (str.isEmpty) return DateTime.now();
+
+    final dt = DateTime.parse(str);
+    if (dt.isUtc) {
+      final cleanStr =
+          str.endsWith('Z') ? str.substring(0, str.length - 1) : str;
+      final wallDt = DateTime.tryParse(cleanStr);
+      if (wallDt != null) return wallDt;
+      return DateTime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second);
+    }
+    return dt;
+  }
+
   factory Shift.fromJson(Map<String, dynamic> json) => Shift(
     id: json['id'],
-    date: DateTime.parse(json['date']),
-    startTime: DateTime.parse(json['startTime'] ?? json['start_time']),
-    endTime: DateTime.parse(json['endTime'] ?? json['end_time']),
+    date: _parseWallClockDateTime(json['date']),
+    startTime: _parseWallClockDateTime(
+      json['startTime'] ?? json['start_time'],
+    ),
+    endTime: _parseWallClockDateTime(json['endTime'] ?? json['end_time']),
     jobTypeId: json['jobTypeId'] ?? json['job_type_id'],
     tips: NumberUtils.parseDouble(json['tips']),
     individualTips: (json['individualTips'] as List?)

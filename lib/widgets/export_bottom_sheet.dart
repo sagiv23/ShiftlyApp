@@ -21,7 +21,8 @@ class ExportBottomSheet extends StatefulWidget {
 }
 
 class _ExportBottomSheetState extends State<ExportBottomSheet> {
-  String _format = 'csv';
+  String _format = 'excel';
+  bool _includeAnalytics = true;
   String _rangeType = 'all';
   String? _selectedMonthKey;
   DateTime _startDate = DateTime.now().subtract(const Duration(days: 30));
@@ -67,11 +68,22 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    l.export_title,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    children: [
+                      const Icon(
+                          Icons.output_rounded, color: AppTheme.electricCyan),
+                      const SizedBox(width: 8),
+                      Text(
+                        l.export_title,
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .titleLarge
+                            ?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                   IconButton(
                     icon: const Icon(Icons.close_rounded),
@@ -85,24 +97,82 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                 l.export_format_label,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 8),
-              SegmentedButton<String>(
-                segments: [
-                  ButtonSegment(
-                    value: 'csv',
-                    label: Text(l.export_format_csv),
-                    icon: const Icon(Icons.table_chart_rounded),
+              const SizedBox(height: 10),
+
+              // Format Selection Grid (2 columns for 5 options: Excel, PDF, CSV, TXT, JSON)
+              GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: 2.8,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _formatCard(
+                    id: 'excel',
+                    label: l.export_format_excel,
+                    icon: Icons.grid_on_rounded,
+                    accentColor: const Color(0xFF10B981),
+                    isDark: isDark,
                   ),
-                  ButtonSegment(
-                    value: 'txt',
-                    label: Text(l.export_format_txt),
-                    icon: const Icon(Icons.description_rounded),
+                  _formatCard(
+                    id: 'pdf',
+                    label: l.export_format_pdf,
+                    icon: Icons.picture_as_pdf_rounded,
+                    accentColor: const Color(0xFFEF4444),
+                    isDark: isDark,
+                  ),
+                  _formatCard(
+                    id: 'csv',
+                    label: l.export_format_csv,
+                    icon: Icons.table_chart_rounded,
+                    accentColor: const Color(0xFF0284C7),
+                    isDark: isDark,
+                  ),
+                  _formatCard(
+                    id: 'txt',
+                    label: l.export_format_txt,
+                    icon: Icons.description_rounded,
+                    accentColor: const Color(0xFF8B5CF6),
+                    isDark: isDark,
+                  ),
+                  _formatCard(
+                    id: 'json',
+                    label: l.export_format_json,
+                    icon: Icons.code_rounded,
+                    accentColor: const Color(0xFFF59E0B),
+                    isDark: isDark,
                   ),
                 ],
-                selected: {_format},
-                onSelectionChanged: (val) =>
-                    setState(() => _format = val.first),
               ),
+
+              if (_format == 'excel' || _format == 'pdf') ...[
+                const SizedBox(height: AppTheme.spaceSm),
+                Material(
+                  color: Colors.transparent,
+                  child: SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                      l.export_include_analytics,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: Text(
+                      l.export_include_analytics_sub,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    value: _includeAnalytics,
+                    activeThumbColor: AppTheme.electricCyan,
+                    activeTrackColor: AppTheme.electricCyan.withValues(
+                        alpha: 0.4),
+                    inactiveThumbColor: isDark ? Colors.grey.shade400 : Colors
+                        .white,
+                    inactiveTrackColor: isDark ? Colors.grey.shade800 : Colors
+                        .grey.shade300,
+                    onChanged: (val) => setState(() => _includeAnalytics = val),
+                  ),
+                ),
+              ],
               const SizedBox(height: AppTheme.spaceMd),
               Text(
                 l.export_range_label,
@@ -268,6 +338,9 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                       shifts: shiftsToExport,
                       format: _format,
                       currencySymbol: settings.currencySymbol,
+                      includeAnalytics: _includeAnalytics,
+                      isHebrew: settings.locale.languageCode == 'he',
+                      l: l,
                       rules: settings.overtimeRules,
                       shabbatRules: settings.shabbatHolidayRules,
                     );
@@ -282,7 +355,7 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                       if (!context.mounted) return;
                       UIUtils.showSnackBar(
                         context,
-                        '${l.export_success_msg} (Downloads)',
+                        '${l.export_success_msg} ($filePath)',
                       );
                     }
                   },
@@ -308,5 +381,55 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
         ),
       ),
     ).animateEntrance(context: context);
+  }
+
+  Widget _formatCard({
+    required String id,
+    required String label,
+    required IconData icon,
+    required Color accentColor,
+    required bool isDark,
+  }) {
+    final isSelected = _format == id;
+    return InkWell(
+      onTap: () => setState(() => _format = id),
+      borderRadius: BorderRadius.circular(12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? accentColor.withValues(alpha: 0.15)
+              : (isDark ? const Color(0xFF1E293B) : Colors.grey.shade100),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? accentColor : (isDark
+                ? AppTheme.darkBorder
+                : Colors.grey.shade300),
+            width: isSelected ? 2.0 : 1.0,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: isSelected ? accentColor : Colors.grey, size: 20),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected
+                      ? (isDark ? Colors.white : Colors.black87)
+                      : null,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

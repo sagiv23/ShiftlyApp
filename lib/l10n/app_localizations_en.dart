@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -999,6 +998,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get export_format_txt => 'Text File (TXT)';
 
   @override
+  String get export_format_json => 'JSON Backup (.json)';
+
+  @override
   String get export_range_label => 'Export Range';
 
   @override
@@ -1725,4 +1727,243 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get all_shifts_title => 'All Shifts';
+
+  @override
+  String get export_format_excel => 'Excel Sheet (.xlsx)';
+
+  @override
+  String get export_format_pdf => 'PDF Document (.pdf)';
+
+  @override
+  String get export_include_analytics => 'Include Analytics & Summaries';
+
+  @override
+  String get export_include_analytics_sub =>
+      'Add charts and stats overview to the report';
+
+  @override
+  String get import_title => 'Import Shifts';
+
+  @override
+  String get import_button => 'Import File (.xlsx, .csv, .json)';
+
+  @override
+  String get import_paste_or_pick => 'Pick file or paste content';
+
+  @override
+  String get import_preview_title => 'Import Preview';
+
+  @override
+  String import_found_shifts(int count) {
+    return 'Found $count valid shifts to import';
+  }
+
+  @override
+  String import_confirm_button(int count) {
+    return 'Import $count Shifts';
+  }
+
+  @override
+  String import_success_msg(int count) {
+    return 'Successfully imported $count shifts!';
+  }
+
+  @override
+  String get import_error_msg =>
+      'Failed to import shifts or unsupported format';
+
+  @override
+  String get pdf_report_title => 'Shiftly - Work & Salary Report';
+
+  @override
+  String get pdf_detailed_log => 'Detailed Shift History';
+
+  @override
+  String get pdf_analytics_summary => 'Analytics & Summary';
+
+  @override
+  String get pdf_total_net_pay => 'Total Net Pay';
+
+  @override
+  String get pdf_total_hours => 'Total Net Hours';
+
+  @override
+  String get pdf_avg_rate => 'Avg Effective Rate';
+
+  @override
+  String get pdf_shifts_count => 'Shift Count';
+
+  @override
+  String get pdf_total_base => 'Base Salary';
+
+  @override
+  String get pdf_total_tips => 'Tips';
+
+  @override
+  String get pdf_total_expenses => 'Expenses';
+
+  @override
+  String get pdf_total_incomes => 'Incomes';
+
+  @override
+  String get pdf_col_date => 'Date';
+
+  @override
+  String get pdf_col_job => 'Job';
+
+  @override
+  String get pdf_col_time => 'Hours';
+
+  @override
+  String get pdf_col_start_time => 'Start Time';
+
+  @override
+  String get pdf_col_end_time => 'End Time';
+
+  @override
+  String get pdf_col_tags => 'Tags';
+
+  @override
+  String get pdf_col_net_hours => 'Net Hrs';
+
+  @override
+  String get pdf_col_hourly_rate => 'Rate';
+
+  @override
+  String get pdf_col_base => 'Base';
+
+  @override
+  String get pdf_col_overtime => 'Overtime';
+
+  @override
+  String get pdf_col_shabbat => 'Shabbat';
+
+  @override
+  String get pdf_col_tips => 'Tips';
+
+  @override
+  String get pdf_col_extras => 'Extras';
+
+  @override
+  String get pdf_col_net_pay => 'Total Net';
+
+  @override
+  String get pdf_col_notes => 'Notes';
+
+  @override
+  String get excel_sheet_shifts => 'Shift Details';
+
+  @override
+  String get excel_sheet_analytics => 'Analytics Summary';
+
+  @override
+  String report_generated_label(String date) {
+    return 'Generated: $date';
+  }
+
+  @override
+  String report_total_shifts_label(int count) {
+    return 'Total Shifts: $count';
+  }
+
+  @override
+  String get report_category_label => 'Category';
+
+  @override
+  String get report_rate_multiplier_label => 'Rate Multiplier';
+
+  @override
+  String get report_hours_label => 'Hours';
+
+  @override
+  String get report_earnings_label => 'Earnings';
+
+  @override
+  String get report_regular_hours => 'Regular Hours (100%)';
+
+  @override
+  String get report_overtime_125 => 'Overtime Tier 1 (125%)';
+
+  @override
+  String get report_overtime_150 => 'Overtime Tier 2 (150%)';
+
+  @override
+  String get report_shabbat_hours => 'Shabbat Hours';
+
+  @override
+  String get report_holiday_hours => 'Holiday Hours';
+
+  @override
+  String get report_disabled_status => '(Disabled in Settings)';
+
+  @override
+  String get report_job_distribution => 'Job Type Distribution';
+
+  @override
+  String get report_job_name => 'Job Name';
+
+  @override
+  String get report_pct_net_pay => '% of Net Pay';
+
+  @override
+  String get report_totals_row => 'TOTALS';
+
+  @override
+  String get report_tag_overtime => 'Overtime';
+
+  @override
+  String get report_tag_shabbat => 'Shabbat';
+
+  @override
+  String get report_tag_holiday => 'Holiday';
+
+  @override
+  String report_page_number(Object current, Object total) {
+    return 'Page $current of $total';
+  }
+
+  @override
+  String pdf_col_hourly_rate_symbol(String symbol) {
+    return 'Hourly Rate ($symbol)';
+  }
+
+  @override
+  String pdf_col_base_symbol(String symbol) {
+    return 'Base Salary ($symbol)';
+  }
+
+  @override
+  String report_overtime_125_symbol(String symbol) {
+    return 'Overtime 125% ($symbol)';
+  }
+
+  @override
+  String report_overtime_150_symbol(String symbol) {
+    return 'Overtime 150% ($symbol)';
+  }
+
+  @override
+  String pdf_col_shabbat_symbol(String symbol) {
+    return 'Shabbat/Holiday ($symbol)';
+  }
+
+  @override
+  String pdf_col_tips_symbol(String symbol) {
+    return 'Tips ($symbol)';
+  }
+
+  @override
+  String pdf_total_incomes_symbol(String symbol) {
+    return 'Auto Incomes ($symbol)';
+  }
+
+  @override
+  String pdf_total_expenses_symbol(String symbol) {
+    return 'Auto Expenses ($symbol)';
+  }
+
+  @override
+  String pdf_col_net_pay_symbol(String symbol) {
+    return 'Total Net Pay ($symbol)';
+  }
 }

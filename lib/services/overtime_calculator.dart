@@ -83,8 +83,12 @@ class OvertimeCalculator {
 
     final netRatio = netPaidHours / grossDurationHours;
 
-    // If manual wage segments are provided, evaluate them directly
-    if (wageSegments != null && wageSegments.isNotEmpty) {
+    // If manual wage segments with custom percentages are provided, evaluate them directly
+    final hasCustomWageSegments = wageSegments != null &&
+        wageSegments.isNotEmpty &&
+        wageSegments.any((s) => (s.percentage - 100.0).abs() > 0.01);
+
+    if (hasCustomWageSegments) {
       List<DateTime> points = [startTime, endTime];
       for (var seg in wageSegments) {
         DateTime segStart = seg.startTime.isBefore(startTime)
@@ -179,13 +183,17 @@ class OvertimeCalculator {
     }
 
     // 2. Build collection of interval split points
-    List<DateTime> points = [startTime, endTime];
+    final localStart = startTime.toLocal();
+    final localEnd = endTime.toLocal();
+    List<DateTime> points = [localStart, localEnd];
     for (var b in specialBoundaries) {
-      if (b.start.isAfter(startTime) && b.start.isBefore(endTime)) {
-        points.add(b.start);
+      final bStart = b.start.toLocal();
+      final bEnd = b.end.toLocal();
+      if (bStart.isAfter(localStart) && bStart.isBefore(localEnd)) {
+        points.add(bStart);
       }
-      if (b.end.isAfter(startTime) && b.end.isBefore(endTime)) {
-        points.add(b.end);
+      if (bEnd.isAfter(localStart) && bEnd.isBefore(localEnd)) {
+        points.add(bEnd);
       }
     }
 
@@ -502,13 +510,17 @@ class OvertimeCalculator {
       );
     }
 
-    List<DateTime> points = [startTime, endTime];
+    final localStart = startTime.toLocal();
+    final localEnd = endTime.toLocal();
+    List<DateTime> points = [localStart, localEnd];
     for (var b in specialBoundaries) {
-      if (b.start.isAfter(startTime) && b.start.isBefore(endTime)) {
-        points.add(b.start);
+      final bStart = b.start.toLocal();
+      final bEnd = b.end.toLocal();
+      if (bStart.isAfter(localStart) && bStart.isBefore(localEnd)) {
+        points.add(bStart);
       }
-      if (b.end.isAfter(startTime) && b.end.isBefore(endTime)) {
-        points.add(b.end);
+      if (bEnd.isAfter(localStart) && bEnd.isBefore(localEnd)) {
+        points.add(bEnd);
       }
     }
 

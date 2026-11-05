@@ -196,6 +196,7 @@ class SettingsProvider with ChangeNotifier {
     _overtimeRules = rules;
     await _persistence.settingsBox.put('overtimeRules', rules.toJson());
     notifyListeners();
+    _onAutomaticSettingsChanged?.call();
   }
 
   Future<void> setShabbatHolidayRules(ShabbatHolidayRules rules) async {
@@ -206,6 +207,7 @@ class SettingsProvider with ChangeNotifier {
     _shabbatHolidayRules = rules;
     await _persistence.settingsBox.put('shabbatHolidayRules', rules.toJson());
     notifyListeners();
+    _onAutomaticSettingsChanged?.call();
   }
 
   Future<void> updateSettingsFromProfile(Map<String, dynamic> data) async {

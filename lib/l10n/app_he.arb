@@ -335,6 +335,7 @@
   "export_format_label": "פורמט קובץ",
   "export_format_csv": "קובץ CSV (מתאים לאקסל)",
   "export_format_txt": "קובץ טקסט (TXT)",
+  "export_format_json": "גיבוי JSON מלא (.json)",
   "export_range_label": "טווח ייצוא",
   "export_range_all": "כל המשמרות",
   "export_range_month": "חודש מסוים",
@@ -605,5 +606,182 @@
   "common_hide_password": "הסתר סיסמה",
   "accessibility_statement": "הצהרת נגישות",
   "settings_accessibility_sub": "מידע על נגישות האפליקציה ודרכי פנייה",
-  "all_shifts_title": "כל המשמרות"
+  "all_shifts_title": "כל המשמרות",
+  "export_format_excel": "גיליון אקסל (.xlsx)",
+  "export_format_pdf": "מסמך PDF מעוצב (.pdf)",
+  "export_include_analytics": "כלול סיכום אנליטיקה וגרפים",
+  "export_include_analytics_sub": "הוסף דף סיכום מנהלים ומדדים לדוח",
+  "import_title": "יבוא משמרות",
+  "import_button": "ייבא מקובץ (.xlsx, .csv, .json)",
+  "import_paste_or_pick": "בחר קובץ או הדבק תוכן",
+  "import_preview_title": "תצוגה מקדימה ליבוא",
+  "import_found_shifts": "נמצאו {count} משמרות תקינות לייבוא",
+  "@import_found_shifts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_confirm_button": "ייבא {count} משמרות",
+  "@import_confirm_button": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_success_msg": "{count} משמרות יובאו בהצלחה!",
+  "@import_success_msg": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_error_msg": "אירעה שגיאה בחישוב או קריאת קובץ היבוא",
+  "pdf_report_title": "Shiftly - דוח עבודה ושכר",
+  "pdf_detailed_log": "פירוט משמרות מלא",
+  "pdf_analytics_summary": "סיכום מנהלים ואנליטיקה",
+  "pdf_total_net_pay": "סה״כ נטו לתשלום",
+  "pdf_total_hours": "סה״כ שעות נטו",
+  "pdf_avg_rate": "תעריף שעתי ממוצע",
+  "pdf_shifts_count": "כמות משמרות",
+  "pdf_total_base": "שכר יסוד",
+  "pdf_total_tips": "טיפים",
+  "pdf_total_expenses": "הוצאות",
+  "pdf_total_incomes": "הכנסות קבועות",
+  "pdf_col_date": "תאריך",
+  "pdf_col_job": "תפקיד",
+  "pdf_col_time": "שעות",
+  "pdf_col_start_time": "שעת התחלה",
+  "pdf_col_end_time": "שעת סיום",
+  "pdf_col_tags": "תגיות",
+  "pdf_col_net_hours": "נטו שעות",
+  "pdf_col_hourly_rate": "תעריף",
+  "pdf_col_base": "יסוד",
+  "pdf_col_overtime": "נוספות",
+  "pdf_col_shabbat": "שבת/חג",
+  "pdf_col_tips": "טיפים",
+  "pdf_col_extras": "הוצאות/הכנסות",
+  "pdf_col_net_pay": "נטו סופי",
+  "pdf_col_notes": "הערות",
+  "excel_sheet_shifts": "פירוט משמרות",
+  "excel_sheet_analytics": "סיכום ואנליטיקה",
+  "report_generated_label": "נוצר בתאריך: {date}",
+  "@report_generated_label": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "report_total_shifts_label": "סה״כ משמרות: {count}",
+  "@report_total_shifts_label": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "report_category_label": "קטגוריה",
+  "report_rate_multiplier_label": "מכפיל תעריף",
+  "report_hours_label": "שעות",
+  "report_earnings_label": "שכר",
+  "report_regular_hours": "שעות רגילות (100%)",
+  "report_overtime_125": "שעות נוספות 125%",
+  "report_overtime_150": "שעות נוספות 150%",
+  "report_shabbat_hours": "שעות שבת",
+  "report_holiday_hours": "שעות חג",
+  "report_disabled_status": "(מנוטרל בהגדרות)",
+  "report_job_distribution": "התפלגות לפי תפקידים",
+  "report_job_name": "שם תפקיד",
+  "report_pct_net_pay": "% מנטו סופי",
+  "report_totals_row": "סה״כ סופי",
+  "report_tag_overtime": "ש.נוספות",
+  "report_tag_shabbat": "שבת",
+  "report_tag_holiday": "חג",
+  "report_page_number": "עמוד {current} מתוך {total}",
+  "@report_page_number": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "pdf_col_hourly_rate_symbol": "תעריף שעתי ({symbol})",
+  "@pdf_col_hourly_rate_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_base_symbol": "שכר יסוד ({symbol})",
+  "@pdf_col_base_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "report_overtime_125_symbol": "שעות נוספות 125% ({symbol})",
+  "@report_overtime_125_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "report_overtime_150_symbol": "שעות נוספות 150% ({symbol})",
+  "@report_overtime_150_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_shabbat_symbol": "שבת/חג ({symbol})",
+  "@pdf_col_shabbat_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_tips_symbol": "טיפים ({symbol})",
+  "@pdf_col_tips_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_total_incomes_symbol": "הכנסות קבועות ({symbol})",
+  "@pdf_total_incomes_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_total_expenses_symbol": "הוצאות קבועות ({symbol})",
+  "@pdf_total_expenses_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_net_pay_symbol": "נטו סופי ({symbol})",
+  "@pdf_col_net_pay_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  }
 }

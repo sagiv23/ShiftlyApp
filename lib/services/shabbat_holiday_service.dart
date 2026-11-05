@@ -38,10 +38,14 @@ class ShabbatHolidayService {
   ) async {
     if (!rules.enabled) return [];
 
-    String cacheKey =
-        'api_${rules.latitude}_${rules.longitude}_${rules.candleLightingMinutesBeforeSunset}_${rules.shabbatExitMinutesAfterSunset}_${start.year}_${start.month}_${start.day}_${end.year}_${end.month}_${end.day}_${rules.diaspora}';
-    if (_cache.containsKey(cacheKey)) {
-      return _cache[cacheKey]!;
+    String baseKey =
+        '${rules.latitude}_${rules.longitude}_${rules.candleLightingMinutesBeforeSunset}_${rules.shabbatExitMinutesAfterSunset}_${start.year}_${start.month}_${start.day}_${end.year}_${end.month}_${end.day}_${rules.diaspora}_${rules.includeCholHaMoed}';
+    String apiCacheKey = 'api_$baseKey';
+    if (_cache.containsKey(apiCacheKey)) {
+      return _cache[apiCacheKey]!;
+    }
+    if (_cache.containsKey(baseKey)) {
+      return _cache[baseKey]!;
     }
 
     List<SpecialPeriodBoundary> boundaries = [];
@@ -124,7 +128,8 @@ class ShabbatHolidayService {
       }
     }
 
-    _cache[cacheKey] = boundaries;
+    _cache[apiCacheKey] = boundaries;
+    _cache[baseKey] = boundaries;
     return boundaries;
   }
 
@@ -136,10 +141,14 @@ class ShabbatHolidayService {
   ) {
     if (!rules.enabled) return [];
 
-    String cacheKey =
+    String baseKey =
         '${rules.latitude}_${rules.longitude}_${rules.candleLightingMinutesBeforeSunset}_${rules.shabbatExitMinutesAfterSunset}_${start.year}_${start.month}_${start.day}_${end.year}_${end.month}_${end.day}_${rules.diaspora}_${rules.includeCholHaMoed}';
-    if (_cache.containsKey(cacheKey)) {
-      return _cache[cacheKey]!;
+    String apiCacheKey = 'api_$baseKey';
+    if (_cache.containsKey(apiCacheKey)) {
+      return _cache[apiCacheKey]!;
+    }
+    if (_cache.containsKey(baseKey)) {
+      return _cache[baseKey]!;
     }
 
     List<SpecialPeriodBoundary> boundaries = [];
@@ -180,7 +189,7 @@ class ShabbatHolidayService {
       cursor = cursor.add(const Duration(days: 1));
     }
 
-    _cache[cacheKey] = boundaries;
+    _cache[baseKey] = boundaries;
     return boundaries;
   }
 

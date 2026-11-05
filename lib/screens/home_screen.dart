@@ -127,6 +127,23 @@ class HomeScreen extends StatelessWidget {
         ),
         const SizedBox(width: AppTheme.spaceXs),
       ],
+      floatingActionButton: (groupedShifts.isEmpty && !hasActiveTimer)
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  AppPageRoute.slideUp(const AddShiftScreen()),
+                );
+              },
+              icon: const Icon(Icons.add_rounded),
+              label: Text(
+                l.home_action_new_shift,
+                style: const TextStyle(fontWeight: FontWeight.w800),
+              ),
+              backgroundColor: AppTheme.electricCyan,
+              foregroundColor: const Color(0xFF040711),
+            )
+          : null,
       body: SafeArea(
         child: Column(
           children: [
@@ -159,6 +176,16 @@ class HomeScreen extends StatelessWidget {
                         : EmptyStateWidget(
                             title: l.home_empty_state_title,
                             subtitle: l.home_empty_state_subtitle,
+                            action: ElevatedButton.icon(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  AppPageRoute.slideUp(const AddShiftScreen()),
+                                );
+                              },
+                              icon: const Icon(Icons.add_rounded),
+                              label: Text(l.home_action_new_shift),
+                            ),
                           ))
                   : ListView(
                       padding: const EdgeInsets.fromLTRB(

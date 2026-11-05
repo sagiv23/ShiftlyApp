@@ -1970,6 +1970,12 @@ abstract class AppLocalizations {
   /// **'קובץ טקסט (TXT)'**
   String get export_format_txt;
 
+  /// No description provided for @export_format_json.
+  ///
+  /// In he, this message translates to:
+  /// **'גיבוי JSON מלא (.json)'**
+  String get export_format_json;
+
   /// No description provided for @export_range_label.
   ///
   /// In he, this message translates to:
@@ -3259,6 +3265,420 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'כל המשמרות'**
   String get all_shifts_title;
+
+  /// No description provided for @export_format_excel.
+  ///
+  /// In he, this message translates to:
+  /// **'גיליון אקסל (.xlsx)'**
+  String get export_format_excel;
+
+  /// No description provided for @export_format_pdf.
+  ///
+  /// In he, this message translates to:
+  /// **'מסמך PDF מעוצב (.pdf)'**
+  String get export_format_pdf;
+
+  /// No description provided for @export_include_analytics.
+  ///
+  /// In he, this message translates to:
+  /// **'כלול סיכום אנליטיקה וגרפים'**
+  String get export_include_analytics;
+
+  /// No description provided for @export_include_analytics_sub.
+  ///
+  /// In he, this message translates to:
+  /// **'הוסף דף סיכום מנהלים ומדדים לדוח'**
+  String get export_include_analytics_sub;
+
+  /// No description provided for @import_title.
+  ///
+  /// In he, this message translates to:
+  /// **'יבוא משמרות'**
+  String get import_title;
+
+  /// No description provided for @import_button.
+  ///
+  /// In he, this message translates to:
+  /// **'ייבא מקובץ (.xlsx, .csv, .json)'**
+  String get import_button;
+
+  /// No description provided for @import_paste_or_pick.
+  ///
+  /// In he, this message translates to:
+  /// **'בחר קובץ או הדבק תוכן'**
+  String get import_paste_or_pick;
+
+  /// No description provided for @import_preview_title.
+  ///
+  /// In he, this message translates to:
+  /// **'תצוגה מקדימה ליבוא'**
+  String get import_preview_title;
+
+  /// No description provided for @import_found_shifts.
+  ///
+  /// In he, this message translates to:
+  /// **'נמצאו {count} משמרות תקינות לייבוא'**
+  String import_found_shifts(int count);
+
+  /// No description provided for @import_confirm_button.
+  ///
+  /// In he, this message translates to:
+  /// **'ייבא {count} משמרות'**
+  String import_confirm_button(int count);
+
+  /// No description provided for @import_success_msg.
+  ///
+  /// In he, this message translates to:
+  /// **'{count} משמרות יובאו בהצלחה!'**
+  String import_success_msg(int count);
+
+  /// No description provided for @import_error_msg.
+  ///
+  /// In he, this message translates to:
+  /// **'אירעה שגיאה בחישוב או קריאת קובץ היבוא'**
+  String get import_error_msg;
+
+  /// No description provided for @pdf_report_title.
+  ///
+  /// In he, this message translates to:
+  /// **'Shiftly - דוח עבודה ושכר'**
+  String get pdf_report_title;
+
+  /// No description provided for @pdf_detailed_log.
+  ///
+  /// In he, this message translates to:
+  /// **'פירוט משמרות מלא'**
+  String get pdf_detailed_log;
+
+  /// No description provided for @pdf_analytics_summary.
+  ///
+  /// In he, this message translates to:
+  /// **'סיכום מנהלים ואנליטיקה'**
+  String get pdf_analytics_summary;
+
+  /// No description provided for @pdf_total_net_pay.
+  ///
+  /// In he, this message translates to:
+  /// **'סה״כ נטו לתשלום'**
+  String get pdf_total_net_pay;
+
+  /// No description provided for @pdf_total_hours.
+  ///
+  /// In he, this message translates to:
+  /// **'סה״כ שעות נטו'**
+  String get pdf_total_hours;
+
+  /// No description provided for @pdf_avg_rate.
+  ///
+  /// In he, this message translates to:
+  /// **'תעריף שעתי ממוצע'**
+  String get pdf_avg_rate;
+
+  /// No description provided for @pdf_shifts_count.
+  ///
+  /// In he, this message translates to:
+  /// **'כמות משמרות'**
+  String get pdf_shifts_count;
+
+  /// No description provided for @pdf_total_base.
+  ///
+  /// In he, this message translates to:
+  /// **'שכר יסוד'**
+  String get pdf_total_base;
+
+  /// No description provided for @pdf_total_tips.
+  ///
+  /// In he, this message translates to:
+  /// **'טיפים'**
+  String get pdf_total_tips;
+
+  /// No description provided for @pdf_total_expenses.
+  ///
+  /// In he, this message translates to:
+  /// **'הוצאות'**
+  String get pdf_total_expenses;
+
+  /// No description provided for @pdf_total_incomes.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנסות קבועות'**
+  String get pdf_total_incomes;
+
+  /// No description provided for @pdf_col_date.
+  ///
+  /// In he, this message translates to:
+  /// **'תאריך'**
+  String get pdf_col_date;
+
+  /// No description provided for @pdf_col_job.
+  ///
+  /// In he, this message translates to:
+  /// **'תפקיד'**
+  String get pdf_col_job;
+
+  /// No description provided for @pdf_col_time.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות'**
+  String get pdf_col_time;
+
+  /// No description provided for @pdf_col_start_time.
+  ///
+  /// In he, this message translates to:
+  /// **'שעת התחלה'**
+  String get pdf_col_start_time;
+
+  /// No description provided for @pdf_col_end_time.
+  ///
+  /// In he, this message translates to:
+  /// **'שעת סיום'**
+  String get pdf_col_end_time;
+
+  /// No description provided for @pdf_col_tags.
+  ///
+  /// In he, this message translates to:
+  /// **'תגיות'**
+  String get pdf_col_tags;
+
+  /// No description provided for @pdf_col_net_hours.
+  ///
+  /// In he, this message translates to:
+  /// **'נטו שעות'**
+  String get pdf_col_net_hours;
+
+  /// No description provided for @pdf_col_hourly_rate.
+  ///
+  /// In he, this message translates to:
+  /// **'תעריף'**
+  String get pdf_col_hourly_rate;
+
+  /// No description provided for @pdf_col_base.
+  ///
+  /// In he, this message translates to:
+  /// **'יסוד'**
+  String get pdf_col_base;
+
+  /// No description provided for @pdf_col_overtime.
+  ///
+  /// In he, this message translates to:
+  /// **'נוספות'**
+  String get pdf_col_overtime;
+
+  /// No description provided for @pdf_col_shabbat.
+  ///
+  /// In he, this message translates to:
+  /// **'שבת/חג'**
+  String get pdf_col_shabbat;
+
+  /// No description provided for @pdf_col_tips.
+  ///
+  /// In he, this message translates to:
+  /// **'טיפים'**
+  String get pdf_col_tips;
+
+  /// No description provided for @pdf_col_extras.
+  ///
+  /// In he, this message translates to:
+  /// **'הוצאות/הכנסות'**
+  String get pdf_col_extras;
+
+  /// No description provided for @pdf_col_net_pay.
+  ///
+  /// In he, this message translates to:
+  /// **'נטו סופי'**
+  String get pdf_col_net_pay;
+
+  /// No description provided for @pdf_col_notes.
+  ///
+  /// In he, this message translates to:
+  /// **'הערות'**
+  String get pdf_col_notes;
+
+  /// No description provided for @excel_sheet_shifts.
+  ///
+  /// In he, this message translates to:
+  /// **'פירוט משמרות'**
+  String get excel_sheet_shifts;
+
+  /// No description provided for @excel_sheet_analytics.
+  ///
+  /// In he, this message translates to:
+  /// **'סיכום ואנליטיקה'**
+  String get excel_sheet_analytics;
+
+  /// No description provided for @report_generated_label.
+  ///
+  /// In he, this message translates to:
+  /// **'נוצר בתאריך: {date}'**
+  String report_generated_label(String date);
+
+  /// No description provided for @report_total_shifts_label.
+  ///
+  /// In he, this message translates to:
+  /// **'סה״כ משמרות: {count}'**
+  String report_total_shifts_label(int count);
+
+  /// No description provided for @report_category_label.
+  ///
+  /// In he, this message translates to:
+  /// **'קטגוריה'**
+  String get report_category_label;
+
+  /// No description provided for @report_rate_multiplier_label.
+  ///
+  /// In he, this message translates to:
+  /// **'מכפיל תעריף'**
+  String get report_rate_multiplier_label;
+
+  /// No description provided for @report_hours_label.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות'**
+  String get report_hours_label;
+
+  /// No description provided for @report_earnings_label.
+  ///
+  /// In he, this message translates to:
+  /// **'שכר'**
+  String get report_earnings_label;
+
+  /// No description provided for @report_regular_hours.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות רגילות (100%)'**
+  String get report_regular_hours;
+
+  /// No description provided for @report_overtime_125.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות נוספות 125%'**
+  String get report_overtime_125;
+
+  /// No description provided for @report_overtime_150.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות נוספות 150%'**
+  String get report_overtime_150;
+
+  /// No description provided for @report_shabbat_hours.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות שבת'**
+  String get report_shabbat_hours;
+
+  /// No description provided for @report_holiday_hours.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות חג'**
+  String get report_holiday_hours;
+
+  /// No description provided for @report_disabled_status.
+  ///
+  /// In he, this message translates to:
+  /// **'(מנוטרל בהגדרות)'**
+  String get report_disabled_status;
+
+  /// No description provided for @report_job_distribution.
+  ///
+  /// In he, this message translates to:
+  /// **'התפלגות לפי תפקידים'**
+  String get report_job_distribution;
+
+  /// No description provided for @report_job_name.
+  ///
+  /// In he, this message translates to:
+  /// **'שם תפקיד'**
+  String get report_job_name;
+
+  /// No description provided for @report_pct_net_pay.
+  ///
+  /// In he, this message translates to:
+  /// **'% מנטו סופי'**
+  String get report_pct_net_pay;
+
+  /// No description provided for @report_totals_row.
+  ///
+  /// In he, this message translates to:
+  /// **'סה״כ סופי'**
+  String get report_totals_row;
+
+  /// No description provided for @report_tag_overtime.
+  ///
+  /// In he, this message translates to:
+  /// **'ש.נוספות'**
+  String get report_tag_overtime;
+
+  /// No description provided for @report_tag_shabbat.
+  ///
+  /// In he, this message translates to:
+  /// **'שבת'**
+  String get report_tag_shabbat;
+
+  /// No description provided for @report_tag_holiday.
+  ///
+  /// In he, this message translates to:
+  /// **'חג'**
+  String get report_tag_holiday;
+
+  /// No description provided for @report_page_number.
+  ///
+  /// In he, this message translates to:
+  /// **'עמוד {current} מתוך {total}'**
+  String report_page_number(Object current, Object total);
+
+  /// No description provided for @pdf_col_hourly_rate_symbol.
+  ///
+  /// In he, this message translates to:
+  /// **'תעריף שעתי ({symbol})'**
+  String pdf_col_hourly_rate_symbol(String symbol);
+
+  /// No description provided for @pdf_col_base_symbol.
+  ///
+  /// In he, this message translates to:
+  /// **'שכר יסוד ({symbol})'**
+  String pdf_col_base_symbol(String symbol);
+
+  /// No description provided for @report_overtime_125_symbol.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות נוספות 125% ({symbol})'**
+  String report_overtime_125_symbol(String symbol);
+
+  /// No description provided for @report_overtime_150_symbol.
+  ///
+  /// In he, this message translates to:
+  /// **'שעות נוספות 150% ({symbol})'**
+  String report_overtime_150_symbol(String symbol);
+
+  /// No description provided for @pdf_col_shabbat_symbol.
+  ///
+  /// In he, this message translates to:
+  /// **'שבת/חג ({symbol})'**
+  String pdf_col_shabbat_symbol(String symbol);
+
+  /// No description provided for @pdf_col_tips_symbol.
+  ///
+  /// In he, this message translates to:
+  /// **'טיפים ({symbol})'**
+  String pdf_col_tips_symbol(String symbol);
+
+  /// No description provided for @pdf_total_incomes_symbol.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנסות קבועות ({symbol})'**
+  String pdf_total_incomes_symbol(String symbol);
+
+  /// No description provided for @pdf_total_expenses_symbol.
+  ///
+  /// In he, this message translates to:
+  /// **'הוצאות קבועות ({symbol})'**
+  String pdf_total_expenses_symbol(String symbol);
+
+  /// No description provided for @pdf_col_net_pay_symbol.
+  ///
+  /// In he, this message translates to:
+  /// **'נטו סופי ({symbol})'**
+  String pdf_col_net_pay_symbol(String symbol);
 }
 
 class _AppLocalizationsDelegate

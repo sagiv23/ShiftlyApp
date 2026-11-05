@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -990,6 +989,9 @@ class AppLocalizationsHe extends AppLocalizations {
   String get export_format_txt => 'קובץ טקסט (TXT)';
 
   @override
+  String get export_format_json => 'גיבוי JSON מלא (.json)';
+
+  @override
   String get export_range_label => 'טווח ייצוא';
 
   @override
@@ -1704,4 +1706,241 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get all_shifts_title => 'כל המשמרות';
+
+  @override
+  String get export_format_excel => 'גיליון אקסל (.xlsx)';
+
+  @override
+  String get export_format_pdf => 'מסמך PDF מעוצב (.pdf)';
+
+  @override
+  String get export_include_analytics => 'כלול סיכום אנליטיקה וגרפים';
+
+  @override
+  String get export_include_analytics_sub => 'הוסף דף סיכום מנהלים ומדדים לדוח';
+
+  @override
+  String get import_title => 'יבוא משמרות';
+
+  @override
+  String get import_button => 'ייבא מקובץ (.xlsx, .csv, .json)';
+
+  @override
+  String get import_paste_or_pick => 'בחר קובץ או הדבק תוכן';
+
+  @override
+  String get import_preview_title => 'תצוגה מקדימה ליבוא';
+
+  @override
+  String import_found_shifts(int count) {
+    return 'נמצאו $count משמרות תקינות לייבוא';
+  }
+
+  @override
+  String import_confirm_button(int count) {
+    return 'ייבא $count משמרות';
+  }
+
+  @override
+  String import_success_msg(int count) {
+    return '$count משמרות יובאו בהצלחה!';
+  }
+
+  @override
+  String get import_error_msg => 'אירעה שגיאה בחישוב או קריאת קובץ היבוא';
+
+  @override
+  String get pdf_report_title => 'Shiftly - דוח עבודה ושכר';
+
+  @override
+  String get pdf_detailed_log => 'פירוט משמרות מלא';
+
+  @override
+  String get pdf_analytics_summary => 'סיכום מנהלים ואנליטיקה';
+
+  @override
+  String get pdf_total_net_pay => 'סה״כ נטו לתשלום';
+
+  @override
+  String get pdf_total_hours => 'סה״כ שעות נטו';
+
+  @override
+  String get pdf_avg_rate => 'תעריף שעתי ממוצע';
+
+  @override
+  String get pdf_shifts_count => 'כמות משמרות';
+
+  @override
+  String get pdf_total_base => 'שכר יסוד';
+
+  @override
+  String get pdf_total_tips => 'טיפים';
+
+  @override
+  String get pdf_total_expenses => 'הוצאות';
+
+  @override
+  String get pdf_total_incomes => 'הכנסות קבועות';
+
+  @override
+  String get pdf_col_date => 'תאריך';
+
+  @override
+  String get pdf_col_job => 'תפקיד';
+
+  @override
+  String get pdf_col_time => 'שעות';
+
+  @override
+  String get pdf_col_start_time => 'שעת התחלה';
+
+  @override
+  String get pdf_col_end_time => 'שעת סיום';
+
+  @override
+  String get pdf_col_tags => 'תגיות';
+
+  @override
+  String get pdf_col_net_hours => 'נטו שעות';
+
+  @override
+  String get pdf_col_hourly_rate => 'תעריף';
+
+  @override
+  String get pdf_col_base => 'יסוד';
+
+  @override
+  String get pdf_col_overtime => 'נוספות';
+
+  @override
+  String get pdf_col_shabbat => 'שבת/חג';
+
+  @override
+  String get pdf_col_tips => 'טיפים';
+
+  @override
+  String get pdf_col_extras => 'הוצאות/הכנסות';
+
+  @override
+  String get pdf_col_net_pay => 'נטו סופי';
+
+  @override
+  String get pdf_col_notes => 'הערות';
+
+  @override
+  String get excel_sheet_shifts => 'פירוט משמרות';
+
+  @override
+  String get excel_sheet_analytics => 'סיכום ואנליטיקה';
+
+  @override
+  String report_generated_label(String date) {
+    return 'נוצר בתאריך: $date';
+  }
+
+  @override
+  String report_total_shifts_label(int count) {
+    return 'סה״כ משמרות: $count';
+  }
+
+  @override
+  String get report_category_label => 'קטגוריה';
+
+  @override
+  String get report_rate_multiplier_label => 'מכפיל תעריף';
+
+  @override
+  String get report_hours_label => 'שעות';
+
+  @override
+  String get report_earnings_label => 'שכר';
+
+  @override
+  String get report_regular_hours => 'שעות רגילות (100%)';
+
+  @override
+  String get report_overtime_125 => 'שעות נוספות 125%';
+
+  @override
+  String get report_overtime_150 => 'שעות נוספות 150%';
+
+  @override
+  String get report_shabbat_hours => 'שעות שבת';
+
+  @override
+  String get report_holiday_hours => 'שעות חג';
+
+  @override
+  String get report_disabled_status => '(מנוטרל בהגדרות)';
+
+  @override
+  String get report_job_distribution => 'התפלגות לפי תפקידים';
+
+  @override
+  String get report_job_name => 'שם תפקיד';
+
+  @override
+  String get report_pct_net_pay => '% מנטו סופי';
+
+  @override
+  String get report_totals_row => 'סה״כ סופי';
+
+  @override
+  String get report_tag_overtime => 'ש.נוספות';
+
+  @override
+  String get report_tag_shabbat => 'שבת';
+
+  @override
+  String get report_tag_holiday => 'חג';
+
+  @override
+  String report_page_number(Object current, Object total) {
+    return 'עמוד $current מתוך $total';
+  }
+
+  @override
+  String pdf_col_hourly_rate_symbol(String symbol) {
+    return 'תעריף שעתי ($symbol)';
+  }
+
+  @override
+  String pdf_col_base_symbol(String symbol) {
+    return 'שכר יסוד ($symbol)';
+  }
+
+  @override
+  String report_overtime_125_symbol(String symbol) {
+    return 'שעות נוספות 125% ($symbol)';
+  }
+
+  @override
+  String report_overtime_150_symbol(String symbol) {
+    return 'שעות נוספות 150% ($symbol)';
+  }
+
+  @override
+  String pdf_col_shabbat_symbol(String symbol) {
+    return 'שבת/חג ($symbol)';
+  }
+
+  @override
+  String pdf_col_tips_symbol(String symbol) {
+    return 'טיפים ($symbol)';
+  }
+
+  @override
+  String pdf_total_incomes_symbol(String symbol) {
+    return 'הכנסות קבועות ($symbol)';
+  }
+
+  @override
+  String pdf_total_expenses_symbol(String symbol) {
+    return 'הוצאות קבועות ($symbol)';
+  }
+
+  @override
+  String pdf_col_net_pay_symbol(String symbol) {
+    return 'נטו סופי ($symbol)';
+  }
 }

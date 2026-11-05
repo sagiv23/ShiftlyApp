@@ -93,7 +93,7 @@ class ShabbatHolidayRules {
 
   factory ShabbatHolidayRules.fromJson(Map<String, dynamic> json) =>
       ShabbatHolidayRules(
-        enabled: NumberUtils.parseBool(json['enabled'], false),
+        enabled: NumberUtils.parseBool(json['enabled'], true),
         shabbatMultiplier: NumberUtils.parseDouble(
           json['shabbatMultiplier'] ?? json['shabbat_multiplier'],
           1.50,

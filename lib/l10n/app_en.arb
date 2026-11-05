@@ -605,5 +605,183 @@
   "common_hide_password": "Hide password",
   "accessibility_statement": "Accessibility Statement",
   "settings_accessibility_sub": "Accessibility info and contact details",
-  "all_shifts_title": "All Shifts"
+  "all_shifts_title": "All Shifts",
+  "export_format_excel": "Excel Sheet (.xlsx)",
+  "export_format_pdf": "PDF Document (.pdf)",
+  "export_format_json": "JSON Backup (.json)",
+  "export_include_analytics": "Include Analytics & Summaries",
+  "export_include_analytics_sub": "Add charts and stats overview to the report",
+  "import_title": "Import Shifts",
+  "import_button": "Import File (.xlsx, .csv, .json)",
+  "import_paste_or_pick": "Pick file or paste content",
+  "import_preview_title": "Import Preview",
+  "import_found_shifts": "Found {count} valid shifts to import",
+  "@import_found_shifts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_confirm_button": "Import {count} Shifts",
+  "@import_confirm_button": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_success_msg": "Successfully imported {count} shifts!",
+  "@import_success_msg": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_error_msg": "Failed to import shifts or unsupported format",
+  "pdf_report_title": "Shiftly - Work & Salary Report",
+  "pdf_detailed_log": "Detailed Shift History",
+  "pdf_analytics_summary": "Analytics & Summary",
+  "pdf_total_net_pay": "Total Net Pay",
+  "pdf_total_hours": "Total Net Hours",
+  "pdf_avg_rate": "Avg Effective Rate",
+  "pdf_shifts_count": "Shift Count",
+  "pdf_total_base": "Base Salary",
+  "pdf_total_tips": "Tips",
+  "pdf_total_expenses": "Expenses",
+  "pdf_total_incomes": "Incomes",
+  "pdf_col_date": "Date",
+  "pdf_col_job": "Job",
+  "pdf_col_time": "Hours",
+  "pdf_col_start_time": "Start Time",
+  "pdf_col_end_time": "End Time",
+  "pdf_col_tags": "Tags",
+  "pdf_col_net_hours": "Net Hrs",
+  "pdf_col_hourly_rate": "Rate",
+  "pdf_col_base": "Base",
+  "pdf_col_overtime": "Overtime",
+  "pdf_col_shabbat": "Shabbat",
+  "pdf_col_tips": "Tips",
+  "pdf_col_extras": "Extras",
+  "pdf_col_net_pay": "Total Net",
+  "pdf_col_notes": "Notes",
+  "excel_sheet_shifts": "Shift Details",
+  "excel_sheet_analytics": "Analytics Summary",
+  "report_generated_label": "Generated: {date}",
+  "@report_generated_label": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "report_total_shifts_label": "Total Shifts: {count}",
+  "@report_total_shifts_label": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "report_category_label": "Category",
+  "report_rate_multiplier_label": "Rate Multiplier",
+  "report_hours_label": "Hours",
+  "report_earnings_label": "Earnings",
+  "report_regular_hours": "Regular Hours (100%)",
+  "report_overtime_125": "Overtime Tier 1 (125%)",
+  "report_overtime_150": "Overtime Tier 2 (150%)",
+  "report_shabbat_hours": "Shabbat Hours",
+  "report_holiday_hours": "Holiday Hours",
+  "report_disabled_status": "(Disabled in Settings)",
+  "report_job_distribution": "Job Type Distribution",
+  "report_job_name": "Job Name",
+  "report_pct_net_pay": "% of Net Pay",
+  "report_totals_row": "TOTALS",
+  "report_tag_overtime": "Overtime",
+  "report_tag_shabbat": "Shabbat",
+  "report_tag_holiday": "Holiday",
+  "report_page_number": "Page {current} of {total}",
+  "@report_page_number": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "pdf_col_hourly_rate_symbol": "Hourly Rate ({symbol})",
+  "@pdf_col_hourly_rate_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_base_symbol": "Base Salary ({symbol})",
+  "@pdf_col_base_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "report_overtime_125_symbol": "Overtime 125% ({symbol})",
+  "@report_overtime_125_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "report_overtime_150_symbol": "Overtime 150% ({symbol})",
+  "@report_overtime_150_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_shabbat_symbol": "Shabbat/Holiday ({symbol})",
+  "@pdf_col_shabbat_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_tips_symbol": "Tips ({symbol})",
+  "@pdf_col_tips_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_total_incomes_symbol": "Auto Incomes ({symbol})",
+  "@pdf_total_incomes_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_total_expenses_symbol": "Auto Expenses ({symbol})",
+  "@pdf_total_expenses_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_net_pay_symbol": "Total Net Pay ({symbol})",
+  "@pdf_col_net_pay_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  }
 }

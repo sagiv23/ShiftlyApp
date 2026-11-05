@@ -38,6 +38,9 @@ dependencies:
   shimmer: ^3.0.0
   package_info_plus: ^8.0.0
   url_launcher: ^6.3.0
+  excel: ^4.0.6
+  pdf: ^3.11.1
+  file_picker: ^8.1.7
 
 dependency_overrides:
   path_provider_android: 2.2.5
@@ -79,3 +82,4 @@ flutter:
   generate: true
   assets:
     - assets/icon/
+    - assets/fonts/
