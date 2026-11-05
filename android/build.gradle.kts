@@ -22,11 +22,17 @@ subprojects {
 subprojects {
     afterEvaluate {
         val android = project.extensions.findByName("android")
-        if (android is com.android.build.api.dsl.CommonExtension<*, *, *, *, *, *>) {
-            android.compileSdk = 36
-        }
-        if (android is com.android.build.gradle.BaseExtension) {
-            android.compileSdkVersion(36)
+        if (android != null) {
+            try {
+                val setter = android.javaClass.methods.find { it.name == "setCompileSdk" || it.name == "setCompileSdkVersion" }
+                setter?.invoke(android, 36)
+            } catch (e: Exception) {
+                try {
+                    val method = android.javaClass.methods.find { it.name == "compileSdkVersion" }
+                    method?.invoke(android, 36)
+                } catch (e2: Exception) {
+                }
+            }
         }
     }
 }
