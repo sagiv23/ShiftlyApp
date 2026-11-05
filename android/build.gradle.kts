@@ -25,6 +25,9 @@ subprojects {
         if (android is com.android.build.api.dsl.CommonExtension<*, *, *, *, *, *>) {
             android.compileSdk = 36
         }
+        if (android is com.android.build.gradle.BaseExtension) {
+            android.compileSdkVersion(36)
+        }
     }
 }
 
