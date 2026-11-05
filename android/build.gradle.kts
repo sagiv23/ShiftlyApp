@@ -20,8 +20,8 @@ subprojects {
 }
 
 subprojects {
-    afterEvaluate {
-        val android = project.extensions.findByName("android")
+    val configureAndroid = Action<Project> {
+        val android = extensions.findByName("android")
         if (android != null) {
             try {
                 val setter = android.javaClass.methods.find { it.name == "setCompileSdk" || it.name == "setCompileSdkVersion" }
@@ -33,6 +33,14 @@ subprojects {
                 } catch (e2: Exception) {
                 }
             }
+        }
+    }
+
+    if (state.executed) {
+        configureAndroid.execute(this)
+    } else {
+        afterEvaluate {
+            configureAndroid.execute(this)
         }
     }
 }
