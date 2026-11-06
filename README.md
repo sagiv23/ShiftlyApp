@@ -12,18 +12,19 @@
 
 ---
 
-## 📋 תוכן עניינים | Table of Contents
+## תוכן עניינים | Table of Contents
 
-1. [סקירה טכנית | Technical Overview](#-סקירה-טכנית--technical-overview)
-2. [תכונות ליבה | Core Features](#-תכונות-ליבה--core-features)
-3. [מסמכים משפטיים | Legal Documents](#-מסמכים-משפטיים--legal-documents)
-4. [ארכיטקטורה וזרימת נתונים | Architecture & Data Flow](#-ארכיטקטורה-וזרימת-נתונים--architecture--data-flow)
-5. [ערכת עיצוב | Design Tokens](#-ערכת-עיצוב--design-tokens)
-6. [הוראות פיתוח ובניית גרסאות | Development & Build Guide](#-הוראות-פיתוח-ובניית-גרסאות--development--build-guide)
+1. [סקירה טכנית | Technical Overview](#סקירה-טכנית--technical-overview)
+2. [תכונות ליבה | Core Features](#תכונות-ליבה--core-features)
+3. [מסמכים משפטיים | Legal Documents](#מסמכים-משפטיים--legal-documents)
+4. [ארכיטקטורה וזרימת נתונים | Architecture & Data Flow](#ארכיטקטורה-וזרימת-נתונים--architecture--data-flow)
+5. [ערכת עיצוב | Design Tokens](#ערכת-עיצוב--design-tokens)
+6. [תמונות מסך | Screenshots](#תמונות-מסך--screenshots)
+7. [הוראות פיתוח ובניית גרסאות | Development & Build Guide](#הוראות-פיתוח-ובניית-גרסאות--development--build-guide)
 
 ---
 
-## 📐 סקירה טכנית | Technical Overview
+## סקירה טכנית | Technical Overview
 
 Shiftly נבנתה בארכיטקטורת **Offline-First**, בה כל הנתונים נשמרים מקומית במסד נתונים **Hive (NoSQL)
 ** ומוצפנים באמצעות **Flutter Secure Storage**. המערכת כוללת אפשרות לסנכרון מול שרת ענן חיצוני,
@@ -31,7 +32,7 @@ Shiftly נבנתה בארכיטקטורת **Offline-First**, בה כל הנתו�
 
 ---
 
-## ⚙️ תכונות ליבה | Core Features
+## תכונות ליבה | Core Features
 
 * **שעון נוכחות וטיימר:** מעקב זמן אמת אחר משמרות, כולל ניהול הפסקות (בתשלום / ללא תשלום) ושליטה
   מווילון ההתראות במכשיר.
@@ -52,21 +53,21 @@ Shiftly נבנתה בארכיטקטורת **Offline-First**, בה כל הנתו�
 
 ---
 
-## 🛡️ מסמכים משפטיים | Legal Documents
+## מסמכים משפטיים | Legal Documents
 
 השימוש באפליקציה כפוף למדיניות הפרטיות ותנאי השימוש המפורטים במסמכי הפרויקט:
 
 | מסמך                                |        קובץ מקומי        |                       קישור רשת ציבורי                        |
 |:------------------------------------|:------------------------:|:-------------------------------------------------------------:|
-| **מדיניות פרטיות (Privacy Policy)** | [PRIVACY.md](PRIVACY.md) | [תצוגת אינטרנט](https://sagiv23.github.io/ShiftlyApp/PRIVACY) |
-| **תנאי שימוש (Terms of Service)**   |   [TERMS.md](TERMS.md)   |  [תצוגת אינטרנט](https://sagiv23.github.io/ShiftlyApp/TERMS)  |
+| **מדיניות פרטיות (Privacy Policy)** | [PRIVACY.md](PRIVACY.md) | [תצוגת אינטרנט](https://sagiv23.github.io/ShiftlyApp/privacy) |
+| **תנאי שימוש (Terms of Service)**   |   [TERMS.md](TERMS.md)   |  [תצוגת אינטרנט](https://sagiv23.github.io/ShiftlyApp/terms)  |
 
 > ⚠️ *הערה משפטית:* חישובי השכר באפליקציה מיועדים להתרשמות ובקרה אישית בלבד, ואינם מחליפים תלוש שכר
 > רשמי המונפק על ידי המעסיק (ראו פירוט ב-[TERMS.md](TERMS.md)).
 
 ---
 
-## 🏗️ ארכיטקטורה וזרימת נתונים | Architecture & Data Flow
+## ארכיטקטורה וזרימת נתונים | Architecture & Data Flow
 
 ```
                                   ┌───────────────────────────┐
@@ -85,7 +86,7 @@ Shiftly נבנתה בארכיטקטורת **Offline-First**, בה כל הנתו�
 
 ---
 
-## 🎨 ערכת עיצוב | Design Tokens
+## ערכת עיצוב | Design Tokens
 
 האפליקציה ממומשת לפי תקן **Material 3** ותומכת במצב כהה (Dark Mode):
 
@@ -100,21 +101,27 @@ Shiftly נבנתה בארכיטקטורת **Offline-First**, בה כל הנתו�
 
 ---
 
-## 📸 תמונות מסך | Screenshots
+## תמונות מסך | Screenshots
 
-ניתן להוסיף צילומי מסך בתיקיית `assets/screenshots/`:
+|                       מסך הבית (Home)                        |                      טיימר משמרת (Timer)                      |                     סיכום משמרות (Shifts)                      |
+|:------------------------------------------------------------:|:-------------------------------------------------------------:|:--------------------------------------------------------------:|
+| <img src="assets/screenshots/home_screen.png" width="220" /> | <img src="assets/screenshots/timer_screen.png" width="220" /> | <img src="assets/screenshots/shifts_screen.png" width="220" /> |
 
-<p style="text-align: center;">
-  <img src="assets/screenshots/timer_screen.png" alt="Timer Screen" width="230"/>
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/screenshots/analytics_screen.png" alt="Analytics Screen" width="230"/>
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/screenshots/shifts_screen.png" alt="Shifts Screen" width="230"/>
-</p>
+|                      כל המשמרות (All Shifts)                       |                     תצוגת לוח שנה (Calendar)                     |               פיענוח טקסט חופשי (Smart Parser)                |
+|:------------------------------------------------------------------:|:----------------------------------------------------------------:|:-------------------------------------------------------------:|
+| <img src="assets/screenshots/all_shifts_screen.png" width="220" /> | <img src="assets/screenshots/calendar_screen.png" width="220" /> | <img src="assets/screenshots/parse_screen.png" width="220" /> |
+
+|                      ייצוא דוחות (Export)                      |
+|:--------------------------------------------------------------:|
+| <img src="assets/screenshots/export_screen.png" width="220" /> |
+
+|                       ניתוחים 1 (Analytics)                        |                       ניתוחים 2 (Analytics)                        |                       ניתוחים 3 (Analytics)                        |                       ניתוחים 4 (Analytics)                        |
+|:------------------------------------------------------------------:|:------------------------------------------------------------------:|:------------------------------------------------------------------:|:------------------------------------------------------------------:|
+| <img src="assets/screenshots/analytics_screen1.png" width="200" /> | <img src="assets/screenshots/analytics_screen2.png" width="200" /> | <img src="assets/screenshots/analytics_screen3.png" width="200" /> | <img src="assets/screenshots/analytics_screen4.png" width="200" /> |
 
 ---
 
-## 💻 הוראות פיתוח ובניית גרסאות | Development & Build Guide
+## הוראות פיתוח ובניית גרסאות | Development & Build Guide
 
 ### 1. הרצה מקומית
 ```bash
