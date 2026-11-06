@@ -48,6 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // GitHub Releases Downloads Modal
   initDownloadsModal();
+
+  // Image Lightbox Fullscreen Modal
+  initImageLightbox();
 });
 
 /* --- Starfield Canvas Animation --- */
@@ -809,5 +812,73 @@ function showShiftlyToast(message) {
   setTimeout(() => {
     toast.classList.remove('show');
   }, 3500);
+}
+
+/* --- Image Lightbox Fullscreen Modal --- */
+function initImageLightbox() {
+  if (!document.getElementById('imageLightboxModal')) {
+    const lightbox = document.createElement('div');
+    lightbox.className = 'image-lightbox-modal';
+    lightbox.id = 'imageLightboxModal';
+    lightbox.setAttribute('role', 'dialog');
+    lightbox.setAttribute('aria-modal', 'true');
+    lightbox.setAttribute('aria-label', 'תצוגת תמונה מוגדלת');
+    lightbox.innerHTML = `
+      <button class="lightbox-close" id="lightboxClose" aria-label="סגור תצוגה">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="lightbox-content">
+        <img id="lightboxImg" src="" alt="Enlarged Screenshot" />
+        <div id="lightboxCaption" class="lightbox-caption"></div>
+      </div>
+    `;
+    document.body.appendChild(lightbox);
+  }
+
+  const lightboxModal = document.getElementById('imageLightboxModal');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxCaption = document.getElementById('lightboxCaption');
+  const lightboxClose = document.getElementById('lightboxClose');
+  let previousActiveElement = null;
+
+  function openLightbox(imgSrc, imgAlt) {
+    previousActiveElement = document.activeElement;
+    lightboxImg.src = imgSrc;
+    lightboxImg.alt = imgAlt || 'Shiftly Screenshot';
+    lightboxCaption.textContent = imgAlt || '';
+    lightboxModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleLightboxKeydown);
+  }
+
+  function closeLightbox() {
+    lightboxModal.classList.remove('active');
+    document.body.style.overflow = '';
+    document.removeEventListener('keydown', handleLightboxKeydown);
+    if (previousActiveElement && typeof previousActiveElement.focus === 'function') {
+      previousActiveElement.focus();
+    }
+  }
+
+  function handleLightboxKeydown(e) {
+    if (e.key === 'Escape') {
+      closeLightbox();
+    }
+  }
+
+  if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+  lightboxModal.addEventListener('click', (e) => {
+    if (e.target === lightboxModal || e.target.classList.contains('lightbox-content')) {
+      closeLightbox();
+    }
+  });
+
+  const screenshotImgs = document.querySelectorAll('#screenshots img');
+  screenshotImgs.forEach(img => {
+    img.style.cursor = 'zoom-in';
+    img.addEventListener('click', () => {
+      openLightbox(img.src, img.alt);
+    });
+  });
 }
 

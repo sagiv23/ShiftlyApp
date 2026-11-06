@@ -103,21 +103,19 @@ Shiftly נבנתה בארכיטקטורת **Offline-First**, בה כל הנתו�
 
 ## תמונות מסך | Screenshots
 
-|                       מסך הבית (Home)                        |                      טיימר משמרת (Timer)                      |                     סיכום משמרות (Shifts)                      |
-|:------------------------------------------------------------:|:-------------------------------------------------------------:|:--------------------------------------------------------------:|
-| <img src="assets/screenshots/home_screen.png" width="220" /> | <img src="assets/screenshots/timer_screen.png" width="220" /> | <img src="assets/screenshots/shifts_screen.png" width="220" /> |
+|                       מסך הבית (Home)                        |                      טיימר משמרת (Timer)                      |                      כל המשמרות (All Shifts)                       |
+|:------------------------------------------------------------:|:-------------------------------------------------------------:|:------------------------------------------------------------------:|
+| <img src="assets/screenshots/home_screen.png" width="220" /> | <img src="assets/screenshots/timer_screen.png" width="220" /> | <img src="assets/screenshots/all_shifts_screen.png" width="220" /> |
 
-|                      כל המשמרות (All Shifts)                       |                     תצוגת לוח שנה (Calendar)                     |               פיענוח טקסט חופשי (Smart Parser)                |
-|:------------------------------------------------------------------:|:----------------------------------------------------------------:|:-------------------------------------------------------------:|
-| <img src="assets/screenshots/all_shifts_screen.png" width="220" /> | <img src="assets/screenshots/calendar_screen.png" width="220" /> | <img src="assets/screenshots/parse_screen.png" width="220" /> |
+|                     תצוגת לוח שנה (Calendar)                     |               פיענוח טקסט חופשי (Smart Parser)                |                      ייצוא דוחות (Export)                      |
+|:----------------------------------------------------------------:|:-------------------------------------------------------------:|:--------------------------------------------------------------:|
+| <img src="assets/screenshots/calendar_screen.png" width="220" /> | <img src="assets/screenshots/parse_screen.png" width="220" /> | <img src="assets/screenshots/export_screen.png" width="220" /> |
 
-|                      ייצוא דוחות (Export)                      |
-|:--------------------------------------------------------------:|
-| <img src="assets/screenshots/export_screen.png" width="220" /> |
+### ניתוחים וסטטיסטיקות (Analytics Suite)
 
-|                       ניתוחים 1 (Analytics)                        |                       ניתוחים 2 (Analytics)                        |                       ניתוחים 3 (Analytics)                        |                       ניתוחים 4 (Analytics)                        |
+|                                                                    |                                                                    |                                                                    |                                                                    |
 |:------------------------------------------------------------------:|:------------------------------------------------------------------:|:------------------------------------------------------------------:|:------------------------------------------------------------------:|
-| <img src="assets/screenshots/analytics_screen1.png" width="200" /> | <img src="assets/screenshots/analytics_screen2.png" width="200" /> | <img src="assets/screenshots/analytics_screen3.png" width="200" /> | <img src="assets/screenshots/analytics_screen4.png" width="200" /> |
+| <img src="assets/screenshots/analytics_screen1.png" width="180" /> | <img src="assets/screenshots/analytics_screen2.png" width="180" /> | <img src="assets/screenshots/analytics_screen3.png" width="180" /> | <img src="assets/screenshots/analytics_screen4.png" width="180" /> |
 
 ---
 
