@@ -784,5 +784,23 @@
         "type": "String"
       }
     }
-  }
+  },
+  "shift_template_title": "תבניות משמרת",
+  "shift_template_subtitle": "תבניות מהירות למילוי אוטומטי וחיסכון בזמן.",
+  "shift_template_morning": "משמרת בוקר",
+  "shift_template_evening": "משמרת ערב",
+  "shift_template_night": "משמרת לילה",
+  "shift_template_add_button": "הוסף תבנית",
+  "shift_template_save_current": "שמור כמשמרת קבועה",
+  "shift_template_applied_snack": "התבנית הוחלה בהצלחה",
+  "shift_template_saved_snack": "התבנית נשמרה בהצלחה",
+  "shift_template_deleted_snack": "התבנית נמחקה",
+  "shift_template_delete_confirm_title": "מחיקת תבנית",
+  "shift_template_delete_confirm_content": "האם למחוק את תבנית המשמרת הזו?",
+  "shift_template_name_label": "שם התבנית",
+  "shift_template_select_prompt": "תבניות משמרת קבועות",
+  "shift_template_manage": "ניהול תבניות",
+  "shift_template_empty": "אין תבניות משמרת שמורות עדיין",
+  "shift_template_edit_title": "עריכת תבנית",
+  "shift_template_new_title": "תבנית משמרת חדשה"
 }

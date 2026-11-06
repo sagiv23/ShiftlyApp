@@ -784,5 +784,23 @@
         "type": "String"
       }
     }
-  }
+  },
+  "shift_template_title": "Shift Templates",
+  "shift_template_subtitle": "Quick templates to make adding shifts fast and easy.",
+  "shift_template_morning": "Morning Shift",
+  "shift_template_evening": "Evening Shift",
+  "shift_template_night": "Night Shift",
+  "shift_template_add_button": "Add Template",
+  "shift_template_save_current": "Save as Template",
+  "shift_template_applied_snack": "Template applied",
+  "shift_template_saved_snack": "Template saved successfully",
+  "shift_template_deleted_snack": "Template deleted",
+  "shift_template_delete_confirm_title": "Delete Template",
+  "shift_template_delete_confirm_content": "Are you sure you want to delete this template?",
+  "shift_template_name_label": "Template Name",
+  "shift_template_select_prompt": "Quick Shift Templates",
+  "shift_template_manage": "Manage Templates",
+  "shift_template_empty": "No shift templates saved yet",
+  "shift_template_edit_title": "Edit Template",
+  "shift_template_new_title": "New Shift Template"
 }

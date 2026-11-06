@@ -3685,6 +3685,114 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'נטו סופי ({symbol})'**
   String pdf_col_net_pay_symbol(String symbol);
+
+  /// No description provided for @shift_template_title.
+  ///
+  /// In he, this message translates to:
+  /// **'תבניות משמרת'**
+  String get shift_template_title;
+
+  /// No description provided for @shift_template_subtitle.
+  ///
+  /// In he, this message translates to:
+  /// **'תבניות מהירות למילוי אוטומטי וחיסכון בזמן.'**
+  String get shift_template_subtitle;
+
+  /// No description provided for @shift_template_morning.
+  ///
+  /// In he, this message translates to:
+  /// **'משמרת בוקר'**
+  String get shift_template_morning;
+
+  /// No description provided for @shift_template_evening.
+  ///
+  /// In he, this message translates to:
+  /// **'משמרת ערב'**
+  String get shift_template_evening;
+
+  /// No description provided for @shift_template_night.
+  ///
+  /// In he, this message translates to:
+  /// **'משמרת לילה'**
+  String get shift_template_night;
+
+  /// No description provided for @shift_template_add_button.
+  ///
+  /// In he, this message translates to:
+  /// **'הוסף תבנית'**
+  String get shift_template_add_button;
+
+  /// No description provided for @shift_template_save_current.
+  ///
+  /// In he, this message translates to:
+  /// **'שמור כמשמרת קבועה'**
+  String get shift_template_save_current;
+
+  /// No description provided for @shift_template_applied_snack.
+  ///
+  /// In he, this message translates to:
+  /// **'התבנית הוחלה בהצלחה'**
+  String get shift_template_applied_snack;
+
+  /// No description provided for @shift_template_saved_snack.
+  ///
+  /// In he, this message translates to:
+  /// **'התבנית נשמרה בהצלחה'**
+  String get shift_template_saved_snack;
+
+  /// No description provided for @shift_template_deleted_snack.
+  ///
+  /// In he, this message translates to:
+  /// **'התבנית נמחקה'**
+  String get shift_template_deleted_snack;
+
+  /// No description provided for @shift_template_delete_confirm_title.
+  ///
+  /// In he, this message translates to:
+  /// **'מחיקת תבנית'**
+  String get shift_template_delete_confirm_title;
+
+  /// No description provided for @shift_template_delete_confirm_content.
+  ///
+  /// In he, this message translates to:
+  /// **'האם למחוק את תבנית המשמרת הזו?'**
+  String get shift_template_delete_confirm_content;
+
+  /// No description provided for @shift_template_name_label.
+  ///
+  /// In he, this message translates to:
+  /// **'שם התבנית'**
+  String get shift_template_name_label;
+
+  /// No description provided for @shift_template_select_prompt.
+  ///
+  /// In he, this message translates to:
+  /// **'תבניות משמרת קבועות'**
+  String get shift_template_select_prompt;
+
+  /// No description provided for @shift_template_manage.
+  ///
+  /// In he, this message translates to:
+  /// **'ניהול תבניות'**
+  String get shift_template_manage;
+
+  /// No description provided for @shift_template_empty.
+  ///
+  /// In he, this message translates to:
+  /// **'אין תבניות משמרת שמורות עדיין'**
+  String get shift_template_empty;
+
+  /// No description provided for @shift_template_edit_title.
+  ///
+  /// In he, this message translates to:
+  /// **'עריכת תבנית'**
+  String get shift_template_edit_title;
+
+  /// No description provided for @shift_template_new_title.
+  ///
+  /// In he, this message translates to:
+  /// **'תבנית משמרת חדשה'**
+  String get shift_template_new_title;
 }
 
 class _AppLocalizationsDelegate

@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/models/automatic_expense.dart';
+import 'package:shiftly/models/break_type.dart';
 import 'package:shiftly/models/overtime_rules.dart';
 import 'package:shiftly/models/shabbat_holiday_rules.dart';
+import 'package:shiftly/models/shift_template.dart';
 import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/services/persistence_service.dart';
 import 'package:shiftly/utils/app_constants.dart';
@@ -48,6 +51,9 @@ class SettingsProvider with ChangeNotifier {
   ShabbatHolidayRules _shabbatHolidayRules = const ShabbatHolidayRules();
   MonthlyProgressMode _monthlyProgressMode = MonthlyProgressMode.month;
   double _monthlyFinancialGoal = 0;
+  List<ShiftTemplate> _shiftTemplates = [];
+
+  List<ShiftTemplate> get shiftTemplates => List.unmodifiable(_shiftTemplates);
 
   ThemeMode get themeMode => _themeMode;
 
@@ -185,6 +191,119 @@ class SettingsProvider with ChangeNotifier {
       _shabbatHolidayRules = const ShabbatHolidayRules(enabled: true);
       box.put('shabbatHolidayRules', _shabbatHolidayRules.toJson());
     }
+
+    final rawTemplates = box.get('shiftTemplates');
+    if (rawTemplates != null) {
+      try {
+        final List list = rawTemplates is String
+            ? jsonDecode(rawTemplates)
+            : rawTemplates;
+        _shiftTemplates = list
+            .map(
+              (e) =>
+              ShiftTemplate.fromJson(Map<String, dynamic>.from(e as Map)),
+        )
+            .toList();
+        _updateDefaultTemplatesForLocale(_locale);
+      } catch (e) {
+        debugPrint('Failed to parse stored shift templates: $e');
+        _seedDefaultShiftTemplates(_locale);
+      }
+    } else {
+      _seedDefaultShiftTemplates(_locale);
+    }
+
+    notifyListeners();
+  }
+
+  void _seedDefaultShiftTemplates([Locale? locale]) {
+    final loc = locale ?? _locale;
+    final l = lookupAppLocalizations(loc);
+
+    _shiftTemplates = [
+      ShiftTemplate(
+        id: 'template_morning',
+        name: l.shift_template_morning,
+        startTime: const TimeOfDay(hour: 8, minute: 0),
+        endTime: const TimeOfDay(hour: 16, minute: 0),
+        breakType: BreakType.unpaid,
+      ),
+      ShiftTemplate(
+        id: 'template_evening',
+        name: l.shift_template_evening,
+        startTime: const TimeOfDay(hour: 16, minute: 0),
+        endTime: const TimeOfDay(hour: 0, minute: 0),
+        breakType: BreakType.unpaid,
+      ),
+      ShiftTemplate(
+        id: 'template_night',
+        name: l.shift_template_night,
+        startTime: const TimeOfDay(hour: 0, minute: 0),
+        endTime: const TimeOfDay(hour: 8, minute: 0),
+        breakType: BreakType.unpaid,
+      ),
+    ];
+    _persistence.settingsBox.put(
+      'shiftTemplates',
+      _shiftTemplates.map((t) => t.toJson()).toList(),
+    );
+  }
+
+  void _updateDefaultTemplatesForLocale(Locale locale) {
+    final l = lookupAppLocalizations(locale);
+
+    for (int i = 0; i < _shiftTemplates.length; i++) {
+      final t = _shiftTemplates[i];
+      if (t.id == 'template_morning') {
+        _shiftTemplates[i] = t.copyWith(name: l.shift_template_morning);
+      } else if (t.id == 'template_evening') {
+        _shiftTemplates[i] = t.copyWith(name: l.shift_template_evening);
+      } else if (t.id == 'template_night') {
+        _shiftTemplates[i] = t.copyWith(name: l.shift_template_night);
+      }
+    }
+    _persistence.settingsBox.put(
+      'shiftTemplates',
+      _shiftTemplates.map((t) => t.toJson()).toList(),
+    );
+  }
+
+  Future<void> saveShiftTemplates(List<ShiftTemplate> templates) async {
+    _shiftTemplates = List.from(templates);
+    await _persistence.settingsBox.put(
+      'shiftTemplates',
+      _shiftTemplates.map((t) => t.toJson()).toList(),
+    );
+    notifyListeners();
+  }
+
+  Future<void> addShiftTemplate(ShiftTemplate template) async {
+    _shiftTemplates.add(template);
+    await _persistence.settingsBox.put(
+      'shiftTemplates',
+      _shiftTemplates.map((t) => t.toJson()).toList(),
+    );
+    notifyListeners();
+  }
+
+  Future<void> updateShiftTemplate(ShiftTemplate template) async {
+    final idx = _shiftTemplates.indexWhere((t) => t.id == template.id);
+    if (idx != -1) {
+      _shiftTemplates[idx] = template;
+      await _persistence.settingsBox.put(
+        'shiftTemplates',
+        _shiftTemplates.map((t) => t.toJson()).toList(),
+      );
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteShiftTemplate(String templateId) async {
+    _shiftTemplates.removeWhere((t) => t.id == templateId);
+    await _persistence.settingsBox.put(
+      'shiftTemplates',
+      _shiftTemplates.map((t) => t.toJson()).toList(),
+    );
     notifyListeners();
   }
 
@@ -457,6 +576,7 @@ class SettingsProvider with ChangeNotifier {
   Future<void> setLocale(Locale locale) async {
     _locale = locale;
     await _persistence.settingsBox.put('locale', locale.languageCode);
+    _updateDefaultTemplatesForLocale(locale);
     notifyListeners();
   }
 

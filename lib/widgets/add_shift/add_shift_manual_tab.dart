@@ -5,6 +5,7 @@ import 'package:shiftly/models/automatic_expense.dart';
 import 'package:shiftly/models/break_type.dart';
 import 'package:shiftly/models/job_type.dart';
 import 'package:shiftly/models/shift.dart';
+import 'package:shiftly/models/shift_template.dart';
 import 'package:shiftly/models/shift_wage_segment.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
@@ -13,7 +14,9 @@ import 'package:shiftly/utils/app_constants.dart';
 import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/ui_utils.dart';
 import 'package:shiftly/widgets/add_shift/add_shift_form_sections.dart';
+import 'package:shiftly/widgets/add_shift/shift_template_chips.dart';
 import 'package:shiftly/widgets/shift_tile.dart';
+import 'package:uuid/uuid.dart';
 
 class AddShiftManualTab extends StatelessWidget {
   final List<JobType> jobs;
@@ -457,7 +460,72 @@ class AddShiftManualTab extends StatelessWidget {
       ),
     ];
 
+    void showSaveTemplateDialog() {
+      final nameController = TextEditingController();
+      showDialog(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            title: Text(l.shift_template_save_current),
+            content: TextField(
+              controller: nameController,
+              autofocus: true,
+              decoration: InputDecoration(
+                labelText: l.shift_template_name_label,
+                hintText: l.shift_template_morning,
+                border: const OutlineInputBorder(),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(l.common_cancel),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final name = nameController.text.trim();
+                  if (name.isEmpty) return;
+
+                  final settings = context.read<SettingsProvider>();
+                  final template = ShiftTemplate(
+                    id: const Uuid().v4(),
+                    name: name,
+                    startTime: startTime,
+                    endTime: endTime,
+                    jobTypeId: selectedJobTypeId,
+                    breakType: selectedBreakType,
+                  );
+
+                  await settings.addShiftTemplate(template);
+                  if (context.mounted) {
+                    Navigator.pop(ctx);
+                    UIUtils.showSnackBar(
+                      context,
+                      l.shift_template_saved_snack,
+                    );
+                  }
+                },
+                child: Text(l.common_save),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     final shiftSections = <Widget>[
+      ShiftTemplateChips(
+        onSelectTemplate: (template) {
+          onStartTimeChanged(template.startTime);
+          onEndTimeChanged(template.endTime);
+          if (template.jobTypeId != null) {
+            onJobTypeChanged(template.jobTypeId);
+          }
+          onBreakTypeChanged(template.breakType);
+          onChanged();
+        },
+        onSaveCurrentAsTemplate: showSaveTemplateDialog,
+      ),
       AddShiftFormSection(
         title: l.add_shift_manual_time_section,
         icon: Icons.schedule_rounded,

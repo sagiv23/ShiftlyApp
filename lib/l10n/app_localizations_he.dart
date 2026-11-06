@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1948,4 +1947,60 @@ class AppLocalizationsHe extends AppLocalizations {
   String pdf_col_net_pay_symbol(String symbol) {
     return 'נטו סופי ($symbol)';
   }
+
+  @override
+  String get shift_template_title => 'תבניות משמרת';
+
+  @override
+  String get shift_template_subtitle =>
+      'תבניות מהירות למילוי אוטומטי וחיסכון בזמן.';
+
+  @override
+  String get shift_template_morning => 'משמרת בוקר';
+
+  @override
+  String get shift_template_evening => 'משמרת ערב';
+
+  @override
+  String get shift_template_night => 'משמרת לילה';
+
+  @override
+  String get shift_template_add_button => 'הוסף תבנית';
+
+  @override
+  String get shift_template_save_current => 'שמור כמשמרת קבועה';
+
+  @override
+  String get shift_template_applied_snack => 'התבנית הוחלה בהצלחה';
+
+  @override
+  String get shift_template_saved_snack => 'התבנית נשמרה בהצלחה';
+
+  @override
+  String get shift_template_deleted_snack => 'התבנית נמחקה';
+
+  @override
+  String get shift_template_delete_confirm_title => 'מחיקת תבנית';
+
+  @override
+  String get shift_template_delete_confirm_content =>
+      'האם למחוק את תבנית המשמרת הזו?';
+
+  @override
+  String get shift_template_name_label => 'שם התבנית';
+
+  @override
+  String get shift_template_select_prompt => 'תבניות משמרת קבועות';
+
+  @override
+  String get shift_template_manage => 'ניהול תבניות';
+
+  @override
+  String get shift_template_empty => 'אין תבניות משמרת שמורות עדיין';
+
+  @override
+  String get shift_template_edit_title => 'עריכת תבנית';
+
+  @override
+  String get shift_template_new_title => 'תבנית משמרת חדשה';
 }

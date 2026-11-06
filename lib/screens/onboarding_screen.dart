@@ -15,6 +15,7 @@ import 'package:shiftly/utils/app_date_picker.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/utils/ui_utils.dart';
+import 'package:shiftly/widgets/add_shift/shift_template_chips.dart';
 import 'package:shiftly/widgets/app_icon.dart';
 import 'package:uuid/uuid.dart';
 
@@ -26,7 +27,7 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  static const int _pageCount = 6;
+  static const int _pageCount = 7;
 
   final PageController _pageController = PageController();
   int _currentPage = 0;
@@ -333,14 +334,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 onPageChanged: (page) => setState(() => _currentPage = page),
                 children: [
                   _buildPage(pageIndex: 0, child: _buildWelcomePage()),
-                  PageEntranceAnimation(
-                    key: const ValueKey(1),
-                    child: _buildJobTypesPage(),
-                  ),
-                  _buildPage(pageIndex: 2, child: _buildBreakSettingsPage()),
-                  _buildPage(pageIndex: 3, child: _buildPayRulesPage()),
-                  _buildPage(pageIndex: 4, child: _buildAutoExpensePage()),
-                  _buildPage(pageIndex: 5, child: _buildAutoIncomePage()),
+                  _buildPage(pageIndex: 1, child: _buildJobTypesPage()),
+                  _buildPage(pageIndex: 2, child: _buildShiftTemplatesPage()),
+                  _buildPage(pageIndex: 3, child: _buildBreakSettingsPage()),
+                  _buildPage(pageIndex: 4, child: _buildPayRulesPage()),
+                  _buildPage(pageIndex: 5, child: _buildAutoExpensePage()),
+                  _buildPage(pageIndex: 6, child: _buildAutoIncomePage()),
                 ],
               ),
             ),
@@ -369,6 +368,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     const stepIcons = [
       Icons.tune_rounded,
       Icons.work_outline_rounded,
+      Icons.auto_awesome_rounded,
       Icons.schedule_rounded,
       Icons.rule_rounded,
       Icons.payments_outlined,
@@ -392,44 +392,51 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 const SizedBox(height: 8),
                 ExcludeSemantics(
-                  child: Row(
-                    children: List.generate(_pageCount * 2 - 1, (index) {
-                      if (index.isOdd) {
-                        final completed = index ~/ 2 < _currentPage;
-                        return Expanded(
-                          child: AnimatedContainer(
-                            duration: progressAnimationDuration,
-                            height: 2,
-                            color: completed ? accent : inactive,
-                          ),
-                        );
-                      }
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: AlignmentDirectional.centerStart,
+                    child: SizedBox(
+                      width: 320,
+                      child: Row(
+                        children: List.generate(_pageCount * 2 - 1, (index) {
+                          if (index.isOdd) {
+                            final completed = index ~/ 2 < _currentPage;
+                            return Expanded(
+                              child: AnimatedContainer(
+                                duration: progressAnimationDuration,
+                                height: 2,
+                                color: completed ? accent : inactive,
+                              ),
+                            );
+                          }
 
-                      final step = index ~/ 2;
-                      final completed = step < _currentPage;
-                      final active = step == _currentPage;
-                      final color = completed || active ? accent : inactive;
-                      return AnimatedContainer(
-                        duration: progressAnimationDuration,
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: active
-                              ? accent.withValues(alpha: 0.16)
-                              : Colors.transparent,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: color,
-                            width: active ? 2 : 1,
-                          ),
-                        ),
-                        child: Icon(
-                          completed ? Icons.check_rounded : stepIcons[step],
-                          size: 15,
-                          color: color,
-                        ),
-                      );
-                    }),
+                          final step = index ~/ 2;
+                          final completed = step < _currentPage;
+                          final active = step == _currentPage;
+                          final color = completed || active ? accent : inactive;
+                          return AnimatedContainer(
+                            duration: progressAnimationDuration,
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: active
+                                  ? accent.withValues(alpha: 0.16)
+                                  : Colors.transparent,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: color,
+                                width: active ? 2 : 1,
+                              ),
+                            ),
+                            child: Icon(
+                              completed ? Icons.check_rounded : stepIcons[step],
+                              size: 15,
+                              color: color,
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -458,6 +465,47 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPageHeader({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    Color iconColor = AppTheme.electricCyan,
+  }) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: iconColor.withValues(alpha: 0.15),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            icon,
+            size: 32,
+            color: iconColor,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          title,
+          style: theme.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          subtitle,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 24),
+      ],
     );
   }
 
@@ -537,7 +585,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final l = AppLocalizations.of(context)!;
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        _buildPageHeader(
+          icon: Icons.rule_rounded,
+          title: l.settings_section_overtime,
+          subtitle: l.settings_overtime_enable_sub,
+        ),
         _buildPayRuleCard(
           title: l.settings_section_overtime,
           subtitle: l.settings_overtime_enable_sub,
@@ -723,21 +777,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(
-          Icons.timer_outlined,
-          size: 48,
-          color: AppTheme.electricCyan,
+        _buildPageHeader(
+          icon: Icons.timer_outlined,
+          title: l.onboarding_breaks_title,
+          subtitle: l.onboarding_breaks_subtitle,
         ),
-        const SizedBox(height: AppTheme.spaceSm),
-        Text(l.onboarding_breaks_title, style: theme.textTheme.headlineMedium),
-        const SizedBox(height: AppTheme.spaceXs),
-        Text(
-          l.onboarding_breaks_subtitle,
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: AppTheme.spaceSm),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(
@@ -769,26 +813,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildAutoExpensePage() {
     final l = AppLocalizations.of(context)!;
-    final textTheme = Theme.of(context).textTheme;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(
-          Icons.auto_fix_high_rounded,
-          size: 64,
-          color: AppTheme.electricCyan,
+        _buildPageHeader(
+          icon: Icons.auto_fix_high_rounded,
+          title: l.onboarding_auto_expenses_title,
+          subtitle: l.onboarding_auto_expenses_subtitle,
         ),
-        const SizedBox(height: 24),
-        Text(l.onboarding_auto_expenses_title, style: textTheme.headlineMedium),
-        const SizedBox(height: 16),
-        Text(
-          l.onboarding_auto_expenses_subtitle,
-          style: textTheme.bodyLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: 40),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(
@@ -864,26 +897,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildAutoIncomePage() {
     final l = AppLocalizations.of(context)!;
-    final textTheme = Theme.of(context).textTheme;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(
-          Icons.account_balance_wallet_rounded,
-          size: 64,
-          color: AppTheme.mintGreen,
+        _buildPageHeader(
+          icon: Icons.account_balance_wallet_rounded,
+          title: l.onboarding_auto_incomes_title,
+          subtitle: l.onboarding_auto_incomes_subtitle,
+          iconColor: AppTheme.mintGreen,
         ),
-        const SizedBox(height: 24),
-        Text(l.onboarding_auto_incomes_title, style: textTheme.headlineMedium),
-        const SizedBox(height: 16),
-        Text(
-          l.onboarding_auto_incomes_subtitle,
-          style: textTheme.bodyLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: 40),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(
@@ -1008,110 +1031,233 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final l = AppLocalizations.of(context)!;
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(32, 32, 32, 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Icon(
-                Icons.work_outline,
-                size: 64,
-                color: AppTheme.electricCyan,
+        _buildPageHeader(
+          icon: Icons.work_outline_rounded,
+          title: l.onboarding_job_types_title,
+          subtitle: l.onboarding_job_types_subtitle,
+        ),
+        ...jobTypes.map((job) {
+          return Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            child: ListTile(
+              title: Text(
+                job.name,
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 24),
-              Text(
-                l.onboarding_job_types_title,
+              subtitle: Text(
+                '${UIUtils.formatCurrency(
+                    job.getRateForDate(DateTime.now()), symbol: symbol)} ${l
+                    .onboarding_job_types_rate_suffix}',
                 style: const TextStyle(
-                  fontSize: 28,
+                  color: AppTheme.electricCyan,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                l.onboarding_job_types_subtitle,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            itemCount: jobTypes.length + 1,
-            itemBuilder: (context, index) {
-              if (index == jobTypes.length) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24.0),
-                  child: Center(
-                    child: TextButton.icon(
-                      onPressed: _addNewJobType,
-                      icon: const Icon(Icons.add),
-                      label: Text(l.onboarding_job_types_add_button),
-                      style: TextButton.styleFrom(
-                        foregroundColor: AppTheme.electricCyan,
-                      ),
-                    ),
-                  ),
-                );
-              }
-              final job = jobTypes[index];
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: ListTile(
-                  title: Text(
-                    job.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    '${UIUtils.formatCurrency(job.getRateForDate(DateTime.now()), symbol: symbol)} ${l.onboarding_job_types_rate_suffix}',
-                    style: const TextStyle(
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.edit_outlined,
                       color: AppTheme.electricCyan,
-                      fontWeight: FontWeight.bold,
                     ),
+                    onPressed: () => _editJobType(job),
                   ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.edit_outlined,
-                          color: AppTheme.electricCyan,
-                        ),
-                        onPressed: () => _editJobType(job),
-                      ),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.delete_outline,
-                          color: AppTheme.softCoral,
-                        ),
-                        onPressed: () async {
-                          final provider = context.read<ShiftProvider>();
-                          final confirmed = await UIUtils.showConfirmDialog(
-                            context: context,
-                            title: l.onboarding_job_types_delete_title,
-                            content:
-                                '${l.onboarding_job_types_delete_desc} ${job.name}?',
-                            isDestructive: true,
-                            confirmLabel: l.common_delete,
-                            cancelLabel: l.common_cancel,
-                          );
-                          if (confirmed == true && context.mounted) {
-                            provider.deleteJobType(job.id);
-                          }
-                        },
-                      ),
-                    ],
+                  IconButton(
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      color: AppTheme.softCoral,
+                    ),
+                    onPressed: () async {
+                      final provider = context.read<ShiftProvider>();
+                      final confirmed = await UIUtils.showConfirmDialog(
+                        context: context,
+                        title: l.onboarding_job_types_delete_title,
+                        content:
+                        '${l.onboarding_job_types_delete_desc} ${job.name}?',
+                        isDestructive: true,
+                        confirmLabel: l.common_delete,
+                        cancelLabel: l.common_cancel,
+                      );
+                      if (confirmed == true && context.mounted) {
+                        provider.deleteJobType(job.id);
+                      }
+                    },
                   ),
-                ),
-              );
-            },
+                ],
+              ),
+            ),
+          );
+        }),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12.0),
+          child: Center(
+            child: TextButton.icon(
+              onPressed: _addNewJobType,
+              icon: const Icon(Icons.add),
+              label: Text(l.onboarding_job_types_add_button),
+              style: TextButton.styleFrom(
+                foregroundColor: AppTheme.electricCyan,
+              ),
+            ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildShiftTemplatesPage() {
+    final l = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Consumer<SettingsProvider>(
+      builder: (context, settings, _) {
+        final templates = settings.shiftTemplates;
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(
+              Icons.auto_awesome_rounded,
+              size: 56,
+              color: AppTheme.electricCyan,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l.shift_template_title,
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l.shift_template_subtitle,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 24),
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: templates.length,
+              separatorBuilder: (ctx, idx) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final t = templates[index];
+                final startStr =
+                    '${t.startTime.hour.toString().padLeft(2, '0')}:${t
+                    .startTime.minute
+                    .toString()
+                    .padLeft(2, '0')}';
+                final endStr =
+                    '${t.endTime.hour.toString().padLeft(2, '0')}:${t.endTime
+                    .minute.toString().padLeft(2, '0')}';
+
+                return Card(
+                  elevation: 0,
+                  color: isDark
+                      ? AppTheme.darkSecondaryBackground
+                      : AppTheme.lightSurfaceElevated,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    side: BorderSide(
+                      color: isDark
+                          ? AppTheme.darkBorder
+                          : AppTheme.lightBorder,
+                    ),
+                  ),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    leading: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppTheme.electricCyan.withValues(
+                          alpha: 0.15,
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.schedule_rounded,
+                        color: AppTheme.electricCyan,
+                        size: 22,
+                      ),
+                    ),
+                    title: Text(
+                      t.name,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Text(
+                      '$startStr - $endStr',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit_outlined, size: 20),
+                          onPressed: () =>
+                              ShiftTemplateChips.showEditTemplateDialog(
+                                context,
+                                t,
+                              ),
+                        ),
+                        if (templates.length > 1)
+                          IconButton(
+                            icon: const Icon(
+                              Icons.delete_outline_rounded,
+                              color: AppTheme.expense,
+                              size: 20,
+                            ),
+                            onPressed: () async {
+                              final confirm =
+                              await UIUtils.showConfirmDialog(
+                                context: context,
+                                title:
+                                l.shift_template_delete_confirm_title,
+                                content:
+                                l.shift_template_delete_confirm_content,
+                                confirmLabel: l.common_delete,
+                                isDestructive: true,
+                              );
+                              if (confirm) {
+                                await settings.deleteShiftTemplate(t.id);
+                              }
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: () =>
+                  ShiftTemplateChips.showEditTemplateDialog(context, null),
+              icon: const Icon(Icons.add_rounded),
+              label: Text(l.shift_template_add_button),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

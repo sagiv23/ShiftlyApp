@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1971,4 +1970,60 @@ class AppLocalizationsEn extends AppLocalizations {
   String pdf_col_net_pay_symbol(String symbol) {
     return 'Total Net Pay ($symbol)';
   }
+
+  @override
+  String get shift_template_title => 'Shift Templates';
+
+  @override
+  String get shift_template_subtitle =>
+      'Quick templates to make adding shifts fast and easy.';
+
+  @override
+  String get shift_template_morning => 'Morning Shift';
+
+  @override
+  String get shift_template_evening => 'Evening Shift';
+
+  @override
+  String get shift_template_night => 'Night Shift';
+
+  @override
+  String get shift_template_add_button => 'Add Template';
+
+  @override
+  String get shift_template_save_current => 'Save as Template';
+
+  @override
+  String get shift_template_applied_snack => 'Template applied';
+
+  @override
+  String get shift_template_saved_snack => 'Template saved successfully';
+
+  @override
+  String get shift_template_deleted_snack => 'Template deleted';
+
+  @override
+  String get shift_template_delete_confirm_title => 'Delete Template';
+
+  @override
+  String get shift_template_delete_confirm_content =>
+      'Are you sure you want to delete this template?';
+
+  @override
+  String get shift_template_name_label => 'Template Name';
+
+  @override
+  String get shift_template_select_prompt => 'Quick Shift Templates';
+
+  @override
+  String get shift_template_manage => 'Manage Templates';
+
+  @override
+  String get shift_template_empty => 'No shift templates saved yet';
+
+  @override
+  String get shift_template_edit_title => 'Edit Template';
+
+  @override
+  String get shift_template_new_title => 'New Shift Template';
 }

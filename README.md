@@ -4,7 +4,7 @@
 
 <p style="text-align: center;">
   <a href="https://shiftly-ujfd.onrender.com/" target="_blank"><img src="https://img.shields.io/badge/🌐_Web_App-Live-38BDF8?style=for-the-badge&logoColor=0F172A" alt="Shiftly Web" /></a>
-  <a href="https://github.com/Sagiv23/ShiftlyApp/releases/tag/v1.1.4" target="_blank"><img src="https://img.shields.io/badge/🏷️_Release-v1.1.4-22C55E?style=for-the-badge" alt="Release v1.1.4" /></a>
+  <a href="https://github.com/Sagiv23/ShiftlyApp/releases/tag/v1.1.5" target="_blank"><img src="https://img.shields.io/badge/🏷️_Release-v1.1.5-22C55E?style=for-the-badge" alt="Release v1.1.5" /></a>
   <a href="PRIVACY.md"><img src="https://img.shields.io/badge/🛡️_Privacy-Policy-0EA5E9?style=for-the-badge" alt="Privacy Policy" /></a>
   <a href="TERMS.md"><img src="https://img.shields.io/badge/⚖️_Terms-Service-0EA5E9?style=for-the-badge" alt="Terms of Service" /></a>
   <img src="https://img.shields.io/badge/Platform-Android_|_iOS_|_Web_|_Desktop-22C55E?style=for-the-badge" alt="Platforms" />
