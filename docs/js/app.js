@@ -78,7 +78,7 @@ function initStarfieldCanvas(prefersReducedMotion) {
     this.vx = (Math.random() - 0.5) * 0.35;
     this.vy = (Math.random() - 0.5) * 0.35;
     this.alpha = Math.random() * 0.6 + 0.2;
-    this.color = Math.random() > 0.4 ? '#38BDF8' : (Math.random() > 0.5 ? '#818CF8' : '#C084FC');
+    this.color = Math.random() > 0.4 ? '#FFC700' : (Math.random() > 0.5 ? '#38BDF8' : '#818CF8');
   }
 
   function initParticles() {
@@ -119,7 +119,7 @@ function initStarfieldCanvas(prefersReducedMotion) {
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(p2.x, p2.y);
-          ctx.strokeStyle = '#38BDF8';
+          ctx.strokeStyle = '#FFC700';
           ctx.globalAlpha = (1 - dist / 120) * 0.15;
           ctx.lineWidth = 0.8;
           ctx.stroke();

@@ -5,34 +5,34 @@
    ========================================================================== */
 
 :root {
-  /* Background Hierarchy */
-  --bg-deep: #050814;
-  --bg-base: #080D1A;
-  --bg-surface: #0E1628;
-  --bg-surface-elevated: #131F36;
-  --bg-glass: rgba(8, 13, 26, 0.85);
-  --bg-glass-card: rgba(14, 22, 40, 0.75);
-  --bg-glass-hover: rgba(19, 31, 54, 0.9);
+  /* Background Hierarchy - Deep Royal Sapphire */
+  --bg-deep: #050914;
+  --bg-base: #0A1026;
+  --bg-surface: #101935;
+  --bg-surface-elevated: #162347;
+  --bg-glass: rgba(10, 16, 38, 0.85);
+  --bg-glass-card: rgba(16, 25, 53, 0.75);
+  --bg-glass-hover: rgba(22, 35, 71, 0.9);
 
   /* Borders & Highlights */
   --border-subtle: rgba(148, 180, 230, 0.12);
-  --border-glass: rgba(56, 232, 255, 0.22);
-  --border-glass-hover: rgba(56, 232, 255, 0.55);
+  --border-glass: rgba(255, 199, 0, 0.25);
+  --border-glass-hover: rgba(255, 199, 0, 0.6);
 
-  /* Primary & Secondary Accents */
-  --primary: #38BDF8;
-  --primary-glow: rgba(56, 189, 248, 0.35);
-  --primary-dark: #0EA5E9;
-  --secondary: #818CF8;
-  --secondary-glow: rgba(129, 140, 248, 0.3);
-  --tertiary: #C084FC;
+  /* Primary & Secondary Accents (Neo-Bank Gold Startup Triad) */
+  --primary: #FFC700;
+  --primary-glow: rgba(255, 199, 0, 0.4);
+  --primary-dark: #E6B200;
+  --secondary: #38BDF8;
+  --secondary-glow: rgba(56, 189, 248, 0.35);
+  --tertiary: #818CF8;
 
   /* Financial Indicators & Status */
   --profit: #34D399;
   --profit-glow: rgba(52, 211, 153, 0.3);
   --expense: #FB7185;
-  --warning: #FBBF24;
-  --warning-glow: rgba(251, 191, 36, 0.25);
+  --warning: #F59E0B;
+  --warning-glow: rgba(245, 158, 11, 0.25);
 
   /* Typography Colors */
   --text-main: #F8FAFC;
@@ -51,8 +51,8 @@
   --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.45);
   --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.6);
   --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.75);
+  --shadow-gold-glow: 0 0 50px rgba(255, 199, 0, 0.25);
   --shadow-cyan-glow: 0 0 50px rgba(56, 189, 248, 0.18);
-  --shadow-violet-glow: 0 0 50px rgba(129, 140, 248, 0.18);
 
   /* Layout Standards */
   --nav-height: 76px;
@@ -95,8 +95,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image:
-    radial-gradient(ellipse 85% 45% at 85% -10%, rgba(56, 189, 248, 0.07), transparent 65%),
-    radial-gradient(ellipse 65% 40% at 10% 30%, rgba(129, 140, 248, 0.06), transparent 70%);
+    radial-gradient(ellipse 85% 45% at 85% -10%, rgba(255, 199, 0, 0.08), transparent 65%),
+    radial-gradient(ellipse 65% 40% at 10% 30%, rgba(56, 189, 248, 0.07), transparent 70%);
   background-attachment: fixed;
   letter-spacing: 0.002em;
 }
@@ -120,7 +120,7 @@ body {
   font-size: 15px;
   z-index: 10000;
   text-decoration: none;
-  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.5);
+  box-shadow: 0 4px 20px rgba(255, 199, 0, 0.5);
   transition: top 0.25s var(--ease-out-cubic);
 }
 
@@ -191,7 +191,7 @@ body {
   right: 15%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, var(--primary) 0%, rgba(56, 189, 248, 0) 70%);
+  background: radial-gradient(circle, var(--primary) 0%, rgba(255, 199, 0, 0) 70%);
 }
 
 .orb-2 {
@@ -199,7 +199,7 @@ body {
   left: -10%;
   width: 650px;
   height: 650px;
-  background: radial-gradient(circle, var(--secondary) 0%, rgba(129, 140, 248, 0) 70%);
+  background: radial-gradient(circle, var(--secondary) 0%, rgba(56, 189, 248, 0) 70%);
   animation-delay: -9s;
 }
 
@@ -208,7 +208,7 @@ body {
   right: 10%;
   width: 550px;
   height: 550px;
-  background: radial-gradient(circle, var(--tertiary) 0%, rgba(192, 132, 252, 0) 70%);
+  background: radial-gradient(circle, var(--tertiary) 0%, rgba(129, 140, 248, 0) 70%);
   animation-delay: -18s;
 }
 
@@ -313,7 +313,7 @@ body {
   color: var(--text-main);
   letter-spacing: -0.5px;
   font-family: var(--font-accent);
-  background: linear-gradient(135deg, #F8FAFC 30%, var(--primary) 100%);
+  background: linear-gradient(135deg, #F8FAFC 30%, var(--secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -321,7 +321,7 @@ body {
 .logo-subtext {
   font-size: 10px;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--secondary);
   letter-spacing: 1.6px;
   text-transform: uppercase;
 }
@@ -393,9 +393,10 @@ body {
 
 .btn-primary {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-  color: #050814;
-  box-shadow: 0 9px 22px rgba(56, 189, 248, 0.22);
-  border-color: rgba(255, 255, 255, 0.28);
+  color: #050914;
+  box-shadow: 0 9px 24px rgba(255, 199, 0, 0.32);
+  border-color: rgba(255, 255, 255, 0.35);
+  font-weight: 800;
 }
 
 .btn-primary::before {
@@ -411,7 +412,7 @@ body {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(56, 189, 248, 0.32);
+  box-shadow: 0 12px 30px rgba(255, 199, 0, 0.45);
 }
 
 .btn-primary:hover::before {
@@ -639,7 +640,7 @@ body {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #38BDF8 0%, #818CF8 50%, #C084FC 100%);
+  background: linear-gradient(135deg, #FFF066 0%, #FFC700 45%, #38BDF8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
@@ -2456,6 +2457,53 @@ input:checked + .toggle-slider:before {
 
 .screenshot-card:hover img {
   transform: scale(1.035);
+}
+
+/* --- Mobile Compact Horizontal Gallery Slider --- */
+@media (max-width: 768px) {
+  #screenshots .screenshots-grid-container {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    gap: 14px !important;
+    padding: 8px 12px 18px !important;
+    margin-top: 18px !important;
+  }
+
+  #screenshots .screenshot-card {
+    flex: 0 0 210px !important;
+    width: 210px !important;
+    max-width: 210px !important;
+    scroll-snap-align: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  #screenshots .screenshot-card[style*="grid-column"] {
+    grid-column: auto !important;
+    flex: 0 0 270px !important;
+    width: 270px !important;
+    max-width: 270px !important;
+    padding: 14px !important;
+  }
+
+  #screenshots .screenshot-card[style*="grid-column"] > div:last-child {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  #screenshots .screenshots-grid-container::-webkit-scrollbar {
+    height: 5px;
+  }
+  #screenshots .screenshots-grid-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+  }
+  #screenshots .screenshots-grid-container::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+  }
 }
 
 /* --- Image Lightbox Fullscreen Modal --- */
