@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -318,6 +319,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings_language_en => 'English';
+
+  @override
+  String get settings_language_fr => 'French (Français)';
+
+  @override
+  String get settings_language_es => 'Spanish (Español)';
+
+  @override
+  String get settings_language_ru => 'Russian (Русский)';
+
+  @override
+  String get settings_language_ar => 'Arabic (العربية)';
 
   @override
   String get settings_current_rate => 'Current Rate';
@@ -2026,4 +2039,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shift_template_new_title => 'New Shift Template';
+
+  @override
+  String get expenses_type_income => 'income';
+
+  @override
+  String get expenses_type_expense => 'expense';
 }

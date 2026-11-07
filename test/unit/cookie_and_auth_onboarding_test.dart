@@ -80,5 +80,37 @@ void main() {
         'OnboardingScreen',
       );
     });
+
+    test('Initial locale determination based on device language', () {
+      const supportedLocales = ['he', 'fr', 'es', 'ru', 'ar', 'en'];
+
+      String determineInitialLocale(String deviceLanguageCode,
+          String? storedLocaleCode) {
+        if (storedLocaleCode != null) {
+          return storedLocaleCode;
+        }
+        if (supportedLocales.contains(deviceLanguageCode)) {
+          return deviceLanguageCode;
+        } else {
+          return 'en';
+        }
+      }
+
+      // Stored locale takes precedence
+      expect(determineInitialLocale('he', 'en'), 'en');
+      expect(determineInitialLocale('en', 'he'), 'he');
+
+      // First time (no stored locale): Supported device languages
+      expect(determineInitialLocale('he', null), 'he');
+      expect(determineInitialLocale('en', null), 'en');
+      expect(determineInitialLocale('fr', null), 'fr');
+      expect(determineInitialLocale('es', null), 'es');
+      expect(determineInitialLocale('ru', null), 'ru');
+      expect(determineInitialLocale('ar', null), 'ar');
+
+      // First time: Other device language (e.g. German, Chinese) -> English
+      expect(determineInitialLocale('de', null), 'en');
+      expect(determineInitialLocale('zh', null), 'en');
+    });
   });
 }

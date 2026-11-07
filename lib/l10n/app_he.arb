@@ -103,6 +103,10 @@
   "settings_theme_dark": "לילה",
   "settings_language_he": "עברית",
   "settings_language_en": "English",
+  "settings_language_fr": "Français (צרפתית)",
+  "settings_language_es": "Español (ספרדית)",
+  "settings_language_ru": "Русский (רוסית)",
+  "settings_language_ar": "العربية (ערבית)",
   "settings_current_rate": "תעריף נוכחי",
   "settings_wage_history_title": "היסטוריית שכר",
   "settings_job_name_label": "שם התפקיד",
@@ -802,5 +806,7 @@
   "shift_template_manage": "ניהול תבניות",
   "shift_template_empty": "אין תבניות משמרת שמורות עדיין",
   "shift_template_edit_title": "עריכת תבנית",
-  "shift_template_new_title": "תבנית משמרת חדשה"
+  "shift_template_new_title": "תבנית משמרת חדשה",
+  "expenses_type_income": "הכנסה",
+  "expenses_type_expense": "הוצאה"
 }

@@ -549,6 +549,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           items: [
             DropdownMenuItem(value: 'he', child: Text(l.settings_language_he)),
             DropdownMenuItem(value: 'en', child: Text(l.settings_language_en)),
+            DropdownMenuItem(value: 'fr', child: Text(l.settings_language_fr)),
+            DropdownMenuItem(value: 'es', child: Text(l.settings_language_es)),
+            DropdownMenuItem(value: 'ru', child: Text(l.settings_language_ru)),
+            DropdownMenuItem(value: 'ar', child: Text(l.settings_language_ar)),
           ],
           onChanged: (val) {
             if (val != null) {

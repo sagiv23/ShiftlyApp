@@ -330,8 +330,8 @@ class _ExpensesScreenState extends State<ExpensesScreen>
                     .where((s) => isSameDay(s.date, selectedDate))
                     .toList();
                 final typeStr = isIncome
-                    ? (l.localeName.startsWith('he') ? 'הכנסה' : 'income')
-                    : (l.localeName.startsWith('he') ? 'הוצאה' : 'expense');
+                    ? l.expenses_type_income
+                    : l.expenses_type_expense;
 
                 if (shiftsOnDay.isNotEmpty) {
                   final action = await showDialog<String>(

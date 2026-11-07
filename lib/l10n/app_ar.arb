@@ -1,0 +1,812 @@
+{
+  "@@locale": "ar",
+  "common_app_name": "Shiftly",
+  "common_continue": "متابعة",
+  "common_back": "رجوع",
+  "common_start": "لنبدأ!",
+  "common_cancel": "إلغاء",
+  "common_save": "حفظ",
+  "common_delete": "حذف",
+  "common_confirm": "تأكيد",
+  "common_error": "خطأ",
+  "common_success": "نجاح",
+  "common_edit": "تعديل",
+  "common_tagline": "محرك الرواتب والورديات",
+  "nav_calendar": "التقويم",
+  "nav_analytics": "التحليلات",
+  "nav_home": "الرئيسية",
+  "nav_expenses": "المصروفات",
+  "nav_summaries": "الملخصات",
+  "common_hours_suffix": "ساعات",
+  "common_min_suffix": "دقيقة",
+  "common_net": "صافي",
+  "common_shifts_count": "الورديات",
+  "common_save_and_finish": "حفظ وإنهاء",
+  "common_reset": "إعادة تعيين",
+  "common_reset_and_cancel": "إلغاء وإعادة تعيين",
+  "onboarding_welcome_title": "مرحباً بك في Shiftly",
+  "onboarding_welcome_subtitle": "التطبيق الذي يساعدك على تتبع وردياتك وراتبك والإكراميات بسهولة ودقة.",
+  "onboarding_welcome_description": "دعنا نضبط بعض الإعدادات الأساسية للبدء.",
+  "onboarding_step_progress": "الخطوة {current} من {total}",
+  "@onboarding_step_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "onboarding_skip_setup": "تخطي الإعداد",
+  "onboarding_language_title": "لغة التطبيق",
+  "onboarding_language_subtitle": "اختر لغتك المفضلة.",
+  "onboarding_currency_title": "اختر العملة",
+  "onboarding_currency_subtitle": "ما هي العملة التي تفضل استخدامها للراتب والمصروفات؟",
+  "monthly_progress_setting_title": "معنى خط التقدم",
+  "monthly_progress_mode_month": "الوقت المنقضي في الشهر",
+  "monthly_progress_mode_financial_goal": "التقدم نحو هدف مالي",
+  "monthly_progress_goal_amount": "مبلغ الهدف الشهري",
+  "monthly_progress_invalid_goal": "أدخل هدفاً مالياً أكبر من الصفر",
+  "monthly_progress_month_elapsed": "تقدم الشهر",
+  "monthly_progress_financial_goal": "تقدم الهدف",
+  "onboarding_breaks_title": "إعدادات الاستراحات",
+  "onboarding_breaks_subtitle": "كم تستغرق الاستراحة عادة؟",
+  "onboarding_breaks_enable": "تفعيل الاستراحات",
+  "onboarding_breaks_paid_label": "استراحة مدفوعة (دقائق)",
+  "onboarding_breaks_unpaid_label": "استراحة غير مدفوعة (دقائق)",
+  "onboarding_auto_expenses_title": "المصروفات المتكررة",
+  "onboarding_auto_expenses_subtitle": "هل لديك مصروفات متكررة في كل وردية؟ (مثل المواصلات)",
+  "onboarding_auto_expenses_enable": "تفعيل المصروفات التلقائية",
+  "onboarding_auto_expenses_add_button": "إضافة مصروف",
+  "onboarding_auto_expenses_desc_label": "الوصف",
+  "onboarding_auto_expenses_invalid_amount": "يجب أن يكون المبلغ أكبر من 0",
+  "onboarding_auto_incomes_title": "الإيرادات المتكررة",
+  "onboarding_auto_incomes_subtitle": "هل لديك إيرادات متكررة في كل وردية؟ (مثل بدل المواصلات)",
+  "onboarding_auto_incomes_enable": "تفعيل الإيرادات التلقائية",
+  "onboarding_auto_incomes_add_button": "إضافة إيراد",
+  "onboarding_job_types_title": "الورديات والأجور",
+  "onboarding_job_types_subtitle": "حدد أدوارك المختلفة ومعدلات الأجور بالساعة.",
+  "onboarding_job_types_add_button": "إضافة نوع وردية",
+  "onboarding_job_types_edit_button": "تعديل نوع الوردية",
+  "onboarding_job_types_delete_title": "حذف الوظيفة",
+  "onboarding_job_types_delete_desc": "حذف الوظيفة ",
+  "onboarding_job_types_rate_suffix": "في الساعة",
+  "onboarding_job_types_same": "توجد وظيفة بهذا الاسم بالفعل",
+  "default_job_buffet": "بوفيه",
+  "default_job_steward": "ستيوارد",
+  "default_job_unloading": "تفريغ بضائع",
+  "default_expenses_trips": "مواصلات",
+  "settings_title": "الإعدادات",
+  "settings_section_app": "التطبيق",
+  "settings_section_work_pay": "العمل والأجر",
+  "settings_section_breaks": "مدد الاستراحات (دقائق)",
+  "settings_section_danger": "منطقة الخطر",
+  "settings_field_theme": "المظهر",
+  "settings_field_language": "لغة التطبيق",
+  "settings_field_currency": "عملة العرض",
+  "settings_field_currency_sub": "العملة المستخدمة للراتب والمصروفات",
+  "settings_field_breaks_enabled": "تفعيل الاستراحات",
+  "settings_field_breaks_enabled_sub": "إظهار أو إخفاء إعدادات الاستراحة في التطبيق",
+  "settings_field_paid_break": "استراحة قصيرة (مدفوعة)",
+  "settings_field_unpaid_break": "استراحة طويلة (غير مدفوعة)",
+  "settings_action_update_breaks": "تحديث الأوقات",
+  "settings_action_factory_reset": "إعادة ضبط المصنع بالكامل",
+  "settings_action_factory_reset_sub": "حذف جميع الورديات والأدوار والمصروفات نهائياً",
+  "settings_dialog_update_breaks_title": "تحديث أوقات الاستراحة",
+  "settings_dialog_factory_reset_title": "إعادة ضبط البيانات؟",
+  "settings_dialog_factory_reset_content": "هل أنت متأكد من رغبتك في حذف جميع بيانات العمل وإعادة ضبط التطبيق؟ لا يمكن التراجع عن هذا الإجراء.",
+  "settings_dialog_final_confirm_title": "التأكيد النهائي",
+  "settings_dialog_final_confirm_content_1": "تحذير: سيتم حذف سجل الورديات والراتب والمصروفات نهائياً.",
+  "settings_dialog_final_confirm_content_2": "هل أنت متأكد من رغبتك في حذف كل شيء؟",
+  "settings_dialog_final_confirm_button": "حذف الكل نهائياً",
+  "settings_dialog_error_enter_desc": "الرجاء إدخال وصف لكل مصروف",
+  "settings_dialog_error_enter_income_desc": "الرجاء إدخال وصف لكل إيراد",
+  "settings_theme_system": "النظام",
+  "settings_theme_light": "نهاري",
+  "settings_theme_dark": "ليلي",
+  "settings_language_he": "עברית",
+  "settings_language_en": "English",
+  "settings_language_fr": "Français",
+  "settings_language_es": "Español",
+  "settings_language_ru": "Русский",
+  "settings_language_ar": "العربية",
+  "settings_current_rate": "المعدل الحالي",
+  "settings_wage_history_title": "سجل الأجور",
+  "settings_job_name_label": "اسم الوظيفة",
+  "settings_job_rate_label": "الأجر بالساعة (جديد)",
+  "home_empty_state_title": "لم يتم تسجيل أي ورديات بعد",
+  "home_empty_state_subtitle": "انقر على \"وردية جديدة\" للبدء",
+  "home_total_card_title": "المجموع المتراكم (الصافي ناقص المصروفات)",
+  "home_total_card_hours": "الساعات",
+  "home_total_card_base": "الأساسي",
+  "home_total_card_tips": "الإكراميات",
+  "home_total_card_expenses": "المصروفات",
+  "home_active_timer_break": "الوردية في استراحة...",
+  "home_active_timer_active": "الوردية النشطة:",
+  "home_active_timer_time": "الوقت:",
+  "home_shift_list_net_total": "المجموع الصافي",
+  "home_shift_list_no_shifts": "لا توجد ورديات في هذا اليوم",
+  "home_shift_list_no_shifts_month": "لا توجد ورديات في هذا الشهر",
+  "shift_history_empty_title": "لم يتم العثور على ورديات",
+  "shift_history_empty_subtitle": "لا يتوفر سجل ورديات",
+  "home_shift_list_select_day": "اختر يوماً لعرض الورديات",
+  "home_shift_list_shifts_on": "ورديات يوم",
+  "home_action_new_shift": "وردية جديدة",
+  "home_action_calendar": "التقويم",
+  "calendar_legend_today": "اليوم",
+  "calendar_legend_selected": "المحدد",
+  "calendar_legend_shift": "وردية",
+  "calendar_legend_holiday": "عطلة / سبت",
+  "calendar_legend_holiday_shift": "وردية عطلة",
+  "expenses_title": "المصروفات والإيرادات",
+  "expenses_tab_expenses": "المصروفات",
+  "expenses_tab_incomes": "إيرادات خاصة",
+  "expenses_auto_section_title": "مصروفات الوردية المتكررة",
+  "expenses_auto_section_subtitle": "إضافة مصروفات متكررة لكل وردية جديدة",
+  "expenses_auto_section_enable": "مصروفات تلقائية",
+  "expenses_history_section_title": "تفصيل المصروفات الشهرية",
+  "expenses_action_add_auto": "إضافة مصروف متكرر",
+  "expenses_action_update_settings": "تحديث الإعدادات",
+  "expenses_action_new_expense": "مصروف جديد",
+  "expenses_dialog_add_title": "إضافة مصروف",
+  "expenses_dialog_edit_title": "تعديل المصروف",
+  "expenses_dialog_delete_title": "حذف المصروف",
+  "expenses_no_history": "لم يتم تسجيل مصروفات",
+  "expenses_delete_expense_confirm_content": "حذف \"[[desc]]\" بقيمة [[amount]]؟",
+  "expenses_total_label": "المجموع",
+  "expenses_auto_updated_msg": "تم تحديث إعدادات المصروفات التلقائية",
+  "expenses_deleted_msg": "تم حذف المصروف",
+  "expenses_link_shift_dialog_title": "الربط بوردية",
+  "expenses_link_shift_dialog_content": "تم العثور على وردية في هذا التاريخ. هل تريد ربط هذا الـ [[type]] بالوردية أو حفظه بشكل مستقل؟",
+  "expenses_link_shift_button": "الربط بوردية",
+  "expenses_save_standalone_button": "حفظ بشكل مستقل",
+  "expenses_no_shift_dialog_title": "لم يتم العثور على وردية",
+  "expenses_no_shift_dialog_content": "لا توجد وردية في هذا التاريخ. هل ما زلت تريد إنشاء هذا الـ [[type]]؟",
+  "expenses_create_anyway_button": "إنشاء على أي حال",
+  "expenses_auto_incomes_updated_msg": "تم تحديث إعدادات الإيرادات التلقائية",
+  "expenses_auto_incomes_section_title": "إيرادات الوردية المتكررة",
+  "expenses_auto_incomes_section_enable": "إيرادات تلقائية",
+  "expenses_auto_incomes_section_subtitle": "إضافة إيرادات متكررة لكل وردية جديدة",
+  "incomes_history_section_title": "تفصيل الإيرادات الشهرية",
+  "incomes_action_new_income": "إيراد جديد",
+  "incomes_dialog_add_title": "إضافة إيراد خاص",
+  "incomes_dialog_edit_title": "تعديل الإيراد",
+  "incomes_dialog_delete_title": "حذف الإيراد",
+  "incomes_no_history": "لم يتم تسجيل إيرادات خاصة",
+  "incomes_delete_income_confirm_content": "حذف \"[[desc]]\" بقيمة [[amount]]؟",
+  "incomes_deleted_msg": "تم حذف الإيراد",
+  "add_shift_title": "وردية جديدة",
+  "add_shift_edit_title": "تعديل الوردية",
+  "add_shift_timer_tab": "المؤقت",
+  "add_shift_manual_tab": "يدوي",
+  "add_shift_paste_tab": "لصق",
+  "add_shift_timer_accumulated_live": "متراكم مباشر",
+  "add_shift_timer_countdown": "العد التنازلي: ",
+  "add_shift_timer_break_paid": "في استراحة مدفوعة...",
+  "add_shift_timer_break_unpaid": "في استراحة غير مدفوعة (توقف المؤقت)",
+  "add_shift_timer_total_break_unpaid": "إجمالي الاستراحات غير المدفوعة:",
+  "add_shift_timer_resume_work": "العودة للعمل",
+  "add_shift_timer_stop_shift": "إيقاف الوردية",
+  "add_shift_timer_start_shift": "بدء الوردية",
+  "add_shift_timer_continue_work": "مواصلة العمل",
+  "add_shift_timer_stopped_msg": "توقف المؤقت. هل تريد حفظ الوردية أو مواصلة العمل؟",
+  "add_shift_timer_reset_title": "إعادة ضبط المؤقت",
+  "add_shift_timer_reset_desc": "هل أنت متأكد من رغبتك في إعادة ضبط المؤقت؟ ستفقد جميع البيانات الحالية.",
+  "add_shift_manual_time_section": "الوقت",
+  "add_shift_manual_date_label": "التاريخ",
+  "add_shift_manual_start_time_label": "وقت البدء",
+  "add_shift_manual_end_time_label": "وقت الانتهاء",
+  "add_shift_manual_break_type_section": "نوع الاستراحة",
+  "add_shift_manual_no_break": "بلا",
+  "add_shift_manual_paid_break": "مدفوعة",
+  "add_shift_manual_unpaid_break": "غير مدفوعة",
+  "add_shift_manual_work_tips_section": "العمل والإكراميات",
+  "add_shift_manual_job_type_label": "نوع الوظيفة",
+  "add_shift_paste_title": "لصق نص الوردية",
+  "add_shift_paste_default_job_label": "نوع الوظيفة الافتراضي",
+  "add_shift_paste_format_info": "النسق: DD.MM (أو DD.MM.YYYY) - HH:mm - HH:mm [استراحة] [+ إكرامية]\n(إذا تم حذف السنة، يتم استنتاج السنة الحالية)",
+  "add_shift_paste_hint": "الصق الورديات هنا...\nمثال:\n24.6.2026 - 17:30 - 23:00 45 دقيقة + 50",
+  "add_shift_paste_parse_button": "تحليل وحفظ الكل",
+  "add_shift_paste_parse_dialog_title": "تحليل الورديات",
+  "add_shift_paste_parse_dialog_desc": "تحليل وحفظ الورديات من النص الملصق؟",
+  "add_shift_paste_error": "الرجاء التحقق من النسق والمحاولة مرة أخرى",
+  "add_shift_tips_title": "الإكراميات",
+  "add_shift_tips_total": "المجموع",
+  "add_shift_tips_hint": "مبلغ الإكرامية",
+  "add_shift_tips_add_button": "إضافة إكرامية",
+  "add_shift_expenses_title": "مصروفات الوردية",
+  "add_shift_expenses_total": "المجموع",
+  "add_shift_expenses_add_button": "إضافة مصروف",
+  "add_shift_incomes_title": "إيرادات الوردية",
+  "add_shift_incomes_total": "المجموع",
+  "add_shift_incomes_add_button": "إضافة إيراد",
+  "add_shift_shift_ended_dialog_title": "حفظ الوردية",
+  "add_shift_shift_ended_dialog_desc": "هل أنت متأكد من رغبتك في حفظ تفاصيل الوردية؟",
+  "add_shift_shift_ended_edit_dialog_desc": "هل أنت متأكد من رغبتك في حفظ تفاصيل الوردية؟",
+  "add_shift_shift_edit_dialog_title": "تحديث الوردية",
+  "add_shift_shift_saved": "تم حفظ الوردية بنجاح",
+  "add_shift_preview_title": "معاينة",
+  "add_shift_segments_count": "{count} فترات",
+  "@add_shift_segments_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "add_shift_overlap_title": "وردية متداخلة",
+  "add_shift_overlap_content": "هذه الوردية تتداخل مع {count} وردية/ورديات موجودة:\n\n{details}\n\nحفظ على أي حال؟",
+  "@add_shift_overlap_content": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "add_shift_overlap_confirm": "حفظ على أي حال",
+  "add_shift_overlap_unknown_job": "وظيفة غير معروفة",
+  "add_shift_pick_a_job": "الرجاء اختيار نوع الوظيفة أولاً",
+  "add_shift_delete_title": "حذف الوردية",
+  "add_shift_delete_desc": "هل أنت متأكد من رغبتك في حذف الوردية من",
+  "add_shift_delete_msg": "تم حذف الوردية بنجاح",
+  "notification_timer_channel_name": "وردية نشطة",
+  "notification_timer_channel_desc": "يعرض مؤقت الوردية الحالي",
+  "notification_timer_title_active": "وردية نشطة",
+  "notification_timer_title_paid_break": "استراحة مدفوعة",
+  "notification_timer_title_unpaid_break": "استراحة غير مدفوعة",
+  "notification_timer_body_running": "المؤقت يعمل...",
+  "notification_timer_body_countdown": "العد التنازلي: [[time]]",
+  "filter_title": "فلترة الورديات",
+  "filter_clear_all": "إعادة تعيين الفلتر",
+  "filter_apply": "تطبيق الفلاتر",
+  "filter_wage_range": "نطاق الأجر الإجمالي",
+  "filter_tips_range": "نطاق الإكراميات",
+  "filter_expenses_range": "نطاق المصروفات",
+  "filter_duration_range": "نطاق المدة (ساعات)",
+  "filter_date_range": "نطاق التاريخ",
+  "filter_job_type": "نوع الوظيفة",
+  "filter_select_all": "تحديد الكل",
+  "filter_error_no_job_selected": "الرجاء اختيار نوع وظيفة واحد على الأقل",
+  "filter_active_filters": "الفلاتر النشطة:",
+  "filter_chip_wage": "الأجر: [[min]] - [[max]]",
+  "filter_chip_tips": "الإكراميات: [[min]] - [[max]]",
+  "filter_chip_expenses": "المصروفات: [[min]] - [[max]]",
+  "filter_chip_duration": "المدة: [[min]] - [[max]] س",
+  "filter_chip_date": "التاريخ: [[start]] - [[end]]",
+  "filter_chip_job": "الوظيفة: [[name]]",
+  "filter_empty_state_title": "لا توجد ورديات مطابقة",
+  "filter_empty_state_subtitle": "جرب تعديل الفلاتر لرؤية المزيد من النتائج",
+  "auth_login_title": "مرحباً بعودتك",
+  "auth_register_title": "إنشاء حساب جديد",
+  "auth_full_name_label": "الاسم الكامل",
+  "auth_email_label": "البريد الإلكتروني",
+  "auth_password_label": "كلمة المرور",
+  "auth_error_name_empty": "الرجاء إدخال الاسم",
+  "auth_error_email_invalid": "بريد إلكتروني غير صالح",
+  "auth_error_password_length": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+  "auth_login_button": "تسجيل الدخول",
+  "auth_register_button": "تسجيل",
+  "auth_no_account_link": "ليس لديك حساب؟ سجل الآن",
+  "auth_has_account_link": "لديك حساب بالفعل؟ سجل دخولك",
+  "auth_error_generic": "حدث خطأ. الرجاء المحاولة مرة أخرى.",
+  "settings_logout_title": "تسجيل الخروج من النظام",
+  "settings_logout_dialog_title": "تسجيل الخروج",
+  "settings_logout_confirm_content": "هل أنت متأكد من رغبتك في تسجيل الخروج؟",
+  "settings_logout_confirm_button": "تسجيل الخروج",
+  "auth_login_success": "تم تسجيل الدخول بنجاح",
+  "auth_register_success": "تم إنشاء الحساب بنجاح",
+  "auth_birth_date_label": "تاريخ الميلاد",
+  "auth_error_underage": "يجب أن يكون عمر المستخدم 12 عاماً على الأقل",
+  "auth_error_birth_date_empty": "الرجاء اختيار تاريخ ميلادك",
+  "auth_error_email_exists": "عنوان البريد الإلكتروني مستخدم بالفعل",
+  "auth_error_user_not_found": "المستخدم غير موجود أو كلمة المرور غير صحيحة",
+  "auth_error_network": "خطأ في اتصال الشبكة. الرجاء التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.",
+  "auth_continue_as_guest": "المتابعة كضيف",
+  "auth_replace_guest_data_title": "استبدال بيانات الضيف؟",
+  "auth_replace_guest_data_message": "سيؤدي تسجيل الدخول إلى حساب موجود إلى استبدال البيانات المخزنة حالياً على هذا الجهاز بالبيانات المرتبطة بحسابك. قد تفقد بيانات ضيفك نهائياً ولا يمكن استردادها ما لم يكن لديك نسخة احتياطية. تأكد من فهم هذه النتائج قبل المتابعة.",
+  "auth_replace_guest_data_confirm": "متابعة",
+  "auth_replace_guest_data_cancel": "إلغاء",
+  "auth_guest_mode_title": "وضع الضيف",
+  "auth_guest_mode_subtitle": "أنت تستخدم Shiftly في وضع الضيف. يتم حفظ بياناتك محلياً على هذا الجهاز. أنشئ حساباً للمزامنة عبر الأجهزة أو سجل الدخول إلى حساب موجود.",
+  "auth_guest_migration_failed": "فشل استرجاع بيانات الحساب. تم الحفاظ على بيانات ضيفك.",
+  "auth_register_guest_transfer": "تسجيل الدخول أو إنشاء حساب Shiftly",
+  "auth_user_deleted_local_data_preserved": "حسابك لم يعد موجوداً في قاعدة البيانات. تم تسجيل خروجك، ولكن بياناتك المحلية لا تزال مخزنة على هذا الجهاز.",
+  "home_welcome_back": "أهلاً، [[name]]",
+  "settings_user_name": "الاسم",
+  "settings_user_email": "البريد الإلكتروني",
+  "settings_user_password": "كلمة المرور",
+  "settings_user_edit_title": "تعديل الملف الشخصي",
+  "settings_user_update_success": "تم تحديث الملف الشخصي بنجاح",
+  "settings_logout_success": "تم تسجيل الخروج بنجاح",
+  "settings_byos_title": "مزامنة BYOS",
+  "settings_byos_connected": "متصل بـ Google Drive",
+  "settings_byos_last_backup": "آخر نسخ احتياطي: [[time]]",
+  "settings_byos_backup_now": "نسخ احتياطي الآن",
+  "settings_byos_auto_sync": "مزامنة تلقائية",
+  "settings_byos_auto_sync_sub": "نسخ التغييرات احتياطياً فوراً إلى السحابة",
+  "settings_byos_disconnect": "قطع الاتصال",
+  "settings_byos_login_shiftly": "تسجيل الدخول إلى حساب Shiftly",
+  "settings_byos_login_shiftly_sub": "مزامنة كاملة في سحابتنا",
+  "settings_byos_method_title": "طريقة BYOS (Google Drive)",
+  "settings_byos_method_sub": "نسخ احتياطي إلى سحابتك الخاصة",
+  "settings_byos_restore_dialog_title": "مزامنة BYOS",
+  "settings_byos_restore_dialog_content": "هل تريد استعادة البيانات الموجودة من Google Drive الخاص بك؟",
+  "settings_byos_restore_confirm": "استعادة",
+  "settings_byos_restore_cancel": "ليس الآن",
+  "settings_byos_login_hint": "سجل الدخول لنسخ البيانات احتياطياً إلى السحابة واستخدام أجهزة متعددة",
+  "settings_restore_success": "تمت الاستعادة بنجاح: تم استعادة [[shifts]] وردية و [[jobs]] وظيفة.",
+  "settings_restore_no_data": "لم يتم العثور على نسخة احتياطية في Google Drive أو حدث خطأ.",
+  "export_title": "تصدير الورديات",
+  "export_format_label": "نسق الملف",
+  "export_format_csv": "CSV (متوافق مع Excel)",
+  "export_format_txt": "ملف نصي (TXT)",
+  "export_range_label": "نطاق التصدير",
+  "export_range_all": "جميع الورديات",
+  "export_range_month": "شهر محدد",
+  "export_range_custom": "نطاق تاريخ مخصص",
+  "export_start_date": "تاريخ البدء",
+  "export_end_date": "تاريخ الانتهاء",
+  "export_select_month": "اختر الشهر",
+  "export_button": "تصدير الملف",
+  "export_success_msg": "تم تصدير الملف بنجاح وحفظه في:",
+  "export_empty_error": "لم يتم العثور على ورديات في النطاق المحدد للتصدير",
+  "analytics_title": "التحليلات والرؤى",
+  "analytics_hero_greeting": "لقطة مالية",
+  "analytics_hero_subtitle": "أدائك المالي وأنماط عملك في لمحة سريعة",
+  "analytics_section_overview": "نظرة عامة",
+  "analytics_section_earnings": "الأرباح",
+  "analytics_section_work_patterns": "أنماط العمل",
+  "analytics_section_pay_breakdown": "تفصيل الأجر",
+  "analytics_period_monthly": "شهري",
+  "analytics_period_yearly": "سنوي",
+  "analytics_period_all_time": "كل الوقت",
+  "analytics_all_jobs": "جميع الوظائف",
+  "analytics_stat_total_net": "المجموع الصافي",
+  "analytics_stat_total_hours": "إجمالي الساعات",
+  "analytics_stat_avg_rate": "متوسط الأجر الفعلي",
+  "analytics_stat_tips": "مصروفات الوردية الصافية",
+  "analytics_chart_earnings_title": "الأرباح مقابل المصروفات بمرور الوقت",
+  "analytics_chart_earnings_subtitle": "انقر على عمود لعرض تفصيل الأجر والمصروفات",
+  "analytics_chart_jobs_title": "التفصيل حسب الوظيفة",
+  "analytics_chart_jobs_by_earnings": "حسب الأرباح",
+  "analytics_chart_jobs_by_hours": "حسب الساعات",
+  "analytics_no_data": "لا توجد بيانات للفترة المختارة",
+  "analytics_selected_breakdown": "تفاصيل اليوم المحدد",
+  "analytics_selected_month_breakdown": "تفاصيل الشهر المحدد",
+  "analytics_base_salary": "الراتب الأساسي",
+  "analytics_chart_cumulative_title": "نمو الأرباح التراكمي",
+  "analytics_chart_cumulative_subtitle": "قم بالتمرير أفقيياً لعرض نمو الأجر بمرور الوقت",
+  "analytics_gross_pay": "الإجمالي",
+  "analytics_net_pay": "الصافي",
+  "analytics_kpi_projected": "الراتب المتوقع بنهاية الشهر",
+  "analytics_kpi_retention": "معدل الاحتفاظ بالصافي",
+  "analytics_chart_tod_title": "التفصيل حسب وقت اليوم",
+  "analytics_chart_tod_subtitle": "مقارنة الساعات عبر فترات اليوم",
+  "analytics_chart_tod_dawn": "الفجر",
+  "analytics_chart_tod_morning": "الصباح",
+  "analytics_chart_tod_noon": "الظهيرة",
+  "analytics_chart_tod_afternoon": "بعد الظهر",
+  "analytics_chart_tod_evening": "المساء",
+  "analytics_chart_tod_night": "الليل",
+  "analytics_chart_duration_title": "تفصيل مدة الورديات والإرهاق",
+  "analytics_chart_duration_subtitle": "توزيع مدد الورديات (قصيرة، قياسية، طويلة)",
+  "analytics_duration_short": "قصيرة",
+  "analytics_duration_standard": "قياسية",
+  "analytics_duration_long": "طويلة",
+  "analytics_insights_title": "رؤى ذكية رئيسية",
+  "analytics_insight_night_boost": "تشكل ورديات المساء والليل [[percent]]% من ساعات عملك.",
+  "analytics_insight_retention": "تحتفظ بـ [[percent]]% من إجمالي الأرباح بعد مصروفات الورديات.",
+  "analytics_insight_fatigue": "[[percent]]% من وردياتك استمرت لأكثر من 9 ساعات.",
+  "analytics_insight_tips_ratio": "تشكل المصروفات المتكررة [[percent]]% من إجمالي أرباحك.",
+  "analytics_shifts_format": "{count} ورديات",
+  "analytics_no_shift_data_period": "لا توجد بيانات ورديات لهذه الفترة",
+  "analytics_min_shifts_hourly": "مطلوب ورديتان على الأقل لعرض اتجاه الأجر بالساعة",
+  "analytics_min_shifts_growth": "مطلوب ورديتان على الأقل لعرض النمو التراكمي",
+  "analytics_min_shifts_retention": "مطلوب ورديتان على الأقل لعرض اتجاه الاحتفاظ بالصافي",
+  "analytics_no_job_data": "لا توجد بيانات وظائف",
+  "analytics_hours_suffix_format": "{hours} س",
+  "analytics_utilization_format": "{pct}% نسبة الاستخدام",
+  "common_previous": "السابق",
+  "common_next": "التالي",
+  "analytics_tips_and_extra": "الإكراميات والإضافات",
+  "analytics_rate_boost_subtitle": "+{boost}/س إضافات صافية",
+  "analytics_retention_subtitle": "المتبقي بعد مصروفات الوردية",
+  "analytics_net_extras_pct_subtitle": "{percent}% من إجمالي الأجر الصافي",
+  "common_unknown_job": "وظيفة غير معروفة",
+  "analytics_duration_range_short": "< 6 ساعات",
+  "analytics_duration_range_standard": "6-9 ساعات",
+  "analytics_duration_range_long": "> 9 ساعات",
+  "profile_title": "الملف الشخصي للمستخدم",
+  "profile_created_at": "تم إنشاء الحساب: [[date]]",
+  "profile_birth_date_display": "تاريخ الميلاد: [[date]] (العمر: [[age]])",
+  "profile_stats_title": "ملخص البيانات المحفوظة",
+  "profile_shifts_count": "الورديات المحفوظة",
+  "profile_jobs_count": "الأدوار / أنواع الوظائف",
+  "profile_expenses_count": "المصروفات المحفوظة",
+  "profile_incomes_count": "الإيرادات المحفوظة",
+  "side_menu_profile": "الملف الشخصي للمستخدم",
+  "profile_old_password": "كلمة المرور الحالية",
+  "profile_new_password": "كلمة المرور الجديدة",
+  "profile_password_error": "كلمة المرور الحالية غير صحيحة",
+  "profile_password_required": "الرجاء إدخال كلمة المرور الحالية",
+  "shift_descriptions_title": "ملخصات الورديات",
+  "shift_descriptions_empty": "لم يتم العثور على ملخصات ورديات",
+  "shift_description_label": "ملخص / وصف الوردية",
+  "shift_description_hint": "أدخل ملاحظات أو ملخصاً لهذه الوردية...",
+  "shift_descriptions_delete_title": "حذف الوصف",
+  "shift_descriptions_delete_content": "هل أنت متأكد من رغبتك في حذف الوصف لهذه الوردية؟",
+  "shift_descriptions_deleted_msg": "تم حذف الوصف بنجاح",
+  "shift_descriptions_edit_title": "تعديل الوصف",
+  "shift_descriptions_updated_msg": "تم تحديث الوصف بنجاح",
+  "common_search_by_date": "البحث حسب التاريخ",
+  "common_clear_date_filter": "مسح فلاتر التاريخ",
+  "common_filter_date": "تاريخ التصفية",
+  "profile_delete_account": "حذف الحساب",
+  "profile_delete_account_sub": "حذف حساب المستخدم الخاص بك في Shiftly نهائياً",
+  "profile_delete_dialog_title": "حذف الحساب",
+  "profile_delete_dialog_content": "هل أنت متأكد من رغبتك في حذف حسابك في Shiftly؟ لا يمكن التراجع عن هذا الإجراء.",
+  "profile_delete_final_title": "التأكيد النهائي",
+  "profile_delete_final_content_1": "سيتم حذف حساب المستخدم الخاص بك وجميع بيانات الخادم نهائياً.",
+  "profile_delete_final_content_2": "هذا الإجراء لا رجعة فيه. هل تريد المتابعة في حذف الحساب؟",
+  "profile_delete_success": "تم حذف الحساب بنجاح",
+  "settings_byos_delete_title": "حذف نسخة BYOS الاحتياطية",
+  "settings_byos_delete_sub": "محو ملف النسخ الاحتياطي نهائياً من Google Drive",
+  "settings_byos_delete_dialog_title": "حذف بيانات BYOS",
+  "settings_byos_delete_dialog_content": "هل أنت متأكد من رغبتك في حذف بيانات النسخ الاحتياطي من Google Drive؟",
+  "settings_byos_delete_final_title": "تحذير نهائي",
+  "settings_byos_delete_final_content_1": "سيتم تدمير ملف النسخ الاحتياطي في Google Drive بالكامل.",
+  "settings_byos_delete_final_content_2": "هل أنت متأكد من رغبتك في حذف بيانات النسخ الاحتياطي BYOS نهائياً؟",
+  "settings_byos_delete_success": "تم حذف بيانات النسخ الاحتياطي BYOS بنجاح",
+  "add_shift_wage_segments_title": "فترات نسبة الأجر بالساعة (اختياري)",
+  "add_shift_wage_segments_subtitle": "تحديد فترات بنسب أجور مختلفة (مثل 150%)",
+  "add_shift_wage_segments_add": "إضافة فترة",
+  "add_shift_wage_segment_start": "البدء",
+  "add_shift_wage_segment_end": "الانتهاء",
+  "add_shift_wage_segment_percentage": "نسبة الأجر %",
+  "error_segment_invalid_time": "يجب أن يكون وقت انتهاء الفترة بعد وقت البدء",
+  "error_segment_overlap": "يوجد تداخل في النطاقات الزمنية",
+  "legal_privacy_policy": "سياسة الخصوصية",
+  "legal_terms_of_service": "شروط الخدمة",
+  "legal_disclaimer_notice": "من خلال التسجيل أو تسجيل الدخول، فإنك توافق على شروط الخدمة وسياسة الخصوصية الخاصة بنا.",
+  "legal_cookie_title": "تفضيلات ملفات تعريف الارتباط والخصوصية",
+  "legal_cookie_description": "نحن نستخدم تقنيات التخزين المحلي وملفات تعريف الارتباط للمصادقة الأساسية، والأمان، وتتبع أعطال التطبيق. يمكنك اختيار قبول الكل أو استخدام ملفات تعريف الارتباط الضرورية فقط.",
+  "legal_cookie_accept_all": "قبول الكل",
+  "legal_cookie_necessary_only": "الضرورية فقط",
+  "legal_cookie_necessary_desc": "ضرورية للمصادقة، والتخزين الآمن للرموز، وتفضيلات الجلسة.",
+  "legal_cookie_analytics_desc": "سجلات الأخطاء مجهولة المصدر وتتبع أداء الأعطال عبر Firebase.",
+  "legal_cookie_customize": "تخصيص",
+  "legal_cookie_save_preferences": "حفظ التفضيلات",
+  "legal_cookie_essential": "ملفات تعريف الارتباط الأساسية والأمنية",
+  "legal_cookie_always_active": "نشطة دائماً",
+  "legal_cookie_optional": "اختيارية",
+  "common_close": "إغلاق",
+  "settings_section_overtime": "قواعد العمل الإضافي",
+  "settings_overtime_enable": "تفعيل حساب العمل الإضافي",
+  "settings_overtime_enable_sub": "حساب تعويض العمل الإضافي المتدرج تلقائياً",
+  "settings_overtime_regular_threshold": "حد الساعات العادية (ساعات)",
+  "settings_overtime_tier1_limit": "مدة شريحة العمل الإضافي الأولى (ساعات)",
+  "settings_overtime_tier1_rate": "مضاعف الشريحة الأولى (%)",
+  "settings_overtime_tier2_rate": "مضاعف الشريحة الإضافية (%)",
+  "settings_overtime_update_button": "حفظ قواعد العمل الإضافي",
+  "settings_overtime_saved": "تم تحديث قواعد العمل الإضافي بنجاح",
+  "overtime_notification_detected": "تتضمن الوردية عملاً إضافياً. تم حساب الراتب وفقاً لمعدلات العمل الإضافي.",
+  "overtime_breakdown_title": "تفصيل الراتب",
+  "overtime_regular_hours_label": "الساعات العادية",
+  "overtime_tier1_label": "عمل إضافي (125%)",
+  "overtime_tier2_label": "عمل إضافي (150%)",
+  "overtime_tier_custom_label": "عمل إضافي ([[rate]]%)",
+  "overtime_tag_label": "عمل إضافي",
+  "overtime_total_paid_time": "إجمالي الوقت المدفوع",
+  "overtime_total_earnings": "إجمالي أرباح الوردية",
+  "overtime_unpaid_break": "استراحة غير مدفوعة",
+  "analytics_overtime_section_title": "ملخص وساعات العمل الإضافي",
+  "analytics_regular_hours": "الساعات العادية",
+  "analytics_overtime_hours": "ساعات العمل الإضافي",
+  "analytics_overtime_earnings": "أرباح العمل الإضافي",
+  "shabbat_tag_label": "السبت",
+  "holiday_tag_label": "عطلة رسمية",
+  "settings_shabbat_section": "السبت والعطلات",
+  "settings_shabbat_enable": "الحساب التلقائي للسبت والعطلات",
+  "settings_shabbat_enable_sub": "الكشف التلقائي عن السبت، والعطلات، والأسعار الخاصة",
+  "settings_shabbat_multiplier_label": "معدل السبت (%)",
+  "settings_holiday_multiplier_label": "معدل العطلة (%)",
+  "settings_candle_lighting_label": "دقائق إضاءة الشموع قبل غروب الشمس",
+  "settings_shabbat_exit_label": "دقائق خروج السبت بعد غروب الشمس",
+  "settings_shabbat_saved": "تم حفظ إعدادات السبت والعطلات بنجاح",
+  "settings_shabbat_save_button": "حفظ إعدادات السبت والعطلات",
+  "analytics_shabbat_holiday_summary": "ملخص السبت والعطلات",
+  "analytics_shabbat_hours": "ساعات السبت",
+  "analytics_holiday_hours": "ساعات العطلات",
+  "onboarding_shabbat_title": "السبت والأعياد اليهودية",
+  "onboarding_shabbat_subtitle": "الكشف التلقائي عن السبت، والأعياد، والأسعار الخاصة",
+  "add_shift_unknown_job_title": "نوع وردية غير معروف: \"{trailingText}\"",
+  "add_shift_unknown_job_desc": "تم العثور على نوع وظيفة غير موجود في قائمة الوظائف الخاصة بك. اختر نوع وظيفة بديل أو احفظه كوصـف:",
+  "add_shift_select_job_label": "اختر نوع الوظيفة",
+  "add_shift_apply_all_instances": "التطبيق تلقائياً على جميع الحالات من هذا النوع",
+  "add_shift_skip": "تخطي",
+  "add_shift_save_as_desc": "الحفظ كوَصْفٍ فقط",
+  "add_shift_assign": "تعيين",
+  "add_shift_shabbat_breakdown": "السبت ({rate}%)",
+  "add_shift_holiday_breakdown": "{name} ({rate}%)",
+  "settings_update_section": "تحديثات التطبيق",
+  "settings_update_check_button": "التحقق من وجود تحديثات من GitHub",
+  "settings_update_current_version": "الإصدار الحالي: v{version}",
+  "@settings_update_current_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "settings_update_checking_toast": "جاري التحقق من التحديثات من إصدارات GitHub...",
+  "settings_update_error_toast": "تعذر الاتصال بـ GitHub. الرجاء المحاولة لاحقاً.",
+  "settings_update_latest_toast": "التطبيق محدث لأحدث إصدار! (v{version})",
+  "@settings_update_latest_toast": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_title": "إصدار جديد متاح!",
+  "update_dialog_version_available": "الإصدار {version} متاح للتنزيل",
+  "@update_dialog_version_available": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_installed_version": "الإصدار المثبت: {version}",
+  "@update_dialog_installed_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_new_version": "الجديد: {version}",
+  "@update_dialog_new_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_whats_new": "ما الجديد في هذا الإصدار:",
+  "update_dialog_downloading": "جاري تنزيل ملف التحديث...",
+  "update_dialog_later": "لاحقاً",
+  "update_dialog_open_browser": "فتح في المتصفح",
+  "update_dialog_update_now": "تحديث الآن",
+  "update_dialog_open_download": "فتح صفحة التنزيل",
+  "update_dialog_mandatory_notice": "هذا التحديث مطلوب لمتابعة استخدام التطبيق.",
+  "update_service_no_changelog": "لا توجد تفاصيل لسجل التغييرات متاحة.",
+  "update_service_download_failed": "فشل تنزيل الملف (رمز الخطأ: {statusCode})",
+  "@update_service_download_failed": {
+    "placeholders": {
+      "statusCode": {
+        "type": "Object"
+      }
+    }
+  },
+  "update_service_no_installer": "لم يتم العثور على تطبيق لتثبيت ملفات APK على الجهاز. جرب الفتح في المتصفح.",
+  "update_service_cannot_launch_installer": "تعذر تشغيل مثبت الحزم ({message})",
+  "@update_service_cannot_launch_installer": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "update_service_download_error": "حدث خطأ أثناء تنزيل التحديث: {error}",
+  "@update_service_download_error": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "common_show_password": "إظهار كلمة المرور",
+  "common_hide_password": "إخفاء كلمة المرور",
+  "accessibility_statement": "بيان إمكانية الوصول",
+  "settings_accessibility_sub": "معلومات إمكانية الوصول وتفاصيل الاتصال",
+  "all_shifts_title": "جميع الورديات",
+  "export_format_excel": "ملف Excel (.xlsx)",
+  "export_format_pdf": "مستند PDF (.pdf)",
+  "export_format_json": "نسخة احتياطية JSON (.json)",
+  "export_include_analytics": "تضمين التحليلات والملخصات",
+  "export_include_analytics_sub": "إضافة الرسوم البيانية ونظرة عامة على الإحصائيات إلى التقرير",
+  "import_title": "استيراد الورديات",
+  "import_button": "استيراد ملف (.xlsx, .csv, .json)",
+  "import_paste_or_pick": "اختر ملفاً أو الصق المحتوى",
+  "import_preview_title": "معاينة الاستيراد",
+  "import_found_shifts": "تم العثور على {count} وردية صالحة للاستيراد",
+  "@import_found_shifts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_confirm_button": "استيراد {count} ورديات",
+  "@import_confirm_button": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_success_msg": "تم استيراد {count} وردية بنجاح!",
+  "@import_success_msg": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_error_msg": "فشل استيراد الورديات أو تنسيق غير مدعوم",
+  "pdf_report_title": "Shiftly - تقرير العمل والراتب",
+  "pdf_detailed_log": "سجل الورديات المفصل",
+  "pdf_analytics_summary": "التحليلات والملخص",
+  "pdf_total_net_pay": "إجمالي الأجر الصافي",
+  "pdf_total_hours": "إجمالي الساعات الصافية",
+  "pdf_avg_rate": "متوسط الأجر الفعلي",
+  "pdf_shifts_count": "عدد الورديات",
+  "pdf_total_base": "الراتب الأساسي",
+  "pdf_total_tips": "الإكراميات",
+  "pdf_total_expenses": "المصروفات",
+  "pdf_total_incomes": "الإيرادات",
+  "pdf_col_date": "التاريخ",
+  "pdf_col_job": "الوظيفة",
+  "pdf_col_time": "الساعات",
+  "pdf_col_start_time": "وقت البدء",
+  "pdf_col_end_time": "وقت الانتهاء",
+  "pdf_col_tags": "العلامات",
+  "pdf_col_net_hours": "س. صافية",
+  "pdf_col_hourly_rate": "الأجر",
+  "pdf_col_base": "الأساسي",
+  "pdf_col_overtime": "عمل إضافي",
+  "pdf_col_shabbat": "السبت",
+  "pdf_col_tips": "الإكراميات",
+  "pdf_col_extras": "إضافات",
+  "pdf_col_net_pay": "المجموع الصافي",
+  "pdf_col_notes": "ملاحظات",
+  "excel_sheet_shifts": "تفاصيل الورديات",
+  "excel_sheet_analytics": "ملخص التحليلات",
+  "report_generated_label": "تم الإنشاء: {date}",
+  "@report_generated_label": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "report_total_shifts_label": "إجمالي الورديات: {count}",
+  "@report_total_shifts_label": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "report_category_label": "الفئة",
+  "report_rate_multiplier_label": "مضاعف الأجر",
+  "report_hours_label": "الساعات",
+  "report_earnings_label": "الأرباح",
+  "report_regular_hours": "الساعات العادية (100%)",
+  "report_overtime_125": "عمل إضافي شريحة 1 (125%)",
+  "report_overtime_150": "عمل إضافي شريحة 2 (150%)",
+  "report_shabbat_hours": "ساعات السبت",
+  "report_holiday_hours": "ساعات العطلات",
+  "report_disabled_status": "(معطل في الإعدادات)",
+  "report_job_distribution": "توزيع نوع الوظيفة",
+  "report_job_name": "اسم الوظيفة",
+  "report_pct_net_pay": "% من الأجر الصافي",
+  "report_totals_row": "المجاميع",
+  "report_tag_overtime": "عمل إضافي",
+  "report_tag_shabbat": "السبت",
+  "report_tag_holiday": "عطلة",
+  "report_page_number": "الصفحة {current} من {total}",
+  "@report_page_number": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "pdf_col_hourly_rate_symbol": "الأجر بالساعة ({symbol})",
+  "@pdf_col_hourly_rate_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_base_symbol": "الراتب الأساسي ({symbol})",
+  "@pdf_col_base_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "report_overtime_125_symbol": "عمل إضافي 125% ({symbol})",
+  "@report_overtime_125_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "report_overtime_150_symbol": "عمل إضافي 150% ({symbol})",
+  "@report_overtime_150_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_shabbat_symbol": "السبت/العطلة ({symbol})",
+  "@pdf_col_shabbat_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_tips_symbol": "الإكراميات ({symbol})",
+  "@pdf_col_tips_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_total_incomes_symbol": "الإيرادات التلقائية ({symbol})",
+  "@pdf_total_incomes_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_total_expenses_symbol": "المصروفات التلقائية ({symbol})",
+  "@pdf_total_expenses_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_net_pay_symbol": "إجمالي الأجر الصافي ({symbol})",
+  "@pdf_col_net_pay_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "shift_template_title": "قوالب الورديات",
+  "shift_template_subtitle": "قوالب سريعة لجعل إضافة الورديات سريعة وسهلة.",
+  "shift_template_morning": "وردية الصباح",
+  "shift_template_evening": "وردية المساء",
+  "shift_template_night": "وردية الليل",
+  "shift_template_add_button": "إضافة قالب",
+  "shift_template_save_current": "حفظ كقالب",
+  "shift_template_applied_snack": "تم تطبيق القالب",
+  "shift_template_saved_snack": "تم حفظ القالب بنجاح",
+  "shift_template_deleted_snack": "تم حذف القالب",
+  "shift_template_delete_confirm_title": "حذف القالب",
+  "shift_template_delete_confirm_content": "هل أنت متأكد من رغبتك في حذف هذا القالب؟",
+  "shift_template_name_label": "اسم القالب",
+  "shift_template_select_prompt": "قوالب الورديات السريعة",
+  "shift_template_manage": "إدارة القوالب",
+  "shift_template_empty": "لم يتم حفظ أي قوالب ورديات بعد",
+  "shift_template_edit_title": "تعديل القالب",
+  "shift_template_new_title": "قالب وردية جديد",
+  "expenses_type_income": "دخل",
+  "expenses_type_expense": "مصروف"
+}

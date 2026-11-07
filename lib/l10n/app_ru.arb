@@ -1,0 +1,812 @@
+{
+  "@@locale": "ru",
+  "common_app_name": "Shiftly",
+  "common_continue": "Продолжить",
+  "common_back": "Назад",
+  "common_start": "Начать!",
+  "common_cancel": "Отмена",
+  "common_save": "Сохранить",
+  "common_delete": "Удалить",
+  "common_confirm": "Подтвердить",
+  "common_error": "Ошибка",
+  "common_success": "Успешно",
+  "common_edit": "Изменить",
+  "common_tagline": "СИСТЕМА УЧЕТА СМЕН И ЗАРПЛАТЫ",
+  "nav_calendar": "Календарь",
+  "nav_analytics": "Аналитика",
+  "nav_home": "Главная",
+  "nav_expenses": "Расходы",
+  "nav_summaries": "Сводки",
+  "common_hours_suffix": "ч.",
+  "common_min_suffix": "мин.",
+  "common_net": "Чистыми",
+  "common_shifts_count": "Смены",
+  "common_save_and_finish": "Сохранить и завершить",
+  "common_reset": "Сбросить",
+  "common_reset_and_cancel": "Отмена и сброс",
+  "onboarding_welcome_title": "Добро пожаловать в Shiftly",
+  "onboarding_welcome_subtitle": "Приложение, которое помогает легко и точно отслеживать смены, зарплату и чаевые.",
+  "onboarding_welcome_description": "Давайте настроим основные параметры для начала работы.",
+  "onboarding_step_progress": "Шаг {current} из {total}",
+  "@onboarding_step_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "onboarding_skip_setup": "Пропустить настройку",
+  "onboarding_language_title": "Язык приложения",
+  "onboarding_language_subtitle": "Выберите предпочитаемый язык.",
+  "onboarding_currency_title": "Выберите валюту",
+  "onboarding_currency_subtitle": "Какую валюту вы хотите использовать для зарплаты и расходов?",
+  "monthly_progress_setting_title": "Значение линии прогресса",
+  "monthly_progress_mode_month": "Прошедшее время месяца",
+  "monthly_progress_mode_financial_goal": "Прогресс достижения финансовой цели",
+  "monthly_progress_goal_amount": "Сумма ежемесячной цели",
+  "monthly_progress_invalid_goal": "Введите финансовую цель больше нуля",
+  "monthly_progress_month_elapsed": "Прогресс месяца",
+  "monthly_progress_financial_goal": "Прогресс цели",
+  "onboarding_breaks_title": "Настройки перерывов",
+  "onboarding_breaks_subtitle": "Сколько обычно длится перерыв?",
+  "onboarding_breaks_enable": "Включить перерывы",
+  "onboarding_breaks_paid_label": "Оплачиваемый перерыв (минуты)",
+  "onboarding_breaks_unpaid_label": "Неоплачиваемый перерыв (минуты)",
+  "onboarding_auto_expenses_title": "Повторяющиеся расходы",
+  "onboarding_auto_expenses_subtitle": "Есть ли у вас повторяющиеся расходы в каждой смене? (например, проезд)",
+  "onboarding_auto_expenses_enable": "Включить авторасходы",
+  "onboarding_auto_expenses_add_button": "Добавить расход",
+  "onboarding_auto_expenses_desc_label": "Описание",
+  "onboarding_auto_expenses_invalid_amount": "Сумма должна быть больше 0",
+  "onboarding_auto_incomes_title": "Повторяющиеся доходы",
+  "onboarding_auto_incomes_subtitle": "Есть ли у вас повторяющиеся доходы в каждой смене? (например, компенсация проезда)",
+  "onboarding_auto_incomes_enable": "Включить автодоходы",
+  "onboarding_auto_incomes_add_button": "Добавить доход",
+  "onboarding_job_types_title": "Смены и ставки",
+  "onboarding_job_types_subtitle": "Укажите ваши роли и почасовые ставки.",
+  "onboarding_job_types_add_button": "Добавить тип смены",
+  "onboarding_job_types_edit_button": "Изменить тип смены",
+  "onboarding_job_types_delete_title": "Удалить должность",
+  "onboarding_job_types_delete_desc": "Удалить должность ",
+  "onboarding_job_types_rate_suffix": "в час",
+  "onboarding_job_types_same": "Должность с таким названием уже существует",
+  "default_job_buffet": "Буфет",
+  "default_job_steward": "Стюарт",
+  "default_job_unloading": "Разгрузка",
+  "default_expenses_trips": "Проезд",
+  "settings_title": "Настройки",
+  "settings_section_app": "Приложение",
+  "settings_section_work_pay": "Работа и оплата",
+  "settings_section_breaks": "Длительность перерывов (мин.)",
+  "settings_section_danger": "Опасная зона",
+  "settings_field_theme": "Тема",
+  "settings_field_language": "Язык приложения",
+  "settings_field_currency": "Валюта отображения",
+  "settings_field_currency_sub": "Валюта, используемая для зарплаты и расходов",
+  "settings_field_breaks_enabled": "Включить перерывы",
+  "settings_field_breaks_enabled_sub": "Показывать или скрывать настройки перерывов в приложении",
+  "settings_field_paid_break": "Короткий перерыв (Оплачиваемый)",
+  "settings_field_unpaid_break": "Длинный перерыв (Неоплачиваемый)",
+  "settings_action_update_breaks": "Обновить время",
+  "settings_action_factory_reset": "Полный сброс настроек",
+  "settings_action_factory_reset_sub": "Безвозвратно удалить все смены, роли и расходы",
+  "settings_dialog_update_breaks_title": "Обновить время перерывов",
+  "settings_dialog_factory_reset_title": "Сбросить данные?",
+  "settings_dialog_factory_reset_content": "Вы уверены, что хотите удалить все рабочие данные и сбросить приложение? Это действие необратимо.",
+  "settings_dialog_final_confirm_title": "Окончательное подтверждение",
+  "settings_dialog_final_confirm_content_1": "Внимание: вся история смен, зарплата и расходы будут безвозвратно удалены.",
+  "settings_dialog_final_confirm_content_2": "Вы действительно хотите всё удалить?",
+  "settings_dialog_final_confirm_button": "Безвозвратно удалить всё",
+  "settings_dialog_error_enter_desc": "Пожалуйста, введите описание для каждого расхода",
+  "settings_dialog_error_enter_income_desc": "Пожалуйста, введите описание для каждого дохода",
+  "settings_theme_system": "Системная",
+  "settings_theme_light": "Светлая",
+  "settings_theme_dark": "Темная",
+  "settings_language_he": "עברית",
+  "settings_language_en": "English",
+  "settings_language_fr": "Français",
+  "settings_language_es": "Español",
+  "settings_language_ru": "Русский",
+  "settings_language_ar": "العربية",
+  "settings_current_rate": "Текущая ставка",
+  "settings_wage_history_title": "История ставок",
+  "settings_job_name_label": "Название должности",
+  "settings_job_rate_label": "Почасовая ставка (Новая)",
+  "home_empty_state_title": "Смены еще не зарегистрированы",
+  "home_empty_state_subtitle": "Нажмите «Новая смена», чтобы начать",
+  "home_total_card_title": "Всего накоплено (Чистыми за вычетом расходов)",
+  "home_total_card_hours": "Часы",
+  "home_total_card_base": "База",
+  "home_total_card_tips": "Чаевые",
+  "home_total_card_expenses": "Расходы",
+  "home_active_timer_break": "Смена на перерыве...",
+  "home_active_timer_active": "Активная смена:",
+  "home_active_timer_time": "Время:",
+  "home_shift_list_net_total": "Итого чистыми",
+  "home_shift_list_no_shifts": "В этот день смен нет",
+  "home_shift_list_no_shifts_month": "В этом месяце смен нет",
+  "shift_history_empty_title": "Смены не найдены",
+  "shift_history_empty_subtitle": "История смен недоступна",
+  "home_shift_list_select_day": "Выберите день для просмотра смен",
+  "home_shift_list_shifts_on": "Смены за",
+  "home_action_new_shift": "Новая смена",
+  "home_action_calendar": "Календарь",
+  "calendar_legend_today": "Сегодня",
+  "calendar_legend_selected": "Выбрано",
+  "calendar_legend_shift": "Смена",
+  "calendar_legend_holiday": "Праздник / Шаббат",
+  "calendar_legend_holiday_shift": "Праздничная смена",
+  "expenses_title": "Расходы и доходы",
+  "expenses_tab_expenses": "Расходы",
+  "expenses_tab_incomes": "Особые доходы",
+  "expenses_auto_section_title": "Повторяющиеся расходы смены",
+  "expenses_auto_section_subtitle": "Добавлять повторяющиеся расходы к каждой новой смене",
+  "expenses_auto_section_enable": "Авторасходы",
+  "expenses_history_section_title": "Ежемесячная разбивка расходов",
+  "expenses_action_add_auto": "Добавить повторяющийся расход",
+  "expenses_action_update_settings": "Обновить настройки",
+  "expenses_action_new_expense": "Новый расход",
+  "expenses_dialog_add_title": "Добавить расход",
+  "expenses_dialog_edit_title": "Изменить расход",
+  "expenses_dialog_delete_title": "Удалить расход",
+  "expenses_no_history": "Расходы не записаны",
+  "expenses_delete_expense_confirm_content": "Удалить «[[desc]]» на сумму [[amount]]?",
+  "expenses_total_label": "Итого",
+  "expenses_auto_updated_msg": "Настройки авторасходов обновлены",
+  "expenses_deleted_msg": "Расход удален",
+  "expenses_link_shift_dialog_title": "Связать со сменой",
+  "expenses_link_shift_dialog_content": "На эту дату найдена смена. Хотите связать этот [[type]] со сменой или сохранить как отдельный?",
+  "expenses_link_shift_button": "Связать со сменой",
+  "expenses_save_standalone_button": "Сохранить отдельно",
+  "expenses_no_shift_dialog_title": "Смена не найдена",
+  "expenses_no_shift_dialog_content": "На эту дату нет смены. Вы все равно хотите создать этот [[type]]?",
+  "expenses_create_anyway_button": "Все равно создать",
+  "expenses_auto_incomes_updated_msg": "Настройки автодоходов обновлены",
+  "expenses_auto_incomes_section_title": "Повторяющиеся доходы смены",
+  "expenses_auto_incomes_section_enable": "Автодоходы",
+  "expenses_auto_incomes_section_subtitle": "Добавлять повторяющиеся доходы к каждой новой смене",
+  "incomes_history_section_title": "Ежемесячная разбивка доходов",
+  "incomes_action_new_income": "Новый доход",
+  "incomes_dialog_add_title": "Добавить особый доход",
+  "incomes_dialog_edit_title": "Изменить доход",
+  "incomes_dialog_delete_title": "Удалить доход",
+  "incomes_no_history": "Особые доходы не записаны",
+  "incomes_delete_income_confirm_content": "Удалить «[[desc]]» на сумму [[amount]]?",
+  "incomes_deleted_msg": "Доход удален",
+  "add_shift_title": "Новая смена",
+  "add_shift_edit_title": "Изменить смену",
+  "add_shift_timer_tab": "Таймер",
+  "add_shift_manual_tab": "Вручную",
+  "add_shift_paste_tab": "Вставить",
+  "add_shift_timer_accumulated_live": "Накоплено в реальном времени",
+  "add_shift_timer_countdown": "Обратный отсчет: ",
+  "add_shift_timer_break_paid": "На оплачиваемом перерыве...",
+  "add_shift_timer_break_unpaid": "На неоплачиваемом перерыве (таймер остановлен)",
+  "add_shift_timer_total_break_unpaid": "Всего неоплачиваемых перерывов:",
+  "add_shift_timer_resume_work": "Вернуться к работе",
+  "add_shift_timer_stop_shift": "Завершить смену",
+  "add_shift_timer_start_shift": "Начать смену",
+  "add_shift_timer_continue_work": "Продолжить работу",
+  "add_shift_timer_stopped_msg": "Таймер остановлен. Хотите сохранить смену или продолжить работу?",
+  "add_shift_timer_reset_title": "Сбросить таймер",
+  "add_shift_timer_reset_desc": "Вы уверены, что хотите сбросить таймер? Все текущие данные будут потеряны.",
+  "add_shift_manual_time_section": "Время",
+  "add_shift_manual_date_label": "Дата",
+  "add_shift_manual_start_time_label": "Время начала",
+  "add_shift_manual_end_time_label": "Время окончания",
+  "add_shift_manual_break_type_section": "Тип перерыва",
+  "add_shift_manual_no_break": "Нет",
+  "add_shift_manual_paid_break": "Оплачиваемый",
+  "add_shift_manual_unpaid_break": "Неоплачиваемый",
+  "add_shift_manual_work_tips_section": "Работа и чаевые",
+  "add_shift_manual_job_type_label": "Должность",
+  "add_shift_paste_title": "Вставить текст смены",
+  "add_shift_paste_default_job_label": "Должность по умолчанию",
+  "add_shift_paste_format_info": "Формат: ДД.ММ (или ДД.ММ.ГГГГ) - ЧЧ:мм - ЧЧ:мм [перерыв] [+ чаевые]\n(Если год не указан, берется текущий год)",
+  "add_shift_paste_hint": "Вставьте смены сюда...\nПример:\n24.6.2026 - 17:30 - 23:00 45 минут + 50",
+  "add_shift_paste_parse_button": "Разобрать и сохранить всё",
+  "add_shift_paste_parse_dialog_title": "Разбор смен",
+  "add_shift_paste_parse_dialog_desc": "Разобрать и сохранить смены из вставленного текста?",
+  "add_shift_paste_error": "Пожалуйста, проверьте формат и попробуйте снова",
+  "add_shift_tips_title": "Чаевые",
+  "add_shift_tips_total": "Итого",
+  "add_shift_tips_hint": "Сумма чаевых",
+  "add_shift_tips_add_button": "Добавить чаевые",
+  "add_shift_expenses_title": "Расходы смены",
+  "add_shift_expenses_total": "Итого",
+  "add_shift_expenses_add_button": "Добавить расход",
+  "add_shift_incomes_title": "Доходы смены",
+  "add_shift_incomes_total": "Итого",
+  "add_shift_incomes_add_button": "Добавить доход",
+  "add_shift_shift_ended_dialog_title": "Сохранить смену",
+  "add_shift_shift_ended_dialog_desc": "Вы уверены, что хотите сохранить данные смены?",
+  "add_shift_shift_ended_edit_dialog_desc": "Вы уверены, что хотите сохранить данные смены?",
+  "add_shift_shift_edit_dialog_title": "Обновить смену",
+  "add_shift_shift_saved": "Смена успешно сохранена",
+  "add_shift_preview_title": "Предпросмотр",
+  "add_shift_segments_count": "{count} периодов",
+  "@add_shift_segments_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "add_shift_overlap_title": "Пересечение смен",
+  "add_shift_overlap_content": "Эта смена пересекается с {count} существующими сменами:\n\n{details}\n\nВсе равно сохранить?",
+  "@add_shift_overlap_content": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "add_shift_overlap_confirm": "Все равно сохранить",
+  "add_shift_overlap_unknown_job": "Неизвестная должность",
+  "add_shift_pick_a_job": "Пожалуйста, сначала выберите тип должности",
+  "add_shift_delete_title": "Удалить смену",
+  "add_shift_delete_desc": "Вы уверены, что хотите удалить смену от",
+  "add_shift_delete_msg": "Смена успешно удалена",
+  "notification_timer_channel_name": "Активная смена",
+  "notification_timer_channel_desc": "Отображает таймер текущей смены",
+  "notification_timer_title_active": "Активная смена",
+  "notification_timer_title_paid_break": "Оплачиваемый перерыв",
+  "notification_timer_title_unpaid_break": "Неоплачиваемый перерыв",
+  "notification_timer_body_running": "Таймер запущен...",
+  "notification_timer_body_countdown": "Обратный отсчет: [[time]]",
+  "filter_title": "Фильтры смен",
+  "filter_clear_all": "Сбросить фильтр",
+  "filter_apply": "Применить фильтры",
+  "filter_wage_range": "Диапазон общей зарплаты",
+  "filter_tips_range": "Диапазон чаевых",
+  "filter_expenses_range": "Диапазон расходов",
+  "filter_duration_range": "Диапазон длительности (часы)",
+  "filter_date_range": "Диапазон дат",
+  "filter_job_type": "Должность",
+  "filter_select_all": "Выбрать все",
+  "filter_error_no_job_selected": "Пожалуйста, выберите хотя бы один тип должности",
+  "filter_active_filters": "Активные фильтры:",
+  "filter_chip_wage": "Зарплата: [[min]] - [[max]]",
+  "filter_chip_tips": "Чаевые: [[min]] - [[max]]",
+  "filter_chip_expenses": "Расходы: [[min]] - [[max]]",
+  "filter_chip_duration": "Длительность: [[min]] - [[max]] ч.",
+  "filter_chip_date": "Дата: [[start]] - [[end]]",
+  "filter_chip_job": "Должность: [[name]]",
+  "filter_empty_state_title": "Нет подходящих смен",
+  "filter_empty_state_subtitle": "Попробуйте изменить фильтры, чтобы увидеть больше результатов",
+  "auth_login_title": "С возвращением",
+  "auth_register_title": "Создать новый аккаунт",
+  "auth_full_name_label": "ФИО",
+  "auth_email_label": "Эл. почта",
+  "auth_password_label": "Пароль",
+  "auth_error_name_empty": "Пожалуйста, введите имя",
+  "auth_error_email_invalid": "Неверный адрес эл. почты",
+  "auth_error_password_length": "Пароль должен содержать не менее 6 символов",
+  "auth_login_button": "Войти",
+  "auth_register_button": "Зарегистрироваться",
+  "auth_no_account_link": "Нет аккаунта? Зарегистрируйтесь",
+  "auth_has_account_link": "Уже есть аккаунт? Войти",
+  "auth_error_generic": "Произошла ошибка. Пожалуйста, попробуйте снова.",
+  "settings_logout_title": "Выйти из системы",
+  "settings_logout_dialog_title": "Выход",
+  "settings_logout_confirm_content": "Вы уверены, что хотите выйти?",
+  "settings_logout_confirm_button": "Выйти",
+  "auth_login_success": "Успешный вход",
+  "auth_register_success": "Аккаунт успешно создан",
+  "auth_birth_date_label": "Дата рождения",
+  "auth_error_underage": "Пользователь должен быть не младше 12 лет",
+  "auth_error_birth_date_empty": "Пожалуйста, выберите дату рождения",
+  "auth_error_email_exists": "Этот адрес эл. почты уже занят",
+  "auth_error_user_not_found": "Пользователь не найден или неверный пароль",
+  "auth_error_network": "Ошибка подключения к сети. Проверьте интернет-соединение и попробуйте снова.",
+  "auth_continue_as_guest": "Продолжить как гость",
+  "auth_replace_guest_data_title": "Заменить гостевые данные?",
+  "auth_replace_guest_data_message": "Вход в существующий аккаунт заменит данные, хранящиеся на этом устройстве, на данные вашего аккаунта. Ваши гостевые данные могут быть безвозвратно утеряны, если у вас нет резервной копии. Убедитесь, что вы понимаете последствия, прежде чем продолжить.",
+  "auth_replace_guest_data_confirm": "Продолжить",
+  "auth_replace_guest_data_cancel": "Отмена",
+  "auth_guest_mode_title": "Гостевой режим",
+  "auth_guest_mode_subtitle": "Вы используете Shiftly в гостевом режиме. Ваши данные сохраняются локально на этом устройстве. Создайте аккаунт для синхронизации между устройствами или войдите в существующий.",
+  "auth_guest_migration_failed": "Не удалось получить данные аккаунта. Ваши гостевые данные сохранены.",
+  "auth_register_guest_transfer": "Войти или создать аккаунт Shiftly",
+  "auth_user_deleted_local_data_preserved": "Ваш аккаунт больше не существует в базе данных. Вы вышли из системы, но ваши локальные данные сохранены на этом устройстве.",
+  "home_welcome_back": "Здравствуйте, [[name]]",
+  "settings_user_name": "Имя",
+  "settings_user_email": "Эл. почта",
+  "settings_user_password": "Пароль",
+  "settings_user_edit_title": "Редактировать профиль",
+  "settings_user_update_success": "Профиль успешно обновлен",
+  "settings_logout_success": "Успешный выход из системы",
+  "settings_byos_title": "Синхронизация BYOS",
+  "settings_byos_connected": "Подключено к Google Диску",
+  "settings_byos_last_backup": "Последняя резервная копия: [[time]]",
+  "settings_byos_backup_now": "Создать резервную копию",
+  "settings_byos_auto_sync": "Автосинхронизация",
+  "settings_byos_auto_sync_sub": "Мгновенное резервное копирование изменений в облако",
+  "settings_byos_disconnect": "Отключить",
+  "settings_byos_login_shiftly": "Войти в аккаунт Shiftly",
+  "settings_byos_login_shiftly_sub": "Полная синхронизация в нашем облаке",
+  "settings_byos_method_title": "Метод BYOS (Google Диск)",
+  "settings_byos_method_sub": "Резервное копирование в ваше личное облако",
+  "settings_byos_restore_dialog_title": "Синхронизация BYOS",
+  "settings_byos_restore_dialog_content": "Хотите восстановить существующие данные с Google Диска?",
+  "settings_byos_restore_confirm": "Восстановить",
+  "settings_byos_restore_cancel": "Не сейчас",
+  "settings_byos_login_hint": "Войдите, чтобы сохранять данные в облаке и использовать другие устройства",
+  "settings_restore_success": "Успешное восстановление: восстановлено смен: [[shifts]], должностей: [[jobs]].",
+  "settings_restore_no_data": "На Google Диске не найдено резервных копий или произошла ошибка.",
+  "export_title": "Экспорт смен",
+  "export_format_label": "Формат файла",
+  "export_format_csv": "CSV (совместимо с Excel)",
+  "export_format_txt": "Текстовый файл (TXT)",
+  "export_range_label": "Диапазон экспорта",
+  "export_range_all": "Все смены",
+  "export_range_month": "Конкретный месяц",
+  "export_range_custom": "Произвольный диапазон дат",
+  "export_start_date": "Дата начала",
+  "export_end_date": "Дата окончания",
+  "export_select_month": "Выберите месяц",
+  "export_button": "Экспортировать файл",
+  "export_success_msg": "Файл успешно экспортирован и сохранен в:",
+  "export_empty_error": "В выбранном диапазоне не найдено смен для экспорта",
+  "analytics_title": "Аналитика и инсайты",
+  "analytics_hero_greeting": "Финансовый снимок",
+  "analytics_hero_subtitle": "Ваши финансовые показатели и рабочий график с первого взгляда",
+  "analytics_section_overview": "Обзор",
+  "analytics_section_earnings": "Заработок",
+  "analytics_section_work_patterns": "Рабочий график",
+  "analytics_section_pay_breakdown": "Структура зарплаты",
+  "analytics_period_monthly": "За месяц",
+  "analytics_period_yearly": "За год",
+  "analytics_period_all_time": "За все время",
+  "analytics_all_jobs": "Все должности",
+  "analytics_stat_total_net": "Всего чистыми",
+  "analytics_stat_total_hours": "Всего часов",
+  "analytics_stat_avg_rate": "Ср. эффективная ставка",
+  "analytics_stat_tips": "Чистые расходы по сменам",
+  "analytics_chart_earnings_title": "Заработок и расходы во времени",
+  "analytics_chart_earnings_subtitle": "Нажмите на столбец, чтобы увидеть детализацию оплаты и расходов",
+  "analytics_chart_jobs_title": "Разбивка по должностям",
+  "analytics_chart_jobs_by_earnings": "По заработку",
+  "analytics_chart_jobs_by_hours": "По часам",
+  "analytics_no_data": "Нет данных за выбранный период",
+  "analytics_selected_breakdown": "Детали выбранного дня",
+  "analytics_selected_month_breakdown": "Детали выбранного месяца",
+  "analytics_base_salary": "Базовый оклад",
+  "analytics_chart_cumulative_title": "Кумулятивный рост заработка",
+  "analytics_chart_cumulative_subtitle": "Прокрутите горизонтально, чтобы посмотреть рост оплаты во времени",
+  "analytics_gross_pay": "Грязными",
+  "analytics_net_pay": "Чистыми",
+  "analytics_kpi_projected": "Прогнозируемая зарплата за месяц",
+  "analytics_kpi_retention": "Коэффициент сохранения чистой суммы",
+  "analytics_chart_tod_title": "Разбивка по времени суток",
+  "analytics_chart_tod_subtitle": "Сравнение часов по сегментам суток",
+  "analytics_chart_tod_dawn": "Рассвет",
+  "analytics_chart_tod_morning": "Утро",
+  "analytics_chart_tod_noon": "День",
+  "analytics_chart_tod_afternoon": "После полудня",
+  "analytics_chart_tod_evening": "Вечер",
+  "analytics_chart_tod_night": "Ночь",
+  "analytics_chart_duration_title": "Разбивка по длительности смен и усталости",
+  "analytics_chart_duration_subtitle": "Распределение длительности смен (короткие, стандартные, длинные)",
+  "analytics_duration_short": "Короткие",
+  "analytics_duration_standard": "Стандартные",
+  "analytics_duration_long": "Длинные",
+  "analytics_insights_title": "Ключевые умные инсайты",
+  "analytics_insight_night_boost": "Вечерние и ночные смены составляют [[percent]]% от вашего рабочего времени.",
+  "analytics_insight_retention": "Вы сохраняете [[percent]]% валового заработка после расходов на смены.",
+  "analytics_insight_fatigue": "[[percent]]% ваших смен длились дольше 9 часов.",
+  "analytics_insight_tips_ratio": "Повторяющиеся расходы составляют [[percent]]% от вашего общего заработка.",
+  "analytics_shifts_format": "{count} смен",
+  "analytics_no_shift_data_period": "Нет данных о сменах за этот период",
+  "analytics_min_shifts_hourly": "Требуется не менее 2 смен для отображения тенденции почасовой ставки",
+  "analytics_min_shifts_growth": "Требуется не менее 2 смен для отображения кумулятивного роста",
+  "analytics_min_shifts_retention": "Требуется не менее 2 смен для отображения тенденции сохранения чистой суммы",
+  "analytics_no_job_data": "Нет данных о должностях",
+  "analytics_hours_suffix_format": "{hours} ч.",
+  "analytics_utilization_format": "Использование: {pct}%",
+  "common_previous": "Предыдущий",
+  "common_next": "Следующий",
+  "analytics_tips_and_extra": "Чаевые и доплаты",
+  "analytics_rate_boost_subtitle": "+{boost}/ч чистых доплат",
+  "analytics_retention_subtitle": "Сохранено после расходов на смены",
+  "analytics_net_extras_pct_subtitle": "{percent}% от общей зарплаты чистыми",
+  "common_unknown_job": "Неизвестная должность",
+  "analytics_duration_range_short": "< 6 часов",
+  "analytics_duration_range_standard": "6-9 часов",
+  "analytics_duration_range_long": "> 9 часов",
+  "profile_title": "Профиль пользователя",
+  "profile_created_at": "Аккаунт создан: [[date]]",
+  "profile_birth_date_display": "Дата рождения: [[date]] (Возраст: [[age]])",
+  "profile_stats_title": "Сводка сохраненных данных",
+  "profile_shifts_count": "Сохранено смен",
+  "profile_jobs_count": "Роли / Типы должностей",
+  "profile_expenses_count": "Сохранено расходов",
+  "profile_incomes_count": "Сохранено доходов",
+  "side_menu_profile": "Профиль пользователя",
+  "profile_old_password": "Текущий пароль",
+  "profile_new_password": "Новый пароль",
+  "profile_password_error": "Текущий пароль указан неверно",
+  "profile_password_required": "Пожалуйста, введите текущий пароль",
+  "shift_descriptions_title": "Сводки смен",
+  "shift_descriptions_empty": "Сводки смен не найдены",
+  "shift_description_label": "Сводка / Описание смены",
+  "shift_description_hint": "Введите заметки или сводку для этой смены...",
+  "shift_descriptions_delete_title": "Удалить описание",
+  "shift_descriptions_delete_content": "Вы уверены, что хотите удалить описание для этой смены?",
+  "shift_descriptions_deleted_msg": "Описание успешно удалено",
+  "shift_descriptions_edit_title": "Изменить описание",
+  "shift_descriptions_updated_msg": "Описание успешно обновлено",
+  "common_search_by_date": "Поиск по дате",
+  "common_clear_date_filter": "Сбросить фильтр по дате",
+  "common_filter_date": "Фильтр по дате",
+  "profile_delete_account": "Удалить аккаунт",
+  "profile_delete_account_sub": "Безвозвратно удалить ваш аккаунт Shiftly",
+  "profile_delete_dialog_title": "Удалить аккаунт",
+  "profile_delete_dialog_content": "Вы уверены, что хотите удалить свой аккаунт Shiftly? Это действие необратимо.",
+  "profile_delete_final_title": "Окончательное подтверждение",
+  "profile_delete_final_content_1": "Ваш аккаунт и все данные на сервере будут безвозвратно удалены.",
+  "profile_delete_final_content_2": "Это действие необратимо. Продолжить удаление аккаунта?",
+  "profile_delete_success": "Аккаунт успешно удален",
+  "settings_byos_delete_title": "Удалить резервную копию BYOS",
+  "settings_byos_delete_sub": "Безвозвратно удалить файл резервной копии с Google Диска",
+  "settings_byos_delete_dialog_title": "Удалить данные BYOS",
+  "settings_byos_delete_dialog_content": "Вы уверены, что хотите удалить резервные данные с Google Диска?",
+  "settings_byos_delete_final_title": "Последнее предупреждение",
+  "settings_byos_delete_final_content_1": "Ваш файл резервной копии на Google Диске будет полностью уничтожен.",
+  "settings_byos_delete_final_content_2": "Вы уверены, что хотите навсегда удалить резервные данные BYOS?",
+  "settings_byos_delete_success": "Резервные данные BYOS успешно удалены",
+  "add_shift_wage_segments_title": "Сегменты процентной ставки (Необязательно)",
+  "add_shift_wage_segments_subtitle": "Определите периоды с разным процентом ставки (например, 150%)",
+  "add_shift_wage_segments_add": "Добавить период",
+  "add_shift_wage_segment_start": "Начало",
+  "add_shift_wage_segment_end": "Конец",
+  "add_shift_wage_segment_percentage": "Процент ставки %",
+  "error_segment_invalid_time": "Время окончания сегмента должно быть позже времени начала",
+  "error_segment_overlap": "Временные диапазоны пересекаются",
+  "legal_privacy_policy": "Политика конфиденциальности",
+  "legal_terms_of_service": "Условия обслуживания",
+  "legal_disclaimer_notice": "Регистрируясь или входя в систему, вы соглашаетесь с нашими Условиями обслуживания и Политикой конфиденциальности.",
+  "legal_cookie_title": "Настройки файлов cookie и конфиденциальности",
+  "legal_cookie_description": "Мы используем технологии локального хранения и файлы cookie для аутентификации, безопасности и телеметрии сбоев. Вы можете принять все или использовать только необходимые файлы cookie.",
+  "legal_cookie_accept_all": "Принять все",
+  "legal_cookie_necessary_only": "Только необходимые",
+  "legal_cookie_necessary_desc": "Необходимы для аутентификации, безопасного хранения токенов и настроек сеанса.",
+  "legal_cookie_analytics_desc": "Анонимные журналы ошибок и телеметрия производительности при сбоях через Firebase.",
+  "legal_cookie_customize": "Настроить",
+  "legal_cookie_save_preferences": "Сохранить настройки",
+  "legal_cookie_essential": "Основные и защитные файлы cookie",
+  "legal_cookie_always_active": "Всегда активны",
+  "legal_cookie_optional": "Необязательные",
+  "common_close": "Закрыть",
+  "settings_section_overtime": "Правила сверхурочных",
+  "settings_overtime_enable": "Включить расчет сверхурочных",
+  "settings_overtime_enable_sub": "Автоматический расчет многоуровневой компенсации сверхурочных",
+  "settings_overtime_regular_threshold": "Порог обычных часов (часы)",
+  "settings_overtime_tier1_limit": "Длительность первого уровня сверхурочных (часы)",
+  "settings_overtime_tier1_rate": "Множитель первого уровня (%)",
+  "settings_overtime_tier2_rate": "Множитель дополнительного уровня (%)",
+  "settings_overtime_update_button": "Сохранить правила сверхурочных",
+  "settings_overtime_saved": "Правила сверхурочных успешно обновлены",
+  "overtime_notification_detected": "Смена включает сверхурочные. Зарплата рассчитана по ставкам сверхурочных.",
+  "overtime_breakdown_title": "Структура зарплаты",
+  "overtime_regular_hours_label": "Обычные часы",
+  "overtime_tier1_label": "Сверхурочные (125%)",
+  "overtime_tier2_label": "Сверхурочные (150%)",
+  "overtime_tier_custom_label": "Сверхурочные ([[rate]]%)",
+  "overtime_tag_label": "Сверхурочные",
+  "overtime_total_paid_time": "Всего оплачиваемого времени",
+  "overtime_total_earnings": "Общий заработок за смену",
+  "overtime_unpaid_break": "Неоплачиваемый перерыв",
+  "analytics_overtime_section_title": "Сводка сверхурочных и часы",
+  "analytics_regular_hours": "Обычные часы",
+  "analytics_overtime_hours": "Часы сверхурочных",
+  "analytics_overtime_earnings": "Заработок за сверхурочные",
+  "shabbat_tag_label": "Шаббат",
+  "holiday_tag_label": "Праздник",
+  "settings_shabbat_section": "Шаббат и праздники",
+  "settings_shabbat_enable": "Автоматический расчет Шаббата и праздников",
+  "settings_shabbat_enable_sub": "Автоматическое определение Шаббата, праздников и специальных ставок",
+  "settings_shabbat_multiplier_label": "Ставка в Шаббат (%)",
+  "settings_holiday_multiplier_label": "Ставка в праздник (%)",
+  "settings_candle_lighting_label": "Зажжение свечей (минут до заката)",
+  "settings_shabbat_exit_label": "Исход Шаббата (минут после заката)",
+  "settings_shabbat_saved": "Настройки Шаббата и праздников успешно сохранены",
+  "settings_shabbat_save_button": "Сохранить настройки Шаббата и праздников",
+  "analytics_shabbat_holiday_summary": "Сводка по Шаббату и праздникам",
+  "analytics_shabbat_hours": "Часы в Шаббат",
+  "analytics_holiday_hours": "Праздничные часы",
+  "onboarding_shabbat_title": "Шаббат и еврейские праздники",
+  "onboarding_shabbat_subtitle": "Автоматическое определение Шаббата, праздников и специальных ставок",
+  "add_shift_unknown_job_title": "Нераспознанный тип смены: «{trailingText}»",
+  "add_shift_unknown_job_desc": "Обнаружен тип должности, которого нет в вашем списке. Выберите альтернативную должность или сохраните как описание:",
+  "add_shift_select_job_label": "Выберите тип должности",
+  "add_shift_apply_all_instances": "Применять автоматически ко всем случаям этого типа",
+  "add_shift_skip": "Пропустить",
+  "add_shift_save_as_desc": "Сохранить только как описание",
+  "add_shift_assign": "Назначить",
+  "add_shift_shabbat_breakdown": "Шаббат ({rate}%)",
+  "add_shift_holiday_breakdown": "{name} ({rate}%)",
+  "settings_update_section": "Обновления приложения",
+  "settings_update_check_button": "Проверить обновления на GitHub",
+  "settings_update_current_version": "Текущая версия: v{version}",
+  "@settings_update_current_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "settings_update_checking_toast": "Проверка обновлений в репозитории GitHub...",
+  "settings_update_error_toast": "Не удалось подключиться к GitHub. Пожалуйста, попробуйте позже.",
+  "settings_update_latest_toast": "Приложение обновлено до последней версии! (v{version})",
+  "@settings_update_latest_toast": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_title": "Доступна новая версия!",
+  "update_dialog_version_available": "Доступна для скачивания версия {version}",
+  "@update_dialog_version_available": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_installed_version": "Установленная версия: {version}",
+  "@update_dialog_installed_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_new_version": "Новая: {version}",
+  "@update_dialog_new_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_whats_new": "Что нового в этой версии:",
+  "update_dialog_downloading": "Загрузка файла обновления...",
+  "update_dialog_later": "Позже",
+  "update_dialog_open_browser": "Открыть в браузере",
+  "update_dialog_update_now": "Обновить сейчас",
+  "update_dialog_open_download": "Открыть страницу загрузки",
+  "update_dialog_mandatory_notice": "Это обновление обязательно для дальнейшего использования приложения.",
+  "update_service_no_changelog": "Информация об изменениях недоступна.",
+  "update_service_download_failed": "Не удалось скачать файл (Код ошибки: {statusCode})",
+  "@update_service_download_failed": {
+    "placeholders": {
+      "statusCode": {
+        "type": "Object"
+      }
+    }
+  },
+  "update_service_no_installer": "На устройстве не найдено приложений для установки APK. Попробуйте открыть в браузере.",
+  "update_service_cannot_launch_installer": "Не удалось запустить установщик пакета ({message})",
+  "@update_service_cannot_launch_installer": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "update_service_download_error": "Ошибка при загрузке обновления: {error}",
+  "@update_service_download_error": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "common_show_password": "Показать пароль",
+  "common_hide_password": "Скрыть пароль",
+  "accessibility_statement": "Заявление о доступности",
+  "settings_accessibility_sub": "Информация о доступности и контакты",
+  "all_shifts_title": "Все смены",
+  "export_format_excel": "Таблица Excel (.xlsx)",
+  "export_format_pdf": "Документ PDF (.pdf)",
+  "export_format_json": "Резервная копия JSON (.json)",
+  "export_include_analytics": "Включить аналитику и сводки",
+  "export_include_analytics_sub": "Добавить графики и обзор статистики в отчет",
+  "import_title": "Импорт смен",
+  "import_button": "Импортировать файл (.xlsx, .csv, .json)",
+  "import_paste_or_pick": "Выберите файл или вставьте содержимое",
+  "import_preview_title": "Предпросмотр импорта",
+  "import_found_shifts": "Найдено валидных смен для импорта: {count}",
+  "@import_found_shifts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_confirm_button": "Импортировать смен: {count}",
+  "@import_confirm_button": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_success_msg": "Успешно импортировано смен: {count}!",
+  "@import_success_msg": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_error_msg": "Не удалось импортировать смены или неподдерживаемый формат",
+  "pdf_report_title": "Shiftly - Отчет о работе и зарплате",
+  "pdf_detailed_log": "Подробная история смен",
+  "pdf_analytics_summary": "Аналитика и сводка",
+  "pdf_total_net_pay": "Всего зарплата чистыми",
+  "pdf_total_hours": "Всего чистых часов",
+  "pdf_avg_rate": "Ср. эффективная ставка",
+  "pdf_shifts_count": "Количество смен",
+  "pdf_total_base": "Базовый оклад",
+  "pdf_total_tips": "Чаевые",
+  "pdf_total_expenses": "Расходы",
+  "pdf_total_incomes": "Доходы",
+  "pdf_col_date": "Дата",
+  "pdf_col_job": "Должность",
+  "pdf_col_time": "Часы",
+  "pdf_col_start_time": "Время начала",
+  "pdf_col_end_time": "Время окончания",
+  "pdf_col_tags": "Теги",
+  "pdf_col_net_hours": "Ч. чист.",
+  "pdf_col_hourly_rate": "Ставка",
+  "pdf_col_base": "База",
+  "pdf_col_overtime": "Сверхурочные",
+  "pdf_col_shabbat": "Шаббат",
+  "pdf_col_tips": "Чаевые",
+  "pdf_col_extras": "Доплаты",
+  "pdf_col_net_pay": "Итого чистыми",
+  "pdf_col_notes": "Примечания",
+  "excel_sheet_shifts": "Детали смен",
+  "excel_sheet_analytics": "Сводка аналитики",
+  "report_generated_label": "Создано: {date}",
+  "@report_generated_label": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "report_total_shifts_label": "Всего смен: {count}",
+  "@report_total_shifts_label": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "report_category_label": "Категория",
+  "report_rate_multiplier_label": "Множитель ставки",
+  "report_hours_label": "Часы",
+  "report_earnings_label": "Заработок",
+  "report_regular_hours": "Обычные часы (100%)",
+  "report_overtime_125": "Сверхурочные 1 ур. (125%)",
+  "report_overtime_150": "Сверхурочные 2 ур. (150%)",
+  "report_shabbat_hours": "Часы в Шаббат",
+  "report_holiday_hours": "Праздничные часы",
+  "report_disabled_status": "(Отключено в настройках)",
+  "report_job_distribution": "Распределение по должностям",
+  "report_job_name": "Название должности",
+  "report_pct_net_pay": "% от зарплаты чистыми",
+  "report_totals_row": "ИТОГО",
+  "report_tag_overtime": "Сверхурочные",
+  "report_tag_shabbat": "Шаббат",
+  "report_tag_holiday": "Праздник",
+  "report_page_number": "Страница {current} из {total}",
+  "@report_page_number": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "pdf_col_hourly_rate_symbol": "Почасовая ставка ({symbol})",
+  "@pdf_col_hourly_rate_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_base_symbol": "Базовый оклад ({symbol})",
+  "@pdf_col_base_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "report_overtime_125_symbol": "Сверхурочные 125% ({symbol})",
+  "@report_overtime_125_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "report_overtime_150_symbol": "Сверхурочные 150% ({symbol})",
+  "@report_overtime_150_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_shabbat_symbol": "Шаббат / Праздник ({symbol})",
+  "@pdf_col_shabbat_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_tips_symbol": "Чаевые ({symbol})",
+  "@pdf_col_tips_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_total_incomes_symbol": "Автодоходы ({symbol})",
+  "@pdf_total_incomes_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_total_expenses_symbol": "Авторасходы ({symbol})",
+  "@pdf_total_expenses_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_net_pay_symbol": "Всего зарплата чистыми ({symbol})",
+  "@pdf_col_net_pay_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "shift_template_title": "Шаблоны смен",
+  "shift_template_subtitle": "Быстрые шаблоны для быстрого и легкого добавления смен.",
+  "shift_template_morning": "Утренняя смена",
+  "shift_template_evening": "Вечерняя смена",
+  "shift_template_night": "Ночная смена",
+  "shift_template_add_button": "Добавить шаблон",
+  "shift_template_save_current": "Сохранить как шаблон",
+  "shift_template_applied_snack": "Шаблон применен",
+  "shift_template_saved_snack": "Шаблон успешно сохранен",
+  "shift_template_deleted_snack": "Шаблон удален",
+  "shift_template_delete_confirm_title": "Удалить шаблон",
+  "shift_template_delete_confirm_content": "Вы уверены, что хотите удалить этот шаблон?",
+  "shift_template_name_label": "Название шаблона",
+  "shift_template_select_prompt": "Шаблоны быстрых смен",
+  "shift_template_manage": "Управление шаблонами",
+  "shift_template_empty": "Шаблоны смен еще не сохранены",
+  "shift_template_edit_title": "Изменить шаблон",
+  "shift_template_new_title": "Новый шаблон смены",
+  "expenses_type_income": "доход",
+  "expenses_type_expense": "расход"
+}

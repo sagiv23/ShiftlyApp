@@ -1,0 +1,812 @@
+{
+  "@@locale": "fr",
+  "common_app_name": "Shiftly",
+  "common_continue": "Continuer",
+  "common_back": "Retour",
+  "common_start": "Commencer !",
+  "common_cancel": "Annuler",
+  "common_save": "Enregistrer",
+  "common_delete": "Supprimer",
+  "common_confirm": "Confirmer",
+  "common_error": "Erreur",
+  "common_success": "Succès",
+  "common_edit": "Modifier",
+  "common_tagline": "MOTEUR DE SALAIRES ET DE QUARTS",
+  "nav_calendar": "Calendrier",
+  "nav_analytics": "Analyses",
+  "nav_home": "Accueil",
+  "nav_expenses": "Dépenses",
+  "nav_summaries": "Résumés",
+  "common_hours_suffix": "heures",
+  "common_min_suffix": "min",
+  "common_net": "Net",
+  "common_shifts_count": "Quarts",
+  "common_save_and_finish": "Enregistrer et terminer",
+  "common_reset": "Réinitialiser",
+  "common_reset_and_cancel": "Annuler et réinitialiser",
+  "onboarding_welcome_title": "Bienvenue sur Shiftly",
+  "onboarding_welcome_subtitle": "L'application qui vous aide à suivre vos quarts, salaires et pourboires facilement et avec précision.",
+  "onboarding_welcome_description": "Configurons quelques bases pour commencer.",
+  "onboarding_step_progress": "Étape {current} sur {total}",
+  "@onboarding_step_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "onboarding_skip_setup": "Ignorer la configuration",
+  "onboarding_language_title": "Langue de l'application",
+  "onboarding_language_subtitle": "Choisissez votre langue préférée.",
+  "onboarding_currency_title": "Sélectionner la devise",
+  "onboarding_currency_subtitle": "Quelle devise souhaitez-vous utiliser pour le salaire et les dépenses ?",
+  "monthly_progress_setting_title": "Sens de la ligne de progression",
+  "monthly_progress_mode_month": "Temps écoulé dans le mois",
+  "monthly_progress_mode_financial_goal": "Progression vers un objectif financier",
+  "monthly_progress_goal_amount": "Montant de l'objectif mensuel",
+  "monthly_progress_invalid_goal": "Entrez un objectif financier supérieur à zéro",
+  "monthly_progress_month_elapsed": "Progression du mois",
+  "monthly_progress_financial_goal": "Progression de l'objectif",
+  "onboarding_breaks_title": "Paramètres des pauses",
+  "onboarding_breaks_subtitle": "Combien de temps dure généralement une pause ?",
+  "onboarding_breaks_enable": "Activer les pauses",
+  "onboarding_breaks_paid_label": "Pause payée (minutes)",
+  "onboarding_breaks_unpaid_label": "Pause non payée (minutes)",
+  "onboarding_auto_expenses_title": "Dépenses récurrentes",
+  "onboarding_auto_expenses_subtitle": "Avez-vous des dépenses récurrentes à chaque quart ? (ex. transport)",
+  "onboarding_auto_expenses_enable": "Activer les dépenses automatiques",
+  "onboarding_auto_expenses_add_button": "Ajouter une dépense",
+  "onboarding_auto_expenses_desc_label": "Description",
+  "onboarding_auto_expenses_invalid_amount": "Le montant doit être supérieur à 0",
+  "onboarding_auto_incomes_title": "Revenus récurrents",
+  "onboarding_auto_incomes_subtitle": "Avez-vous des revenus récurrents à chaque quart ? (ex. remboursement de transport)",
+  "onboarding_auto_incomes_enable": "Activer les revenus automatiques",
+  "onboarding_auto_incomes_add_button": "Ajouter un revenu",
+  "onboarding_job_types_title": "Quarts et salaires",
+  "onboarding_job_types_subtitle": "Définissez vos différents rôles et taux horaires.",
+  "onboarding_job_types_add_button": "Ajouter un type de quart",
+  "onboarding_job_types_edit_button": "Modifier le type de quart",
+  "onboarding_job_types_delete_title": "Supprimer le poste",
+  "onboarding_job_types_delete_desc": "Supprimer le poste ",
+  "onboarding_job_types_rate_suffix": "par heure",
+  "onboarding_job_types_same": "Un poste avec ce nom existe déjà",
+  "default_job_buffet": "Buffet",
+  "default_job_steward": "Steward",
+  "default_job_unloading": "Déchargement",
+  "default_expenses_trips": "Transport",
+  "settings_title": "Paramètres",
+  "settings_section_app": "Application",
+  "settings_section_work_pay": "Travail et paie",
+  "settings_section_breaks": "Durées des pauses (min)",
+  "settings_section_danger": "Zone de danger",
+  "settings_field_theme": "Thème",
+  "settings_field_language": "Langue de l'application",
+  "settings_field_currency": "Devise d'affichage",
+  "settings_field_currency_sub": "Devise utilisée pour le salaire et les dépenses",
+  "settings_field_breaks_enabled": "Activer les pauses",
+  "settings_field_breaks_enabled_sub": "Afficher ou masquer les paramètres de pause dans l'application",
+  "settings_field_paid_break": "Pause courte (Payée)",
+  "settings_field_unpaid_break": "Pause longue (Non payée)",
+  "settings_action_update_breaks": "Mettre à jour les horaires",
+  "settings_action_factory_reset": "Réinitialisation complète d'usine",
+  "settings_action_factory_reset_sub": "Supprimer définitivement tous les quarts, rôles et dépenses",
+  "settings_dialog_update_breaks_title": "Mettre à jour les heures de pause",
+  "settings_dialog_factory_reset_title": "Réinitialiser les données ?",
+  "settings_dialog_factory_reset_content": "Voulez-vous vraiment supprimer toutes les données de travail et réinitialiser l'application ? Cette action est irréversible.",
+  "settings_dialog_final_confirm_title": "Confirmation finale",
+  "settings_dialog_final_confirm_content_1": "Attention : tout l'historique des quarts, le salaire et les dépenses seront définitivement supprimés.",
+  "settings_dialog_final_confirm_content_2": "Voulez-vous vraiment tout supprimer ?",
+  "settings_dialog_final_confirm_button": "Tout supprimer définitivement",
+  "settings_dialog_error_enter_desc": "Veuillez entrer une description pour chaque dépense",
+  "settings_dialog_error_enter_income_desc": "Veuillez entrer une description pour chaque revenu",
+  "settings_theme_system": "Système",
+  "settings_theme_light": "Jour",
+  "settings_theme_dark": "Nuit",
+  "settings_language_he": "עברית",
+  "settings_language_en": "English",
+  "settings_language_fr": "Français",
+  "settings_language_es": "Español",
+  "settings_language_ru": "Русский",
+  "settings_language_ar": "العربية",
+  "settings_current_rate": "Taux actuel",
+  "settings_wage_history_title": "Historique des salaires",
+  "settings_job_name_label": "Nom du poste",
+  "settings_job_rate_label": "Taux horaire (Nouveau)",
+  "home_empty_state_title": "Aucun quart enregistré pour l'instant",
+  "home_empty_state_subtitle": "Cliquez sur \"Nouveau quart\" pour commencer",
+  "home_total_card_title": "Total accumulé (Net moins dépenses)",
+  "home_total_card_hours": "Heures",
+  "home_total_card_base": "Base",
+  "home_total_card_tips": "Pourboires",
+  "home_total_card_expenses": "Dépenses",
+  "home_active_timer_break": "Quart en pause...",
+  "home_active_timer_active": "Quart actif :",
+  "home_active_timer_time": "Temps :",
+  "home_shift_list_net_total": "Total net",
+  "home_shift_list_no_shifts": "Aucun quart ce jour-là",
+  "home_shift_list_no_shifts_month": "Aucun quart ce mois-ci",
+  "shift_history_empty_title": "Aucun quart trouvé",
+  "shift_history_empty_subtitle": "Aucun historique de quart disponible",
+  "home_shift_list_select_day": "Sélectionnez un jour pour afficher les quarts",
+  "home_shift_list_shifts_on": "Quarts du",
+  "home_action_new_shift": "Nouveau quart",
+  "home_action_calendar": "Calendrier",
+  "calendar_legend_today": "Aujourd'hui",
+  "calendar_legend_selected": "Sélectionné",
+  "calendar_legend_shift": "Quart",
+  "calendar_legend_holiday": "Jour férié / Shabbat",
+  "calendar_legend_holiday_shift": "Quart de jour férié",
+  "expenses_title": "Dépenses et revenus",
+  "expenses_tab_expenses": "Dépenses",
+  "expenses_tab_incomes": "Revenus spéciaux",
+  "expenses_auto_section_title": "Dépenses de quart récurrentes",
+  "expenses_auto_section_subtitle": "Ajouter des dépenses récurrentes à chaque nouveau quart",
+  "expenses_auto_section_enable": "Dépenses automatiques",
+  "expenses_history_section_title": "Répartition mensuelle des dépenses",
+  "expenses_action_add_auto": "Ajouter une dépense récurrente",
+  "expenses_action_update_settings": "Mettre à jour les paramètres",
+  "expenses_action_new_expense": "Nouvelle dépense",
+  "expenses_dialog_add_title": "Ajouter une dépense",
+  "expenses_dialog_edit_title": "Modifier la dépense",
+  "expenses_dialog_delete_title": "Supprimer la dépense",
+  "expenses_no_history": "Aucune dépense enregistrée",
+  "expenses_delete_expense_confirm_content": "Supprimer \"[[desc]]\" pour [[amount]] ?",
+  "expenses_total_label": "Total",
+  "expenses_auto_updated_msg": "Paramètres de dépenses automatiques mis à jour",
+  "expenses_deleted_msg": "Dépense supprimée",
+  "expenses_link_shift_dialog_title": "Lier au quart",
+  "expenses_link_shift_dialog_content": "Un quart a été trouvé à cette date. Souhaitez-vous lier ce [[type]] au quart ou l'enregistrer de manière indépendante ?",
+  "expenses_link_shift_button": "Lier au quart",
+  "expenses_save_standalone_button": "Enregistrer indépendamment",
+  "expenses_no_shift_dialog_title": "Aucun quart trouvé",
+  "expenses_no_shift_dialog_content": "Il n'y a pas de quart à cette date. Voulez-vous quand même créer ce [[type]] ?",
+  "expenses_create_anyway_button": "Créer quand même",
+  "expenses_auto_incomes_updated_msg": "Paramètres de revenus automatiques mis à jour",
+  "expenses_auto_incomes_section_title": "Revenus de quart récurrents",
+  "expenses_auto_incomes_section_enable": "Revenus automatiques",
+  "expenses_auto_incomes_section_subtitle": "Ajouter des revenus récurrents à chaque nouveau quart",
+  "incomes_history_section_title": "Répartition mensuelle des revenus",
+  "incomes_action_new_income": "Nouveau revenu",
+  "incomes_dialog_add_title": "Ajouter un revenu spécial",
+  "incomes_dialog_edit_title": "Modifier le revenu",
+  "incomes_dialog_delete_title": "Supprimer le revenu",
+  "incomes_no_history": "Aucun revenu spécial enregistré",
+  "incomes_delete_income_confirm_content": "Supprimer \"[[desc]]\" pour [[amount]] ?",
+  "incomes_deleted_msg": "Revenu supprimé",
+  "add_shift_title": "Nouveau quart",
+  "add_shift_edit_title": "Modifier le quart",
+  "add_shift_timer_tab": "Chronomètre",
+  "add_shift_manual_tab": "Manuel",
+  "add_shift_paste_tab": "Coller",
+  "add_shift_timer_accumulated_live": "Accumulé en direct",
+  "add_shift_timer_countdown": "Compte à rebours : ",
+  "add_shift_timer_break_paid": "En pause payée...",
+  "add_shift_timer_break_unpaid": "En pause non payée (chronomètre arrêté)",
+  "add_shift_timer_total_break_unpaid": "Total des pauses non payées :",
+  "add_shift_timer_resume_work": "Reprendre le travail",
+  "add_shift_timer_stop_shift": "Arrêter le quart",
+  "add_shift_timer_start_shift": "Démarrer le quart",
+  "add_shift_timer_continue_work": "Continuer le travail",
+  "add_shift_timer_stopped_msg": "Le chronomètre s'est arrêté. Voulez-vous enregistrer le quart ou continuer à travailler ?",
+  "add_shift_timer_reset_title": "Réinitialiser le chronomètre",
+  "add_shift_timer_reset_desc": "Voulez-vous vraiment réinitialiser le chronomètre ? Toutes les données actuelles seront perdues.",
+  "add_shift_manual_time_section": "Heure",
+  "add_shift_manual_date_label": "Date",
+  "add_shift_manual_start_time_label": "Heure de début",
+  "add_shift_manual_end_time_label": "Heure de fin",
+  "add_shift_manual_break_type_section": "Type de pause",
+  "add_shift_manual_no_break": "Aucune",
+  "add_shift_manual_paid_break": "Payée",
+  "add_shift_manual_unpaid_break": "Non payée",
+  "add_shift_manual_work_tips_section": "Travail et pourboires",
+  "add_shift_manual_job_type_label": "Type de poste",
+  "add_shift_paste_title": "Coller le texte du quart",
+  "add_shift_paste_default_job_label": "Type de poste par défaut",
+  "add_shift_paste_format_info": "Format : JJ.MM (ou JJ.MM.AAAA) - HH:mm - HH:mm [pause] [+ pourboires]\n(Si l'année est omise, l'année en cours est déduite)",
+  "add_shift_paste_hint": "Collez les quarts ici...\nExemple :\n24.6.2026 - 17:30 - 23:00 45 minutes + 50",
+  "add_shift_paste_parse_button": "Analyser et tout enregistrer",
+  "add_shift_paste_parse_dialog_title": "Analyser les quarts",
+  "add_shift_paste_parse_dialog_desc": "Analyser et enregistrer les quarts à partir du texte collé ?",
+  "add_shift_paste_error": "Veuillez vérifier le format et réessayer",
+  "add_shift_tips_title": "Pourboires",
+  "add_shift_tips_total": "Total",
+  "add_shift_tips_hint": "Montant du pourboire",
+  "add_shift_tips_add_button": "Ajouter un pourboire",
+  "add_shift_expenses_title": "Dépenses du quart",
+  "add_shift_expenses_total": "Total",
+  "add_shift_expenses_add_button": "Ajouter une dépense",
+  "add_shift_incomes_title": "Revenus du quart",
+  "add_shift_incomes_total": "Total",
+  "add_shift_incomes_add_button": "Ajouter un revenu",
+  "add_shift_shift_ended_dialog_title": "Enregistrer le quart",
+  "add_shift_shift_ended_dialog_desc": "Voulez-vous vraiment enregistrer les détails du quart ?",
+  "add_shift_shift_ended_edit_dialog_desc": "Voulez-vous vraiment enregistrer les détails du quart ?",
+  "add_shift_shift_edit_dialog_title": "Mettre à jour le quart",
+  "add_shift_shift_saved": "Quart enregistré avec succès",
+  "add_shift_preview_title": "Aperçu",
+  "add_shift_segments_count": "{count} périodes",
+  "@add_shift_segments_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "add_shift_overlap_title": "Quart chevauchant",
+  "add_shift_overlap_content": "Ce quart chevauche {count} quart(s) existant(s) :\n\n{details}\n\nVoulez-vous l'enregistrer quand même ?",
+  "@add_shift_overlap_content": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "add_shift_overlap_confirm": "Enregistrer quand même",
+  "add_shift_overlap_unknown_job": "Poste inconnu",
+  "add_shift_pick_a_job": "Veuillez d'abord sélectionner un type de poste",
+  "add_shift_delete_title": "Supprimer le quart",
+  "add_shift_delete_desc": "Voulez-vous vraiment supprimer le quart du",
+  "add_shift_delete_msg": "Quart supprimé avec succès",
+  "notification_timer_channel_name": "Quart actif",
+  "notification_timer_channel_desc": "Affiche le chronomètre du quart en cours",
+  "notification_timer_title_active": "Quart actif",
+  "notification_timer_title_paid_break": "Pause payée",
+  "notification_timer_title_unpaid_break": "Pause non payée",
+  "notification_timer_body_running": "Chronomètre en cours...",
+  "notification_timer_body_countdown": "Compte à rebours : [[time]]",
+  "filter_title": "Filtres de quarts",
+  "filter_clear_all": "Réinitialiser le filtre",
+  "filter_apply": "Appliquer les filtres",
+  "filter_wage_range": "Plage de salaire total",
+  "filter_tips_range": "Plage de pourboires",
+  "filter_expenses_range": "Plage de dépenses",
+  "filter_duration_range": "Plage de durée (Heures)",
+  "filter_date_range": "Plage de dates",
+  "filter_job_type": "Type de poste",
+  "filter_select_all": "Tout sélectionner",
+  "filter_error_no_job_selected": "Veuillez sélectionner au moins un type de poste",
+  "filter_active_filters": "Filtres actifs :",
+  "filter_chip_wage": "Salaire : [[min]] - [[max]]",
+  "filter_chip_tips": "Pourboires : [[min]] - [[max]]",
+  "filter_chip_expenses": "Dépenses : [[min]] - [[max]]",
+  "filter_chip_duration": "Durée : [[min]] - [[max]] h",
+  "filter_chip_date": "Date : [[start]] - [[end]]",
+  "filter_chip_job": "Poste : [[name]]",
+  "filter_empty_state_title": "Aucun quart correspondant",
+  "filter_empty_state_subtitle": "Essayez d'ajuster vos filtres pour voir plus de résultats",
+  "auth_login_title": "Bon retour",
+  "auth_register_title": "Créer un nouveau compte",
+  "auth_full_name_label": "Nom complet",
+  "auth_email_label": "E-mail",
+  "auth_password_label": "Mot de passe",
+  "auth_error_name_empty": "Veuillez entrer un nom",
+  "auth_error_email_invalid": "E-mail invalide",
+  "auth_error_password_length": "Le mot de passe doit contenir au moins 6 caractères",
+  "auth_login_button": "Se connecter",
+  "auth_register_button": "S'inscrire",
+  "auth_no_account_link": "Pas de compte ? S'inscrire",
+  "auth_has_account_link": "Déjà un compte ? Se connecter",
+  "auth_error_generic": "Une erreur s'est produite. Veuillez réessayer.",
+  "settings_logout_title": "Se déconnecter du système",
+  "settings_logout_dialog_title": "Déconnexion",
+  "settings_logout_confirm_content": "Voulez-vous vraiment vous déconnecter ?",
+  "settings_logout_confirm_button": "Se déconnecter",
+  "auth_login_success": "Connexion réussie",
+  "auth_register_success": "Compte créé avec succès",
+  "auth_birth_date_label": "Date de naissance",
+  "auth_error_underage": "L'utilisateur doit avoir au moins 12 ans",
+  "auth_error_birth_date_empty": "Veuillez sélectionner votre date de naissance",
+  "auth_error_email_exists": "Cette adresse e-mail est déjà utilisée",
+  "auth_error_user_not_found": "Utilisateur introuvable ou mot de passe incorrect",
+  "auth_error_network": "Erreur de connexion réseau. Veuillez vérifier votre connexion Internet et réessayer.",
+  "auth_continue_as_guest": "Continuer en tant qu'invité",
+  "auth_replace_guest_data_title": "Remplacer les données d'invité ?",
+  "auth_replace_guest_data_message": "La connexion à un compte existant remplacera les données actuellement stockées sur cet appareil par celles associées à votre compte. Vos données d'invité pourraient être définitivement perdues et ne pourront pas être récupérées à moins d'avoir une sauvegarde. Assurez-vous de comprendre ces conséquences avant de continuer.",
+  "auth_replace_guest_data_confirm": "Continuer",
+  "auth_replace_guest_data_cancel": "Annuler",
+  "auth_guest_mode_title": "Mode invité",
+  "auth_guest_mode_subtitle": "Vous utilisez Shiftly en mode invité. Vos données sont enregistrées localement sur cet appareil. Créez un compte pour synchroniser vos appareils ou connectez-vous à un compte existant.",
+  "auth_guest_migration_failed": "Échec de la récupération des données du compte. Vos données d'invité ont été préservées.",
+  "auth_register_guest_transfer": "Se connecter ou créer un compte Shiftly",
+  "auth_user_deleted_local_data_preserved": "Votre compte n'existe plus dans la base de données. Vous avez été déconnecté, mais vos données locales restent enregistrées sur cet appareil.",
+  "home_welcome_back": "Bonjour, [[name]]",
+  "settings_user_name": "Nom",
+  "settings_user_email": "E-mail",
+  "settings_user_password": "Mot de passe",
+  "settings_user_edit_title": "Modifier le profil",
+  "settings_user_update_success": "Profil mis à jour avec succès",
+  "settings_logout_success": "Déconnexion réussie",
+  "settings_byos_title": "Synchronisation BYOS",
+  "settings_byos_connected": "Connecté à Google Drive",
+  "settings_byos_last_backup": "Dernière sauvegarde : [[time]]",
+  "settings_byos_backup_now": "Sauvegarder maintenant",
+  "settings_byos_auto_sync": "Synchronisation automatique",
+  "settings_byos_auto_sync_sub": "Sauvegarder instantanément les modifications dans le cloud",
+  "settings_byos_disconnect": "Déconnecter",
+  "settings_byos_login_shiftly": "Se connecter au compte Shiftly",
+  "settings_byos_login_shiftly_sub": "Synchronisation complète dans notre cloud",
+  "settings_byos_method_title": "Méthode BYOS (Google Drive)",
+  "settings_byos_method_sub": "Sauvegarder dans votre cloud privé",
+  "settings_byos_restore_dialog_title": "Synchronisation BYOS",
+  "settings_byos_restore_dialog_content": "Souhaitez-vous restaurer les données existantes depuis votre Google Drive ?",
+  "settings_byos_restore_confirm": "Restaurer",
+  "settings_byos_restore_cancel": "Pas maintenant",
+  "settings_byos_login_hint": "Connectez-vous pour sauvegarder vos données dans le cloud et utiliser d'autres appareils",
+  "settings_restore_success": "Restauration réussie : [[shifts]] quarts et [[jobs]] postes restaurés.",
+  "settings_restore_no_data": "Aucune sauvegarde trouvée sur Google Drive ou une erreur s'est produite.",
+  "export_title": "Exporter les quarts",
+  "export_format_label": "Format de fichier",
+  "export_format_csv": "CSV (Compatible Excel)",
+  "export_format_txt": "Fichier texte (TXT)",
+  "export_range_label": "Plage d'exportation",
+  "export_range_all": "Tous les quarts",
+  "export_range_month": "Mois spécifique",
+  "export_range_custom": "Plage de dates personnalisée",
+  "export_start_date": "Date de début",
+  "export_end_date": "Date de fin",
+  "export_select_month": "Sélectionner le mois",
+  "export_button": "Exporter le fichier",
+  "export_success_msg": "Fichier exporté avec succès et enregistré à :",
+  "export_empty_error": "Aucun quart trouvé dans la plage sélectionnée pour l'exportation",
+  "analytics_title": "Analyses et aperçus",
+  "analytics_hero_greeting": "Aperçu financier",
+  "analytics_hero_subtitle": "Vos performances financières et vos habitudes de travail en un coup d'œil",
+  "analytics_section_overview": "Vue d'ensemble",
+  "analytics_section_earnings": "Gains",
+  "analytics_section_work_patterns": "Habitudes de travail",
+  "analytics_section_pay_breakdown": "Répartition de la paie",
+  "analytics_period_monthly": "Mensuel",
+  "analytics_period_yearly": "Annuel",
+  "analytics_period_all_time": "Tout le temps",
+  "analytics_all_jobs": "Tous les postes",
+  "analytics_stat_total_net": "Net total",
+  "analytics_stat_total_hours": "Total des heures",
+  "analytics_stat_avg_rate": "Taux effectif moyen",
+  "analytics_stat_tips": "Dépenses de quart nettes",
+  "analytics_chart_earnings_title": "Gains par rapport aux dépenses au fil du temps",
+  "analytics_chart_earnings_subtitle": "Appuyez sur une barre pour voir la répartition de la paie et des dépenses",
+  "analytics_chart_jobs_title": "Répartition par poste",
+  "analytics_chart_jobs_by_earnings": "Par gains",
+  "analytics_chart_jobs_by_hours": "Par heures",
+  "analytics_no_data": "Aucune donnée pour la période sélectionnée",
+  "analytics_selected_breakdown": "Détails du jour sélectionné",
+  "analytics_selected_month_breakdown": "Détails du mois sélectionné",
+  "analytics_base_salary": "Salaire de base",
+  "analytics_chart_cumulative_title": "Croissance cumulative des gains",
+  "analytics_chart_cumulative_subtitle": "Faites défiler horizontalement pour afficher la croissance de la paie au fil du temps",
+  "analytics_gross_pay": "Brut",
+  "analytics_net_pay": "Net",
+  "analytics_kpi_projected": "Paie de fin de mois projetée",
+  "analytics_kpi_retention": "Taux de rétention net",
+  "analytics_chart_tod_title": "Répartition par moment de la journée",
+  "analytics_chart_tod_subtitle": "Comparaison des heures selon les segments de la journée",
+  "analytics_chart_tod_dawn": "Aube",
+  "analytics_chart_tod_morning": "Matin",
+  "analytics_chart_tod_noon": "Midi",
+  "analytics_chart_tod_afternoon": "Après-midi",
+  "analytics_chart_tod_evening": "Soirée",
+  "analytics_chart_tod_night": "Nuit",
+  "analytics_chart_duration_title": "Répartition de la durée des quarts et de la fatigue",
+  "analytics_chart_duration_subtitle": "Distribution de la durée des quarts (court, standard, long)",
+  "analytics_duration_short": "Court",
+  "analytics_duration_standard": "Standard",
+  "analytics_duration_long": "Long",
+  "analytics_insights_title": "Aperçus intelligents clés",
+  "analytics_insight_night_boost": "Les quarts de soirée et de nuit représentent [[percent]]% de vos heures de travail.",
+  "analytics_insight_retention": "Vous conservez [[percent]]% des gains bruts après les dépenses de quart.",
+  "analytics_insight_fatigue": "[[percent]]% de vos quarts ont duré plus de 9 heures.",
+  "analytics_insight_tips_ratio": "Les dépenses récurrentes représentent [[percent]]% de vos gains totaux.",
+  "analytics_shifts_format": "{count} quarts",
+  "analytics_no_shift_data_period": "Aucune donnée de quart pour cette période",
+  "analytics_min_shifts_hourly": "Au moins 2 quarts requis pour afficher la tendance du salaire horaire",
+  "analytics_min_shifts_growth": "Au moins 2 quarts requis pour afficher la croissance cumulative",
+  "analytics_min_shifts_retention": "Au moins 2 quarts requis pour afficher la tendance de la rétention nette",
+  "analytics_no_job_data": "Aucune donnée de poste",
+  "analytics_hours_suffix_format": "{hours} h",
+  "analytics_utilization_format": "{pct}% d'utilisation",
+  "common_previous": "Précédent",
+  "common_next": "Suivant",
+  "analytics_tips_and_extra": "Pourboires et extras",
+  "analytics_rate_boost_subtitle": "+{boost}/h d'extras nets",
+  "analytics_retention_subtitle": "Conservé après les dépenses de quart",
+  "analytics_net_extras_pct_subtitle": "{percent}% du salaire net total",
+  "common_unknown_job": "Poste inconnu",
+  "analytics_duration_range_short": "< 6 heures",
+  "analytics_duration_range_standard": "6-9 heures",
+  "analytics_duration_range_long": "> 9 heures",
+  "profile_title": "Profil utilisateur",
+  "profile_created_at": "Compte créé le : [[date]]",
+  "profile_birth_date_display": "Date de naissance : [[date]] (Âge : [[age]])",
+  "profile_stats_title": "Résumé des données enregistrées",
+  "profile_shifts_count": "Quarts enregistrés",
+  "profile_jobs_count": "Rôles / Types de postes",
+  "profile_expenses_count": "Dépenses enregistrées",
+  "profile_incomes_count": "Revenus enregistrés",
+  "side_menu_profile": "Profil utilisateur",
+  "profile_old_password": "Mot de passe actuel",
+  "profile_new_password": "Nouveau mot de passe",
+  "profile_password_error": "Le mot de passe actuel est incorrect",
+  "profile_password_required": "Veuillez entrer votre mot de passe actuel",
+  "shift_descriptions_title": "Résumés de quarts",
+  "shift_descriptions_empty": "Aucun résumé de quart trouvé",
+  "shift_description_label": "Résumé / Description du quart",
+  "shift_description_hint": "Entrez des notes ou un résumé pour ce quart...",
+  "shift_descriptions_delete_title": "Supprimer la description",
+  "shift_descriptions_delete_content": "Voulez-vous vraiment supprimer la description de ce quart ?",
+  "shift_descriptions_deleted_msg": "Description supprimée avec succès",
+  "shift_descriptions_edit_title": "Modifier la description",
+  "shift_descriptions_updated_msg": "Description mise à jour avec succès",
+  "common_search_by_date": "Rechercher par date",
+  "common_clear_date_filter": "Effacer le filtre de date",
+  "common_filter_date": "Filtrer par date",
+  "profile_delete_account": "Supprimer le compte",
+  "profile_delete_account_sub": "Supprimer définitivement votre compte utilisateur Shiftly",
+  "profile_delete_dialog_title": "Supprimer le compte",
+  "profile_delete_dialog_content": "Voulez-vous vraiment supprimer votre compte Shiftly ? Cette action est irréversible.",
+  "profile_delete_final_title": "Confirmation finale",
+  "profile_delete_final_content_1": "Votre compte utilisateur et toutes les données du serveur seront définitivement supprimés.",
+  "profile_delete_final_content_2": "Cette action est irréversible. Procéder à la suppression du compte ?",
+  "profile_delete_success": "Compte supprimé avec succès",
+  "settings_byos_delete_title": "Supprimer la sauvegarde BYOS",
+  "settings_byos_delete_sub": "Effacer définitivement le fichier de sauvegarde de Google Drive",
+  "settings_byos_delete_dialog_title": "Supprimer les données BYOS",
+  "settings_byos_delete_dialog_content": "Voulez-vous vraiment supprimer vos données de sauvegarde de Google Drive ?",
+  "settings_byos_delete_final_title": "Dernier avertissement",
+  "settings_byos_delete_final_content_1": "Votre fichier de sauvegarde dans Google Drive sera complètement détruit.",
+  "settings_byos_delete_final_content_2": "Voulez-vous vraiment supprimer définitivement les données de sauvegarde BYOS ?",
+  "settings_byos_delete_success": "Données de sauvegarde BYOS supprimées avec succès",
+  "add_shift_wage_segments_title": "Segments de pourcentage du salaire horaire (Facultatif)",
+  "add_shift_wage_segments_subtitle": "Définir des périodes avec différents pourcentages de salaire (ex. 150%)",
+  "add_shift_wage_segments_add": "Ajouter une période",
+  "add_shift_wage_segment_start": "Début",
+  "add_shift_wage_segment_end": "Fin",
+  "add_shift_wage_segment_percentage": "% de salaire",
+  "error_segment_invalid_time": "L'heure de fin du segment doit être postérieure à l'heure de début",
+  "error_segment_overlap": "Il y a un chevauchement dans les plages horaires",
+  "legal_privacy_policy": "Politique de confidentialité",
+  "legal_terms_of_service": "Conditions d'utilisation",
+  "legal_disclaimer_notice": "En vous inscrivant ou en vous connectant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité.",
+  "legal_cookie_title": "Préférences de cookies et de confidentialité",
+  "legal_cookie_description": "Nous utilisons des technologies de stockage local et des cookies pour l'authentification essentielle, la sécurité et la télémétrie des plantages de l'application. Vous pouvez choisir de tout accepter ou d'utiliser uniquement les cookies nécessaires.",
+  "legal_cookie_accept_all": "Tout accepter",
+  "legal_cookie_necessary_only": "Nécessaires uniquement",
+  "legal_cookie_necessary_desc": "Essentiels pour l'authentification, le stockage sécurisé des jetons et les préférences de session.",
+  "legal_cookie_analytics_desc": "Journaux d'erreurs anonymes et télémétrie des performances de plantage via Firebase.",
+  "legal_cookie_customize": "Personnaliser",
+  "legal_cookie_save_preferences": "Enregistrer les préférences",
+  "legal_cookie_essential": "Cookies essentiels et de sécurité",
+  "legal_cookie_always_active": "Toujours actif",
+  "legal_cookie_optional": "Optionnel",
+  "common_close": "Fermer",
+  "settings_section_overtime": "Règles des heures supplémentaires",
+  "settings_overtime_enable": "Activer le calcul des heures supplémentaires",
+  "settings_overtime_enable_sub": "Calculer automatiquement la rémunération des heures supplémentaires par paliers",
+  "settings_overtime_regular_threshold": "Seuil des heures normales (heures)",
+  "settings_overtime_tier1_limit": "Durée du premier palier d'heures sup (heures)",
+  "settings_overtime_tier1_rate": "Multiplicateur du premier palier (%)",
+  "settings_overtime_tier2_rate": "Multiplicateur du palier supplémentaire (%)",
+  "settings_overtime_update_button": "Enregistrer les règles d'heures sup",
+  "settings_overtime_saved": "Règles des heures supplémentaires mises à jour avec succès",
+  "overtime_notification_detected": "Le quart inclut des heures supplémentaires. Le salaire a été calculé selon les taux d'heures sup.",
+  "overtime_breakdown_title": "Répartition du salaire",
+  "overtime_regular_hours_label": "Heures normales",
+  "overtime_tier1_label": "Heures sup (125%)",
+  "overtime_tier2_label": "Heures sup (150%)",
+  "overtime_tier_custom_label": "Heures sup ([[rate]]%)",
+  "overtime_tag_label": "Heures sup",
+  "overtime_total_paid_time": "Temps payé total",
+  "overtime_total_earnings": "Gains totaux du quart",
+  "overtime_unpaid_break": "Pause non payée",
+  "analytics_overtime_section_title": "Résumé et heures des heures sup",
+  "analytics_regular_hours": "Heures normales",
+  "analytics_overtime_hours": "Heures supplémentaires",
+  "analytics_overtime_earnings": "Gains des heures sup",
+  "shabbat_tag_label": "Shabbat",
+  "holiday_tag_label": "Jour férié",
+  "settings_shabbat_section": "Shabbat et jours fériés",
+  "settings_shabbat_enable": "Calcul automatique Shabbat et jours fériés",
+  "settings_shabbat_enable_sub": "Détection automatique de Shabbat, des jours fériés et des taux spéciaux",
+  "settings_shabbat_multiplier_label": "Taux Shabbat (%)",
+  "settings_holiday_multiplier_label": "Taux jour férié (%)",
+  "settings_candle_lighting_label": "Allumage des bougies (minutes avant le coucher du soleil)",
+  "settings_shabbat_exit_label": "Sortie de Shabbat (minutes après le coucher du soleil)",
+  "settings_shabbat_saved": "Paramètres Shabbat et jours fériés enregistrés avec succès",
+  "settings_shabbat_save_button": "Enregistrer les paramètres Shabbat et jours fériés",
+  "analytics_shabbat_holiday_summary": "Résumé Shabbat et jours fériés",
+  "analytics_shabbat_hours": "Heures de Shabbat",
+  "analytics_holiday_hours": "Heures de jours fériés",
+  "onboarding_shabbat_title": "Shabbat et fêtes juives",
+  "onboarding_shabbat_subtitle": "Détection automatique de Shabbat, des jours fériés et des taux spéciaux",
+  "add_shift_unknown_job_title": "Type de quart non reconnu : \"{trailingText}\"",
+  "add_shift_unknown_job_desc": "Un type de poste qui n'existe pas dans votre liste a été trouvé. Choisissez un type de poste alternatif ou enregistrez comme description :",
+  "add_shift_select_job_label": "Sélectionner le type de poste",
+  "add_shift_apply_all_instances": "Appliquer automatiquement à toutes les occurrences de ce type",
+  "add_shift_skip": "Ignorer",
+  "add_shift_save_as_desc": "Enregistrer comme description uniquement",
+  "add_shift_assign": "Attribuer",
+  "add_shift_shabbat_breakdown": "Shabbat ({rate}%)",
+  "add_shift_holiday_breakdown": "{name} ({rate}%)",
+  "settings_update_section": "Mises à jour de l'application",
+  "settings_update_check_button": "Vérifier les mises à jour sur GitHub",
+  "settings_update_current_version": "Version actuelle : v{version}",
+  "@settings_update_current_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "settings_update_checking_toast": "Vérification des mises à jour sur GitHub Releases...",
+  "settings_update_error_toast": "Impossible de se connecter à GitHub. Veuillez réessayer plus tard.",
+  "settings_update_latest_toast": "L'application est à jour ! (v{version})",
+  "@settings_update_latest_toast": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_title": "Nouvelle version disponible !",
+  "update_dialog_version_available": "La version {version} est disponible au téléchargement",
+  "@update_dialog_version_available": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_installed_version": "Version installée : {version}",
+  "@update_dialog_installed_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_new_version": "Nouveau : {version}",
+  "@update_dialog_new_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_whats_new": "Nouveautés de cette version :",
+  "update_dialog_downloading": "Téléchargement du fichier de mise à jour...",
+  "update_dialog_later": "Plus tard",
+  "update_dialog_open_browser": "Ouvrir dans le navigateur",
+  "update_dialog_update_now": "Mettre à jour maintenant",
+  "update_dialog_open_download": "Ouvrir la page de téléchargement",
+  "update_dialog_mandatory_notice": "Cette mise à jour est requise pour continuer à utiliser l'application.",
+  "update_service_no_changelog": "Aucun détail de journal des modifications disponible.",
+  "update_service_download_failed": "Échec du téléchargement du fichier (Code d'erreur : {statusCode})",
+  "@update_service_download_failed": {
+    "placeholders": {
+      "statusCode": {
+        "type": "Object"
+      }
+    }
+  },
+  "update_service_no_installer": "Aucune application trouvée pour installer les fichiers APK sur l'appareil. Essayez d'ouvrir dans le navigateur.",
+  "update_service_cannot_launch_installer": "Impossible de lancer le programme d'installation du paquet ({message})",
+  "@update_service_cannot_launch_installer": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "update_service_download_error": "Erreur lors du téléchargement de la mise à jour : {error}",
+  "@update_service_download_error": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "common_show_password": "Afficher le mot de passe",
+  "common_hide_password": "Masquer le mot de passe",
+  "accessibility_statement": "Déclaration d'accessibilité",
+  "settings_accessibility_sub": "Informations d'accessibilité et coordonnées",
+  "all_shifts_title": "Tous les quarts",
+  "export_format_excel": "Feuille Excel (.xlsx)",
+  "export_format_pdf": "Document PDF (.pdf)",
+  "export_format_json": "Sauvegarde JSON (.json)",
+  "export_include_analytics": "Inclure les analyses et résumés",
+  "export_include_analytics_sub": "Ajouter des graphiques et un aperçu des statistiques au rapport",
+  "import_title": "Importer des quarts",
+  "import_button": "Importer un fichier (.xlsx, .csv, .json)",
+  "import_paste_or_pick": "Choisir un fichier ou coller le contenu",
+  "import_preview_title": "Aperçu de l'importation",
+  "import_found_shifts": "{count} quarts valides trouvés à importer",
+  "@import_found_shifts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_confirm_button": "Importer {count} quarts",
+  "@import_confirm_button": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_success_msg": "{count} quarts importés avec succès !",
+  "@import_success_msg": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_error_msg": "Échec de l'importation des quarts ou format non pris en charge",
+  "pdf_report_title": "Shiftly - Rapport de travail et de salaire",
+  "pdf_detailed_log": "Historique détaillé des quarts",
+  "pdf_analytics_summary": "Analyses et résumé",
+  "pdf_total_net_pay": "Salaire net total",
+  "pdf_total_hours": "Total des heures nettes",
+  "pdf_avg_rate": "Taux effectif moyen",
+  "pdf_shifts_count": "Nombre de quarts",
+  "pdf_total_base": "Salaire de base",
+  "pdf_total_tips": "Pourboires",
+  "pdf_total_expenses": "Dépenses",
+  "pdf_total_incomes": "Revenus",
+  "pdf_col_date": "Date",
+  "pdf_col_job": "Poste",
+  "pdf_col_time": "Heures",
+  "pdf_col_start_time": "Heure de début",
+  "pdf_col_end_time": "Heure de fin",
+  "pdf_col_tags": "Tags",
+  "pdf_col_net_hours": "H. nettes",
+  "pdf_col_hourly_rate": "Taux",
+  "pdf_col_base": "Base",
+  "pdf_col_overtime": "Heures sup",
+  "pdf_col_shabbat": "Shabbat",
+  "pdf_col_tips": "Pourboires",
+  "pdf_col_extras": "Extras",
+  "pdf_col_net_pay": "Net total",
+  "pdf_col_notes": "Notes",
+  "excel_sheet_shifts": "Détails des quarts",
+  "excel_sheet_analytics": "Résumé des analyses",
+  "report_generated_label": "Généré le : {date}",
+  "@report_generated_label": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "report_total_shifts_label": "Total des quarts : {count}",
+  "@report_total_shifts_label": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "report_category_label": "Catégorie",
+  "report_rate_multiplier_label": "Multiplicateur de taux",
+  "report_hours_label": "Heures",
+  "report_earnings_label": "Gains",
+  "report_regular_hours": "Heures normales (100%)",
+  "report_overtime_125": "Heures sup palier 1 (125%)",
+  "report_overtime_150": "Heures sup palier 2 (150%)",
+  "report_shabbat_hours": "Heures de Shabbat",
+  "report_holiday_hours": "Heures de jours fériés",
+  "report_disabled_status": "(Désactivé dans les paramètres)",
+  "report_job_distribution": "Répartition par type de poste",
+  "report_job_name": "Nom du poste",
+  "report_pct_net_pay": "% du salaire net",
+  "report_totals_row": "TOTAUX",
+  "report_tag_overtime": "Heures sup",
+  "report_tag_shabbat": "Shabbat",
+  "report_tag_holiday": "Jour férié",
+  "report_page_number": "Page {current} sur {total}",
+  "@report_page_number": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "pdf_col_hourly_rate_symbol": "Taux horaire ({symbol})",
+  "@pdf_col_hourly_rate_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_base_symbol": "Salaire de base ({symbol})",
+  "@pdf_col_base_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "report_overtime_125_symbol": "Heures sup 125% ({symbol})",
+  "@report_overtime_125_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "report_overtime_150_symbol": "Heures sup 150% ({symbol})",
+  "@report_overtime_150_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_shabbat_symbol": "Shabbat / Férié ({symbol})",
+  "@pdf_col_shabbat_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_tips_symbol": "Pourboires ({symbol})",
+  "@pdf_col_tips_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_total_incomes_symbol": "Revenus auto ({symbol})",
+  "@pdf_total_incomes_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_total_expenses_symbol": "Dépenses auto ({symbol})",
+  "@pdf_total_expenses_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_net_pay_symbol": "Salaire net total ({symbol})",
+  "@pdf_col_net_pay_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "shift_template_title": "Modèles de quarts",
+  "shift_template_subtitle": "Modèles rapides pour ajouter des quarts rapidement et facilement.",
+  "shift_template_morning": "Quart du matin",
+  "shift_template_evening": "Quart du soir",
+  "shift_template_night": "Quart de nuit",
+  "shift_template_add_button": "Ajouter un modèle",
+  "shift_template_save_current": "Enregistrer comme modèle",
+  "shift_template_applied_snack": "Modèle appliqué",
+  "shift_template_saved_snack": "Modèle enregistré avec succès",
+  "shift_template_deleted_snack": "Modèle supprimé",
+  "shift_template_delete_confirm_title": "Supprimer le modèle",
+  "shift_template_delete_confirm_content": "Voulez-vous vraiment supprimer ce modèle ?",
+  "shift_template_name_label": "Nom du modèle",
+  "shift_template_select_prompt": "Modèles de quarts rapides",
+  "shift_template_manage": "Gérer les modèles",
+  "shift_template_empty": "Aucun modèle de quart enregistré pour l'instant",
+  "shift_template_edit_title": "Modifier le modèle",
+  "shift_template_new_title": "Nouveau modèle de quart",
+  "expenses_type_income": "revenu",
+  "expenses_type_expense": "dépense"
+}

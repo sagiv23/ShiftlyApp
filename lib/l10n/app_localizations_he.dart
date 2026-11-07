@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -314,6 +315,18 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get settings_language_en => 'English';
+
+  @override
+  String get settings_language_fr => 'Français (צרפתית)';
+
+  @override
+  String get settings_language_es => 'Español (ספרדית)';
+
+  @override
+  String get settings_language_ru => 'Русский (רוסית)';
+
+  @override
+  String get settings_language_ar => 'العربية (ערבית)';
 
   @override
   String get settings_current_rate => 'תעריף נוכחי';
@@ -2003,4 +2016,10 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get shift_template_new_title => 'תבנית משמרת חדשה';
+
+  @override
+  String get expenses_type_income => 'הכנסה';
+
+  @override
+  String get expenses_type_expense => 'הוצאה';
 }

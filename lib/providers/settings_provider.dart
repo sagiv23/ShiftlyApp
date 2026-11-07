@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -133,7 +134,15 @@ class SettingsProvider with ChangeNotifier {
     if (localeCode != null) {
       _locale = Locale(localeCode);
     } else {
-      _locale = const Locale('he', 'IL');
+      final deviceLocale = PlatformDispatcher.instance.locale;
+      final matchedLocale = AppLocalizations.supportedLocales.firstWhere(
+            (supported) => supported.languageCode == deviceLocale.languageCode,
+        orElse: () => const Locale('en'),
+      );
+      _locale = matchedLocale.languageCode == 'he'
+          ? const Locale('he', 'IL')
+          : matchedLocale;
+      box.put('locale', _locale.languageCode);
     }
 
     final List? storedExpenses = box.get('defaultAutomaticExpenses');

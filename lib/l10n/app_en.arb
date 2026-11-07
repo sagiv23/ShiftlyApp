@@ -103,6 +103,10 @@
   "settings_theme_dark": "Night",
   "settings_language_he": "עברית",
   "settings_language_en": "English",
+  "settings_language_fr": "French (Français)",
+  "settings_language_es": "Spanish (Español)",
+  "settings_language_ru": "Russian (Русский)",
+  "settings_language_ar": "Arabic (العربية)",
   "settings_current_rate": "Current Rate",
   "settings_wage_history_title": "Wage History",
   "settings_job_name_label": "Job Name",
@@ -802,5 +806,7 @@
   "shift_template_manage": "Manage Templates",
   "shift_template_empty": "No shift templates saved yet",
   "shift_template_edit_title": "Edit Template",
-  "shift_template_new_title": "New Shift Template"
+  "shift_template_new_title": "New Shift Template",
+  "expenses_type_income": "income",
+  "expenses_type_expense": "expense"
 }

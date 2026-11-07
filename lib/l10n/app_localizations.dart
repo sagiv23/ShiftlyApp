@@ -5,8 +5,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_ar.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
 import 'app_localizations_he.dart';
+import 'app_localizations_ru.dart';
 
 // ignore_for_file: type=lint
 
@@ -94,8 +98,12 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
     Locale('en'),
+    Locale('es'),
+    Locale('fr'),
     Locale('he'),
+    Locale('ru'),
   ];
 
   /// No description provided for @common_app_name.
@@ -679,6 +687,30 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'English'**
   String get settings_language_en;
+
+  /// No description provided for @settings_language_fr.
+  ///
+  /// In he, this message translates to:
+  /// **'Français (צרפתית)'**
+  String get settings_language_fr;
+
+  /// No description provided for @settings_language_es.
+  ///
+  /// In he, this message translates to:
+  /// **'Español (ספרדית)'**
+  String get settings_language_es;
+
+  /// No description provided for @settings_language_ru.
+  ///
+  /// In he, this message translates to:
+  /// **'Русский (רוסית)'**
+  String get settings_language_ru;
+
+  /// No description provided for @settings_language_ar.
+  ///
+  /// In he, this message translates to:
+  /// **'العربية (ערבית)'**
+  String get settings_language_ar;
 
   /// No description provided for @settings_current_rate.
   ///
@@ -3793,6 +3825,18 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'תבנית משמרת חדשה'**
   String get shift_template_new_title;
+
+  /// No description provided for @expenses_type_income.
+  ///
+  /// In he, this message translates to:
+  /// **'הכנסה'**
+  String get expenses_type_income;
+
+  /// No description provided for @expenses_type_expense.
+  ///
+  /// In he, this message translates to:
+  /// **'הוצאה'**
+  String get expenses_type_expense;
 }
 
 class _AppLocalizationsDelegate
@@ -3805,8 +3849,14 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'he'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'ar',
+    'en',
+    'es',
+    'fr',
+    'he',
+    'ru',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -3815,10 +3865,18 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ar':
+      return AppLocalizationsAr();
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
     case 'he':
       return AppLocalizationsHe();
+    case 'ru':
+      return AppLocalizationsRu();
   }
 
   throw FlutterError(

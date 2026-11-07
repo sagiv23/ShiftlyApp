@@ -1,0 +1,812 @@
+{
+  "@@locale": "es",
+  "common_app_name": "Shiftly",
+  "common_continue": "Continuar",
+  "common_back": "Atrás",
+  "common_start": "¡Empezar!",
+  "common_cancel": "Cancelar",
+  "common_save": "Guardar",
+  "common_delete": "Eliminar",
+  "common_confirm": "Confirmar",
+  "common_error": "Error",
+  "common_success": "Éxito",
+  "common_edit": "Editar",
+  "common_tagline": "MOTOR DE TURNOS Y SALARIOS",
+  "nav_calendar": "Calendario",
+  "nav_analytics": "Análisis",
+  "nav_home": "Inicio",
+  "nav_expenses": "Gastos",
+  "nav_summaries": "Resúmenes",
+  "common_hours_suffix": "horas",
+  "common_min_suffix": "min",
+  "common_net": "Neto",
+  "common_shifts_count": "Turnos",
+  "common_save_and_finish": "Guardar y terminar",
+  "common_reset": "Restablecer",
+  "common_reset_and_cancel": "Cancelar y restablecer",
+  "onboarding_welcome_title": "Bienvenido a Shiftly",
+  "onboarding_welcome_subtitle": "La aplicación que te ayuda a registrar tus turnos, salario y propinas de forma fácil y precisa.",
+  "onboarding_welcome_description": "Configuremos algunos datos básicos para empezar.",
+  "onboarding_step_progress": "Paso {current} de {total}",
+  "@onboarding_step_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "onboarding_skip_setup": "Omitir configuración",
+  "onboarding_language_title": "Idioma de la aplicación",
+  "onboarding_language_subtitle": "Elige tu idioma preferido.",
+  "onboarding_currency_title": "Seleccionar moneda",
+  "onboarding_currency_subtitle": "¿Qué moneda te gustaría usar para el salario y los gastos?",
+  "monthly_progress_setting_title": "Significado de la línea de progreso",
+  "monthly_progress_mode_month": "Tiempo transcurrido en el mes",
+  "monthly_progress_mode_financial_goal": "Progreso hacia una meta financiera",
+  "monthly_progress_goal_amount": "Monto de la meta mensual",
+  "monthly_progress_invalid_goal": "Ingresa una meta financiera mayor que cero",
+  "monthly_progress_month_elapsed": "Progreso del mes",
+  "monthly_progress_financial_goal": "Progreso de la meta",
+  "onboarding_breaks_title": "Configuración de descansos",
+  "onboarding_breaks_subtitle": "¿Cuánto suele durar un descanso?",
+  "onboarding_breaks_enable": "Activar descansos",
+  "onboarding_breaks_paid_label": "Descanso pagado (minutos)",
+  "onboarding_breaks_unpaid_label": "Descanso no pagado (minutos)",
+  "onboarding_auto_expenses_title": "Gastos recurrentes",
+  "onboarding_auto_expenses_subtitle": "¿Tienes gastos recurrentes en cada turno? (ej. transporte)",
+  "onboarding_auto_expenses_enable": "Activar gastos automáticos",
+  "onboarding_auto_expenses_add_button": "Añadir gasto",
+  "onboarding_auto_expenses_desc_label": "Descripción",
+  "onboarding_auto_expenses_invalid_amount": "El monto debe ser mayor a 0",
+  "onboarding_auto_incomes_title": "Ingresos recurrentes",
+  "onboarding_auto_incomes_subtitle": "¿Tienes ingresos recurrentes en cada turno? (ej. reembolso de transporte)",
+  "onboarding_auto_incomes_enable": "Activar ingresos automáticos",
+  "onboarding_auto_incomes_add_button": "Añadir ingreso",
+  "onboarding_job_types_title": "Turnos y salarios",
+  "onboarding_job_types_subtitle": "Define tus diferentes roles y tarifas por hora.",
+  "onboarding_job_types_add_button": "Añadir tipo de turno",
+  "onboarding_job_types_edit_button": "Editar tipo de turno",
+  "onboarding_job_types_delete_title": "Eliminar puesto",
+  "onboarding_job_types_delete_desc": "Eliminar puesto ",
+  "onboarding_job_types_rate_suffix": "por hora",
+  "onboarding_job_types_same": "Ya existe un puesto con este nombre",
+  "default_job_buffet": "Bufé",
+  "default_job_steward": "Steward",
+  "default_job_unloading": "Descarga",
+  "default_expenses_trips": "Viajes",
+  "settings_title": "Ajustes",
+  "settings_section_app": "Aplicación",
+  "settings_section_work_pay": "Trabajo y pago",
+  "settings_section_breaks": "Duración de los descansos (min)",
+  "settings_section_danger": "Zona de peligro",
+  "settings_field_theme": "Tema",
+  "settings_field_language": "Idioma de la aplicación",
+  "settings_field_currency": "Moneda de visualización",
+  "settings_field_currency_sub": "Moneda utilizada para el salario y los gastos",
+  "settings_field_breaks_enabled": "Activar descansos",
+  "settings_field_breaks_enabled_sub": "Mostrar u ocultar la configuración de descansos en la app",
+  "settings_field_paid_break": "Descanso corto (Pagado)",
+  "settings_field_unpaid_break": "Descanso largo (No pagado)",
+  "settings_action_update_breaks": "Actualizar horarios",
+  "settings_action_factory_reset": "Restablecer valores de fábrica",
+  "settings_action_factory_reset_sub": "Eliminar permanentemente todos los turnos, roles y gastos",
+  "settings_dialog_update_breaks_title": "Actualizar tiempos de descanso",
+  "settings_dialog_factory_reset_title": "¿Restablecer datos?",
+  "settings_dialog_factory_reset_content": "¿Estás seguro de que deseas eliminar todos los datos de trabajo y restablecer la aplicación? Esta acción no se puede deshacer.",
+  "settings_dialog_final_confirm_title": "Confirmación final",
+  "settings_dialog_final_confirm_content_1": "Advertencia: Todo el historial de turnos, salarios y gastos se eliminará permanentemente.",
+  "settings_dialog_final_confirm_content_2": "¿Estás seguro de que quieres eliminar todo?",
+  "settings_dialog_final_confirm_button": "Eliminar todo permanentemente",
+  "settings_dialog_error_enter_desc": "Por favor, introduce una descripción para cada gasto",
+  "settings_dialog_error_enter_income_desc": "Por favor, introduce una descripción para cada ingreso",
+  "settings_theme_system": "Sistema",
+  "settings_theme_light": "Día",
+  "settings_theme_dark": "Noche",
+  "settings_language_he": "עברית",
+  "settings_language_en": "English",
+  "settings_language_fr": "Français",
+  "settings_language_es": "Español",
+  "settings_language_ru": "Русский",
+  "settings_language_ar": "العربية",
+  "settings_current_rate": "Tarifa actual",
+  "settings_wage_history_title": "Historial salarial",
+  "settings_job_name_label": "Nombre del puesto",
+  "settings_job_rate_label": "Tarifa por hora (Nueva)",
+  "home_empty_state_title": "Aún no hay turnos registrados",
+  "home_empty_state_subtitle": "Haz clic en \"Nuevo turno\" para empezar",
+  "home_total_card_title": "Total acumulado (Neto menos gastos)",
+  "home_total_card_hours": "Horas",
+  "home_total_card_base": "Base",
+  "home_total_card_tips": "Propinas",
+  "home_total_card_expenses": "Gastos",
+  "home_active_timer_break": "Turno en descanso...",
+  "home_active_timer_active": "Turno activo:",
+  "home_active_timer_time": "Tiempo:",
+  "home_shift_list_net_total": "Total neto",
+  "home_shift_list_no_shifts": "No hay turnos este día",
+  "home_shift_list_no_shifts_month": "No hay turnos este mes",
+  "shift_history_empty_title": "No se encontraron turnos",
+  "shift_history_empty_subtitle": "No hay historial de turnos disponible",
+  "home_shift_list_select_day": "Selecciona un día para ver los turnos",
+  "home_shift_list_shifts_on": "Turnos el",
+  "home_action_new_shift": "Nuevo turno",
+  "home_action_calendar": "Calendario",
+  "calendar_legend_today": "Hoy",
+  "calendar_legend_selected": "Seleccionado",
+  "calendar_legend_shift": "Turno",
+  "calendar_legend_holiday": "Festivo / Shabat",
+  "calendar_legend_holiday_shift": "Turno en festivo",
+  "expenses_title": "Gastos e ingresos",
+  "expenses_tab_expenses": "Gastos",
+  "expenses_tab_incomes": "Ingresos especiales",
+  "expenses_auto_section_title": "Gastos recurrentes de turno",
+  "expenses_auto_section_subtitle": "Añadir gastos recurrentes a cada nuevo turno",
+  "expenses_auto_section_enable": "Gastos automáticos",
+  "expenses_history_section_title": "Desglose mensual de gastos",
+  "expenses_action_add_auto": "Añadir gasto recurrente",
+  "expenses_action_update_settings": "Actualizar ajustes",
+  "expenses_action_new_expense": "Nuevo gasto",
+  "expenses_dialog_add_title": "Añadir gasto",
+  "expenses_dialog_edit_title": "Editar gasto",
+  "expenses_dialog_delete_title": "Eliminar gasto",
+  "expenses_no_history": "No hay gastos registrados",
+  "expenses_delete_expense_confirm_content": "¿Eliminar \"[[desc]]\" por [[amount]]?",
+  "expenses_total_label": "Total",
+  "expenses_auto_updated_msg": "Ajustes de gastos automáticos actualizados",
+  "expenses_deleted_msg": "Gasto eliminado",
+  "expenses_link_shift_dialog_title": "Vincular al turno",
+  "expenses_link_shift_dialog_content": "Se encontró un turno en esta fecha. ¿Deseas vincular este [[type]] al turno o guardarlo de forma independiente?",
+  "expenses_link_shift_button": "Vincular al turno",
+  "expenses_save_standalone_button": "Guardar independiente",
+  "expenses_no_shift_dialog_title": "No se encontró ningún turno",
+  "expenses_no_shift_dialog_content": "No hay ningún turno en esta fecha. ¿Aún quieres crear este [[type]]?",
+  "expenses_create_anyway_button": "Crear de todos modos",
+  "expenses_auto_incomes_updated_msg": "Ajustes de ingresos automáticos actualizados",
+  "expenses_auto_incomes_section_title": "Ingresos recurrentes de turno",
+  "expenses_auto_incomes_section_enable": "Ingresos automáticos",
+  "expenses_auto_incomes_section_subtitle": "Añadir ingresos recurrentes a cada nuevo turno",
+  "incomes_history_section_title": "Desglose mensual de ingresos",
+  "incomes_action_new_income": "Nuevo ingreso",
+  "incomes_dialog_add_title": "Añadir ingreso especial",
+  "incomes_dialog_edit_title": "Editar ingreso",
+  "incomes_dialog_delete_title": "Eliminar ingreso",
+  "incomes_no_history": "No hay ingresos especiales registrados",
+  "incomes_delete_income_confirm_content": "¿Eliminar \"[[desc]]\" por [[amount]]?",
+  "incomes_deleted_msg": "Ingreso eliminado",
+  "add_shift_title": "Nuevo turno",
+  "add_shift_edit_title": "Editar turno",
+  "add_shift_timer_tab": "Temporizador",
+  "add_shift_manual_tab": "Manual",
+  "add_shift_paste_tab": "Pegar",
+  "add_shift_timer_accumulated_live": "Acumulado en vivo",
+  "add_shift_timer_countdown": "Cuenta regresiva: ",
+  "add_shift_timer_break_paid": "En descanso pagado...",
+  "add_shift_timer_break_unpaid": "En descanso no pagado (temporizador detenido)",
+  "add_shift_timer_total_break_unpaid": "Total de descansos no pagados:",
+  "add_shift_timer_resume_work": "Volver al trabajo",
+  "add_shift_timer_stop_shift": "Detener turno",
+  "add_shift_timer_start_shift": "Iniciar turno",
+  "add_shift_timer_continue_work": "Continuar trabajando",
+  "add_shift_timer_stopped_msg": "El temporizador se detuvo. ¿Deseas guardar el turno o seguir trabajando?",
+  "add_shift_timer_reset_title": "Restablecer temporizador",
+  "add_shift_timer_reset_desc": "¿Estás seguro de que quieres restablecer el temporizador? Se perderán todos los datos actuales.",
+  "add_shift_manual_time_section": "Hora",
+  "add_shift_manual_date_label": "Fecha",
+  "add_shift_manual_start_time_label": "Hora de inicio",
+  "add_shift_manual_end_time_label": "Hora de fin",
+  "add_shift_manual_break_type_section": "Tipo de descanso",
+  "add_shift_manual_no_break": "Ninguno",
+  "add_shift_manual_paid_break": "Pagado",
+  "add_shift_manual_unpaid_break": "No pagado",
+  "add_shift_manual_work_tips_section": "Trabajo y propinas",
+  "add_shift_manual_job_type_label": "Tipo de puesto",
+  "add_shift_paste_title": "Pegar texto del turno",
+  "add_shift_paste_default_job_label": "Tipo de puesto predeterminado",
+  "add_shift_paste_format_info": "Formato: DD.MM (o DD.MM.AAAA) - HH:mm - HH:mm [descanso] [+ propinas]\n(Si se omite el año, se infiere el año actual)",
+  "add_shift_paste_hint": "Pega los turnos aquí...\nEjemplo:\n24.6.2026 - 17:30 - 23:00 45 minutos + 50",
+  "add_shift_paste_parse_button": "Analizar y guardar todo",
+  "add_shift_paste_parse_dialog_title": "Analizar turnos",
+  "add_shift_paste_parse_dialog_desc": "¿Analizar y guardar los turnos del texto pegado?",
+  "add_shift_paste_error": "Por favor, verifica el formato e inténtalo de nuevo",
+  "add_shift_tips_title": "Propinas",
+  "add_shift_tips_total": "Total",
+  "add_shift_tips_hint": "Monto de propina",
+  "add_shift_tips_add_button": "Añadir propina",
+  "add_shift_expenses_title": "Gastos del turno",
+  "add_shift_expenses_total": "Total",
+  "add_shift_expenses_add_button": "Añadir gasto",
+  "add_shift_incomes_title": "Ingresos del turno",
+  "add_shift_incomes_total": "Total",
+  "add_shift_incomes_add_button": "Añadir ingreso",
+  "add_shift_shift_ended_dialog_title": "Guardar turno",
+  "add_shift_shift_ended_dialog_desc": "¿Estás seguro de que deseas guardar los detalles del turno?",
+  "add_shift_shift_ended_edit_dialog_desc": "¿Estás seguro de que deseas guardar los detalles del turno?",
+  "add_shift_shift_edit_dialog_title": "Actualizar turno",
+  "add_shift_shift_saved": "Turno guardado con éxito",
+  "add_shift_preview_title": "Vista previa",
+  "add_shift_segments_count": "{count} períodos",
+  "@add_shift_segments_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "add_shift_overlap_title": "Turno superpuesto",
+  "add_shift_overlap_content": "Este turno se superpone con {count} turno(s) existente(s):\n\n{details}\n\n¿Guardarlo de todos modos?",
+  "@add_shift_overlap_content": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "add_shift_overlap_confirm": "Guardar de todos modos",
+  "add_shift_overlap_unknown_job": "Puesto desconocido",
+  "add_shift_pick_a_job": "Por favor, selecciona primero un tipo de puesto",
+  "add_shift_delete_title": "Eliminar turno",
+  "add_shift_delete_desc": "¿Estás seguro de que deseas eliminar el turno del",
+  "add_shift_delete_msg": "Turno eliminado con éxito",
+  "notification_timer_channel_name": "Turno activo",
+  "notification_timer_channel_desc": "Muestra el temporizador del turno actual",
+  "notification_timer_title_active": "Turno activo",
+  "notification_timer_title_paid_break": "Descanso pagado",
+  "notification_timer_title_unpaid_break": "Descanso no pagado",
+  "notification_timer_body_running": "Temporizador en ejecución...",
+  "notification_timer_body_countdown": "Cuenta regresiva: [[time]]",
+  "filter_title": "Filtros de turnos",
+  "filter_clear_all": "Restablecer filtro",
+  "filter_apply": "Aplicar filtros",
+  "filter_wage_range": "Rango de salario total",
+  "filter_tips_range": "Rango de propinas",
+  "filter_expenses_range": "Rango de gastos",
+  "filter_duration_range": "Rango de duración (Horas)",
+  "filter_date_range": "Rango de fechas",
+  "filter_job_type": "Tipo de puesto",
+  "filter_select_all": "Seleccionar todo",
+  "filter_error_no_job_selected": "Por favor, selecciona al menos un tipo de puesto",
+  "filter_active_filters": "Filtros activos:",
+  "filter_chip_wage": "Salario: [[min]] - [[max]]",
+  "filter_chip_tips": "Propinas: [[min]] - [[max]]",
+  "filter_chip_expenses": "Gastos: [[min]] - [[max]]",
+  "filter_chip_duration": "Duración: [[min]] - [[max]] h",
+  "filter_chip_date": "Fecha: [[start]] - [[end]]",
+  "filter_chip_job": "Puesto: [[name]]",
+  "filter_empty_state_title": "No hay turnos coincidentes",
+  "filter_empty_state_subtitle": "Intenta ajustar tus filtros para ver más resultados",
+  "auth_login_title": "Bienvenido de nuevo",
+  "auth_register_title": "Crear una nueva cuenta",
+  "auth_full_name_label": "Nombre completo",
+  "auth_email_label": "Correo electrónico",
+  "auth_password_label": "Contraseña",
+  "auth_error_name_empty": "Por favor, introduce tu nombre",
+  "auth_error_email_invalid": "Correo electrónico inválido",
+  "auth_error_password_length": "La contraseña debe tener al menos 6 caracteres",
+  "auth_login_button": "Iniciar sesión",
+  "auth_register_button": "Registrarse",
+  "auth_no_account_link": "¿No tienes cuenta? Regístrate ahora",
+  "auth_has_account_link": "¿Ya tienes una cuenta? Inicia sesión",
+  "auth_error_generic": "Ocurrió un error. Por favor, inténtalo de nuevo.",
+  "settings_logout_title": "Cerrar sesión del sistema",
+  "settings_logout_dialog_title": "Cerrar sesión",
+  "settings_logout_confirm_content": "¿Estás seguro de que quieres cerrar sesión?",
+  "settings_logout_confirm_button": "Cerrar sesión",
+  "auth_login_success": "Inicio de sesión exitoso",
+  "auth_register_success": "Cuenta creada con éxito",
+  "auth_birth_date_label": "Fecha de nacimiento",
+  "auth_error_underage": "El usuario debe tener al menos 12 años",
+  "auth_error_birth_date_empty": "Por favor, selecciona tu fecha de nacimiento",
+  "auth_error_email_exists": "Esta dirección de correo electrónico ya está en uso",
+  "auth_error_user_not_found": "Usuario no encontrado o contraseña incorrecta",
+  "auth_error_network": "Error de conexión de red. Por favor, comprueba tu conexión a internet e inténtalo de nuevo.",
+  "auth_continue_as_guest": "Continuar como invitado",
+  "auth_replace_guest_data_title": "¿Reemplazar datos de invitado?",
+  "auth_replace_guest_data_message": "Iniciar sesión en una cuenta existente reemplazará los datos almacenados actualmente en este dispositivo con los datos asociados a tu cuenta. Tus datos de invitado podrían perderse permanentemente y no se podrán recuperar a menos que tengas una copia de seguridad. Asegúrate de entender estas consecuencias antes de continuar.",
+  "auth_replace_guest_data_confirm": "Continuar",
+  "auth_replace_guest_data_cancel": "Cancelar",
+  "auth_guest_mode_title": "Modo invitado",
+  "auth_guest_mode_subtitle": "Estás usando Shiftly en modo invitado. Tus datos se guardan localmente en este dispositivo. Crea una cuenta para sincronizar entre dispositivos o inicia sesión en una cuenta existente.",
+  "auth_guest_migration_failed": "No se pudieron recuperar los datos de la cuenta. Tus datos de invitado se han conservado.",
+  "auth_register_guest_transfer": "Iniciar sesión o crear cuenta de Shiftly",
+  "auth_user_deleted_local_data_preserved": "Tu cuenta ya no existe en la base de datos. Se ha cerrado tu sesión, pero tus datos locales siguen guardados en este dispositivo.",
+  "home_welcome_back": "Hola, [[name]]",
+  "settings_user_name": "Nombre",
+  "settings_user_email": "Correo electrónico",
+  "settings_user_password": "Contraseña",
+  "settings_user_edit_title": "Editar perfil",
+  "settings_user_update_success": "Perfil actualizado con éxito",
+  "settings_logout_success": "Sesión cerrada con éxito",
+  "settings_byos_title": "Sincronización BYOS",
+  "settings_byos_connected": "Conectado a Google Drive",
+  "settings_byos_last_backup": "Última copia de seguridad: [[time]]",
+  "settings_byos_backup_now": "Hacer copia de seguridad ahora",
+  "settings_byos_auto_sync": "Sincronización automática",
+  "settings_byos_auto_sync_sub": "Sincronizar cambios instantáneamente en la nube",
+  "settings_byos_disconnect": "Desconectar",
+  "settings_byos_login_shiftly": "Iniciar sesión en la cuenta de Shiftly",
+  "settings_byos_login_shiftly_sub": "Sincronización completa en nuestra nube",
+  "settings_byos_method_title": "Método BYOS (Google Drive)",
+  "settings_byos_method_sub": "Copia de seguridad en tu nube privada",
+  "settings_byos_restore_dialog_title": "Sincronización BYOS",
+  "settings_byos_restore_dialog_content": "¿Te gustaría restaurar los datos existentes desde tu Google Drive?",
+  "settings_byos_restore_confirm": "Restaurar",
+  "settings_byos_restore_cancel": "Ahora no",
+  "settings_byos_login_hint": "Inicia sesión para respaldar datos en la nube y usar más dispositivos",
+  "settings_restore_success": "Restauración exitosa: se restauraron [[shifts]] turnos y [[jobs]] puestos.",
+  "settings_restore_no_data": "No se encontró ninguna copia de seguridad en Google Drive o ocurrió un error.",
+  "export_title": "Exportar turnos",
+  "export_format_label": "Formato de archivo",
+  "export_format_csv": "CSV (Compatible con Excel)",
+  "export_format_txt": "Archivo de texto (TXT)",
+  "export_range_label": "Rango de exportación",
+  "export_range_all": "Todos los turnos",
+  "export_range_month": "Mes específico",
+  "export_range_custom": "Rango de fechas personalizado",
+  "export_start_date": "Fecha de inicio",
+  "export_end_date": "Fecha de fin",
+  "export_select_month": "Seleccionar mes",
+  "export_button": "Exportar archivo",
+  "export_success_msg": "Archivo exportado con éxito y guardado en:",
+  "export_empty_error": "No se encontraron turnos en el rango seleccionado para la exportación",
+  "analytics_title": "Análisis e información",
+  "analytics_hero_greeting": "Resumen financiero",
+  "analytics_hero_subtitle": "Tu rendimiento financiero y tus patrones de trabajo de un vistazo",
+  "analytics_section_overview": "Resumen",
+  "analytics_section_earnings": "Ganancias",
+  "analytics_section_work_patterns": "Patrones de trabajo",
+  "analytics_section_pay_breakdown": "Desglose de pago",
+  "analytics_period_monthly": "Mensual",
+  "analytics_period_yearly": "Anual",
+  "analytics_period_all_time": "Todo el tiempo",
+  "analytics_all_jobs": "Todos los puestos",
+  "analytics_stat_total_net": "Neto total",
+  "analytics_stat_total_hours": "Horas totales",
+  "analytics_stat_avg_rate": "Tarifa efectiva media",
+  "analytics_stat_tips": "Gastos de turno netos",
+  "analytics_chart_earnings_title": "Ganancias vs Gastos a lo largo del tiempo",
+  "analytics_chart_earnings_subtitle": "Toca una barra para ver el desglose de pago y gastos",
+  "analytics_chart_jobs_title": "Desglose por puesto",
+  "analytics_chart_jobs_by_earnings": "Por ganancias",
+  "analytics_chart_jobs_by_hours": "Por horas",
+  "analytics_no_data": "No hay datos para el período seleccionado",
+  "analytics_selected_breakdown": "Detalles del día seleccionado",
+  "analytics_selected_month_breakdown": "Detalles del mes seleccionado",
+  "analytics_base_salary": "Salario base",
+  "analytics_chart_cumulative_title": "Crecimiento acumulado de ganancias",
+  "analytics_chart_cumulative_subtitle": "Desplázate horizontalmente para ver el crecimiento salarial a lo largo del tiempo",
+  "analytics_gross_pay": "Bruto",
+  "analytics_net_pay": "Neto",
+  "analytics_kpi_projected": "Pago proyectado de fin de mes",
+  "analytics_kpi_retention": "Tasa de retención neta",
+  "analytics_chart_tod_title": "Desglose por hora del día",
+  "analytics_chart_tod_subtitle": "Comparando horas según los segmentos del día",
+  "analytics_chart_tod_dawn": "Madrugada",
+  "analytics_chart_tod_morning": "Mañana",
+  "analytics_chart_tod_noon": "Mediodía",
+  "analytics_chart_tod_afternoon": "Tarde",
+  "analytics_chart_tod_evening": "Atardecer",
+  "analytics_chart_tod_night": "Noche",
+  "analytics_chart_duration_title": "Desglose de duración de turnos y fatiga",
+  "analytics_chart_duration_subtitle": "Distribución de la duración de los turnos (corto, estándar, largo)",
+  "analytics_duration_short": "Corto",
+  "analytics_duration_standard": "Estándar",
+  "analytics_duration_long": "Largo",
+  "analytics_insights_title": "Información inteligente clave",
+  "analytics_insight_night_boost": "Los turnos de tarde y noche representan el [[percent]]% de tus horas de trabajo.",
+  "analytics_insight_retention": "Retienes el [[percent]]% de las ganancias brutas después de los gastos de turno.",
+  "analytics_insight_fatigue": "El [[percent]]% de tus turnos duraron más de 9 horas.",
+  "analytics_insight_tips_ratio": "Los gastos recurrentes representan el [[percent]]% de tus ganancias totales.",
+  "analytics_shifts_format": "{count} turnos",
+  "analytics_no_shift_data_period": "No hay datos de turnos para este período",
+  "analytics_min_shifts_hourly": "Se requieren al menos 2 turnos para mostrar la tendencia del salario por hora",
+  "analytics_min_shifts_growth": "Se requieren al menos 2 turnos para mostrar el crecimiento acumulado",
+  "analytics_min_shifts_retention": "Se requieren al menos 2 turnos para mostrar la tendencia de retención neta",
+  "analytics_no_job_data": "No hay datos de puestos",
+  "analytics_hours_suffix_format": "{hours} h",
+  "analytics_utilization_format": "{pct}% de utilización",
+  "common_previous": "Anterior",
+  "common_next": "Siguiente",
+  "analytics_tips_and_extra": "Propinas y extras",
+  "analytics_rate_boost_subtitle": "+{boost}/h extras netos",
+  "analytics_retention_subtitle": "Retenido después de los gastos de turno",
+  "analytics_net_extras_pct_subtitle": "{percent}% del pago neto total",
+  "common_unknown_job": "Puesto desconocido",
+  "analytics_duration_range_short": "< 6 horas",
+  "analytics_duration_range_standard": "6-9 horas",
+  "analytics_duration_range_long": "> 9 horas",
+  "profile_title": "Perfil de usuario",
+  "profile_created_at": "Cuenta creada: [[date]]",
+  "profile_birth_date_display": "Fecha de nacimiento: [[date]] (Edad: [[age]])",
+  "profile_stats_title": "Resumen de datos guardados",
+  "profile_shifts_count": "Turnos guardados",
+  "profile_jobs_count": "Roles / Tipos de puesto",
+  "profile_expenses_count": "Gastos guardados",
+  "profile_incomes_count": "Ingresos guardados",
+  "side_menu_profile": "Perfil de usuario",
+  "profile_old_password": "Contraseña actual",
+  "profile_new_password": "Nueva contraseña",
+  "profile_password_error": "La contraseña actual es incorrecta",
+  "profile_password_required": "Por favor, introduce tu contraseña actual",
+  "shift_descriptions_title": "Resúmenes de turnos",
+  "shift_descriptions_empty": "No se encontraron resúmenes de turnos",
+  "shift_description_label": "Resumen / Descripción del turno",
+  "shift_description_hint": "Introduce notas o resumen para este turno...",
+  "shift_descriptions_delete_title": "Eliminar descripción",
+  "shift_descriptions_delete_content": "¿Estás seguro de que deseas eliminar la descripción de este turno?",
+  "shift_descriptions_deleted_msg": "Descripción eliminada con éxito",
+  "shift_descriptions_edit_title": "Editar descripción",
+  "shift_descriptions_updated_msg": "Descripción actualizada con éxito",
+  "common_search_by_date": "Buscar por fecha",
+  "common_clear_date_filter": "Borrar filtro de fecha",
+  "common_filter_date": "Filtrar fecha",
+  "profile_delete_account": "Eliminar cuenta",
+  "profile_delete_account_sub": "Eliminar permanentemente tu cuenta de usuario de Shiftly",
+  "profile_delete_dialog_title": "Eliminar cuenta",
+  "profile_delete_dialog_content": "¿Estás seguro de que deseas eliminar tu cuenta de Shiftly? Esta acción no se puede deshacer.",
+  "profile_delete_final_title": "Confirmación final",
+  "profile_delete_final_content_1": "Tu cuenta de usuario y todos los datos del servidor se eliminarán permanentemente.",
+  "profile_delete_final_content_2": "Esta acción es irreversible. ¿Proceder con la eliminación de la cuenta?",
+  "profile_delete_success": "Cuenta eliminada con éxito",
+  "settings_byos_delete_title": "Eliminar copia de seguridad BYOS",
+  "settings_byos_delete_sub": "Borrar permanentemente el archivo de respaldo de Google Drive",
+  "settings_byos_delete_dialog_title": "Eliminar datos BYOS",
+  "settings_byos_delete_dialog_content": "¿Estás seguro de que deseas eliminar tus datos de respaldo de Google Drive?",
+  "settings_byos_delete_final_title": "Advertencia final",
+  "settings_byos_delete_final_content_1": "Tu archivo de respaldo en Google Drive será destruido por completo.",
+  "settings_byos_delete_final_content_2": "¿Estás seguro de que deseas eliminar permanentemente los datos de respaldo BYOS?",
+  "settings_byos_delete_success": "Datos de respaldo BYOS eliminados con éxito",
+  "add_shift_wage_segments_title": "Segmentos de porcentaje de salario por hora (Opcional)",
+  "add_shift_wage_segments_subtitle": "Define períodos con diferentes porcentajes de salario (ej. 150%)",
+  "add_shift_wage_segments_add": "Añadir período",
+  "add_shift_wage_segment_start": "Inicio",
+  "add_shift_wage_segment_end": "Fin",
+  "add_shift_wage_segment_percentage": "% de salario",
+  "error_segment_invalid_time": "La hora de fin del segmento debe ser posterior a la hora de inicio",
+  "error_segment_overlap": "Hay una superposición en los rangos de tiempo",
+  "legal_privacy_policy": "Política de privacidad",
+  "legal_terms_of_service": "Términos de servicio",
+  "legal_disclaimer_notice": "Al registrarte o iniciar sesión, aceptas nuestros Términos de servicio y Política de privacidad.",
+  "legal_cookie_title": "Preferencias de cookies y privacidad",
+  "legal_cookie_description": "Utilizamos tecnologías de almacenamiento local y cookies para la autenticación esencial, la seguridad y la telemetría de fallos de la aplicación. Puedes elegir aceptarlas todas o usar solo las cookies necesarias.",
+  "legal_cookie_accept_all": "Aceptar todas",
+  "legal_cookie_necessary_only": "Solo necesarias",
+  "legal_cookie_necessary_desc": "Esenciales para la autenticación, almacenamiento seguro de tokens y preferencias de sesión.",
+  "legal_cookie_analytics_desc": "Registros de errores anónimos y telemetría de rendimiento de fallos a través de Firebase.",
+  "legal_cookie_customize": "Personalizar",
+  "legal_cookie_save_preferences": "Guardar preferencias",
+  "legal_cookie_essential": "Cookies esenciales y de seguridad",
+  "legal_cookie_always_active": "Siempre activas",
+  "legal_cookie_optional": "Opcionales",
+  "common_close": "Cerrar",
+  "settings_section_overtime": "Reglas de horas extras",
+  "settings_overtime_enable": "Activar cálculo de horas extras",
+  "settings_overtime_enable_sub": "Calcular automáticamente la compensación de horas extras por niveles",
+  "settings_overtime_regular_threshold": "Umbral de horas normales (horas)",
+  "settings_overtime_tier1_limit": "Duración del primer nivel de horas extras (horas)",
+  "settings_overtime_tier1_rate": "Multiplicador del primer nivel (%)",
+  "settings_overtime_tier2_rate": "Multiplicador del nivel adicional (%)",
+  "settings_overtime_update_button": "Guardar reglas de horas extras",
+  "settings_overtime_saved": "Reglas de horas extras actualizadas con éxito",
+  "overtime_notification_detected": "El turno incluye horas extras. El salario se calculó según las tarifas de horas extras.",
+  "overtime_breakdown_title": "Desglose salarial",
+  "overtime_regular_hours_label": "Horas normales",
+  "overtime_tier1_label": "Horas extras (125%)",
+  "overtime_tier2_label": "Horas extras (150%)",
+  "overtime_tier_custom_label": "Horas extras ([[rate]]%)",
+  "overtime_tag_label": "Horas extras",
+  "overtime_total_paid_time": "Tiempo pagado total",
+  "overtime_total_earnings": "Ganancias totales del turno",
+  "overtime_unpaid_break": "Descanso no pagado",
+  "analytics_overtime_section_title": "Resumen y horas de horas extras",
+  "analytics_regular_hours": "Horas normales",
+  "analytics_overtime_hours": "Horas extras",
+  "analytics_overtime_earnings": "Ganancias de horas extras",
+  "shabbat_tag_label": "Shabat",
+  "holiday_tag_label": "Festivo",
+  "settings_shabbat_section": "Shabat y días festivos",
+  "settings_shabbat_enable": "Cálculo automático de Shabat y días festivos",
+  "settings_shabbat_enable_sub": "Detección automática de Shabat, días festivos y tarifas especiales",
+  "settings_shabbat_multiplier_label": "Tarifa de Shabat (%)",
+  "settings_holiday_multiplier_label": "Tarifa de día festivo (%)",
+  "settings_candle_lighting_label": "Minutos de encendido de velas antes del atardecer",
+  "settings_shabbat_exit_label": "Minutos de salida de Shabat después del atardecer",
+  "settings_shabbat_saved": "Ajustes de Shabat y días festivos guardados con éxito",
+  "settings_shabbat_save_button": "Guardar ajustes de Shabat y días festivos",
+  "analytics_shabbat_holiday_summary": "Resumen de Shabat y días festivos",
+  "analytics_shabbat_hours": "Horas de Shabat",
+  "analytics_holiday_hours": "Horas de días festivos",
+  "onboarding_shabbat_title": "Shabat y festivos judíos",
+  "onboarding_shabbat_subtitle": "Detección automática de Shabat, días festivos y tarifas especiales",
+  "add_shift_unknown_job_title": "Tipo de turno no reconocido: \"{trailingText}\"",
+  "add_shift_unknown_job_desc": "Se encontró un tipo de puesto que no existe en tu lista de puestos. Elige un tipo de puesto alternativo o guárdalo como descripción:",
+  "add_shift_select_job_label": "Seleccionar tipo de puesto",
+  "add_shift_apply_all_instances": "Aplicar automáticamente a todas las instancias de este tipo",
+  "add_shift_skip": "Omitir",
+  "add_shift_save_as_desc": "Guardar solo como descripción",
+  "add_shift_assign": "Asignar",
+  "add_shift_shabbat_breakdown": "Shabbat ({rate}%)",
+  "add_shift_holiday_breakdown": "{name} ({rate}%)",
+  "settings_update_section": "Actualizaciones de la aplicación",
+  "settings_update_check_button": "Buscar actualizaciones en GitHub",
+  "settings_update_current_version": "Versión actual: v{version}",
+  "@settings_update_current_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "settings_update_checking_toast": "Buscando actualizaciones en GitHub Releases...",
+  "settings_update_error_toast": "No se pudo conectar a GitHub. Por favor, inténtalo de nuevo más tarde.",
+  "settings_update_latest_toast": "¡La aplicación está actualizada! (v{version})",
+  "@settings_update_latest_toast": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_title": "¡Nueva versión disponible!",
+  "update_dialog_version_available": "La versión {version} está disponible para descargar",
+  "@update_dialog_version_available": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_installed_version": "Versión instalada: {version}",
+  "@update_dialog_installed_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_new_version": "Nuevo: {version}",
+  "@update_dialog_new_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "update_dialog_whats_new": "Novedades en esta versión:",
+  "update_dialog_downloading": "Descargando archivo de actualización...",
+  "update_dialog_later": "Más tarde",
+  "update_dialog_open_browser": "Abrir en el navegador",
+  "update_dialog_update_now": "Actualizar ahora",
+  "update_dialog_open_download": "Abrir página de descarga",
+  "update_dialog_mandatory_notice": "Esta actualización es necesaria para seguir usando la aplicación.",
+  "update_service_no_changelog": "No hay detalles de registro de cambios disponibles.",
+  "update_service_download_failed": "Error al descargar el archivo (Código de error: {statusCode})",
+  "@update_service_download_failed": {
+    "placeholders": {
+      "statusCode": {
+        "type": "Object"
+      }
+    }
+  },
+  "update_service_no_installer": "No se encontró ninguna aplicación para instalar archivos APK en el dispositivo. Intenta abrirlo en el navegador.",
+  "update_service_cannot_launch_installer": "No se pudo iniciar el instalador de paquetes ({message})",
+  "@update_service_cannot_launch_installer": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "update_service_download_error": "Error durante la descarga de la actualización: {error}",
+  "@update_service_download_error": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "common_show_password": "Mostrar contraseña",
+  "common_hide_password": "Ocultar contraseña",
+  "accessibility_statement": "Declaración de accesibilidad",
+  "settings_accessibility_sub": "Información de accesibilidad y datos de contacto",
+  "all_shifts_title": "Todos los turnos",
+  "export_format_excel": "Hoja de Excel (.xlsx)",
+  "export_format_pdf": "Documento PDF (.pdf)",
+  "export_format_json": "Copia de seguridad JSON (.json)",
+  "export_include_analytics": "Incluir análisis y resúmenes",
+  "export_include_analytics_sub": "Añadir gráficos y resumen de estadísticas al informe",
+  "import_title": "Importar turnos",
+  "import_button": "Importar archivo (.xlsx, .csv, .json)",
+  "import_paste_or_pick": "Elegir archivo o pegar contenido",
+  "import_preview_title": "Vista previa de importación",
+  "import_found_shifts": "Se encontraron {count} turnos válidos para importar",
+  "@import_found_shifts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_confirm_button": "Importar {count} turnos",
+  "@import_confirm_button": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_success_msg": "¡Se importaron {count} turnos con éxito!",
+  "@import_success_msg": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_error_msg": "Error al importar turnos o formato no compatible",
+  "pdf_report_title": "Shiftly - Informe de trabajo y salario",
+  "pdf_detailed_log": "Historial detallado de turnos",
+  "pdf_analytics_summary": "Análisis y resumen",
+  "pdf_total_net_pay": "Pago neto total",
+  "pdf_total_hours": "Horas netas totales",
+  "pdf_avg_rate": "Tarifa efectiva media",
+  "pdf_shifts_count": "Recuento de turnos",
+  "pdf_total_base": "Salario base",
+  "pdf_total_tips": "Propinas",
+  "pdf_total_expenses": "Gastos",
+  "pdf_total_incomes": "Ingresos",
+  "pdf_col_date": "Fecha",
+  "pdf_col_job": "Puesto",
+  "pdf_col_time": "Horas",
+  "pdf_col_start_time": "Hora de inicio",
+  "pdf_col_end_time": "Hora de fin",
+  "pdf_col_tags": "Etiquetas",
+  "pdf_col_net_hours": "H. netas",
+  "pdf_col_hourly_rate": "Tarifa",
+  "pdf_col_base": "Base",
+  "pdf_col_overtime": "Horas extras",
+  "pdf_col_shabbat": "Shabat",
+  "pdf_col_tips": "Propinas",
+  "pdf_col_extras": "Extras",
+  "pdf_col_net_pay": "Neto total",
+  "pdf_col_notes": "Notas",
+  "excel_sheet_shifts": "Detalles de turnos",
+  "excel_sheet_analytics": "Resumen de análisis",
+  "report_generated_label": "Generado: {date}",
+  "@report_generated_label": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "report_total_shifts_label": "Total de turnos: {count}",
+  "@report_total_shifts_label": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "report_category_label": "Categoría",
+  "report_rate_multiplier_label": "Multiplicador de tarifa",
+  "report_hours_label": "Horas",
+  "report_earnings_label": "Ganancias",
+  "report_regular_hours": "Horas normales (100%)",
+  "report_overtime_125": "Horas extras nivel 1 (125%)",
+  "report_overtime_150": "Horas extras nivel 2 (150%)",
+  "report_shabbat_hours": "Horas de Shabat",
+  "report_holiday_hours": "Horas de festivos",
+  "report_disabled_status": "(Desactivado en ajustes)",
+  "report_job_distribution": "Distribución por tipo de puesto",
+  "report_job_name": "Nombre del puesto",
+  "report_pct_net_pay": "% del pago neto",
+  "report_totals_row": "TOTALES",
+  "report_tag_overtime": "Horas extras",
+  "report_tag_shabbat": "Shabat",
+  "report_tag_holiday": "Festivo",
+  "report_page_number": "Página {current} de {total}",
+  "@report_page_number": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "pdf_col_hourly_rate_symbol": "Tarifa por hora ({symbol})",
+  "@pdf_col_hourly_rate_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_base_symbol": "Salario base ({symbol})",
+  "@pdf_col_base_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "report_overtime_125_symbol": "Horas extras 125% ({symbol})",
+  "@report_overtime_125_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "report_overtime_150_symbol": "Horas extras 150% ({symbol})",
+  "@report_overtime_150_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_shabbat_symbol": "Shabat/Festivo ({symbol})",
+  "@pdf_col_shabbat_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_tips_symbol": "Propinas ({symbol})",
+  "@pdf_col_tips_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_total_incomes_symbol": "Ingresos auto ({symbol})",
+  "@pdf_total_incomes_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_total_expenses_symbol": "Gastos auto ({symbol})",
+  "@pdf_total_expenses_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "pdf_col_net_pay_symbol": "Pago neto total ({symbol})",
+  "@pdf_col_net_pay_symbol": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "shift_template_title": "Plantillas de turnos",
+  "shift_template_subtitle": "Plantillas rápidas para agregar turnos de forma rápida y sencilla.",
+  "shift_template_morning": "Turno de mañana",
+  "shift_template_evening": "Turno de tarde",
+  "shift_template_night": "Turno de noche",
+  "shift_template_add_button": "Añadir plantilla",
+  "shift_template_save_current": "Guardar como plantilla",
+  "shift_template_applied_snack": "Plantilla aplicada",
+  "shift_template_saved_snack": "Plantilla guardada con éxito",
+  "shift_template_deleted_snack": "Plantilla eliminada",
+  "shift_template_delete_confirm_title": "Eliminar plantilla",
+  "shift_template_delete_confirm_content": "¿Estás seguro de que deseas eliminar esta plantilla?",
+  "shift_template_name_label": "Nombre de la plantilla",
+  "shift_template_select_prompt": "Plantillas de turnos rápidos",
+  "shift_template_manage": "Gestionar plantillas",
+  "shift_template_empty": "Aún no hay plantillas de turnos guardadas",
+  "shift_template_edit_title": "Editar plantilla",
+  "shift_template_new_title": "Nueva plantilla de turno",
+  "expenses_type_income": "ingreso",
+  "expenses_type_expense": "gasto"
+}

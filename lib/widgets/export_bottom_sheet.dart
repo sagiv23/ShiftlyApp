@@ -339,7 +339,8 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
                       format: _format,
                       currencySymbol: settings.currencySymbol,
                       includeAnalytics: _includeAnalytics,
-                      isHebrew: settings.locale.languageCode == 'he',
+                      isHebrew: settings.locale.languageCode == 'he' ||
+                          settings.locale.languageCode == 'ar',
                       l: l,
                       rules: settings.overtimeRules,
                       shabbatRules: settings.shabbatHolidayRules,
