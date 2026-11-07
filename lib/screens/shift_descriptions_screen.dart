@@ -388,9 +388,59 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                                                 ),
                                               ] else
                                                 ...[
-                                                  const Icon(
-                                                    Icons.chevron_right_rounded,
-                                                    size: 20,
+                                                  PopupMenuButton<String>(
+                                                    icon: const Icon(
+                                                        Icons.more_vert,
+                                                        size: 20),
+                                                    tooltip: l.common_edit,
+                                                    onSelected: (value) {
+                                                      if (value == 'edit') {
+                                                        _editDescription(
+                                                            context, shift);
+                                                      } else
+                                                      if (value == 'delete') {
+                                                        _deleteDescription(
+                                                            context, shift);
+                                                      }
+                                                    },
+                                                    itemBuilder: (context) =>
+                                                    [
+                                                      PopupMenuItem(
+                                                        value: 'edit',
+                                                        child: Row(
+                                                          children: [
+                                                            const Icon(Icons
+                                                                .edit_outlined,
+                                                                size: 18),
+                                                            const SizedBox(
+                                                                width: 8),
+                                                            Text(l.common_edit),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      PopupMenuItem(
+                                                        value: 'delete',
+                                                        child: Row(
+                                                          children: [
+                                                            const Icon(
+                                                              Icons
+                                                                  .delete_outline_rounded,
+                                                              size: 18,
+                                                              color: AppTheme
+                                                                  .softCoral,
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 8),
+                                                            Text(
+                                                              l.common_delete,
+                                                              style: const TextStyle(
+                                                                  color: AppTheme
+                                                                      .softCoral),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ],
                                             ],

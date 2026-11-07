@@ -1181,35 +1181,6 @@ class _AddShiftScreenState extends State<AddShiftScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? l.add_shift_edit_title : l.add_shift_title),
-        bottom: isEditing
-            ? null
-            : PreferredSize(
-          preferredSize: const Size.fromHeight(56),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 760),
-              child: TabBar(
-                controller: _tabController,
-                isScrollable: false,
-                tabAlignment: TabAlignment.fill,
-                tabs: [
-                  Tab(
-                    text: l.add_shift_timer_tab,
-                    icon: const Icon(Icons.timer_outlined),
-                  ),
-                  Tab(
-                    text: l.add_shift_manual_tab,
-                    icon: const Icon(Icons.edit_note_rounded),
-                  ),
-                  Tab(
-                    text: l.add_shift_paste_tab,
-                    icon: const Icon(Icons.paste_rounded),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
       ),
       body: ResponsivePageBody(
         child: SafeArea(
@@ -1268,9 +1239,56 @@ class _AddShiftScreenState extends State<AddShiftScreen>
               buildWageSegmentsSection: _buildWageSegmentsSection,
               buildOvertimeSalaryBreakdownSection: _buildOvertimeSalaryBreakdownSection,
             )
-                : TabBarView(
-              controller: _tabController,
+                : Column(
               children: [
+                Container(
+                  margin: const EdgeInsets.fromLTRB(
+                    AppTheme.spaceSm,
+                    AppTheme.spaceXs,
+                    AppTheme.spaceSm,
+                    AppTheme.spaceXs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme
+                        .of(context)
+                        .cardTheme
+                        .color,
+                    borderRadius: BorderRadius.circular(
+                      AppTheme.radiusMd,
+                    ),
+                    border: Border.all(
+                      color: Theme
+                          .of(
+                        context,
+                      )
+                          .dividerColor
+                          .withValues(alpha: 0.5),
+                    ),
+                  ),
+                  child: TabBar(
+                    controller: _tabController,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    dividerColor: Colors.transparent,
+                    tabs: [
+                      Tab(
+                        text: l.add_shift_timer_tab,
+                        icon: const Icon(Icons.timer_outlined, size: 20),
+                      ),
+                      Tab(
+                        text: l.add_shift_manual_tab,
+                        icon: const Icon(Icons.edit_note_rounded, size: 20),
+                      ),
+                      Tab(
+                        text: l.add_shift_paste_tab,
+                        icon: const Icon(Icons.paste_rounded, size: 20),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
                 AddShiftTimerTab(
                   jobs: jobs,
                   pulseController: _pulseController,
@@ -1380,6 +1398,9 @@ class _AddShiftScreenState extends State<AddShiftScreen>
                   rawTextController: _rawTextController,
                   onSaveRaw: _saveRaw,
                 ),
+              ],
+            ),
+          ),
               ],
             ),
           ),

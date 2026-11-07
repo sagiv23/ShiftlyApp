@@ -288,22 +288,65 @@ class ShiftTile extends StatelessWidget {
               ),
             ),
           ),
-          if (interactive && isWide) ...[
+          if (interactive) ...[
             const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.edit_outlined, size: 20),
-              tooltip: l.common_edit,
-              onPressed: () => _editShift(context),
-            ),
-            IconButton(
-              icon: const Icon(
-                Icons.delete_outline_rounded,
-                size: 20,
-                color: AppTheme.softCoral,
+            if (isWide) ...[
+              IconButton(
+                icon: const Icon(Icons.edit_outlined, size: 20),
+                tooltip: l.common_edit,
+                onPressed: () => _editShift(context),
               ),
-              tooltip: l.common_delete,
-              onPressed: () => _deleteShift(context),
-            ),
+              IconButton(
+                icon: const Icon(
+                  Icons.delete_outline_rounded,
+                  size: 20,
+                  color: AppTheme.softCoral,
+                ),
+                tooltip: l.common_delete,
+                onPressed: () => _deleteShift(context),
+              ),
+            ] else ...[
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert, size: 20),
+                tooltip: l.common_edit,
+                onSelected: (value) {
+                  if (value == 'edit') {
+                    _editShift(context);
+                  } else if (value == 'delete') {
+                    _deleteShift(context);
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        const Icon(Icons.edit_outlined, size: 18),
+                        const SizedBox(width: 8),
+                        Text(l.common_edit),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.delete_outline_rounded,
+                          size: 18,
+                          color: AppTheme.softCoral,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          l.common_delete,
+                          style: const TextStyle(color: AppTheme.softCoral),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ],
       ),

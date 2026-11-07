@@ -211,8 +211,8 @@ class ExpenseTile extends StatelessWidget {
                 positiveColor: badgeColor,
               ),
             ),
+            const SizedBox(width: 8),
             if (isWide) ...[
-              const SizedBox(width: 8),
               IconButton(
                 icon: const Icon(Icons.edit_outlined, size: 20),
                 tooltip: AppLocalizations.of(context)!.common_edit,
@@ -226,6 +226,47 @@ class ExpenseTile extends StatelessWidget {
                 ),
                 tooltip: AppLocalizations.of(context)!.common_delete,
                 onPressed: () => _deleteRecord(context),
+              ),
+            ] else ...[
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert, size: 20),
+                tooltip: AppLocalizations.of(context)!.common_edit,
+                onSelected: (value) {
+                  if (value == 'edit') {
+                    onTap();
+                  } else if (value == 'delete') {
+                    _deleteRecord(context);
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        const Icon(Icons.edit_outlined, size: 18),
+                        const SizedBox(width: 8),
+                        Text(AppLocalizations.of(context)!.common_edit),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.delete_outline_rounded,
+                          size: 18,
+                          color: AppTheme.softCoral,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          AppLocalizations.of(context)!.common_delete,
+                          style: const TextStyle(color: AppTheme.softCoral),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ],
