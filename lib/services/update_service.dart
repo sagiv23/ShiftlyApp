@@ -45,7 +45,7 @@ class UpdateService {
 
   /// Checks GitHub Releases API for a newer version than the currently installed app.
   static Future<AppUpdateInfo?> checkForUpdates({AppLocalizations? l}) async {
-    if (kIsWeb) return null;
+    return null;
 
     try {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();

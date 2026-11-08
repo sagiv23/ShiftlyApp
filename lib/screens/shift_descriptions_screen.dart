@@ -333,16 +333,25 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                                                   style: const TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                   ),
+                                                  overflow: TextOverflow
+                                                      .ellipsis,
+                                                  maxLines: 1,
                                                 ),
                                               ),
-                                              Text(
-                                                timeStr,
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: isDark
-                                                      ? AppTheme.secondaryText
-                                                      : Colors.grey.shade600,
+                                              const SizedBox(width: 4),
+                                              Flexible(
+                                                child: Text(
+                                                  timeStr,
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: isDark
+                                                        ? AppTheme.secondaryText
+                                                        : Colors.grey.shade600,
+                                                  ),
+                                                  overflow: TextOverflow
+                                                      .ellipsis,
+                                                  maxLines: 1,
                                                 ),
                                               ),
                                             ],
@@ -359,6 +368,8 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
                                                 ).colorScheme.onSurface,
                                                 fontSize: 14,
                                               ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
                                             ),
                                           ),
                                           trailing: Row(

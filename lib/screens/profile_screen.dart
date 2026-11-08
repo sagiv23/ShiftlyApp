@@ -246,7 +246,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                                       ?.copyWith(
                                     fontWeight: FontWeight.w900,
                                   ),
-                                      ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  textAlign: TextAlign.center,
+                                ),
                                 const SizedBox(height: 4),
                                 Text(
                                   auth.userEmail ?? '',
@@ -254,8 +257,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                                     color: isDark
                                         ? AppTheme.secondaryText
                                         : Colors.grey.shade700,
-                                        ),
-                                      ),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  textAlign: TextAlign.center,
+                                ),
                                 if (auth.userCreatedAt != null) ...[
                                   const SizedBox(height: 6),
                                         Text(

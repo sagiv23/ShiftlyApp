@@ -165,27 +165,36 @@ class ExpenseTile extends StatelessWidget {
               child: Text(
                 record.description,
                 style: const TextStyle(fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
-            if (record.shiftInfo != null)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppTheme.electricCyan.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(
-                    color: AppTheme.electricCyan.withValues(alpha: 0.25),
+            if (record.shiftInfo != null) ...[
+              const SizedBox(width: 4),
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppTheme.electricCyan.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: AppTheme.electricCyan.withValues(alpha: 0.25),
+                    ),
                   ),
-                ),
-                child: Text(
-                  record.shiftInfo!,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.electricCyan,
+                  child: Text(
+                    record.shiftInfo!,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.electricCyan,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
               ),
+            ],
           ],
         ),
         subtitle: Text(

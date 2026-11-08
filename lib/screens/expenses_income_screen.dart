@@ -1079,34 +1079,53 @@ class _MonthItemSectionState extends State<_MonthItemSection> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Icon(
-                      _isExpanded
-                          ? Icons.expand_less_rounded
-                          : Icons.expand_more_rounded,
-                      size: 20,
-                      color: AppTheme.primaryDark,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '$monthName ${date.year}',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Row(
+                    children: [
+                      Icon(
+                        _isExpanded
+                            ? Icons.expand_less_rounded
+                            : Icons.expand_more_rounded,
+                        size: 20,
                         color: AppTheme.primaryDark,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          '$monthName ${date.year}',
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primaryDark,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      '${l.expenses_total_label}: ${UIUtils.formatCurrency(total, symbol: symbol)}',
-                      style: UIUtils.getCurrencyStyle(
-                        context,
-                        widget.isIncome ? total : -total,
-                        baseStyle: const TextStyle(fontWeight: FontWeight.w600),
-                        positiveColor: AppTheme.profit,
+                    Flexible(
+                      child: Text(
+                        '${l.expenses_total_label}: ${UIUtils.formatCurrency(
+                            total, symbol: symbol)}',
+                        style: UIUtils.getCurrencyStyle(
+                          context,
+                          widget.isIncome ? total : -total,
+                          baseStyle: const TextStyle(fontWeight: FontWeight
+                              .w600),
+                          positiveColor: AppTheme.profit,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        textAlign: TextAlign.end,
                       ),
                     ),
                     const SizedBox(width: 4),
