@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/main.dart';
@@ -83,10 +84,28 @@ class AuthProvider with ChangeNotifier {
       final box = _persistence.settingsBox;
       _isLoggedIn = box.get('isLoggedIn', defaultValue: false);
       _isGuest = box.get('isGuest', defaultValue: false);
-      _userName = box.get('userName');
-      _userEmail = box.get('userEmail');
-      _userCreatedAt = box.get('userCreatedAt');
-      _userBirthDate = box.get('userBirthDate');
+
+      // Load secure PII
+      final secureData = await SecureStorageHelper.getUserData();
+      _userEmail = secureData['email'] ?? box.get('userEmail');
+      _userName = secureData['name'] ?? box.get('userName');
+      _userCreatedAt = secureData['createdAt'] ?? box.get('userCreatedAt');
+      _userBirthDate = secureData['birthDate'] ?? box.get('userBirthDate');
+
+      // Migrate legacy plaintext keys to secure storage
+      if (box.containsKey('userEmail') || box.containsKey('userName')) {
+        await SecureStorageHelper.saveUserData(
+          email: _userEmail,
+          name: _userName,
+          createdAt: _userCreatedAt,
+          birthDate: _userBirthDate,
+        );
+        await box.delete('userEmail');
+        await box.delete('userName');
+        await box.delete('userCreatedAt');
+        await box.delete('userBirthDate');
+      }
+
       _token = await SecureStorageHelper.getToken();
 
       if (_token != null && _token!.isNotEmpty) {
@@ -101,7 +120,9 @@ class AuthProvider with ChangeNotifier {
         _isGuest = box.get('isGuest', defaultValue: false);
       }
     } catch (e) {
-      debugPrint('Failed to restore local session: $e');
+      if (kDebugMode) {
+        debugPrint('Failed to restore local session: ${e.runtimeType}');
+      }
     } finally {
       notifyListeners();
     }
@@ -193,14 +214,14 @@ class AuthProvider with ChangeNotifier {
           await _settingsProvider?.updateSettingsFromProfile(profile);
           await _saveToPersistence();
         } catch (e) {
-          debugPrint('Failed to sync profile on load: $e');
+          if (kDebugMode) {
+            debugPrint('Failed to sync profile on load: ${e.runtimeType}');
+          }
           if (e.toString().contains('unauthorized')) {
-            debugPrint('User check failed with unauthorized.');
+            if (kDebugMode) {
+              debugPrint('User check failed with unauthorized.');
+            }
             return await _handleUserNotFoundOrUnauthorized();
-          } else {
-            debugPrint(
-              'Network or server error during profile sync. Continuing with local cached user session.',
-            );
           }
         }
       }
@@ -212,7 +233,9 @@ class AuthProvider with ChangeNotifier {
 
       return _isLoggedIn;
     } catch (e) {
-      debugPrint('Unexpected error in syncProfileAndDrive: $e');
+      if (kDebugMode) {
+        debugPrint('Unexpected error in syncProfileAndDrive: ${e.runtimeType}');
+      }
       if (e.toString().contains('unauthorized')) {
         return await _handleUserNotFoundOrUnauthorized();
       }
@@ -317,14 +340,19 @@ class AuthProvider with ChangeNotifier {
     final box = _persistence.settingsBox;
     await box.put('isLoggedIn', true);
     await box.put('isGuest', false);
-    await box.put('userEmail', _userEmail ?? '');
-    await box.put('userName', _userName ?? '');
-    if (_userCreatedAt != null) {
-      await box.put('userCreatedAt', _userCreatedAt!);
-    }
-    if (_userBirthDate != null) {
-      await box.put('userBirthDate', _userBirthDate!);
-    }
+
+    // Save PII in encrypted secure storage, delete from settingsBox
+    await SecureStorageHelper.saveUserData(
+      email: _userEmail,
+      name: _userName,
+      createdAt: _userCreatedAt,
+      birthDate: _userBirthDate,
+    );
+    await box.delete('userEmail');
+    await box.delete('userName');
+    await box.delete('userCreatedAt');
+    await box.delete('userBirthDate');
+
     if (_token != null && _token!.isNotEmpty) {
       await SecureStorageHelper.saveToken(_token!);
     }
@@ -382,15 +410,17 @@ class AuthProvider with ChangeNotifier {
 
     await _settingsProvider?.updateSettingsFromProfile(data);
 
+    await SecureStorageHelper.saveUserData(
+      email: _userEmail,
+      name: _userName,
+      createdAt: _userCreatedAt,
+      birthDate: _userBirthDate,
+    );
     final box = _persistence.settingsBox;
-    await box.put('userName', _userName ?? '');
-    await box.put('userEmail', _userEmail ?? '');
-    if (_userCreatedAt != null) {
-      await box.put('userCreatedAt', _userCreatedAt!);
-    }
-    if (_userBirthDate != null) {
-      await box.put('userBirthDate', _userBirthDate!);
-    }
+    await box.delete('userName');
+    await box.delete('userEmail');
+    await box.delete('userCreatedAt');
+    await box.delete('userBirthDate');
 
     notifyListeners();
   }
@@ -418,6 +448,7 @@ class AuthProvider with ChangeNotifier {
     await box.delete('userName');
     await box.delete('userCreatedAt');
     await box.delete('userBirthDate');
+    await SecureStorageHelper.deleteUserData();
     await SecureStorageHelper.deleteToken();
     notifyListeners();
 

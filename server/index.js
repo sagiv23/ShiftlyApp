@@ -18,10 +18,30 @@ const pool = new Pool({
     : false
 });
 
+// Simple In-Memory Rate Limiter for Sensitive Endpoints (Brute Force Protection)
+const rateLimitMap = new Map();
+const rateLimiter = (limitMs = 15 * 60 * 1000, maxRequests = 20) => {
+  return (req, res, next) => {
+    const ip = req.ip || req.headers['x-forwarded-for'] || 'unknown';
+    const now = Date.now();
+    let record = rateLimitMap.get(ip);
+
+    if (!record || now > record.resetTime) {
+      record = { count: 1, resetTime: now + limitMs };
+      rateLimitMap.set(ip, record);
+    } else {
+      record.count++;
+      if (record.count > maxRequests) {
+        return res.status(429).json({ error: 'Too many requests, please try again later.' });
+      }
+    }
+    next();
+  };
+};
+
 // Automatically runs database migrations, creates missing tables, indexes, and columns.
 const ensureSchema = async () => {
   try {
-    // 1. Create Users table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
           id SERIAL PRIMARY KEY,
@@ -35,7 +55,6 @@ const ensureSchema = async () => {
       )
     `);
 
-    // 2. Create Job Types table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS job_types (
           id VARCHAR(50) NOT NULL,
@@ -48,7 +67,6 @@ const ensureSchema = async () => {
       )
     `);
 
-    // 3. Create Default Automatic Items table (dedicated table for user fixed expenses & incomes)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS default_automatic_items (
           id VARCHAR(100) NOT NULL,
@@ -62,7 +80,6 @@ const ensureSchema = async () => {
       )
     `);
 
-    // 4. Create Shifts table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS shifts (
           id UUID PRIMARY KEY,
@@ -86,7 +103,6 @@ const ensureSchema = async () => {
 
     await pool.query('ALTER TABLE shifts ADD COLUMN IF NOT EXISTS wage_segments JSONB');
 
-    // 5. Create Financial Transactions table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS financial_transactions (
           id UUID PRIMARY KEY,
@@ -99,19 +115,17 @@ const ensureSchema = async () => {
       )
     `);
 
-    // Performance Indexes
     await pool.query('CREATE INDEX IF NOT EXISTS idx_shifts_user_date ON shifts(user_id, date DESC)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_job_types_user ON job_types(user_id)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_financial_trans_user_date ON financial_transactions(user_id, date DESC)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_default_auto_items_user ON default_automatic_items(user_id)');
 
-    console.log('Database schema & indexes ensured successfully.');
+    console.log('Database schema & security indexes ensured successfully.');
   } catch (err) {
     console.error('Error ensuring schema:', err);
   }
 };
 
-// Root route
 app.get('/', (req, res) => {
   res.send('Shiftly Backend is running successfully!');
 });
@@ -136,9 +150,73 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Register Route
-app.post('/api/auth/register', async (req, res) => {
+// Server-Side Authoritative Salary Calculation Helper
+async function computeAuthoritativePay(client, userId, shiftData) {
+  const {
+    job_type_id, start_time, end_time, tips = 0,
+    break_type = 'none', unpaid_break_minutes = 45,
+    automatic_expenses, automatic_incomes
+  } = shiftData;
+
+  // 1. Verify job_type ownership and fetch rate
+  let baseRate = 40.0;
+  if (job_type_id) {
+    const jobRes = await client.query(
+      'SELECT hourly_rate, wage_history FROM job_types WHERE id = $1 AND user_id = $2',
+      [job_type_id, userId]
+    );
+    if (jobRes.rows.length === 0) {
+      throw new Error('Unauthorized or non-existent job_type_id');
+    }
+    const job = jobRes.rows[0];
+    baseRate = parseFloat(job.hourly_rate) || 40.0;
+  }
+
+  // 2. Compute duration and net paid hours
+  const start = new Date(start_time);
+  const end = new Date(end_time);
+  let grossHours = (end - start) / 3600000;
+  if (grossHours < 0) grossHours += 24;
+
+  let unpaidHours = 0;
+  if (break_type === 'unpaid') {
+    unpaidHours = (parseFloat(unpaid_break_minutes) || 45) / 60.0;
+  }
+  const netPaidHours = Math.max(0, grossHours - unpaidHours);
+  const baseSalary = Math.round(netPaidHours * baseRate * 100) / 100.0;
+
+  // 3. Add tips and automatic incomes, subtract automatic expenses
+  let totalExpenses = 0;
+  if (Array.isArray(automatic_expenses)) {
+    for (const exp of automatic_expenses) {
+      totalExpenses += parseFloat(exp.amount) || 0;
+    }
+  }
+
+  let totalIncomes = 0;
+  if (Array.isArray(automatic_incomes)) {
+    for (const inc of automatic_incomes) {
+      totalIncomes += parseFloat(inc.amount) || 0;
+    }
+  }
+
+  const safeTips = Math.max(0, parseFloat(tips) || 0);
+  const calculatedTotalPay = Math.round((baseSalary + safeTips + totalIncomes - totalExpenses) * 100) / 100.0;
+
+  return {
+    hourlyRate: baseRate,
+    totalPay: calculatedTotalPay
+  };
+}
+
+// Register Route with Input Validation & Rate Limiting
+app.post('/api/auth/register', rateLimiter(15 * 60 * 1000, 15), async (req, res) => {
   const { name, email, password, birthDate, birth_date, automaticExpenseEnabled, automaticIncomeEnabled } = req.body;
+
+  if (!email || !password || password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters and email is required' });
+  }
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const bDate = birthDate || birth_date;
@@ -151,21 +229,24 @@ app.post('/api/auth/register', async (req, res) => {
     );
 
     const user = result.rows[0];
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET);
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
 
     res.status(201).json({ user, token });
   } catch (err) {
     console.error(err);
-    if (err.code === '23505' || (err.message && (err.message.includes('unique') || err.message.includes('already exists')))) {
+    if (err.code === '23505') {
       return res.status(400).json({ error: 'Email already exists' });
     }
     res.status(500).json({ error: 'User registration failed' });
   }
 });
 
-// Login Route
-app.post('/api/auth/login', async (req, res) => {
+// Login Route with Rate Limiting
+app.post('/api/auth/login', rateLimiter(15 * 60 * 1000, 20), async (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
   try {
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = result.rows[0];
@@ -174,7 +255,7 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET);
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
     res.json({
       user: {
         id: user.id,
@@ -193,24 +274,19 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-// Get User Profile Route
 app.get('/api/auth/profile', authenticateToken, async (req, res) => {
   try {
     const result = await pool.query(
       'SELECT id, name, email, birth_date, created_at, automatic_expense_enabled, automatic_income_enabled FROM users WHERE id = $1',
       [req.user.userId]
     );
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+    if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: 'Failed to fetch profile' });
   }
 });
 
-// Update User Profile
 app.put('/api/auth/profile', authenticateToken, async (req, res) => {
   const { name, email, birthDate, birth_date, automaticExpenseEnabled, automaticIncomeEnabled } = req.body;
   try {
@@ -219,16 +295,14 @@ app.put('/api/auth/profile', authenticateToken, async (req, res) => {
 
     let query, params;
     if (parsedBirthDate !== undefined) {
-      query = `UPDATE users SET
-               name = $1, email = $2, birth_date = $3,
+      query = `UPDATE users SET name = $1, email = $2, birth_date = $3,
                automatic_expense_enabled = COALESCE($4, automatic_expense_enabled),
                automatic_income_enabled = COALESCE($5, automatic_income_enabled)
                WHERE id = $6
                RETURNING id, name, email, birth_date, created_at, automatic_expense_enabled, automatic_income_enabled`;
       params = [name, email, parsedBirthDate, automaticExpenseEnabled, automaticIncomeEnabled, req.user.userId];
     } else {
-      query = `UPDATE users SET
-               name = $1, email = $2,
+      query = `UPDATE users SET name = $1, email = $2,
                automatic_expense_enabled = COALESCE($3, automatic_expense_enabled),
                automatic_income_enabled = COALESCE($4, automatic_income_enabled)
                WHERE id = $5
@@ -238,12 +312,10 @@ app.put('/api/auth/profile', authenticateToken, async (req, res) => {
     const result = await pool.query(query, params);
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: 'Failed to update profile' });
   }
 });
 
-// Dedicated Update User Settings Route
 app.put('/api/auth/settings', authenticateToken, async (req, res) => {
   const { automaticExpenseEnabled, automaticIncomeEnabled } = req.body;
   try {
@@ -257,12 +329,10 @@ app.put('/api/auth/settings', authenticateToken, async (req, res) => {
     );
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: 'Failed to update settings' });
   }
 });
 
-// Health check
 app.get('/health', (req, res) => res.send('OK'));
 
 // --- Job Type Routes ---
@@ -295,12 +365,9 @@ app.post('/api/job-types', authenticateToken, async (req, res) => {
   }
 });
 
-// Batch upsert job types
 app.post('/api/job-types/batch', authenticateToken, async (req, res) => {
   const { items } = req.body;
-  if (!Array.isArray(items) || items.length === 0) {
-    return res.json({ status: 'ok', count: 0 });
-  }
+  if (!Array.isArray(items) || items.length === 0) return res.json({ status: 'ok', count: 0 });
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -319,7 +386,6 @@ app.post('/api/job-types/batch', authenticateToken, async (req, res) => {
     res.json({ status: 'ok', count: items.length });
   } catch (err) {
     await client.query('ROLLBACK');
-    console.error('Batch job-types upsert error:', err);
     res.status(500).json({ error: 'Batch job-types save failed' });
   } finally {
     client.release();
@@ -335,35 +401,49 @@ app.delete('/api/job-types/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// --- Shift Routes ---
+// --- Shift Routes with Authoritative Server-Side Salary Calculation & IDOR Protection ---
 
 app.get('/api/shifts', authenticateToken, async (req, res) => {
   try {
-    const result = await pool.query(
-      'SELECT * FROM shifts WHERE user_id = $1 ORDER BY start_time DESC',
-      [req.user.userId]
-    );
+    const result = await pool.query('SELECT * FROM shifts WHERE user_id = $1 ORDER BY start_time DESC', [req.user.userId]);
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch shifts' });
   }
 });
 
-// Single shift upsert
 app.post('/api/shifts', authenticateToken, async (req, res) => {
-  const {
-    id, job_type_id, date, start_time, end_time, tips,
-    break_type, unpaid_break_minutes, hourly_rate,
-    automatic_expenses, automatic_incomes, description, total_pay,
-    wage_segments, wageSegments
-  } = req.body;
+  const client = await pool.connect();
   try {
+    const {
+      id, job_type_id, date, start_time, end_time, tips,
+      break_type, unpaid_break_minutes,
+      automatic_expenses, automatic_incomes, description,
+      wage_segments, wageSegments
+    } = req.body;
+
+    if (!id || !date || !start_time || !end_time) {
+      return res.status(400).json({ error: 'Missing required shift fields' });
+    }
+
+    await client.query('BEGIN');
+
+    // IDOR Protection: Check if shift already exists and belongs to another user
+    const existing = await client.query('SELECT user_id FROM shifts WHERE id = $1', [id]);
+    if (existing.rows.length > 0 && existing.rows[0].user_id !== req.user.userId) {
+      await client.query('ROLLBACK');
+      return res.status(403).json({ error: 'Forbidden: Cannot overwrite another user\'s shift' });
+    }
+
+    // Authoritative Server-Side Calculation (Ignoring client-submitted total_pay)
+    const { hourlyRate, totalPay } = await computeAuthoritativePay(client, req.user.userId, req.body);
+
     const autoExpJson = automatic_expenses && automatic_expenses.length > 0 ? JSON.stringify(automatic_expenses) : null;
     const autoIncJson = automatic_incomes && automatic_incomes.length > 0 ? JSON.stringify(automatic_incomes) : null;
     const segments = wage_segments || wageSegments;
     const wageSegJson = segments && segments.length > 0 ? JSON.stringify(segments) : null;
 
-    const result = await pool.query(
+    const result = await client.query(
       `INSERT INTO shifts (id, user_id, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, automatic_expenses, automatic_incomes, description, total_pay, wage_segments)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::jsonb, $12::jsonb, $13, $14, $15::jsonb)
        ON CONFLICT (id) DO UPDATE SET
@@ -381,25 +461,39 @@ app.post('/api/shifts', authenticateToken, async (req, res) => {
        total_pay = EXCLUDED.total_pay,
        wage_segments = EXCLUDED.wage_segments
        RETURNING *`,
-      [id, req.user.userId, job_type_id, date, start_time, end_time, tips, break_type, unpaid_break_minutes, hourly_rate, autoExpJson, autoIncJson, description, total_pay, wageSegJson]
+      [id, req.user.userId, job_type_id, date, start_time, end_time, tips || 0, break_type || 'none', unpaid_break_minutes || 0, hourlyRate, autoExpJson, autoIncJson, description, totalPay, wageSegJson]
     );
+
+    await client.query('COMMIT');
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to save shift' });
+    await client.query('ROLLBACK');
+    console.error('Shift upsert error:', err);
+    if (err.message && err.message.includes('Unauthorized')) {
+      return res.status(403).json({ error: err.message });
+    }
+    res.status(500).json({ error: 'Failed to save shift securely' });
+  } finally {
+    client.release();
   }
 });
 
-// Batch upsert shifts
 app.post('/api/shifts/batch', authenticateToken, async (req, res) => {
   const { items } = req.body;
-  if (!Array.isArray(items) || items.length === 0) {
-    return res.json({ status: 'ok', count: 0 });
-  }
+  if (!Array.isArray(items) || items.length === 0) return res.json({ status: 'ok', count: 0 });
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
     for (const item of items) {
+      if (!item.id || !item.date || !item.start_time || !item.end_time) continue;
+
+      const existing = await client.query('SELECT user_id FROM shifts WHERE id = $1', [item.id]);
+      if (existing.rows.length > 0 && existing.rows[0].user_id !== req.user.userId) {
+        continue; // Skip unauthorized overrides in batch
+      }
+
+      const { hourlyRate, totalPay } = await computeAuthoritativePay(client, req.user.userId, item);
+
       const autoExpJson = item.automatic_expenses && item.automatic_expenses.length > 0 ? JSON.stringify(item.automatic_expenses) : null;
       const autoIncJson = item.automatic_incomes && item.automatic_incomes.length > 0 ? JSON.stringify(item.automatic_incomes) : null;
       const segments = item.wage_segments || item.wageSegments;
@@ -425,8 +519,8 @@ app.post('/api/shifts/batch', authenticateToken, async (req, res) => {
         [
           item.id, req.user.userId, item.job_type_id, item.date,
           item.start_time, item.end_time, item.tips || 0,
-          item.break_type, item.unpaid_break_minutes || 0,
-          item.hourly_rate || 0, autoExpJson, autoIncJson, item.description, item.total_pay || 0, wageSegJson
+          item.break_type || 'none', item.unpaid_break_minutes || 0,
+          hourlyRate, autoExpJson, autoIncJson, item.description, totalPay, wageSegJson
         ]
       );
     }
@@ -450,7 +544,7 @@ app.delete('/api/shifts/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// --- Financial Transactions Routes (Expenses & Special Incomes Unified Table) ---
+// --- Financial Transactions Routes ---
 
 app.get('/api/expenses', authenticateToken, async (req, res) => {
   try {
@@ -481,12 +575,9 @@ app.post('/api/expenses', authenticateToken, async (req, res) => {
   }
 });
 
-// Batch upsert financial transactions
 app.post('/api/expenses/batch', authenticateToken, async (req, res) => {
   const { items } = req.body;
-  if (!Array.isArray(items) || items.length === 0) {
-    return res.json({ status: 'ok', count: 0 });
-  }
+  if (!Array.isArray(items) || items.length === 0) return res.json({ status: 'ok', count: 0 });
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -506,7 +597,6 @@ app.post('/api/expenses/batch', authenticateToken, async (req, res) => {
     res.json({ status: 'ok', count: items.length });
   } catch (err) {
     await client.query('ROLLBACK');
-    console.error('Batch financial transactions upsert error:', err);
     res.status(500).json({ error: 'Batch financial transactions save failed' });
   } finally {
     client.release();
@@ -522,7 +612,7 @@ app.delete('/api/expenses/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// --- Default Automatic Items Routes (Dedicated Table for User Fixed Expenses & Incomes) ---
+// --- Default Automatic Items Routes ---
 
 app.get('/api/automatic-items', authenticateToken, async (req, res) => {
   try {
@@ -552,7 +642,6 @@ app.post('/api/automatic-items/batch', authenticateToken, async (req, res) => {
     res.json({ status: 'ok', count: items ? items.length : 0 });
   } catch (err) {
     await client.query('ROLLBACK');
-    console.error('Batch automatic items error:', err);
     res.status(500).json({ error: 'Failed to save default automatic items' });
   } finally {
     client.release();
@@ -574,7 +663,6 @@ app.delete('/api/auth/profile', authenticateToken, async (req, res) => {
     await pool.query('DELETE FROM users WHERE id = $1', [req.user.userId]);
     res.sendStatus(204);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: 'Failed to delete account' });
   }
 });

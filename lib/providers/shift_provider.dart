@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shiftly/l10n/app_localizations.dart';
@@ -349,58 +350,64 @@ class ShiftProvider with ChangeNotifier {
             .timeout(const Duration(seconds: 8));
         await _settingsProvider?.updateSettingsFromProfile(remoteProfile);
       } catch (e) {
-        debugPrint('Failed to sync profile settings during server sync: $e');
-      }
-
-      // 2. Handle conflicts if requested
-      if (keepLocal == false) {
-        await _persistence.shiftsBox.clear();
-        await _persistence.jobTypesBox.clear();
-        await _persistence.expensesBox.clear();
-      }
-
-      // 3. Save remote to local
-      for (var jobData in remoteJobTypes) {
-        List<WageEntry>? wageHistory;
-        final rawWageHistory =
-            jobData['wage_history'] ?? jobData['wageHistory'];
-        if (rawWageHistory != null && rawWageHistory is List) {
-          wageHistory = rawWageHistory
-              .map(
-                (e) => WageEntry.fromJson(Map<String, dynamic>.from(e as Map)),
-              )
-              .toList();
+        if (kDebugMode) {
+          debugPrint(
+            'Failed to sync profile settings during server sync: ${e
+                .runtimeType}',
+          );
         }
-        final rateVal = jobData['hourly_rate'] ?? jobData['hourlyRate'];
-        final hourlyRate = rateVal != null
-            ? double.parse(rateVal.toString())
-            : AppConstants.defaultHourlyRate;
-
-        final job = JobType(
-          id: jobData['id'].toString(),
-          name: jobData['name'].toString(),
-          hourlyRate: hourlyRate,
-          wageHistory: wageHistory,
-        );
-        await _persistence.jobTypesBox.put(job.id, job);
       }
 
-      for (var expData in remoteExpenses) {
-        final exp = Expense.fromJson(
-          Map<String, dynamic>.from(expData as Map),
+      // 2. Handle atomic remote dataset replacement if keepLocal is false
+      if (keepLocal == false) {
+        await replaceLocalDataAtomic(
+          remoteJobTypes: remoteJobTypes,
+          remoteExpenses: remoteExpenses,
+          remoteShifts: remoteShifts,
         );
-        await _persistence.expensesBox.put(exp.id, exp);
-      }
+      } else {
+        // 3. Save remote to local
+        for (var jobData in remoteJobTypes) {
+          List<WageEntry>? wageHistory;
+          final rawWageHistory =
+              jobData['wage_history'] ?? jobData['wageHistory'];
+          if (rawWageHistory != null && rawWageHistory is List) {
+            wageHistory = rawWageHistory
+                .map(
+                  (e) =>
+                  WageEntry.fromJson(Map<String, dynamic>.from(e as Map)),
+            )
+                .toList();
+          }
+          final rateVal = jobData['hourly_rate'] ?? jobData['hourlyRate'];
+          final hourlyRate = rateVal != null
+              ? double.parse(rateVal.toString())
+              : AppConstants.defaultHourlyRate;
 
-      for (var shiftData in remoteShifts) {
-        final shift = Shift.fromJson(
-          Map<String, dynamic>.from(shiftData as Map),
-        );
-        await _persistence.shiftsBox.put(shift.id, shift);
-      }
+          final job = JobType(
+            id: jobData['id'].toString(),
+            name: jobData['name'].toString(),
+            hourlyRate: hourlyRate,
+            wageHistory: wageHistory,
+          );
+          await _persistence.jobTypesBox.put(job.id, job);
+        }
 
-      // 4. Upload local to server via Batch Endpoints
-      if (keepLocal != false) {
+        for (var expData in remoteExpenses) {
+          final exp = Expense.fromJson(
+            Map<String, dynamic>.from(expData as Map),
+          );
+          await _persistence.expensesBox.put(exp.id, exp);
+        }
+
+        for (var shiftData in remoteShifts) {
+          final shift = Shift.fromJson(
+            Map<String, dynamic>.from(shiftData as Map),
+          );
+          await _persistence.shiftsBox.put(shift.id, shift);
+        }
+
+        // 4. Upload local to server via Batch Endpoints
         await _settingsProvider?.syncSettingsToServer(_authToken!);
         final jobTypeItems = jobTypes
             .map(
@@ -482,7 +489,9 @@ class ShiftProvider with ChangeNotifier {
           });
         }
       }
-      debugPrint('Sync failed: $e');
+      if (kDebugMode) {
+        debugPrint('Sync failed: ${e.runtimeType}');
+      }
       _errorMessage = e.toString();
     } finally {
       _isLoading = false;

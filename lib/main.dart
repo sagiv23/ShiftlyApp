@@ -33,7 +33,9 @@ void main() async {
       };
     }
   } catch (e) {
-    debugPrint('Firebase initialization skipped/failed (non-fatal): $e');
+    if (kDebugMode) {
+      debugPrint('Firebase initialization skipped/failed: ${e.runtimeType}');
+    }
   }
 
   try {
@@ -41,7 +43,9 @@ void main() async {
     try {
       await NotificationService.init();
     } catch (e) {
-      debugPrint('NotificationService.init failed (non-fatal): $e');
+      if (kDebugMode) {
+        debugPrint('NotificationService.init failed: ${e.runtimeType}');
+      }
     }
 
     await initializeDateFormatting('he_IL', null);
@@ -82,7 +86,9 @@ void main() async {
       ),
     );
   } catch (e) {
-    debugPrint('Critical error during initialization: $e');
+    if (kDebugMode) {
+      debugPrint('Critical error during initialization: ${e.runtimeType}');
+    }
     // Still try to run the app even if some services fail
     runApp(
       const MaterialApp(

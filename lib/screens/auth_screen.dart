@@ -552,7 +552,10 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.length < 6) {
+                            if (value == null ||
+                                value.length < 8 ||
+                                !RegExp(r'^(?=.*[A-Za-z])(?=.*\d)').hasMatch(
+                                    value)) {
                               return l.auth_error_password_length;
                             }
                             return null;

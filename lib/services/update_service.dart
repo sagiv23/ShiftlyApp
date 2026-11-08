@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_filex/open_filex.dart';
@@ -18,6 +19,7 @@ class AppUpdateInfo {
   final bool changelogIsRtl;
   final String? downloadUrl;
   final String releaseUrl;
+  final String? expectedSha256;
   final DateTime? publishedAt;
   final bool isNewer;
 
@@ -29,6 +31,7 @@ class AppUpdateInfo {
     required this.changelogIsRtl,
     this.downloadUrl,
     required this.releaseUrl,
+    this.expectedSha256,
     this.publishedAt,
     required this.isNewer,
   });
@@ -61,9 +64,11 @@ class UpdateService {
           .timeout(const Duration(seconds: 10));
 
       if (response.statusCode != 200) {
-        debugPrint(
-          'Update check failed with status code: ${response.statusCode}',
-        );
+        if (kDebugMode) {
+          debugPrint(
+            'Update check failed with status code: ${response.statusCode}',
+          );
+        }
         return null;
       }
 
@@ -96,6 +101,8 @@ class UpdateService {
         json['assets'],
       );
 
+      final String? expectedSha256 = _extractExpectedSha256(rawChangelog);
+
       final bool isNewer = _isVersionNewer(versionName, currentVersion);
 
       return AppUpdateInfo(
@@ -109,13 +116,24 @@ class UpdateService {
         ).hasMatch(rawChangelog),
         downloadUrl: downloadUrl,
         releaseUrl: releaseUrl,
+        expectedSha256: expectedSha256,
         publishedAt: publishedAt,
         isNewer: isNewer,
       );
     } catch (e) {
-      debugPrint('Error checking for updates: $e');
+      if (kDebugMode) {
+        debugPrint('Error checking for updates: ${e.runtimeType}');
+      }
       return null;
     }
+  }
+
+  static String? _extractExpectedSha256(String rawChangelog) {
+    final match = RegExp(
+      r'SHA-?256:\s*([a-fA-F0-9]{64})',
+      caseSensitive: false,
+    ).firstMatch(rawChangelog);
+    return match?.group(1);
   }
 
   static String? _downloadUrlForCurrentPlatform(dynamic assets) {
@@ -200,9 +218,11 @@ class UpdateService {
         .toList();
   }
 
-  /// Downloads the APK file from [downloadUrl] and launches the Android installer via OpenFilex.
+  /// Downloads the APK file from [downloadUrl], verifies SHA-256 integrity,
+  /// and launches the Android installer via OpenFilex.
   static Future<void> downloadAndInstallApk({
     required String downloadUrl,
+    String? expectedSha256,
     required Function(double progress) onProgress,
     required Function(String filePath) onCompleted,
     required Function(String errorMessage) onError,
@@ -249,6 +269,23 @@ class UpdateService {
       await sink.close();
       client.close();
 
+      // Cryptographic SHA-256 integrity check
+      final bytes = await apkFile.readAsBytes();
+      final actualSha256 = sha256.convert(bytes).toString().toLowerCase();
+
+      if (expectedSha256 != null && expectedSha256.isNotEmpty) {
+        if (actualSha256 != expectedSha256.toLowerCase().trim()) {
+          if (await apkFile.exists()) {
+            await apkFile.delete();
+          }
+          final String integrityErr =
+              l?.update_service_download_failed(403) ??
+              'אימות אבטחה נכשל: חתימת הקובץ שהורד אינה תואמת (SHA-256 Mismatch).';
+          onError(integrityErr);
+          return;
+        }
+      }
+
       onCompleted(apkFile.path);
 
       // Prompt Android OS package installer
@@ -258,9 +295,11 @@ class UpdateService {
       );
 
       if (openResult.type != ResultType.done) {
-        debugPrint(
-          'OpenFilex result type: ${openResult.type}, message: ${openResult.message}',
-        );
+        if (kDebugMode) {
+          debugPrint(
+            'OpenFilex result type: ${openResult.type}, message: ${openResult.message}',
+          );
+        }
         if (openResult.type == ResultType.noAppToOpen) {
           final String noInstallerStr =
               l?.update_service_no_installer ??
@@ -274,7 +313,9 @@ class UpdateService {
         }
       }
     } catch (e) {
-      debugPrint('Error downloading and installing APK: $e');
+      if (kDebugMode) {
+        debugPrint('Error downloading and installing APK: ${e.runtimeType}');
+      }
       final String downloadErrStr =
           l?.update_service_download_error(e) ?? 'שגיאה במהלך הורדת העדכון: $e';
       onError(downloadErrStr);
@@ -287,7 +328,9 @@ class UpdateService {
       final Uri uri = Uri.parse(url);
       return await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (e) {
-      debugPrint('Error launching release URL: $e');
+      if (kDebugMode) {
+        debugPrint('Error launching release URL: ${e.runtimeType}');
+      }
       return false;
     }
   }

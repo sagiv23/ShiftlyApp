@@ -415,7 +415,9 @@ class ApiService {
         );
       }
     } catch (e) {
-      debugPrint('deleteAccount exception: $e');
+      if (kDebugMode) {
+        debugPrint('deleteAccount exception: ${e.runtimeType}');
+      }
     }
   }
 }
