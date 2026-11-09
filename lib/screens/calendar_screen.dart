@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -5,9 +7,11 @@ import 'package:shiftly/l10n/app_localizations.dart';
 import 'package:shiftly/models/shift.dart';
 import 'package:shiftly/providers/settings_provider.dart';
 import 'package:shiftly/providers/shift_provider.dart';
+import 'package:shiftly/screens/secret_screen.dart';
 import 'package:shiftly/services/shabbat_holiday_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_constants.dart';
+import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:shiftly/widgets/adaptive_scaffold.dart';
 import 'package:shiftly/widgets/empty_state_widget.dart';
@@ -33,6 +37,10 @@ class _CalendarScreenState extends State<CalendarScreen>
   AnimationController? _bannerController;
   Animation<double>? _bannerAnimation;
   List<SpecialPeriodBoundary> _monthBoundaries = [];
+
+  Timer? _easterEggProgressTimer;
+  OverlayEntry? _easterEggOverlay;
+  double _easterEggProgress = 0.0;
 
   @override
   void initState() {
@@ -71,8 +79,178 @@ class _CalendarScreenState extends State<CalendarScreen>
 
   @override
   void dispose() {
+    _cancelEasterEggHold();
     _bannerController?.dispose();
     super.dispose();
+  }
+
+  void _startEasterEggHold(BuildContext context) {
+    _cancelEasterEggHold();
+
+    _easterEggProgress = 0.0;
+    const totalDurationMs = 5000;
+    const tickMs = 50;
+    int elapsedMs = 0;
+
+    _showEasterEggOverlay(context);
+
+    _easterEggProgressTimer = Timer.periodic(
+      const Duration(milliseconds: tickMs),
+          (timer) {
+        elapsedMs += tickMs;
+        if (mounted) {
+          setState(() {
+            _easterEggProgress = elapsedMs / totalDurationMs;
+            _easterEggOverlay?.markNeedsBuild();
+          });
+        }
+        if (elapsedMs >= totalDurationMs) {
+          timer.cancel();
+          _completeEasterEggHold(context);
+        }
+      },
+    );
+  }
+
+  void _cancelEasterEggHold() {
+    _easterEggProgressTimer?.cancel();
+    _easterEggProgressTimer = null;
+    _easterEggProgress = 0.0;
+    _removeEasterEggOverlay();
+  }
+
+  void _removeEasterEggOverlay() {
+    _easterEggOverlay?.remove();
+    _easterEggOverlay = null;
+  }
+
+  void _showEasterEggOverlay(BuildContext context) {
+    _removeEasterEggOverlay();
+    _easterEggOverlay = OverlayEntry(
+      builder: (context) {
+        final secondsLeft = ((1.0 - _easterEggProgress) * 5.0).ceil();
+        final isDark = Theme
+            .of(context)
+            .brightness == Brightness.dark;
+
+        return Positioned(
+          top: MediaQuery
+              .of(context)
+              .padding
+              .top + 60,
+          left: 32,
+          right: 32,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: BoxDecoration(
+                color: (isDark ? AppTheme.darkCard : Colors.white)
+                    .withValues(alpha: 0.95),
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(color: AppTheme.electricCyan, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.electricCyan.withValues(alpha: 0.3),
+                    blurRadius: 24,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'מחזיק לפתיחת סוד... ${secondsLeft > 0 ? secondsLeft : 1}s',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: LinearProgressIndicator(
+                      value: _easterEggProgress.clamp(0.0, 1.0),
+                      minHeight: 8,
+                      backgroundColor:
+                      AppTheme.electricCyan.withValues(alpha: 0.2),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        AppTheme.electricCyan,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    Overlay.of(context).insert(_easterEggOverlay!);
+  }
+
+  void _completeEasterEggHold(BuildContext context) {
+    _cancelEasterEggHold();
+    if (!mounted) return;
+    Navigator.of(context).push(
+      AppPageRoute.fadeScale(const SecretScreen()),
+    );
+  }
+
+  Widget _buildNovember23Cell(BuildContext context, DateTime day,
+      DateTime focusedDay) {
+    final isSelected = isSameDay(_selectedDay, day);
+    final isToday = isSameDay(DateTime.now(), day);
+    final isDark = Theme
+        .of(context)
+        .brightness == Brightness.dark;
+    final isWeekend = day.weekday == DateTime.saturday;
+
+    Color textStyleColor;
+    BoxDecoration? decoration;
+
+    if (isSelected) {
+      decoration = const BoxDecoration(
+        color: AppTheme.electricCyan,
+        shape: BoxShape.circle,
+      );
+      textStyleColor = const Color(0xFF040711);
+    } else if (isToday) {
+      decoration = BoxDecoration(
+        color: AppTheme.neonViolet.withValues(alpha: 0.35),
+        shape: BoxShape.circle,
+        border: Border.all(color: AppTheme.neonViolet),
+      );
+      textStyleColor = Colors.white;
+    } else if (isWeekend) {
+      textStyleColor = AppTheme.warmAmber;
+    } else {
+      textStyleColor =
+      isDark ? AppTheme.secondaryText : const Color(0xFF475569);
+    }
+
+    return Listener(
+      behavior: HitTestBehavior.opaque,
+      onPointerDown: (_) => _startEasterEggHold(context),
+      onPointerUp: (_) => _cancelEasterEggHold(),
+      onPointerCancel: (_) => _cancelEasterEggHold(),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        margin: const EdgeInsets.all(6.0),
+        alignment: Alignment.center,
+        decoration: decoration,
+        child: Text(
+          '${day.day}',
+          style: TextStyle(
+            color: textStyleColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
   }
 
   void _showHolidayBanner(
@@ -235,6 +413,17 @@ class _CalendarScreenState extends State<CalendarScreen>
                                       ),
                                     ),
                                     calendarBuilders: CalendarBuilders(
+                                      prioritizedBuilder:
+                                          (context, day, focusedDay) {
+                                        if (day.month == 11 && day.day == 23) {
+                                          return _buildNovember23Cell(
+                                            context,
+                                            day,
+                                            focusedDay,
+                                          );
+                                        }
+                                        return null;
+                                      },
                                       markerBuilder: (context, day, events) {
                                         final hasShift =
                                             events.isNotEmpty ||
