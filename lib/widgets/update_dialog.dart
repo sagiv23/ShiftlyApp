@@ -68,6 +68,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
 
     await UpdateService.downloadAndInstallApk(
       downloadUrl: downloadUrl,
+      expectedSha256: widget.updateInfo.expectedSha256,
       l: l,
       onProgress: (progress) {
         if (mounted) {

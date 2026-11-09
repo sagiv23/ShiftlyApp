@@ -286,15 +286,15 @@ class UpdateService {
         }
       }
 
-      onCompleted(apkFile.path);
-
       // Prompt Android OS package installer
       final OpenResult openResult = await OpenFilex.open(
         apkFile.path,
         type: 'application/vnd.android.package-archive',
       );
 
-      if (openResult.type != ResultType.done) {
+      if (openResult.type == ResultType.done) {
+        onCompleted(apkFile.path);
+      } else {
         if (kDebugMode) {
           debugPrint(
             'OpenFilex result type: ${openResult.type}, message: ${openResult.message}',
