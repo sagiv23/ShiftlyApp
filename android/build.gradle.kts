@@ -22,16 +22,17 @@ subprojects {
 subprojects {
     val configureAndroid = Action<Project> {
         val android = extensions.findByName("android")
-        if (android != null) {
+        if (android is com.android.build.gradle.BaseExtension) {
+            android.compileSdkVersion(36)
+        } else if (android != null) {
             try {
-                val setter = android.javaClass.methods.find { it.name == "setCompileSdk" || it.name == "setCompileSdkVersion" }
-                setter?.invoke(android, 36)
-            } catch (e: Exception) {
-                try {
-                    val method = android.javaClass.methods.find { it.name == "compileSdkVersion" }
-                    method?.invoke(android, 36)
-                } catch (e2: Exception) {
+                val method = android.javaClass.methods.find {
+                    (it.name == "compileSdkVersion" || it.name == "setCompileSdk" || it.name == "setCompileSdkVersion") &&
+                            it.parameterTypes.size == 1 &&
+                            (it.parameterTypes[0] == Int::class.javaPrimitiveType || it.parameterTypes[0] == Integer::class.java)
                 }
+                method?.invoke(android, 36)
+            } catch (_: Exception) {
             }
         }
     }
