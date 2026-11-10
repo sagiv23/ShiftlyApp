@@ -641,7 +641,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     }
   }
 
-  void _showEditProfileDialog(BuildContext context) {
+  Future<void> _showEditProfileDialog(BuildContext context) async {
     final auth = context.read<AuthProvider>();
     final l = AppLocalizations.of(context)!;
     final nameController = TextEditingController(text: auth.userName);
@@ -654,9 +654,11 @@ class _ProfileScreenState extends State<ProfileScreen>
     bool obscureOld = true;
     bool obscureNew = true;
 
-    showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
+    try {
+      await showDialog(
+        context: context,
+        builder: (ctx) =>
+            StatefulBuilder(
         builder: (dialogContext, setDialogState) => AlertDialog(
           title: Text(l.settings_user_edit_title),
           content: SingleChildScrollView(
@@ -827,6 +829,12 @@ class _ProfileScreenState extends State<ProfileScreen>
         ),
       ),
     );
+    } finally {
+      nameController.dispose();
+      emailController.dispose();
+      oldPasswordController.dispose();
+      newPasswordController.dispose();
+    }
   }
 }
 

@@ -460,57 +460,61 @@ class AddShiftManualTab extends StatelessWidget {
       ),
     ];
 
-    void showSaveTemplateDialog() {
+    Future<void> showSaveTemplateDialog() async {
       final nameController = TextEditingController();
-      showDialog(
-        context: context,
-        builder: (ctx) {
-          return AlertDialog(
-            title: Text(l.shift_template_save_current),
-            content: TextField(
-              controller: nameController,
-              autofocus: true,
-              decoration: InputDecoration(
-                labelText: l.shift_template_name_label,
-                hintText: l.shift_template_morning,
-                border: const OutlineInputBorder(),
+      try {
+        await showDialog(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              title: Text(l.shift_template_save_current),
+              content: TextField(
+                controller: nameController,
+                autofocus: true,
+                decoration: InputDecoration(
+                  labelText: l.shift_template_name_label,
+                  hintText: l.shift_template_morning,
+                  border: const OutlineInputBorder(),
+                ),
               ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: Text(l.common_cancel),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  final name = nameController.text.trim();
-                  if (name.isEmpty) return;
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(l.common_cancel),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final name = nameController.text.trim();
+                    if (name.isEmpty) return;
 
-                  final settings = context.read<SettingsProvider>();
-                  final template = ShiftTemplate(
-                    id: const Uuid().v4(),
-                    name: name,
-                    startTime: startTime,
-                    endTime: endTime,
-                    jobTypeId: selectedJobTypeId,
-                    breakType: selectedBreakType,
-                  );
-
-                  await settings.addShiftTemplate(template);
-                  if (context.mounted) {
-                    Navigator.pop(ctx);
-                    UIUtils.showSnackBar(
-                      context,
-                      l.shift_template_saved_snack,
+                    final settings = context.read<SettingsProvider>();
+                    final template = ShiftTemplate(
+                      id: const Uuid().v4(),
+                      name: name,
+                      startTime: startTime,
+                      endTime: endTime,
+                      jobTypeId: selectedJobTypeId,
+                      breakType: selectedBreakType,
                     );
-                  }
-                },
-                child: Text(l.common_save),
-              ),
-            ],
-          );
-        },
-      );
+
+                    await settings.addShiftTemplate(template);
+                    if (context.mounted) {
+                      Navigator.pop(ctx);
+                      UIUtils.showSnackBar(
+                        context,
+                        l.shift_template_saved_snack,
+                      );
+                    }
+                  },
+                  child: Text(l.common_save),
+                ),
+              ],
+            );
+          },
+        );
+      } finally {
+        nameController.dispose();
+      }
     }
 
     final shiftSections = <Widget>[

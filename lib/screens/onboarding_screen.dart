@@ -1265,7 +1265,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  void _editJobType(JobType job) {
+  Future<void> _editJobType(JobType job) async {
     final l = AppLocalizations.of(context)!;
     final nameController = TextEditingController(text: job.name);
     final rate = job.getRateForDate(DateTime.now());
@@ -1273,137 +1273,161 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       text: rate > 0 ? rate.toString() : '',
     );
     DateTime effectiveDate = DateTime.now();
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: Text(l.onboarding_job_types_edit_button),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  labelText: l.settings_job_name_label,
-                  hintText: l.settings_job_name_label,
-                ),
-              ),
-              TextField(
-                controller: rateController,
-                decoration: InputDecoration(
-                  labelText: l.settings_job_rate_label,
-                  hintText: '0',
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              ListTile(
-                title: Text(l.common_back),
-                subtitle: Text(AppConstants.formatDate(effectiveDate)),
-                trailing: const Icon(
-                  Icons.calendar_today_rounded,
-                  color: AppTheme.electricCyan,
-                ),
-                onTap: () async {
-                  final picked = await AppDatePicker.showSingleDatePicker(
-                    context: context,
-                    initialDate: effectiveDate,
-                  );
-                  if (picked != null) {
-                    setDialogState(() => effectiveDate = picked);
-                  }
-                },
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(l.common_cancel),
+    try {
+      await showDialog(
+        context: context,
+        builder: (context) =>
+            StatefulBuilder(
+              builder: (context, setDialogState) =>
+                  AlertDialog(
+                    title: Text(l.onboarding_job_types_edit_button),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          controller: nameController,
+                          decoration: InputDecoration(
+                            labelText: l.settings_job_name_label,
+                            hintText: l.settings_job_name_label,
+                          ),
+                        ),
+                        TextField(
+                          controller: rateController,
+                          decoration: InputDecoration(
+                            labelText: l.settings_job_rate_label,
+                            hintText: '0',
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                        ListTile(
+                          title: Text(l.common_back),
+                          subtitle: Text(
+                              AppConstants.formatDate(effectiveDate)),
+                          trailing: const Icon(
+                            Icons.calendar_today_rounded,
+                            color: AppTheme.electricCyan,
+                          ),
+                          onTap: () async {
+                            final picked = await AppDatePicker
+                                .showSingleDatePicker(
+                              context: context,
+                              initialDate: effectiveDate,
+                            );
+                            if (picked != null) {
+                              setDialogState(() => effectiveDate = picked);
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(l.common_cancel),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final name = nameController.text.trim();
+                          final rate =
+                              double.tryParse(rateController.text) ??
+                                  job.hourlyRate;
+                          if (name.isEmpty) return;
+                          final confirmed = await UIUtils.showConfirmDialog(
+                            context: context,
+                            title: l.onboarding_job_types_edit_button,
+                            content: '${l
+                                .onboarding_job_types_edit_button} $name?',
+                          );
+                          if (confirmed != true || !context.mounted) return;
+                          final history = List<WageEntry>.from(
+                              job.wageHistory ?? [])
+                            ..removeWhere((e) =>
+                                isSameDay(e.startDate, effectiveDate))
+                            ..add(WageEntry(
+                                startDate: effectiveDate, hourlyRate: rate))
+                            ..sort((a, b) =>
+                                a.startDate.compareTo(b.startDate));
+                          final updated = job.copyWith(
+                              name: name, wageHistory: history)
+                            ..syncCurrentRate();
+                          await context.read<ShiftProvider>().updateJobType(
+                              updated);
+                          if (!context.mounted) return;
+                          Navigator.pop(context);
+                        },
+                        child: Text(l.common_save),
+                      ),
+                    ],
+                  ),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                final name = nameController.text.trim();
-                final rate =
-                    double.tryParse(rateController.text) ?? job.hourlyRate;
-                if (name.isEmpty) return;
-                final confirmed = await UIUtils.showConfirmDialog(
-                  context: context,
-                  title: l.onboarding_job_types_edit_button,
-                  content: '${l.onboarding_job_types_edit_button} $name?',
-                );
-                if (confirmed != true || !context.mounted) return;
-                final history = List<WageEntry>.from(job.wageHistory ?? [])
-                  ..removeWhere((e) => isSameDay(e.startDate, effectiveDate))
-                  ..add(WageEntry(startDate: effectiveDate, hourlyRate: rate))
-                  ..sort((a, b) => a.startDate.compareTo(b.startDate));
-                final updated = job.copyWith(name: name, wageHistory: history)
-                  ..syncCurrentRate();
-                await context.read<ShiftProvider>().updateJobType(updated);
-                if (!context.mounted) return;
-                Navigator.pop(context);
-              },
-              child: Text(l.common_save),
-            ),
-          ],
-        ),
-      ),
-    );
+      );
+    } finally {
+      nameController.dispose();
+      rateController.dispose();
+    }
   }
 
-  void _addNewJobType() {
+  Future<void> _addNewJobType() async {
     final l = AppLocalizations.of(context)!;
     final nameController = TextEditingController();
     final rateController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l.onboarding_job_types_add_button),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(
-                labelText: l.settings_job_name_label,
-                hintText: l.settings_job_name_label,
-              ),
-            ),
-            TextField(
-              controller: rateController,
-              decoration: InputDecoration(
-                labelText: l.settings_job_rate_label,
-                hintText: '0',
-              ),
-              keyboardType: TextInputType.number,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l.common_cancel),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final name = nameController.text.trim();
-              final rate = double.tryParse(rateController.text) ?? 0.0;
-              if (name.isEmpty) return;
-              final newJob = JobType(
-                id: const Uuid().v4(),
-                name: name,
-                hourlyRate: rate,
-                wageHistory: [
-                  WageEntry(startDate: DateTime.now(), hourlyRate: rate),
+    try {
+      await showDialog(
+        context: context,
+        builder: (context) =>
+            AlertDialog(
+              title: Text(l.onboarding_job_types_add_button),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      labelText: l.settings_job_name_label,
+                      hintText: l.settings_job_name_label,
+                    ),
+                  ),
+                  TextField(
+                    controller: rateController,
+                    decoration: InputDecoration(
+                      labelText: l.settings_job_rate_label,
+                      hintText: '0',
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
                 ],
-              )..syncCurrentRate();
-              context.read<ShiftProvider>().addJobType(newJob);
-              Navigator.pop(context);
-            },
-            child: Text(l.common_confirm),
-          ),
-        ],
-      ),
-    );
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(l.common_cancel),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final name = nameController.text.trim();
+                    final rate = double.tryParse(rateController.text) ?? 0.0;
+                    if (name.isEmpty) return;
+                    final newJob = JobType(
+                      id: const Uuid().v4(),
+                      name: name,
+                      hourlyRate: rate,
+                      wageHistory: [
+                        WageEntry(startDate: DateTime.now(), hourlyRate: rate),
+                      ],
+                    )
+                      ..syncCurrentRate();
+                    context.read<ShiftProvider>().addJobType(newJob);
+                    Navigator.pop(context);
+                  },
+                  child: Text(l.common_confirm),
+                ),
+              ],
+            ),
+      );
+    } finally {
+      nameController.dispose();
+      rateController.dispose();
+    }
   }
 
   Widget _buildFooter() {

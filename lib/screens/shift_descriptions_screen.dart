@@ -73,44 +73,48 @@ class _ShiftDescriptionsScreenState extends State<ShiftDescriptionsScreen> {
     );
   }
 
-  void _editDescription(BuildContext context, Shift shift) {
+  Future<void> _editDescription(BuildContext context, Shift shift) async {
     final l = AppLocalizations.of(context)!;
     final controller = TextEditingController(text: shift.description ?? '');
 
-    showDialog(
-      context: context,
-      builder: (ctx) =>
-          AlertDialog(
-            title: Text(l.shift_descriptions_edit_title),
-            content: TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                labelText: l.shift_description_label,
-                hintText: l.shift_description_hint,
+    try {
+      await showDialog(
+        context: context,
+        builder: (ctx) =>
+            AlertDialog(
+              title: Text(l.shift_descriptions_edit_title),
+              content: TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  labelText: l.shift_description_label,
+                  hintText: l.shift_description_hint,
+                ),
+                maxLines: 3,
               ),
-              maxLines: 3,
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(l.common_cancel),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final newDesc = controller.text.trim();
+                    shift.description = newDesc.isEmpty ? null : newDesc;
+                    context.read<ShiftProvider>().updateShift(shift);
+                    Navigator.pop(ctx);
+                    UIUtils.showSnackBar(
+                      context,
+                      l.shift_descriptions_updated_msg,
+                    );
+                  },
+                  child: Text(l.common_save),
+                ),
+              ],
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: Text(l.common_cancel),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  final newDesc = controller.text.trim();
-                  shift.description = newDesc.isEmpty ? null : newDesc;
-                  context.read<ShiftProvider>().updateShift(shift);
-                  Navigator.pop(ctx);
-                  UIUtils.showSnackBar(
-                    context,
-                    l.shift_descriptions_updated_msg,
-                  );
-                },
-                child: Text(l.common_save),
-              ),
-            ],
-          ),
-    );
+      );
+    } finally {
+      controller.dispose();
+    }
   }
 
   @override

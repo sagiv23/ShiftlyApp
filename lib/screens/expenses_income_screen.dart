@@ -209,11 +209,11 @@ class _ExpensesScreenState extends State<ExpensesScreen>
     }
   }
 
-  void _showItemDialog(
+  Future<void> _showItemDialog(
     BuildContext context, {
     Expense? item,
     required bool isIncome,
-  }) {
+      }) async {
     final settings = context.read<SettingsProvider>();
     final symbol = settings.currencySymbol;
     final l = AppLocalizations.of(context)!;
@@ -233,9 +233,11 @@ class _ExpensesScreenState extends State<ExpensesScreen>
               ? l.expenses_dialog_add_title
               : l.expenses_dialog_edit_title);
 
-    showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
+    try {
+      await showDialog(
+        context: context,
+        builder: (ctx) =>
+            StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           title: Text(titleText),
           content: SingleChildScrollView(
@@ -437,6 +439,10 @@ class _ExpensesScreenState extends State<ExpensesScreen>
         ),
       ),
     );
+    } finally {
+      descriptionController.dispose();
+      amountController.dispose();
+    }
   }
 
   @override

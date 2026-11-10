@@ -143,7 +143,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await context.read<SettingsProvider>().setMonthlyFinancialGoal(amount);
   }
 
-  void _showEditJobDialog(BuildContext context, [JobType? job]) {
+  Future<void> _showEditJobDialog(BuildContext context, [JobType? job]) async {
     final settings = context.read<SettingsProvider>();
     final symbol = settings.currencySymbol;
     final l = AppLocalizations.of(context)!;
@@ -155,9 +155,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
     DateTime effectiveDate = DateTime.now();
 
-    showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
+    try {
+      await showDialog(
+        context: context,
+        builder: (ctx) =>
+            StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           title: Text(
             job == null
@@ -318,6 +320,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
+    } finally {
+      nameController.dispose();
+      rateController.dispose();
+    }
   }
 
   Future<void> _deleteJob(BuildContext context, JobType job) async {

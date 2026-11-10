@@ -213,10 +213,9 @@ class ShiftTemplateChips extends StatelessWidget {
     );
   }
 
-  static void showEditTemplateDialog(
+  static Future<void> showEditTemplateDialog(
     BuildContext context,
-    ShiftTemplate? templateToEdit,
-  ) {
+    ShiftTemplate? templateToEdit,) async {
     final l = AppLocalizations.of(context)!;
     final nameController = TextEditingController(
       text: templateToEdit?.name ?? '',
@@ -227,10 +226,11 @@ class ShiftTemplateChips extends StatelessWidget {
         templateToEdit?.endTime ?? const TimeOfDay(hour: 16, minute: 0);
     BreakType breakType = templateToEdit?.breakType ?? BreakType.unpaid;
 
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return StatefulBuilder(
+    try {
+      await showDialog(
+        context: context,
+        builder: (ctx) {
+          return StatefulBuilder(
           builder: (context, setDialogState) {
             String formatTime(TimeOfDay t) {
               final h = t.hour.toString().padLeft(2, '0');
@@ -347,6 +347,9 @@ class ShiftTemplateChips extends StatelessWidget {
         );
       },
     );
+    } finally {
+      nameController.dispose();
+    }
   }
 
   @override
