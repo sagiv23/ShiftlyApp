@@ -277,6 +277,19 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
     super.dispose();
   }
 
+  String _extractName(dynamic e) {
+    if (e is Map) {
+      final nameVal = e['name'] ?? e['n'] ?? e['title'];
+      if (nameVal != null) return nameVal.toString();
+      for (final val in e.values) {
+        if (val is String && !['pro', 'anti'].contains(val)) {
+          return val;
+        }
+      }
+    }
+    return e.toString();
+  }
+
   void _loadData() {
     final box = Hive.box<dynamic>('settings');
     final rawPro = box.get(_proKey);
@@ -285,21 +298,19 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
     const demoItems = {'שגיב (המייסד)', 'אוהב Shiftly', 'שעון נוכחות ישן'};
 
     if (rawPro is List) {
-      _proList =
-          rawPro
-              .map((e) => e.toString())
-              .where((e) => !demoItems.contains(e))
-              .toList();
+      _proList = rawPro
+          .map((e) => _extractName(e))
+          .where((e) => !demoItems.contains(e) && e.isNotEmpty)
+          .toList();
     } else {
       _proList = [];
     }
 
     if (rawAnti is List) {
-      _antiList =
-          rawAnti
-              .map((e) => e.toString())
-              .where((e) => !demoItems.contains(e))
-              .toList();
+      _antiList = rawAnti
+          .map((e) => _extractName(e))
+          .where((e) => !demoItems.contains(e) && e.isNotEmpty)
+          .toList();
     } else {
       _antiList = [];
     }
@@ -316,8 +327,15 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
     try {
       final remoteData = await _apiService.getSecretTable();
       if (remoteData != null) {
-        final remotePro = remoteData['pro'] ?? [];
-        final remoteAnti = remoteData['anti'] ?? [];
+        final remotePro = (remoteData['pro'] ?? [])
+            .map((e) => _extractName(e))
+            .where((e) => e.isNotEmpty)
+            .toList();
+
+        final remoteAnti = (remoteData['anti'] ?? [])
+            .map((e) => _extractName(e))
+            .where((e) => e.isNotEmpty)
+            .toList();
 
         final proEqual = listEquals(_proList, remotePro);
         final antiEqual = listEquals(_antiList, remoteAnti);
