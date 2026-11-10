@@ -115,6 +115,15 @@ const ensureSchema = async () => {
       )
     `);
 
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS secret_table (
+          id INTEGER PRIMARY KEY DEFAULT 1,
+          pro_list JSONB DEFAULT '[]'::jsonb,
+          anti_list JSONB DEFAULT '[]'::jsonb,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     await pool.query('CREATE INDEX IF NOT EXISTS idx_shifts_user_date ON shifts(user_id, date DESC)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_job_types_user ON job_types(user_id)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_financial_trans_user_date ON financial_transactions(user_id, date DESC)');
@@ -132,6 +141,49 @@ app.get('/', (req, res) => {
 
 app.get('/api', (req, res) => {
   res.json({ message: 'Shiftly API is active' });
+});
+
+// --- Secret Table Easter Egg Routes ---
+
+app.get('/api/secret-table', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT pro_list, anti_list FROM secret_table WHERE id = 1');
+    if (result.rows.length === 0) {
+      await pool.query(
+        "INSERT INTO secret_table (id, pro_list, anti_list) VALUES (1, '[]'::jsonb, '[]'::jsonb) ON CONFLICT (id) DO NOTHING"
+      );
+      return res.json({ pro: [], anti: [] });
+    }
+    const row = result.rows[0];
+    const pro = Array.isArray(row.pro_list) ? row.pro_list : (typeof row.pro_list === 'string' ? JSON.parse(row.pro_list) : []);
+    const anti = Array.isArray(row.anti_list) ? row.anti_list : (typeof row.anti_list === 'string' ? JSON.parse(row.anti_list) : []);
+    res.json({ pro, anti });
+  } catch (err) {
+    console.error('Error fetching secret-table:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/api/secret-table', async (req, res) => {
+  try {
+    const { pro, anti } = req.body;
+    const proList = Array.isArray(pro) ? pro : [];
+    const antiList = Array.isArray(anti) ? anti : [];
+
+    await pool.query(`
+      INSERT INTO secret_table (id, pro_list, anti_list, updated_at)
+      VALUES (1, $1::jsonb, $2::jsonb, CURRENT_TIMESTAMP)
+      ON CONFLICT (id) DO UPDATE
+      SET pro_list = EXCLUDED.pro_list,
+          anti_list = EXCLUDED.anti_list,
+          updated_at = CURRENT_TIMESTAMP
+    `, [JSON.stringify(proList), JSON.stringify(antiList)]);
+
+    res.json({ success: true, pro: proList, anti: antiList });
+  } catch (err) {
+    console.error('Error updating secret-table:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_key';

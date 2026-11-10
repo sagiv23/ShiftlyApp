@@ -64,6 +64,14 @@ CREATE TABLE IF NOT EXISTS financial_transactions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 6. Secret Table (Easter Egg Pro-Shiftly vs Anti-Shiftly Community Table)
+CREATE TABLE IF NOT EXISTS secret_table (
+    id INTEGER PRIMARY KEY DEFAULT 1,
+    pro_list JSONB DEFAULT '[]'::jsonb,
+    anti_list JSONB DEFAULT '[]'::jsonb,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Optimized Performance Indexes for Fast Querying
 CREATE INDEX IF NOT EXISTS idx_shifts_user_date ON shifts(user_id, date DESC);
 CREATE INDEX IF NOT EXISTS idx_job_types_user ON job_types(user_id);

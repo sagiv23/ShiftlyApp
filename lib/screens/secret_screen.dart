@@ -1,9 +1,13 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shiftly/providers/auth_provider.dart';
 import 'package:shiftly/screens/auth_screen.dart';
+import 'package:shiftly/services/api_service.dart';
 import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
@@ -245,16 +249,32 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
   static const String _joinedNameKey = 'secret_user_joined_name';
   static const String _collapsedKey = 'secret_is_table_collapsed';
 
+  final ApiService _apiService = ApiService();
   late List<String> _proList;
   late List<String> _antiList;
   String? _joinedChoice; // 'pro' or 'anti'
   String? _joinedName;
   bool _isCollapsed = false;
+  bool _isSyncing = false;
+  Timer? _pollTimer;
 
   @override
   void initState() {
     super.initState();
     _loadData();
+    _fetchRemoteData();
+    // Real-time polling timer every 3 seconds to keep devices perfectly in sync
+    _pollTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (mounted) {
+        _fetchRemoteData(silent: true);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    super.dispose();
   }
 
   void _loadData() {
@@ -289,7 +309,41 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
     _isCollapsed = box.get(_collapsedKey, defaultValue: false) as bool;
   }
 
+  Future<void> _fetchRemoteData({bool silent = false}) async {
+    if (!silent && mounted) {
+      setState(() => _isSyncing = true);
+    }
+    try {
+      final remoteData = await _apiService.getSecretTable();
+      if (remoteData != null) {
+        final remotePro = remoteData['pro'] ?? [];
+        final remoteAnti = remoteData['anti'] ?? [];
+
+        final proEqual = listEquals(_proList, remotePro);
+        final antiEqual = listEquals(_antiList, remoteAnti);
+
+        if (!proEqual || !antiEqual) {
+          _proList = List<String>.from(remotePro);
+          _antiList = List<String>.from(remoteAnti);
+          if (mounted) {
+            setState(() {});
+          }
+          final box = Hive.box<dynamic>('settings');
+          await box.put(_proKey, _proList);
+          await box.put(_antiKey, _antiList);
+        }
+      }
+    } catch (_) {} finally {
+      if (!silent && mounted) {
+        setState(() => _isSyncing = false);
+      }
+    }
+  }
+
   Future<void> _saveData() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final token = authProvider.token;
+
     final box = Hive.box<dynamic>('settings');
     await box.put(_proKey, _proList);
     await box.put(_antiKey, _antiList);
@@ -304,6 +358,16 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
     } else {
       await box.delete(_joinedNameKey);
     }
+
+    // Sync to remote API server globally for all users
+    await _apiService.updateSecretTable(
+      _proList,
+      _antiList,
+      token: token,
+    );
+
+    // Immediate silent re-fetch to confirm server state
+    _fetchRemoteData(silent: true);
   }
 
   void _toggleCollapse() {
@@ -586,7 +650,9 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
                     label: const Text(
                       'התחבר למשתמש Shiftly (auth_screen.dart)',
                       style: TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.bold),
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     onPressed: null, // Handled by ScalePress
                   ),
@@ -686,10 +752,12 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
   void _addEntry(String side, String name) {
     setState(() {
       if (side == 'pro') {
+        _antiList.remove(name);
         if (!_proList.contains(name)) {
           _proList.add(name);
         }
       } else {
+        _proList.remove(name);
         if (!_antiList.contains(name)) {
           _antiList.add(name);
         }
@@ -726,7 +794,7 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Header Row with Collapse Toggle
+          // Header Row with Collapse Toggle & Refresh
           InkWell(
             onTap: _toggleCollapse,
             borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -741,17 +809,34 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'פרושיפטלי vs אנטישיפטלי',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Theme
-                              .of(context)
-                              .colorScheme
-                              .onSurface,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              'פרושיפטלי vs אנטישיפטלי',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Theme
+                                    .of(context)
+                                    .colorScheme
+                                    .onSurface,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (_isSyncing) ...[
+                            const SizedBox(width: 6),
+                            const SizedBox(
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 1.5,
+                                color: AppTheme.electricCyan,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                       if (_isCollapsed)
                         Text(
@@ -767,6 +852,11 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
                         ),
                     ],
                   ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.refresh_rounded, size: 20),
+                  tooltip: 'רענון נתונים',
+                  onPressed: () => _fetchRemoteData(silent: false),
                 ),
                 IconButton(
                   icon: Icon(
@@ -897,7 +987,7 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
         ),
         const SizedBox(height: 10),
 
-        // List of names
+        // List of names with smart multiline text wrapping
         Container(
           constraints: const BoxConstraints(minHeight: 100),
           padding: const EdgeInsets.all(8),
@@ -934,7 +1024,7 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
                 margin: const EdgeInsets.only(bottom: 6),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 8,
-                  vertical: 6,
+                  vertical: 7,
                 ),
                 decoration: BoxDecoration(
                   color:
@@ -952,25 +1042,31 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
                       : null,
                 ),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      isMe
-                          ? Icons.stars_rounded
-                          : Icons.person_rounded,
-                      size: 14,
-                      color:
-                      isMe
-                          ? color
-                          : (isDark
-                          ? AppTheme.secondaryText
-                          : Colors.grey.shade600),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Icon(
+                        isMe
+                            ? Icons.stars_rounded
+                            : Icons.person_rounded,
+                        size: 14,
+                        color:
+                        isMe
+                            ? color
+                            : (isDark
+                            ? AppTheme.secondaryText
+                            : Colors.grey.shade600),
+                      ),
                     ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
                         name,
+                        softWrap: true,
                         style: TextStyle(
                           fontSize: 12,
+                          height: 1.3,
                           fontWeight:
                           isMe
                               ? FontWeight.bold
@@ -985,14 +1081,16 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
                               .colorScheme
                               .onSurface,
                         ),
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     if (isMe)
                       GestureDetector(
                         onTap: _cancelRegistration,
                         child: const Padding(
-                          padding: EdgeInsets.only(right: 4),
+                          padding: EdgeInsets.only(
+                            right: 4,
+                            top: 2,
+                          ),
                           child: Icon(
                             Icons.close_rounded,
                             size: 16,

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -419,5 +420,174 @@ class ApiService {
         debugPrint('deleteAccount exception: ${e.runtimeType}');
       }
     }
+  }
+
+  // --- Secret Easter Egg Table API ---
+
+  static const String _defaultSecretBlobUrl =
+      'https://jsonblob.com/api/jsonBlob/1337448899220011999';
+
+  Future<String> _getSecretBlobUrl() async {
+    try {
+      final box = Hive.box<dynamic>('settings');
+      final storedUrl = box.get('secret_table_blob_url') as String?;
+      if (storedUrl != null && storedUrl.isNotEmpty) {
+        return storedUrl;
+      }
+    } catch (_) {}
+    return _defaultSecretBlobUrl;
+  }
+
+  Future<Map<String, List<String>>?> getSecretTable() async {
+    // 1. Try primary server endpoint
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$_baseUrl/secret-table'),
+            headers: {'Content-Type': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 4));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final proList =
+            (data['pro'] as List?)?.map((e) => e.toString()).toList() ?? [];
+        final antiList =
+            (data['anti'] as List?)?.map((e) => e.toString()).toList() ?? [];
+        return {'pro': proList, 'anti': antiList};
+      }
+    } catch (_) {}
+
+    // 2. Fallback to shared cloud JSONBlob store
+    try {
+      final blobUrl = await _getSecretBlobUrl();
+      final response = await http
+          .get(
+            Uri.parse(blobUrl),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+          )
+          .timeout(const Duration(seconds: 5));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final proList =
+            (data['pro'] as List?)?.map((e) => e.toString()).toList() ?? [];
+        final antiList =
+            (data['anti'] as List?)?.map((e) => e.toString()).toList() ?? [];
+        return {'pro': proList, 'anti': antiList};
+      } else if (response.statusCode == 404) {
+        return await _createNewSecretBlob();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('getSecretTable public store exception: $e');
+      }
+    }
+
+    return null;
+  }
+
+  Future<Map<String, List<String>>?> _createNewSecretBlob() async {
+    try {
+      final createResponse = await http
+          .post(
+            Uri.parse('https://jsonblob.com/api/jsonBlob'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            body: jsonEncode({'pro': <String>[], 'anti': <String>[]}),
+          )
+          .timeout(const Duration(seconds: 5));
+
+      if (createResponse.statusCode == 201) {
+        final location = createResponse.headers['location'];
+        if (location != null && location.isNotEmpty) {
+          try {
+            final box = Hive.box<dynamic>('settings');
+            await box.put('secret_table_blob_url', location);
+          } catch (_) {}
+        }
+        return {'pro': [], 'anti': []};
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  Future<bool> updateSecretTable(
+    List<String> pro,
+    List<String> anti, {
+    String? token,
+  }) async {
+    bool updated = false;
+
+    // 1. Try primary server endpoint
+    try {
+      final headers = {'Content-Type': 'application/json'};
+      if (token != null && token.isNotEmpty) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+      final response = await http
+          .post(
+            Uri.parse('$_baseUrl/secret-table'),
+            headers: headers,
+            body: jsonEncode({'pro': pro, 'anti': anti}),
+          )
+          .timeout(const Duration(seconds: 4));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        updated = true;
+      }
+    } catch (_) {}
+
+    // 2. Also update shared cloud JSONBlob store
+    try {
+      final blobUrl = await _getSecretBlobUrl();
+      final response = await http
+          .put(
+            Uri.parse(blobUrl),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            body: jsonEncode({'pro': pro, 'anti': anti}),
+          )
+          .timeout(const Duration(seconds: 5));
+
+      if (response.statusCode == 404) {
+        final createResponse = await http
+            .post(
+              Uri.parse('https://jsonblob.com/api/jsonBlob'),
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+              },
+              body: jsonEncode({'pro': pro, 'anti': anti}),
+            )
+            .timeout(const Duration(seconds: 5));
+
+        if (createResponse.statusCode == 201) {
+          final location = createResponse.headers['location'];
+          if (location != null && location.isNotEmpty) {
+            try {
+              final box = Hive.box<dynamic>('settings');
+              await box.put('secret_table_blob_url', location);
+            } catch (_) {}
+          }
+          updated = true;
+        }
+      } else if (response.statusCode == 200) {
+        updated = true;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('updateSecretTable public store exception: $e');
+      }
+    }
+
+    return updated;
   }
 }
