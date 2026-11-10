@@ -12,6 +12,7 @@ import 'package:shiftly/theme/app_theme.dart';
 import 'package:shiftly/utils/app_page_route.dart';
 import 'package:shiftly/utils/page_entrance_animation.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:uuid/uuid.dart';
 
 /// Secret Easter Egg screen triggered by holding 23.11 for 5 seconds in CalendarScreen.
 class SecretScreen extends StatelessWidget {
@@ -92,7 +93,6 @@ class SecretScreen extends StatelessWidget {
                     easterEggImagePath,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
-                      // Fallback UI if asset image is not found yet
                       return Container(
                         padding: const EdgeInsets.symmetric(
                           vertical: 40,
@@ -245,15 +245,11 @@ class ShiftlySidesTable extends StatefulWidget {
 class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
   static const String _proKey = 'secret_pro_shiftly_list';
   static const String _antiKey = 'secret_anti_shiftly_list';
-  static const String _joinedChoiceKey = 'secret_user_joined_choice';
-  static const String _joinedNameKey = 'secret_user_joined_name';
   static const String _collapsedKey = 'secret_is_table_collapsed';
 
   final ApiService _apiService = ApiService();
   late List<String> _proList;
   late List<String> _antiList;
-  String? _joinedChoice; // 'pro' or 'anti'
-  String? _joinedName;
   bool _isCollapsed = false;
   bool _isSyncing = false;
   Timer? _pollTimer;
@@ -263,7 +259,6 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
     super.initState();
     _loadData();
     _fetchRemoteData();
-    // Real-time polling timer every 3 seconds to keep devices perfectly in sync
     _pollTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       if (mounted) {
         _fetchRemoteData(silent: true);
@@ -315,8 +310,6 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
       _antiList = [];
     }
 
-    _joinedChoice = box.get(_joinedChoiceKey) as String?;
-    _joinedName = box.get(_joinedNameKey) as String?;
     _isCollapsed = box.get(_collapsedKey, defaultValue: false) as bool;
   }
 
@@ -358,36 +351,6 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
     }
   }
 
-  Future<void> _saveData() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final token = authProvider.token;
-
-    final box = Hive.box<dynamic>('settings');
-    await box.put(_proKey, _proList);
-    await box.put(_antiKey, _antiList);
-    await box.put(_collapsedKey, _isCollapsed);
-    if (_joinedChoice != null) {
-      await box.put(_joinedChoiceKey, _joinedChoice);
-    } else {
-      await box.delete(_joinedChoiceKey);
-    }
-    if (_joinedName != null) {
-      await box.put(_joinedNameKey, _joinedName);
-    } else {
-      await box.delete(_joinedNameKey);
-    }
-
-    // Sync to remote API server globally for all users
-    await _apiService.updateSecretTable(
-      _proList,
-      _antiList,
-      token: token,
-    );
-
-    // Immediate silent re-fetch to confirm server state
-    _fetchRemoteData(silent: true);
-  }
-
   void _toggleCollapse() {
     setState(() {
       _isCollapsed = !_isCollapsed;
@@ -396,149 +359,8 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
     box.put(_collapsedKey, _isCollapsed);
   }
 
-  (String?, String?) _getEffectiveState(AuthProvider authProvider) {
-    if (authProvider.isLoggedIn) {
-      final name = authProvider.userName ?? authProvider.userEmail;
-      if (name != null && name.isNotEmpty) {
-        if (_proList.contains(name)) return ('pro', name);
-        if (_antiList.contains(name)) return ('anti', name);
-      }
-    }
-    if (_joinedName != null && _joinedName!.isNotEmpty) {
-      if (_proList.contains(_joinedName!)) return ('pro', _joinedName);
-      if (_antiList.contains(_joinedName!)) return ('anti', _joinedName);
-    }
-    return (null, null);
-  }
-
-  void _cancelRegistration() {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final (effectiveSide, effectiveName) = _getEffectiveState(authProvider);
-
-    if (effectiveSide == null || effectiveName == null) return;
-
-    final sideName = effectiveSide == 'pro' ? 'פרושיפטלי' : 'אנטישיפטלי';
-    showDialog(
-      context: context,
-      builder:
-          (ctx) =>
-          AlertDialog(
-            title: const Text('ביטול הרשמה'),
-            content: Text(
-              'האם ברצונך לבטל את הרשמתך ("$effectiveName") מ-$sideName?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('ביטול'),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.softCoral,
-                  foregroundColor: Colors.white,
-                ),
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  _performCancelRegistration(effectiveName);
-                },
-                child: const Text('אישור ביטול'),
-              ),
-            ],
-          ),
-    );
-  }
-
-  void _performCancelRegistration(String name) {
-    setState(() {
-      _proList.remove(name);
-      _antiList.remove(name);
-      if (_joinedName == name) {
-        _joinedChoice = null;
-        _joinedName = null;
-      }
-    });
-
-    _saveData();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('ההרשמה בוטלה בהצלחה'),
-        backgroundColor: Colors.blueGrey,
-      ),
-    );
-  }
-
   void _handleJoin(String side) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final (effectiveSide, effectiveName) = _getEffectiveState(authProvider);
-
-    if (effectiveSide != null && effectiveName != null) {
-      final currentSideName =
-      effectiveSide == 'pro' ? 'פרושיפטלי' : 'אנטישיפטלי';
-      final targetSideName = side == 'pro' ? 'פרושיפטלי' : 'אנטישיפטלי';
-
-      if (effectiveSide == side) {
-        showDialog(
-          context: context,
-          builder:
-              (ctx) =>
-              AlertDialog(
-                title: Text('כבר הצטרפת ל$currentSideName'),
-                content: Text(
-                  'הנך רשום כבר ב-$currentSideName בתור "$effectiveName". האם ברצונך לבטל את ההרשמה?',
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    child: const Text('סגור'),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.softCoral,
-                      foregroundColor: Colors.white,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(ctx);
-                      _cancelRegistration();
-                    },
-                    child: const Text('ביטול הרשמה'),
-                  ),
-                ],
-              ),
-        );
-      } else {
-        showDialog(
-          context: context,
-          builder:
-              (ctx) =>
-              AlertDialog(
-                title: const Text('ביטול הרשמה קודמת'),
-                content: Text(
-                  'הנך רשום כרגע ב-$currentSideName בתור "$effectiveName". כדי להצטרף ל-$targetSideName, עליך לבטל תחילה את ההרשמה הקודמת. לבטל כעת?',
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    child: const Text('ביטול'),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.softCoral,
-                      foregroundColor: Colors.white,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(ctx);
-                      _performCancelRegistration(effectiveName);
-                    },
-                    child: const Text('ביטול הרשמה קודמת'),
-                  ),
-                ],
-              ),
-        );
-      }
-      return;
-    }
-
     final isPro = side == 'pro';
     final sideTitle = isPro ? 'פרושיפטלי' : 'אנטישיפטלי';
 
@@ -596,7 +418,7 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
             ),
             const SizedBox(height: 8),
             Text(
-              'בחר כיצד ברצונך להופיע בטבלה (ניתן להצטרף פעם אחת בלבד):',
+              'בחר כיצד ברצונך להופיע בטבלה:',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
@@ -634,7 +456,7 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  onPressed: null, // Handled by ScalePress
+                  onPressed: null,
                 ),
               ),
               const SizedBox(height: 12),
@@ -672,7 +494,7 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    onPressed: null, // Handled by ScalePress
+                    onPressed: null,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -702,7 +524,7 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
                   'הזן שם מלא ידנית',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
-                onPressed: null, // Handled by ScalePress
+                onPressed: null,
               ),
             ),
           ],
@@ -767,26 +589,42 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
     );
   }
 
-  void _addEntry(String side, String name) {
+  Future<void> _addEntry(String side, String name) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final token = authProvider.token;
+    final messenger = ScaffoldMessenger.of(context);
+
+    // Generate a fresh unique UUID for EACH new registration entry so duplicate names don't collide
+    final String entryId = const Uuid().v4();
+
     setState(() {
       if (side == 'pro') {
-        _antiList.remove(name);
         if (!_proList.contains(name)) {
           _proList.add(name);
         }
       } else {
-        _proList.remove(name);
         if (!_antiList.contains(name)) {
           _antiList.add(name);
         }
       }
-      _joinedChoice = side;
-      _joinedName = name;
     });
-    _saveData();
+
+    final box = Hive.box<dynamic>('settings');
+    await box.put(_proKey, _proList);
+    await box.put(_antiKey, _antiList);
+
+    await _apiService.sendSecretAction(
+      action: 'add',
+      id: entryId,
+      name: name,
+      side: side,
+      token: token,
+    );
+
+    _fetchRemoteData(silent: true);
 
     final sideTitle = side == 'pro' ? 'פרושיפטלי' : 'אנטישיפטלי';
-    ScaffoldMessenger.of(context).showSnackBar(
+    messenger.showSnackBar(
       SnackBar(
         content: Text('נוספת בהצלחה ל-$sideTitle בתור "$name"'),
         backgroundColor:
@@ -800,8 +638,6 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
     final isDark = Theme
         .of(context)
         .brightness == Brightness.dark;
-    final authProvider = Provider.of<AuthProvider>(context);
-    final (effectiveSide, effectiveName) = _getEffectiveState(authProvider);
 
     return Container(
       decoration: AppTheme.glassDecoration(
@@ -900,7 +736,7 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
                 : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 6),
+                const SizedBox(height: 5),
                 Text(
                   'בחר צד והוסף את עצמך לטבלה',
                   textAlign: TextAlign.center,
@@ -927,8 +763,6 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
                           color: AppTheme.mintGreen,
                           items: _proList,
                           side: 'pro',
-                          effectiveSide: effectiveSide,
-                          effectiveName: effectiveName,
                         ),
                       ),
                       const VerticalDivider(width: 16, thickness: 1),
@@ -940,8 +774,6 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
                           color: AppTheme.softCoral,
                           items: _antiList,
                           side: 'anti',
-                          effectiveSide: effectiveSide,
-                          effectiveName: effectiveName,
                         ),
                       ),
                     ],
@@ -961,14 +793,10 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
     required Color color,
     required List<String> items,
     required String side,
-    required String? effectiveSide,
-    required String? effectiveName,
   }) {
     final isDark = Theme
         .of(context)
         .brightness == Brightness.dark;
-    final hasJoined = effectiveSide != null;
-    final isMySide = hasJoined && effectiveSide == side;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1037,7 +865,6 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children:
             items.map((name) {
-              final isMe = name == effectiveName;
               return Container(
                 margin: const EdgeInsets.only(bottom: 6),
                 padding: const EdgeInsets.symmetric(
@@ -1045,36 +872,22 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
                   vertical: 7,
                 ),
                 decoration: BoxDecoration(
-                  color:
-                  isMe
-                      ? color.withValues(alpha: 0.2)
-                      : (isDark
+                  color: isDark
                       ? Colors.white.withValues(alpha: 0.05)
-                      : Colors.grey.shade100),
+                      : Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(
                     AppTheme.radiusSm,
                   ),
-                  border:
-                  isMe
-                      ? Border.all(color: color, width: 1.5)
-                      : null,
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2),
                       child: Icon(
-                        isMe
-                            ? Icons.stars_rounded
-                            : Icons.person_rounded,
+                        Icons.person_rounded,
                         size: 14,
-                        color:
-                        isMe
-                            ? color
-                            : (isDark
-                            ? AppTheme.secondaryText
-                            : Colors.grey.shade600),
+                        color: AppTheme.secondaryText,
                       ),
                     ),
                     const SizedBox(width: 6),
@@ -1085,37 +898,14 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
                         style: TextStyle(
                           fontSize: 12,
                           height: 1.3,
-                          fontWeight:
-                          isMe
-                              ? FontWeight.bold
-                              : FontWeight.normal,
                           color:
-                          isMe
-                              ? color
-                              : Theme
-                              .of(
-                            context,
-                          )
+                          Theme
+                              .of(context)
                               .colorScheme
                               .onSurface,
                         ),
                       ),
                     ),
-                    if (isMe)
-                      GestureDetector(
-                        onTap: _cancelRegistration,
-                        child: const Padding(
-                          padding: EdgeInsets.only(
-                            right: 4,
-                            top: 2,
-                          ),
-                          child: Icon(
-                            Icons.close_rounded,
-                            size: 16,
-                            color: AppTheme.softCoral,
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               );
@@ -1124,35 +914,28 @@ class _ShiftlySidesTableState extends State<ShiftlySidesTable> {
         ),
         const SizedBox(height: 10),
 
-        // Join/Cancel button for this side
+        // Join button for this side
         ScalePress(
-          onTap: isMySide ? _cancelRegistration : () => _handleJoin(side),
+          onTap: () => _handleJoin(side),
           child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
-              backgroundColor:
-              isMySide
-                  ? AppTheme.softCoral
-                  : (hasJoined ? Colors.grey.shade400 : color),
+              backgroundColor: color,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-              elevation: isMySide ? 2 : (hasJoined ? 0 : 2),
+              elevation: 2,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
               ),
             ),
-            icon: Icon(
-              isMySide
-                  ? Icons.close_rounded
-                  : (hasJoined ? Icons.lock_outlined : Icons.add_rounded),
+            icon: const Icon(
+              Icons.add_rounded,
               size: 16,
             ),
-            label: Text(
-              isMySide
-                  ? 'ביטול הרשמה'
-                  : (hasJoined ? 'החלף צד' : '+ הצטרף'),
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            label: const Text(
+              '+ הצטרף',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),
-            onPressed: null, // Handled by ScalePress
+            onPressed: null,
           ),
         ),
       ],

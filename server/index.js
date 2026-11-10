@@ -175,50 +175,53 @@ app.get('/api/secret-table', async (req, res) => {
 });
 
 app.post('/api/secret-table', async (req, res) => {
+  let authUserId = null;
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      authUserId = decoded.userId;
+    } catch (_) {}
+  }
+
   const client = await pool.connect();
   try {
     const { action, id, name, side, userId, pro, anti } = req.body;
+    const effectiveUserId = authUserId || userId;
 
     await client.query('BEGIN');
 
-    // If client sends action ('add' or 'remove')
     if (action === 'remove') {
-      if (userId) {
-        await client.query('DELETE FROM secret_table_entries WHERE user_id = $1', [userId]);
+      if (effectiveUserId) {
+        await client.query('DELETE FROM secret_table_entries WHERE user_id = $1', [effectiveUserId]);
       } else if (id) {
         await client.query('DELETE FROM secret_table_entries WHERE id = $1', [id]);
       }
     } else if (action === 'add' && id && name && side) {
-      if (userId) {
-        // Logged in user: unique per user_id
+      if (effectiveUserId) {
         await client.query(`
           INSERT INTO secret_table_entries (id, name, side, user_id, created_at)
           VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
-          ON CONFLICT (user_id) WHERE user_id IS NOT NULL DO UPDATE SET
+          ON CONFLICT (user_id) DO UPDATE SET
             id = EXCLUDED.id,
             name = EXCLUDED.name,
             side = EXCLUDED.side,
             created_at = CURRENT_TIMESTAMP
-        `, [id, name.trim(), side, userId]);
+        `, [id, name.trim(), side, effectiveUserId]);
       } else {
-        // Guest user: unique per entry id
         await client.query(`
           INSERT INTO secret_table_entries (id, name, side, user_id, created_at)
           VALUES ($1, $2, $3, NULL, CURRENT_TIMESTAMP)
-          ON CONFLICT (id) DO UPDATE SET
-            name = EXCLUDED.name,
-            side = EXCLUDED.side,
-            created_at = CURRENT_TIMESTAMP
         `, [id, name.trim(), side]);
       }
     } else if (Array.isArray(pro) || Array.isArray(anti)) {
-      // Array sync fallback
       const proItems = Array.isArray(pro) ? pro : [];
       const antiItems = Array.isArray(anti) ? anti : [];
 
       for (const item of proItems) {
         const itemStr = typeof item === 'string' ? item : item.name;
-        const itemId = typeof item === 'object' && item.id ? item.id : 'entry_' + itemStr;
+        const itemId = typeof item === 'object' && item.id ? item.id : 'entry_' + itemStr + '_' + Math.random();
         const itemUser = typeof item === 'object' ? item.userId : null;
         if (!itemStr || !itemStr.trim()) continue;
 
@@ -226,7 +229,7 @@ app.post('/api/secret-table', async (req, res) => {
           await client.query(`
             INSERT INTO secret_table_entries (id, name, side, user_id, created_at)
             VALUES ($1, $2, 'pro', $3, CURRENT_TIMESTAMP)
-            ON CONFLICT (user_id) WHERE user_id IS NOT NULL DO UPDATE SET
+            ON CONFLICT (user_id) DO UPDATE SET
               name = EXCLUDED.name, side = 'pro'
           `, [itemId, itemStr.trim(), itemUser]);
         } else {
@@ -240,7 +243,7 @@ app.post('/api/secret-table', async (req, res) => {
 
       for (const item of antiItems) {
         const itemStr = typeof item === 'string' ? item : item.name;
-        const itemId = typeof item === 'object' && item.id ? item.id : 'entry_' + itemStr;
+        const itemId = typeof item === 'object' && item.id ? item.id : 'entry_' + itemStr + '_' + Math.random();
         const itemUser = typeof item === 'object' ? item.userId : null;
         if (!itemStr || !itemStr.trim()) continue;
 
@@ -248,7 +251,7 @@ app.post('/api/secret-table', async (req, res) => {
           await client.query(`
             INSERT INTO secret_table_entries (id, name, side, user_id, created_at)
             VALUES ($1, $2, 'anti', $3, CURRENT_TIMESTAMP)
-            ON CONFLICT (user_id) WHERE user_id IS NOT NULL DO UPDATE SET
+            ON CONFLICT (user_id) DO UPDATE SET
               name = EXCLUDED.name, side = 'anti'
           `, [itemId, itemStr.trim(), itemUser]);
         } else {
@@ -263,7 +266,6 @@ app.post('/api/secret-table', async (req, res) => {
 
     await client.query('COMMIT');
 
-    // Return latest state
     const result = await client.query(
       'SELECT id, name, side, user_id FROM secret_table_entries ORDER BY created_at ASC'
     );
