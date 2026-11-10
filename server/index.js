@@ -116,11 +116,12 @@ const ensureSchema = async () => {
     `);
 
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS secret_table (
-          id INTEGER PRIMARY KEY DEFAULT 1,
-          pro_list JSONB DEFAULT '[]'::jsonb,
-          anti_list JSONB DEFAULT '[]'::jsonb,
-          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      CREATE TABLE IF NOT EXISTS secret_table_entries (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(150) NOT NULL UNIQUE,
+          side VARCHAR(10) NOT NULL CHECK (side IN ('pro', 'anti')),
+          user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
@@ -147,16 +148,13 @@ app.get('/api', (req, res) => {
 
 app.get('/api/secret-table', async (req, res) => {
   try {
-    const result = await pool.query('SELECT pro_list, anti_list FROM secret_table WHERE id = 1');
-    if (result.rows.length === 0) {
-      await pool.query(
-        "INSERT INTO secret_table (id, pro_list, anti_list) VALUES (1, '[]'::jsonb, '[]'::jsonb) ON CONFLICT (id) DO NOTHING"
-      );
-      return res.json({ pro: [], anti: [] });
+    const result = await pool.query('SELECT name, side FROM secret_table_entries ORDER BY created_at ASC');
+    const pro = [];
+    const anti = [];
+    for (const row of result.rows) {
+      if (row.side === 'pro') pro.push(row.name);
+      else if (row.side === 'anti') anti.push(row.name);
     }
-    const row = result.rows[0];
-    const pro = Array.isArray(row.pro_list) ? row.pro_list : (typeof row.pro_list === 'string' ? JSON.parse(row.pro_list) : []);
-    const anti = Array.isArray(row.anti_list) ? row.anti_list : (typeof row.anti_list === 'string' ? JSON.parse(row.anti_list) : []);
     res.json({ pro, anti });
   } catch (err) {
     console.error('Error fetching secret-table:', err);
@@ -165,24 +163,50 @@ app.get('/api/secret-table', async (req, res) => {
 });
 
 app.post('/api/secret-table', async (req, res) => {
+  const client = await pool.connect();
   try {
     const { pro, anti } = req.body;
     const proList = Array.isArray(pro) ? pro : [];
     const antiList = Array.isArray(anti) ? anti : [];
 
-    await pool.query(`
-      INSERT INTO secret_table (id, pro_list, anti_list, updated_at)
-      VALUES (1, $1::jsonb, $2::jsonb, CURRENT_TIMESTAMP)
-      ON CONFLICT (id) DO UPDATE
-      SET pro_list = EXCLUDED.pro_list,
-          anti_list = EXCLUDED.anti_list,
-          updated_at = CURRENT_TIMESTAMP
-    `, [JSON.stringify(proList), JSON.stringify(antiList)]);
+    await client.query('BEGIN');
 
+    // Remove entries no longer present in either list
+    const allNames = [...proList, ...antiList];
+    if (allNames.length === 0) {
+      await client.query('DELETE FROM secret_table_entries');
+    } else {
+      await client.query('DELETE FROM secret_table_entries WHERE NOT (name = ANY($1::text[]))', [allNames]);
+    }
+
+    // Insert or update pro names
+    for (const name of proList) {
+      if (!name || !name.trim()) continue;
+      await client.query(`
+        INSERT INTO secret_table_entries (name, side, created_at)
+        VALUES ($1, 'pro', CURRENT_TIMESTAMP)
+        ON CONFLICT (name) DO UPDATE SET side = 'pro'
+      `, [name.trim()]);
+    }
+
+    // Insert or update anti names
+    for (const name of antiList) {
+      if (!name || !name.trim()) continue;
+      await client.query(`
+        INSERT INTO secret_table_entries (name, side, created_at)
+        VALUES ($1, 'anti', CURRENT_TIMESTAMP)
+        ON CONFLICT (name) DO UPDATE SET side = 'anti'
+      `, [name.trim()]);
+    }
+
+    await client.query('COMMIT');
     res.json({ success: true, pro: proList, anti: antiList });
   } catch (err) {
+    await client.query('ROLLBACK');
     console.error('Error updating secret-table:', err);
     res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    client.release();
   }
 });
 
