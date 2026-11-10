@@ -451,7 +451,11 @@ class ApiService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final proList =
-            (data['pro'] as List?)?.map((e) => e.toString()).toList() ?? [];
+            (data['pro'] as List?)?.map((e) {
+              if (e is Map) return (e['name'] ?? e.toString()).toString();
+              return e.toString();
+            }).toList() ??
+            [];
         final antiList =
             (data['anti'] as List?)?.map((e) => e.toString()).toList() ?? [];
         return {'pro': proList, 'anti': antiList};

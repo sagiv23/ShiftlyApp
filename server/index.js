@@ -117,13 +117,17 @@ const ensureSchema = async () => {
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS secret_table_entries (
-          id SERIAL PRIMARY KEY,
-          name VARCHAR(150) NOT NULL UNIQUE,
+          id VARCHAR(100) PRIMARY KEY,
+          name VARCHAR(150) NOT NULL,
           side VARCHAR(10) NOT NULL CHECK (side IN ('pro', 'anti')),
-          user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+          user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    await pool.query(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_secret_entries_user ON secret_table_entries(user_id) WHERE user_id IS NOT NULL'
+    );
 
     await pool.query('CREATE INDEX IF NOT EXISTS idx_shifts_user_date ON shifts(user_id, date DESC)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_job_types_user ON job_types(user_id)');
@@ -148,12 +152,20 @@ app.get('/api', (req, res) => {
 
 app.get('/api/secret-table', async (req, res) => {
   try {
-    const result = await pool.query('SELECT name, side FROM secret_table_entries ORDER BY created_at ASC');
+    const result = await pool.query(
+      'SELECT id, name, side, user_id FROM secret_table_entries ORDER BY created_at ASC'
+    );
     const pro = [];
     const anti = [];
     for (const row of result.rows) {
-      if (row.side === 'pro') pro.push(row.name);
-      else if (row.side === 'anti') anti.push(row.name);
+      const entry = {
+        id: row.id,
+        name: row.name,
+        side: row.side,
+        userId: row.user_id ? parseInt(row.user_id, 10) : null,
+      };
+      if (row.side === 'pro') pro.push(entry);
+      else if (row.side === 'anti') anti.push(entry);
     }
     res.json({ pro, anti });
   } catch (err) {
@@ -165,41 +177,109 @@ app.get('/api/secret-table', async (req, res) => {
 app.post('/api/secret-table', async (req, res) => {
   const client = await pool.connect();
   try {
-    const { pro, anti } = req.body;
-    const proList = Array.isArray(pro) ? pro : [];
-    const antiList = Array.isArray(anti) ? anti : [];
+    const { action, id, name, side, userId, pro, anti } = req.body;
 
     await client.query('BEGIN');
 
-    // Remove entries no longer present in either list
-    const allNames = [...proList, ...antiList];
-    if (allNames.length === 0) {
-      await client.query('DELETE FROM secret_table_entries');
-    } else {
-      await client.query('DELETE FROM secret_table_entries WHERE NOT (name = ANY($1::text[]))', [allNames]);
-    }
+    // If client sends action ('add' or 'remove')
+    if (action === 'remove') {
+      if (userId) {
+        await client.query('DELETE FROM secret_table_entries WHERE user_id = $1', [userId]);
+      } else if (id) {
+        await client.query('DELETE FROM secret_table_entries WHERE id = $1', [id]);
+      }
+    } else if (action === 'add' && id && name && side) {
+      if (userId) {
+        // Logged in user: unique per user_id
+        await client.query(`
+          INSERT INTO secret_table_entries (id, name, side, user_id, created_at)
+          VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+          ON CONFLICT (user_id) WHERE user_id IS NOT NULL DO UPDATE SET
+            id = EXCLUDED.id,
+            name = EXCLUDED.name,
+            side = EXCLUDED.side,
+            created_at = CURRENT_TIMESTAMP
+        `, [id, name.trim(), side, userId]);
+      } else {
+        // Guest user: unique per entry id
+        await client.query(`
+          INSERT INTO secret_table_entries (id, name, side, user_id, created_at)
+          VALUES ($1, $2, $3, NULL, CURRENT_TIMESTAMP)
+          ON CONFLICT (id) DO UPDATE SET
+            name = EXCLUDED.name,
+            side = EXCLUDED.side,
+            created_at = CURRENT_TIMESTAMP
+        `, [id, name.trim(), side]);
+      }
+    } else if (Array.isArray(pro) || Array.isArray(anti)) {
+      // Array sync fallback
+      const proItems = Array.isArray(pro) ? pro : [];
+      const antiItems = Array.isArray(anti) ? anti : [];
 
-    // Insert or update pro names
-    for (const name of proList) {
-      if (!name || !name.trim()) continue;
-      await client.query(`
-        INSERT INTO secret_table_entries (name, side, created_at)
-        VALUES ($1, 'pro', CURRENT_TIMESTAMP)
-        ON CONFLICT (name) DO UPDATE SET side = 'pro'
-      `, [name.trim()]);
-    }
+      for (const item of proItems) {
+        const itemStr = typeof item === 'string' ? item : item.name;
+        const itemId = typeof item === 'object' && item.id ? item.id : 'entry_' + itemStr;
+        const itemUser = typeof item === 'object' ? item.userId : null;
+        if (!itemStr || !itemStr.trim()) continue;
 
-    // Insert or update anti names
-    for (const name of antiList) {
-      if (!name || !name.trim()) continue;
-      await client.query(`
-        INSERT INTO secret_table_entries (name, side, created_at)
-        VALUES ($1, 'anti', CURRENT_TIMESTAMP)
-        ON CONFLICT (name) DO UPDATE SET side = 'anti'
-      `, [name.trim()]);
+        if (itemUser) {
+          await client.query(`
+            INSERT INTO secret_table_entries (id, name, side, user_id, created_at)
+            VALUES ($1, $2, 'pro', $3, CURRENT_TIMESTAMP)
+            ON CONFLICT (user_id) WHERE user_id IS NOT NULL DO UPDATE SET
+              name = EXCLUDED.name, side = 'pro'
+          `, [itemId, itemStr.trim(), itemUser]);
+        } else {
+          await client.query(`
+            INSERT INTO secret_table_entries (id, name, side, user_id, created_at)
+            VALUES ($1, $2, 'pro', NULL, CURRENT_TIMESTAMP)
+            ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, side = 'pro'
+          `, [itemId, itemStr.trim()]);
+        }
+      }
+
+      for (const item of antiItems) {
+        const itemStr = typeof item === 'string' ? item : item.name;
+        const itemId = typeof item === 'object' && item.id ? item.id : 'entry_' + itemStr;
+        const itemUser = typeof item === 'object' ? item.userId : null;
+        if (!itemStr || !itemStr.trim()) continue;
+
+        if (itemUser) {
+          await client.query(`
+            INSERT INTO secret_table_entries (id, name, side, user_id, created_at)
+            VALUES ($1, $2, 'anti', $3, CURRENT_TIMESTAMP)
+            ON CONFLICT (user_id) WHERE user_id IS NOT NULL DO UPDATE SET
+              name = EXCLUDED.name, side = 'anti'
+          `, [itemId, itemStr.trim(), itemUser]);
+        } else {
+          await client.query(`
+            INSERT INTO secret_table_entries (id, name, side, user_id, created_at)
+            VALUES ($1, $2, 'anti', NULL, CURRENT_TIMESTAMP)
+            ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, side = 'anti'
+          `, [itemId, itemStr.trim()]);
+        }
+      }
     }
 
     await client.query('COMMIT');
+
+    // Return latest state
+    const result = await client.query(
+      'SELECT id, name, side, user_id FROM secret_table_entries ORDER BY created_at ASC'
+    );
+    const proList = [];
+    const antiList = [];
+    for (const row of result.rows) {
+      const entry = {
+        id: row.id,
+        name: row.name,
+        side: row.side,
+        userId: row.user_id ? parseInt(row.user_id, 10) : null,
+      };
+      if (row.side === 'pro') proList.push(entry);
+      else if (row.side === 'anti') antiList.push(entry);
+    }
+
     res.json({ success: true, pro: proList, anti: antiList });
   } catch (err) {
     await client.query('ROLLBACK');

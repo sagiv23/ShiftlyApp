@@ -64,14 +64,16 @@ CREATE TABLE IF NOT EXISTS financial_transactions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 6. Secret Table Entries (Easter Egg Pro-Shiftly vs Anti-Shiftly Individual Rows)
+-- 6. Secret Table Entries (Easter Egg Pro-Shiftly vs Anti-Shiftly Unique User & Device Registrations)
 CREATE TABLE IF NOT EXISTS secret_table_entries (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(150) NOT NULL UNIQUE,
+    id VARCHAR(100) PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
     side VARCHAR(10) NOT NULL CHECK (side IN ('pro', 'anti')),
-    user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_secret_entries_user ON secret_table_entries(user_id) WHERE user_id IS NOT NULL;
 
 -- Optimized Performance Indexes for Fast Querying
 CREATE INDEX IF NOT EXISTS idx_shifts_user_date ON shifts(user_id, date DESC);
